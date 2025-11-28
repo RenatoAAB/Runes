@@ -23,14 +23,15 @@ func reset_state() -> void:
 func can_activate() -> bool:
 	return current_activations < get_max_activations()
 
-## Returns the max activations, accounting for any buffs (future implementation).
+## Returns the max activations, accounting for any buffs.
 func get_max_activations() -> int:
-	# Placeholder for buff logic:
-	# var bonus = temporary_buffs.get("max_activations_bonus", 0)
-	return data.base_max_activations
+	var bonus = temporary_buffs.get("max_activations_bonus", 0)
+	return data.base_max_activations + bonus
 
 ## Called when the rune is triggered by the Reader.
-func on_activate() -> void:
+func on_activate(grid_manager: GridManager, my_slot: GridSlot) -> void:
 	if can_activate():
 		current_activations += 1
-		# Logic to trigger effects will be called here by the Reader or GridManager
+		
+		for effect in data.effects:
+			effect.execute(self, grid_manager, my_slot)

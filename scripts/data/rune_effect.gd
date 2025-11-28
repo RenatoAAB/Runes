@@ -2,10 +2,21 @@ class_name RuneEffect
 extends Resource
 
 ## Base class for all modular rune effects.
-## In Task 3, we will expand this to include Condition, TargetArea, and Payload components.
+## Composed of a Condition, a Target, and a Payload.
 
-# Placeholder for the execution logic.
+@export var condition: EffectCondition
+@export var target: EffectTarget
+@export var payload: EffectPayload
+
 # We use 'Object' for source_rune and grid_manager to avoid cyclic dependency issues 
 # during the initial setup, but these will be typed as RuneInstance and GridManager later.
-func execute(source_rune: Object, grid_manager: Object) -> void:
-	pass
+# Actually, since we are in GDScript 2.0 (Godot 4), we can use class_name types if we are careful,
+# but to be safe with the current file structure, we will cast them inside.
+func execute(source_rune: RuneInstance, grid_manager: GridManager, source_slot: GridSlot) -> void:
+	if not condition or not target or not payload:
+		push_warning("RuneEffect missing components.")
+		return
+
+	if condition.evaluate(source_rune, grid_manager, source_slot):
+		var targets = target.get_targets(source_rune, grid_manager, source_slot)
+		payload.execute(targets, source_rune, grid_manager)
