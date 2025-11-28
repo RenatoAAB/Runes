@@ -8,6 +8,8 @@ extends RefCounted
 signal score_event(amount: int, source: RuneInstance)
 
 var grid: GridManager
+var current_score: int = 0
+var current_step_index: int = 0
 
 func _init(p_grid: GridManager):
 	grid = p_grid

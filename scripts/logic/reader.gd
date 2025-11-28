@@ -43,6 +43,10 @@ func _process_next_step() -> void:
 	var x = current_index % GridManager.GRID_SIZE
 	var coord = Vector2i(x, y)
 	
+	# Update context
+	if battle_context:
+		battle_context.current_step_index = current_index
+	
 	step_started.emit(coord)
 	
 	var slot = grid_manager.get_slot(coord)
@@ -65,6 +69,8 @@ func _activate_rune(slot: GridSlot) -> void:
 
 func _on_score_event(amount: int, source: RuneInstance) -> void:
 	total_score += amount
+	if battle_context:
+		battle_context.current_score = total_score
 	score_updated.emit(total_score)
 
 func _finish_sequence() -> void:
