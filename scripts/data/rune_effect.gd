@@ -20,3 +20,11 @@ func execute(source_rune: RuneInstance, context: BattleContext, source_slot: Gri
 	if condition.evaluate(source_rune, context, source_slot):
 		var targets = target.get_targets(source_rune, context, source_slot)
 		payload.execute(targets, source_rune, context)
+
+func get_description() -> String:
+	var desc = ""
+	if payload and payload.has_method("get_description"):
+		desc += payload.get_description()
+	if condition and condition.has_method("get_description"):
+		desc += " if " + condition.get_description()
+	return desc

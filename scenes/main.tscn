@@ -1,6 +1,6 @@
 [gd_scene load_steps=13 format=3 uid="uid://c654112svuun8"]
 
-[ext_resource type="Script" uid="uid://dlp2xojtverw0" path="res://scenes/main.gd" id="1_eb6dy"]
+[ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
 [ext_resource type="Script" uid="uid://bmvi2d1q3u4lg" path="res://scripts/logic/grid_manager.gd" id="2_tipki"]
 [ext_resource type="Script" uid="uid://qhromqhnu80e" path="res://scripts/logic/inventory_manager.gd" id="3_85g3d"]
@@ -13,8 +13,18 @@
 [ext_resource type="Resource" uid="uid://djh6bup75oc57" path="res://resources/runes/rune_water_1.tres" id="6_jbj1t"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
 
-[node name="Main" type="Node2D"]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
+game_manager = NodePath("Managers/GameManager")
+grid_manager = NodePath("Managers/GridManager")
+inventory_manager = NodePath("Managers/InventoryManager")
+reader = NodePath("Managers/Reader")
+grid_container = NodePath("UI/GameUI/GridContainer")
+inventory_container = NodePath("UI/GameUI/InventoryContainer")
+score_label = NodePath("UI/GameUI/ScoreLabel")
+level_label = NodePath("UI/GameUI/LevelLabel")
+slot_scene = ExtResource("5_ya4ey")
+grid_highlighter = NodePath("UI/GridHighlighter")
 
 [node name="Managers" type="Node" parent="."]
 
@@ -23,6 +33,7 @@ script = ExtResource("1_o6xl0")
 reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
+base_target_score = 10
 available_runes = Array[ExtResource("3_trceg")]([ExtResource("4_a8y0u"), ExtResource("5_jkv2x"), ExtResource("6_jbj1t")])
 
 [node name="GridManager" type="Node" parent="Managers"]
@@ -35,6 +46,7 @@ max_slots = 12
 [node name="Reader" type="Node" parent="Managers" node_paths=PackedStringArray("grid_manager")]
 script = ExtResource("4_choun")
 grid_manager = NodePath("../GridManager")
+step_delay = 0.2
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -52,7 +64,7 @@ offset_right = 314.0
 offset_bottom = 224.0
 columns = 5
 
-[node name="Slot" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot1" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
 [node name="Slot2" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
@@ -186,6 +198,14 @@ offset_top = 234.0
 offset_right = 163.0
 offset_bottom = 257.0
 text = "Score:"
+
+[node name="LevelLabel" type="Label" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 255.0
+offset_top = 234.0
+offset_right = 303.0
+offset_bottom = 257.0
+text = "Level"
 
 [node name="GridHighlighter" type="Node" parent="UI" node_paths=PackedStringArray("grid_manager") groups=["grid_highlighter"]]
 script = ExtResource("6_eb6dy")

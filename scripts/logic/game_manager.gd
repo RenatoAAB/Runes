@@ -39,6 +39,7 @@ func _ready() -> void:
 
 func start_game() -> void:
 	current_level = 1
+	grid_manager.clear_grid()
 	_setup_initial_inventory()
 	start_level()
 

@@ -9,6 +9,8 @@ const GRID_SIZE = 5
 # 1D Array representing 5x5 grid. Index = y * WIDTH + x
 var grid: Array[GridSlot] = []
 
+signal slot_changed(coord: Vector2i)
+
 func _ready() -> void:
 	_init_grid()
 
@@ -75,6 +77,7 @@ func place_rune(rune_data: RuneData, coord: Vector2i) -> bool:
 	if slot and slot.is_empty():
 		var instance = RuneInstance.new(rune_data)
 		slot.set_rune(instance)
+		slot_changed.emit(coord)
 		return true
 	return false
 
@@ -99,6 +102,9 @@ func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 	from_slot.set_rune(rune_b)
 	to_slot.set_rune(rune_a)
 	
+	slot_changed.emit(from_coord)
+	slot_changed.emit(to_coord)
+	
 	return true
 
 func process_round_end() -> void:
@@ -106,3 +112,9 @@ func process_round_end() -> void:
 		slot.process_states()
 		if slot.rune:
 			slot.rune.reset_state()
+
+func clear_grid() -> void:
+	for slot in grid:
+		if not slot.is_empty():
+			slot.remove_rune()
+			slot_changed.emit(slot.grid_position)

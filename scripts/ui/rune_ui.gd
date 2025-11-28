@@ -23,6 +23,11 @@ func _on_mouse_entered() -> void:
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
 		var info = "%s\n%s\nTier: %d" % [rune_instance.data.rune_name, GameEnums.Element.keys()[rune_instance.data.element], rune_instance.data.tier]
+		
+		# Add effects description
+		for effect in rune_instance.data.effects:
+			info += "\n- " + effect.get_description()
+			
 		tooltip_manager.show_tooltip(info)
 	
 	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")

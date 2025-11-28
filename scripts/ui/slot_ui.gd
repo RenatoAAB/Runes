@@ -41,7 +41,7 @@ func set_rune(rune: RuneInstance) -> void:
 		rune_ui = RuneUI.new()
 		rune_ui.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		rune_ui.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		rune_ui.custom_minimum_size = Vector2(64, 64) # Example size
+		rune_ui.custom_minimum_size = Vector2(32, 32)
 		add_child(rune_ui)
 		rune_ui.setup(rune)
 

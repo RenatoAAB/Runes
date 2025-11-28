@@ -19,3 +19,13 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 
 func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:
 	return context.grid.get_neighbors(source_slot.grid_position, check_diagonals)
+
+func get_description() -> String:
+	var type = "neighbors"
+	if check_diagonals:
+		type += " (incl. diag)"
+	
+	if exact_match:
+		return "exactly %d %s" % [required_count, type]
+	else:
+		return "at least %d %s" % [required_count, type]
