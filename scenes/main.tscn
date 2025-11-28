@@ -1,0 +1,201 @@
+[gd_scene load_steps=13 format=3 uid="uid://c654112svuun8"]
+
+[ext_resource type="Script" uid="uid://dlp2xojtverw0" path="res://scenes/main.gd" id="1_eb6dy"]
+[ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
+[ext_resource type="Script" uid="uid://bmvi2d1q3u4lg" path="res://scripts/logic/grid_manager.gd" id="2_tipki"]
+[ext_resource type="Script" uid="uid://qhromqhnu80e" path="res://scripts/logic/inventory_manager.gd" id="3_85g3d"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="3_trceg"]
+[ext_resource type="Resource" uid="uid://bomciso2hvmip" path="res://resources/runes/rune_fire_1.tres" id="4_a8y0u"]
+[ext_resource type="Script" uid="uid://pjx26antyjld" path="res://scripts/logic/reader.gd" id="4_choun"]
+[ext_resource type="Resource" uid="uid://dfvirymxfh3rt" path="res://resources/runes/rune_fire_2.tres" id="5_jkv2x"]
+[ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
+[ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
+[ext_resource type="Resource" uid="uid://djh6bup75oc57" path="res://resources/runes/rune_water_1.tres" id="6_jbj1t"]
+[ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_eb6dy")
+
+[node name="Managers" type="Node" parent="."]
+
+[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("reader", "inventory_manager", "grid_manager")]
+script = ExtResource("1_o6xl0")
+reader = NodePath("../Reader")
+inventory_manager = NodePath("../InventoryManager")
+grid_manager = NodePath("../GridManager")
+available_runes = Array[ExtResource("3_trceg")]([ExtResource("4_a8y0u"), ExtResource("5_jkv2x"), ExtResource("6_jbj1t")])
+
+[node name="GridManager" type="Node" parent="Managers"]
+script = ExtResource("2_tipki")
+
+[node name="InventoryManager" type="Node" parent="Managers"]
+script = ExtResource("3_85g3d")
+max_slots = 12
+
+[node name="Reader" type="Node" parent="Managers" node_paths=PackedStringArray("grid_manager")]
+script = ExtResource("4_choun")
+grid_manager = NodePath("../GridManager")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="GameUI" type="Control" parent="UI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="GridContainer" type="GridContainer" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 118.0
+offset_top = 28.0
+offset_right = 314.0
+offset_bottom = 224.0
+columns = 5
+
+[node name="Slot" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot4" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot5" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot6" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot7" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot8" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot9" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot10" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot11" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot12" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot13" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot14" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot15" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot16" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot17" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot18" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot19" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot20" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot21" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot22" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot23" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot24" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot25" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="InventoryContainer" type="GridContainer" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 384.0
+offset_top = 25.0
+offset_right = 460.0
+offset_bottom = 261.0
+columns = 2
+
+[node name="Slot" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot4" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot5" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot6" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot7" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot8" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot9" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot10" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot11" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot12" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="BattleButton" type="Button" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 229.0
+offset_right = 74.0
+offset_bottom = 260.0
+text = "Battle!"
+
+[node name="ScoreLabel" type="Label" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 115.0
+offset_top = 234.0
+offset_right = 163.0
+offset_bottom = 257.0
+text = "Score:"
+
+[node name="GridHighlighter" type="Node" parent="UI" node_paths=PackedStringArray("grid_manager") groups=["grid_highlighter"]]
+script = ExtResource("6_eb6dy")
+grid_manager = NodePath("../../Managers/GridManager")
+
+[node name="TooltipManager" type="Control" parent="UI" groups=["tooltip_manager"]]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_trceg")
+
+[connection signal="pressed" from="UI/GameUI/BattleButton" to="Managers/GameManager" method="_on_battle_button_pressed"]

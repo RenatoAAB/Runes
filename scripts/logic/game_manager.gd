@@ -115,3 +115,7 @@ func _grant_reward() -> void:
 	var instance = RuneInstance.new(data)
 	inventory_manager.add_rune(instance)
 	print("Reward Granted: %s" % data.rune_name)
+
+
+func _on_battle_button_pressed() -> void:
+	start_battle()

@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=9 format=3 uid="uid://dfvirymxfh3rt"]
+
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_7mik1"]
+[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="2_8pu03"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="3_8pu03"]
+[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_tut4t"]
+[ext_resource type="Texture2D" uid="uid://ci6658j10sogw" path="res://sprites/icons/runes/Icon5.png" id="4_7mik1"]
+[ext_resource type="Resource" uid="uid://16yatdx658me" path="res://resources/effects/targets/target_self.tres" id="4_dx780"]
+
+[sub_resource type="Resource" id="Resource_b80tk"]
+script = ExtResource("3_tut4t")
+score_amount = 20
+metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
+
+[sub_resource type="Resource" id="Resource_8cvkc"]
+script = ExtResource("1_7mik1")
+condition = ExtResource("2_8pu03")
+target = ExtResource("4_dx780")
+payload = SubResource("Resource_b80tk")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[resource]
+script = ExtResource("3_8pu03")
+id = "rune_fire_2"
+rune_name = "Fire Rune II"
+tier = 2
+element = 0
+base_max_activations = 2
+textures = Array[Texture2D]([ExtResource("4_7mik1")])
+effects = Array[ExtResource("1_7mik1")]([SubResource("Resource_8cvkc")])
+metadata/_custom_type_script = "uid://s48ipf5uo7mv"

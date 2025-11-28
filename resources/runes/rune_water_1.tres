@@ -1,0 +1,29 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=9 format=3 uid="uid://djh6bup75oc57"]
+
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_mvxor"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="2_4gw5u"]
+[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="2_fkkjh"]
+[ext_resource type="Script" uid="uid://m21p8xdfbeom" path="res://scripts/data/effects/payloads/payload_buff_activation.gd" id="3_0gbrj"]
+[ext_resource type="Resource" uid="uid://dor0piyxrw5d8" path="res://resources/effects/targets/target_adjacent.tres" id="4_tnmwy"]
+[ext_resource type="Texture2D" uid="uid://c06ho32qsno82" path="res://sprites/icons/runes/Icon46.png" id="6_v4i8e"]
+
+[sub_resource type="Resource" id="Resource_l32en"]
+script = ExtResource("3_0gbrj")
+activation_bonus = 5
+metadata/_custom_type_script = "uid://m21p8xdfbeom"
+
+[sub_resource type="Resource" id="Resource_46m7c"]
+script = ExtResource("1_mvxor")
+condition = ExtResource("2_fkkjh")
+target = ExtResource("4_tnmwy")
+payload = SubResource("Resource_l32en")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[resource]
+script = ExtResource("2_4gw5u")
+id = "rune_water_1"
+rune_name = "Water Rune I"
+element = 1
+textures = Array[Texture2D]([ExtResource("6_v4i8e")])
+effects = Array[ExtResource("1_mvxor")]([SubResource("Resource_46m7c")])
+metadata/_custom_type_script = "uid://s48ipf5uo7mv"
