@@ -96,9 +96,11 @@ func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 		return false
 		
 	# Swap logic
-	var rune_a = from_slot.rune
-	var rune_b = to_slot.rune
+	# Use remove_rune() to ensure buffs are stripped from the leaving runes
+	var rune_a = from_slot.remove_rune()
+	var rune_b = to_slot.remove_rune()
 	
+	# Use set_rune() to ensure buffs are applied from the entering slots
 	from_slot.set_rune(rune_b)
 	to_slot.set_rune(rune_a)
 	
@@ -107,11 +109,35 @@ func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 	
 	return true
 
+func rotate_runes(slots: Array[GridSlot], clockwise: bool) -> void:
+	if slots.size() < 2:
+		return
+		
+	var runes: Array[RuneInstance] = []
+	for slot in slots:
+		# Remove rune to strip buffs
+		runes.append(slot.remove_rune()) 
+		
+	# Shift array
+	if clockwise:
+		var last = runes.pop_back()
+		runes.push_front(last)
+	else:
+		var first = runes.pop_front()
+		runes.push_back(first)
+		
+	# Reassign
+	for i in range(slots.size()):
+		slots[i].set_rune(runes[i])
+		slot_changed.emit(slots[i].grid_position)
+
 func process_round_end() -> void:
 	for slot in grid:
 		slot.process_states()
 		if slot.rune:
 			slot.rune.reset_state()
+			# Re-apply slot buffs because reset_state cleared them
+			slot.apply_buffs(slot.rune)
 
 func clear_grid() -> void:
 	for slot in grid:

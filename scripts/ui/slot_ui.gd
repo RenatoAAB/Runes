@@ -13,20 +13,71 @@ var inventory_index: int = -1
 
 var rune_ui: RuneUI
 var highlight_rect: ColorRect
+var buff_rect: ColorRect
+
+var current_slot_data: GridSlot
 
 func _ready() -> void:
-	# Create highlight overlay
+	# Create buff overlay (persistent state)
+	buff_rect = ColorRect.new()
+	buff_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	buff_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	buff_rect.color = Color(0, 0, 0, 0)
+	add_child(buff_rect)
+
+	# Create highlight overlay (preview/interaction)
 	highlight_rect = ColorRect.new()
 	highlight_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	highlight_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	highlight_rect.color = Color(0, 0, 0, 0) # Transparent by default
 	add_child(highlight_rect)
-	# Ensure highlight is behind the rune but in front of background
-	move_child(highlight_rect, 0)
+	
+	# Ensure order: Background -> Buff -> Highlight -> Rune
+	move_child(buff_rect, 0)
+	move_child(highlight_rect, 1)
 
 func set_highlight(color: Color) -> void:
 	if highlight_rect:
 		highlight_rect.color = color
+
+func set_buff_highlight(color: Color) -> void:
+	if buff_rect:
+		buff_rect.color = color
+
+func update_slot_info(slot: GridSlot) -> void:
+	current_slot_data = slot
+	# Update buff visual based on state
+	if slot and not slot.active_states.is_empty():
+		# Check for specific states or just generic "buffed"
+		# For now, if any state exists, we show a color.
+		# Ideally, we'd map state_id to color.
+		# Let's use a generic Blue for now as requested.
+		set_buff_highlight(Color(0.2, 0.2, 1.0, 0.3))
+		tooltip_text = "Slot Effects" # Trigger _make_custom_tooltip
+	else:
+		set_buff_highlight(Color(0, 0, 0, 0))
+		tooltip_text = ""
+
+func _make_custom_tooltip(for_text: String) -> Object:
+	# If we have a rune, let the rune handle it (or combine them)
+	# But RuneUI usually blocks mouse, so this might only trigger on empty slots or edges.
+	# However, if RuneUI is set to MouseFilter.PASS, this might work.
+	# Let's assume we want to show Slot info.
+	
+	if not current_slot_data or current_slot_data.active_states.is_empty():
+		return null
+		
+	var label = Label.new()
+	var text = "Slot Effects:\n"
+	for state_id in current_slot_data.active_states:
+		var data = current_slot_data.active_states[state_id]
+		text += "- %s (%d turns)" % [state_id.capitalize(), data["duration"]]
+		if data.get("score_bonus", 0) != 0:
+			text += "\n  Bonus: +%d Score" % data["score_bonus"]
+	
+	label.text = text
+	return label
+
 
 func set_rune(rune: RuneInstance) -> void:
 	# Clear existing UI

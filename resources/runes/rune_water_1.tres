@@ -9,7 +9,6 @@
 
 [sub_resource type="Resource" id="Resource_l32en"]
 script = ExtResource("3_0gbrj")
-activation_bonus = 5
 metadata/_custom_type_script = "uid://m21p8xdfbeom"
 
 [sub_resource type="Resource" id="Resource_46m7c"]
@@ -21,7 +20,7 @@ metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
 
 [resource]
 script = ExtResource("2_4gw5u")
-id = "rune_water_1"
+id = "water_1"
 rune_name = "Water Rune I"
 element = 1
 textures = Array[Texture2D]([ExtResource("6_v4i8e")])

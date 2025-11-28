@@ -3,7 +3,14 @@ extends EffectCondition
 
 @export var required_count: int = 1
 @export var check_diagonals: bool = false
-@export var exact_match: bool = false # If true, must be exactly X. If false, >= X.
+
+enum Comparison {
+	GREATER_THAN_OR_EQUAL, # >=
+	LESS_THAN_OR_EQUAL,    # <=
+	EQUAL                  # ==
+}
+
+@export var comparison: Comparison = Comparison.GREATER_THAN_OR_EQUAL
 
 @export_group("Filter")
 @export var filter_by_element: bool = false
@@ -20,10 +27,14 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 			else:
 				count += 1
 			
-	if exact_match:
-		return count == required_count
-	else:
-		return count >= required_count
+	match comparison:
+		Comparison.GREATER_THAN_OR_EQUAL:
+			return count >= required_count
+		Comparison.LESS_THAN_OR_EQUAL:
+			return count <= required_count
+		Comparison.EQUAL:
+			return count == required_count
+	return false
 
 func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:
 	var neighbors = context.grid.get_neighbors(source_slot.grid_position, check_diagonals)
@@ -44,7 +55,11 @@ func get_description() -> String:
 	if check_diagonals:
 		type += " (incl. diag)"
 	
-	if exact_match:
-		return "exactly %d %s" % [required_count, type]
-	else:
-		return "at least %d %s" % [required_count, type]
+	match comparison:
+		Comparison.GREATER_THAN_OR_EQUAL:
+			return "at least %d %s" % [required_count, type]
+		Comparison.LESS_THAN_OR_EQUAL:
+			return "at most %d %s" % [required_count, type]
+		Comparison.EQUAL:
+			return "exactly %d %s" % [required_count, type]
+	return ""

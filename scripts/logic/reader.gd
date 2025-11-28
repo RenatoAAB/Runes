@@ -28,6 +28,7 @@ func start_sequence() -> void:
 	# Initialize BattleContext
 	battle_context = BattleContext.new(grid_manager)
 	battle_context.score_event.connect(_on_score_event)
+	battle_context.reader_jump_request.connect(_on_reader_jump_request)
 	
 	# Reset grid state before starting
 	grid_manager.process_round_end()
@@ -38,6 +39,10 @@ func _process_next_step() -> void:
 	if current_index >= GridManager.GRID_SIZE * GridManager.GRID_SIZE:
 		_finish_sequence()
 		return
+	
+	# Safety check for infinite loops or out of bounds
+	if current_index < 0:
+		current_index = 0
 	
 	var y = current_index / GridManager.GRID_SIZE
 	var x = current_index % GridManager.GRID_SIZE
@@ -72,6 +77,16 @@ func _on_score_event(amount: int, source: RuneInstance) -> void:
 	if battle_context:
 		battle_context.current_score = total_score
 	score_updated.emit(total_score)
+
+func _on_reader_jump_request(target_index: int) -> void:
+	# We modify current_index. 
+	# Note: _process_next_step increments current_index at the end.
+	# If we want to jump TO index X, we should set current_index = X - 1 (if we are inside the loop)
+	# But _process_next_step is recursive via await.
+	# The jump happens during _activate_rune.
+	# So when _activate_rune returns, we wait, then increment.
+	# So if we want the NEXT step to be target_index, we set current_index = target_index - 1.
+	current_index = target_index - 1
 
 func _finish_sequence() -> void:
 	is_running = false

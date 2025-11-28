@@ -128,6 +128,8 @@ func _on_grid_slot_changed(coord: Vector2i) -> void:
 		var slot_ui = grid_ui_slots[coord]
 		var logic_slot = grid_manager.get_slot(coord)
 		slot_ui.set_rune(logic_slot.rune)
+		slot_ui.update_slot_info(logic_slot)
+
 
 func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI) -> void:
 	# Determine source and destination

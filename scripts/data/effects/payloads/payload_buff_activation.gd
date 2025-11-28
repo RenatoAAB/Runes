@@ -15,3 +15,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 				target_rune.temporary_buffs["max_activations_bonus"] = activation_bonus
 			
 			print("Buffed Rune %s with +%d activations" % [target_rune.data.rune_name, activation_bonus])
+
+func get_description() -> String:
+	return "Adds +%d Max Activations" % activation_bonus
