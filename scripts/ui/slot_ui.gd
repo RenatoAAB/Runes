@@ -12,10 +12,21 @@ var grid_coord: Vector2i = Vector2i(-1, -1)
 var inventory_index: int = -1
 
 var rune_ui: RuneUI
+var highlight_rect: ColorRect
 
 func _ready() -> void:
-	# Ensure we can receive drops
-	pass
+	# Create highlight overlay
+	highlight_rect = ColorRect.new()
+	highlight_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
+	highlight_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	highlight_rect.color = Color(0, 0, 0, 0) # Transparent by default
+	add_child(highlight_rect)
+	# Ensure highlight is behind the rune but in front of background
+	move_child(highlight_rect, 0)
+
+func set_highlight(color: Color) -> void:
+	if highlight_rect:
+		highlight_rect.color = color
 
 func set_rune(rune: RuneInstance) -> void:
 	# Clear existing UI

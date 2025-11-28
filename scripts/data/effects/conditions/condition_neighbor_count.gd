@@ -16,3 +16,6 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 		return count == required_count
 	else:
 		return count >= required_count
+
+func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:
+	return context.grid.get_neighbors(source_slot.grid_position, check_diagonals)
