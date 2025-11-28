@@ -29,9 +29,9 @@ func get_max_activations() -> int:
 	return data.base_max_activations + bonus
 
 ## Called when the rune is triggered by the Reader.
-func on_activate(grid_manager: GridManager, my_slot: GridSlot) -> void:
+func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
 	if can_activate():
 		current_activations += 1
 		
 		for effect in data.effects:
-			effect.execute(self, grid_manager, my_slot)
+			effect.execute(self, context, my_slot)

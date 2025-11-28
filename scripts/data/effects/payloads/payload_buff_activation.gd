@@ -3,7 +3,7 @@ extends EffectPayload
 
 @export var activation_bonus: int = 1
 
-func execute(targets: Array[GridSlot], source_rune: RuneInstance, grid_manager: GridManager) -> void:
+func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: BattleContext) -> void:
 	for slot in targets:
 		if not slot.is_empty():
 			var target_rune = slot.rune
