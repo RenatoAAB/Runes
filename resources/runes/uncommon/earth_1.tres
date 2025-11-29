@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=11 format=3 uid="uid://blrdbrjqlyild"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=12 format=3 uid="uid://blrdbrjqlyild"]
 
 [ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_p61o3"]
 [ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_nvny6"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_lqyma"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_13g10"]
 [ext_resource type="Texture2D" uid="uid://cojsngv40kha" path="res://sprites/icons/runes/Icon8.png" id="6_751p4"]
+[ext_resource type="Resource" uid="uid://besmp4do4qlfq" path="res://resources/runes/uncommon/earth_2.tres" id="7_nvny6"]
 
 [sub_resource type="Resource" id="Resource_jlfeg"]
 script = ExtResource("2_nvny6")
@@ -33,6 +34,7 @@ id = "earth_1"
 rune_name = "Earth Rune I"
 rarity = 1
 element = 2
+upgrades_to = ExtResource("7_nvny6")
 base_max_activations = 3
 textures = Array[Texture2D]([ExtResource("6_751p4")])
 effects = Array[ExtResource("1_p61o3")]([SubResource("Resource_xr7t1")])

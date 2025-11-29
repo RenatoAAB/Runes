@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RuneDropRates" load_steps=2 format=3 uid="uid://drwnsdkkhm5um"]
+
+[ext_resource type="Script" uid="uid://b0g75gel7g2gv" path="res://scripts/data/rune_drop_rates.gd" id="1_tbknl"]
+
+[resource]
+script = ExtResource("1_tbknl")
+rare_weight = 0
+epic_weight = 0
+legendary_weight = 0
+metadata/_custom_type_script = "uid://b0g75gel7g2gv"

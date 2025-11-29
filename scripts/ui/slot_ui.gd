@@ -4,7 +4,7 @@ extends PanelContainer
 ## Visual representation of a GridSlot or Inventory Slot.
 ## Handles the Drop part of Drag & Drop.
 
-signal rune_dropped(source_rune: RuneInstance, target_slot_ui: SlotUI)
+signal rune_dropped(source_rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
 
 # If part of the grid, this will be set.
 var grid_coord: Vector2i = Vector2i(-1, -1)
@@ -107,4 +107,10 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	# Emit signal to let the controller handle the logic
-	rune_dropped.emit(data["rune_instance"], self)
+	var source_ui = data.get("source_ui")
+	# source_ui is likely a RuneUI. We need its parent SlotUI.
+	var source_slot = null
+	if source_ui and source_ui.get_parent() is SlotUI:
+		source_slot = source_ui.get_parent()
+		
+	rune_dropped.emit(data["rune_instance"], self, source_slot)

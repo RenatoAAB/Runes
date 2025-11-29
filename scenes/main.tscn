@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -22,8 +22,11 @@
 [ext_resource type="Resource" uid="uid://dowf3kmtasjmf" path="res://resources/runes/uncommon/water_1.tres" id="15_tel4y"]
 [ext_resource type="Resource" uid="uid://dd8n6smuirlpq" path="res://resources/runes/uncommon/water_2.tres" id="16_qkpxi"]
 [ext_resource type="Resource" uid="uid://op5x4xm2hkpc" path="res://resources/runes/uncommon/water_3.tres" id="17_5q0nq"]
+[ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
+[ext_resource type="Script" uid="uid://bcn1e8j0fr1u7" path="res://scripts/ui/choice_area.gd" id="22_og1vs"]
+[ext_resource type="Script" uid="uid://bnyk1gjrs36en" path="res://scripts/ui/upgrade_area.gd" id="23_2wyq8"]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "choice_area", "upgrade_area", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
 grid_manager = NodePath("Managers/GridManager")
@@ -33,6 +36,8 @@ grid_container = NodePath("UI/GameUI/GridContainer")
 inventory_container = NodePath("UI/GameUI/InventoryContainer")
 score_label = NodePath("UI/GameUI/ScoreLabel")
 level_label = NodePath("UI/GameUI/LevelLabel")
+choice_area = NodePath("UI/GameUI/ChoiceArea")
+upgrade_area = NodePath("UI/GameUI/UpgradeArea")
 slot_scene = ExtResource("5_ya4ey")
 grid_highlighter = NodePath("UI/GridHighlighter")
 default_tooltip_label_settings = ExtResource("3_dp3eg")
@@ -44,7 +49,9 @@ script = ExtResource("1_o6xl0")
 reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
+base_target_score = 30
 available_runes = Array[ExtResource("3_trceg")]([ExtResource("6_jscy8"), ExtResource("7_pm3ni"), ExtResource("8_y6deb"), ExtResource("9_og1vs"), ExtResource("10_2wyq8"), ExtResource("11_vxglm"), ExtResource("12_2f3dj"), ExtResource("13_yq6so"), ExtResource("14_fv21b"), ExtResource("15_tel4y"), ExtResource("16_qkpxi"), ExtResource("17_5q0nq")])
+rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="GridManager" type="Node" parent="Managers"]
 script = ExtResource("2_tipki")
@@ -68,10 +75,10 @@ offset_bottom = 40.0
 
 [node name="GridContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 118.0
-offset_top = 28.0
-offset_right = 314.0
-offset_bottom = 224.0
+offset_left = 157.0
+offset_top = 26.0
+offset_right = 353.0
+offset_bottom = 222.0
 columns = 5
 
 [node name="Slot1" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
@@ -216,6 +223,57 @@ offset_top = 234.0
 offset_right = 303.0
 offset_bottom = 257.0
 text = "Level"
+
+[node name="ChoiceLabel" type="Label" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 28.0
+offset_right = 146.0
+offset_bottom = 51.0
+text = "Choose new Rune"
+
+[node name="UpgradeLabel" type="Label" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 127.0
+offset_right = 149.0
+offset_bottom = 150.0
+text = "Upgrade Rune"
+
+[node name="ChoiceArea" type="GridContainer" parent="UI/GameUI" node_paths=PackedStringArray("container")]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 57.0
+offset_right = 131.0
+offset_bottom = 97.0
+columns = 3
+script = ExtResource("22_og1vs")
+container = NodePath(".")
+slot_scene = ExtResource("5_ya4ey")
+
+[node name="UpgradeArea" type="HBoxContainer" parent="UI/GameUI" node_paths=PackedStringArray("input_slot_container", "output_slot_container", "confirm_button")]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 157.0
+offset_right = 140.0
+offset_bottom = 197.0
+script = ExtResource("23_2wyq8")
+input_slot_container = NodePath("InputArea")
+output_slot_container = NodePath("UpgradePreview")
+confirm_button = NodePath("ConfirmUpgradeButton")
+slot_scene = ExtResource("5_ya4ey")
+
+[node name="InputArea" type="Control" parent="UI/GameUI/UpgradeArea"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+
+[node name="UpgradePreview" type="Control" parent="UI/GameUI/UpgradeArea"]
+custom_minimum_size = Vector2(36, 0)
+layout_mode = 2
+
+[node name="ConfirmUpgradeButton" type="Button" parent="UI/GameUI/UpgradeArea"]
+layout_mode = 2
+text = "Go!"
 
 [node name="GridHighlighter" type="Node" parent="UI" node_paths=PackedStringArray("grid_manager") groups=["grid_highlighter"]]
 script = ExtResource("6_eb6dy")

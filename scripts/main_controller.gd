@@ -15,6 +15,8 @@ extends Node
 @export var inventory_container: Control # HBoxContainer or GridContainer
 @export var score_label: Label
 @export var level_label: Label
+@export var choice_area: ChoiceArea
+@export var upgrade_area: UpgradeArea
 
 # We need a PackedScene for the SlotUI to instantiate them dynamically
 # You can assign this in Inspector, or we can try to load it if it exists.
@@ -31,7 +33,7 @@ var inventory_ui_slots: Array[SlotUI] = []
 
 func _ready() -> void:
 	# Wait for managers to be ready
-	await get_tree().process_frame
+	# await get_tree().process_frame
 	
 	_generate_grid_ui()
 	_generate_inventory_ui()
@@ -52,12 +54,20 @@ func _ready() -> void:
 		
 	if game_manager:
 		game_manager.level_started.connect(_on_level_started)
+		game_manager.rune_selection_requested.connect(_on_rune_selection_requested)
+		game_manager.upgrade_requested.connect(_on_upgrade_requested)
 		# Force initial update in case level started before we connected
 		_on_level_started(game_manager.current_level, game_manager.current_target_score)
 	
 	if grid_highlighter:
 		grid_highlighter.request_highlight.connect(_on_request_highlight)
 	
+	if upgrade_area:
+		upgrade_area.upgrade_confirmed.connect(_on_upgrade_confirmed)
+		# Connect the input slot drop signal so MainController can handle drops onto it
+		if upgrade_area.input_slot:
+			upgrade_area.input_slot.rune_dropped.connect(_on_rune_dropped)
+
 	# Configure TooltipManager if it exists
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager and default_tooltip_label_settings:
@@ -146,31 +156,46 @@ func _on_grid_slot_changed(coord: Vector2i) -> void:
 		slot_ui.update_slot_info(logic_slot)
 
 
-func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI) -> void:
+func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI) -> void:
 	# Determine source and destination
-	# This is a simplified logic. In a full game, we'd handle swapping, etc.
+	print("Rune Dropped. Source: %s, Target: %s" % [source_slot_ui, target_slot_ui])
 	
-	# 1. If dropped on Grid
+	# Case 0: Drop from Choice Area (Selection)
+	if source_slot_ui and choice_area and choice_area.is_choice_slot(source_slot_ui):
+		print("Drop from Choice Area detected.")
+		# Must drop into Inventory to select
+		if target_slot_ui.inventory_index != -1:
+			print("Dropped into Inventory. Selecting reward.")
+			game_manager.select_rune_reward(rune.data)
+			choice_area.hide_choices()
+		else:
+			print("Dropped outside inventory (Index: %d). Ignoring." % target_slot_ui.inventory_index)
+		return
+
+	# Case 1: Drop into Upgrade Input
+	if upgrade_area and upgrade_area.is_upgrade_input_slot(target_slot_ui):
+		# Try to place the rune. The UpgradeArea checks if it's a valid upgradeable rune.
+		# This works for both Inventory and Grid runes since GameManager populates the valid list with both.
+		if upgrade_area.try_place_rune(rune):
+			pass 
+		return
+
+	# Case 2: Drop on Grid
 	if target_slot_ui.grid_coord != Vector2i(-1, -1):
-		# Check if we are moving from Inventory or Grid
-		# For now, let's assume we are moving FROM inventory (since we don't track source coord in drag data yet)
-		# Wait, RuneUI._get_drag_data passes "source_ui".
-		
-		# We need to find where the rune came from.
-		# But RuneInstance is unique. We can check if it's in inventory.
-		
 		if inventory_manager.runes.has(rune):
 			# Move from Inventory -> Grid
 			if grid_manager.place_rune(rune.data, target_slot_ui.grid_coord):
 				inventory_manager.remove_rune(rune)
+				# If it was in upgrade slot, clear it
+				if upgrade_area and upgrade_area.current_rune_in_input == rune:
+					upgrade_area._clear_input()
 		else:
 			# Move from Grid -> Grid (Swap/Move)
-			# We need to find the source coordinate.
 			var source_coord = _find_rune_coord(rune)
 			if source_coord != Vector2i(-1, -1):
 				grid_manager.move_rune(source_coord, target_slot_ui.grid_coord)
 
-	# 2. If dropped on Inventory (Optional: Unequip)
+	# Case 3: Drop on Inventory (Unequip)
 	elif target_slot_ui.inventory_index != -1:
 		# Move Grid -> Inventory
 		var source_coord = _find_rune_coord(rune)
@@ -178,10 +203,34 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI) -> void:
 			# Remove from grid
 			var slot = grid_manager.get_slot(source_coord)
 			slot.remove_rune()
-			grid_manager.slot_changed.emit(source_coord) # Force update
-			
-			# Add to inventory
+			grid_manager.slot_changed.emit(source_coord)
 			inventory_manager.add_rune(rune)
+		
+		# If dropped from Upgrade Input back to Inventory (Cancel Upgrade)
+		if source_slot_ui and upgrade_area and upgrade_area.is_upgrade_input_slot(source_slot_ui):
+			upgrade_area._clear_input()
+
+# --- Signal Handlers ---
+
+func _on_rune_selection_requested(options: Array[RuneData]) -> void:
+	print("chegou o signal aqui")
+	if choice_area:
+		choice_area.show_choices(options)
+
+func _on_upgrade_requested(runes: Array[RuneInstance]) -> void:
+	if upgrade_area:
+		upgrade_area.show_upgrade_ui(runes)
+
+func _on_upgrade_confirmed(rune: RuneInstance) -> void:
+	game_manager.confirm_upgrade(rune)
+	
+	# Force refresh of all UI slots to reflect the data change (new texture/stats)
+	_on_inventory_updated()
+	for coord in grid_ui_slots:
+		_on_grid_slot_changed(coord)
+		
+	if upgrade_area:
+		upgrade_area.hide_upgrade_ui()
 
 func _find_rune_coord(rune: RuneInstance) -> Vector2i:
 	for y in range(GridManager.GRID_SIZE):

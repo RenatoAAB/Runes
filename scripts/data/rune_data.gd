@@ -7,6 +7,7 @@ extends Resource
 @export var tier: GameEnums.Tier = GameEnums.Tier.TIER_1
 @export var rarity: GameEnums.Rarity = GameEnums.Rarity.COMMON
 @export var element: GameEnums.Element = GameEnums.Element.NEUTRAL
+@export var upgrades_to: RuneData
 
 @export_group("Stats")
 @export var base_max_activations: int = 1

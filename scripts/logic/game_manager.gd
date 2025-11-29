@@ -5,12 +5,16 @@ signal level_started(level: int, target_score: int)
 signal game_won
 signal game_lost(final_level: int)
 signal phase_changed(new_phase: GamePhase)
+signal rune_selection_requested(options: Array[RuneData])
+signal upgrade_requested(runes: Array[RuneInstance])
 
 enum GamePhase {
 	SETUP,
 	PLANNING,
 	BATTLE,
-	RESOLUTION
+	RESOLUTION,
+	REWARD,
+	UPGRADE
 }
 
 @export var reader: Reader
@@ -24,9 +28,12 @@ enum GamePhase {
 var current_level: int = 1
 var current_target_score: int = 0
 var current_phase: GamePhase = GamePhase.SETUP
+var is_initial_setup: bool = true
 
 # Temporary database of runes to pick rewards from
 @export var available_runes: Array[RuneData]
+@export var fixed_starting_runes: Array[RuneData]
+@export var rune_drop_rates: RuneDropRates
 
 func _ready() -> void:
 	if reader:
@@ -39,11 +46,13 @@ func _ready() -> void:
 
 func start_game() -> void:
 	current_level = 1
+	is_initial_setup = true
 	grid_manager.clear_grid()
 	_setup_initial_inventory()
-	start_level()
+	# start_level() is now called by select_rune_reward after the player makes their choice.
 
 func start_level() -> void:
+	is_initial_setup = false
 	current_target_score = _calculate_target_score(current_level)
 	current_phase = GamePhase.PLANNING
 	phase_changed.emit(current_phase)
@@ -52,6 +61,7 @@ func start_level() -> void:
 
 func start_battle() -> void:
 	if current_phase != GamePhase.PLANNING:
+		print("Cannot start battle. Current phase: %s" % GamePhase.keys()[current_phase])
 		return
 	
 	current_phase = GamePhase.BATTLE
@@ -71,13 +81,8 @@ func _on_battle_finished(total_score: int) -> void:
 
 func _handle_win() -> void:
 	print("Victory!")
-	# Grant 2 runes as reward
-	for i in range(2):
-		_grant_reward()
-	
-	current_level += 1
-	# Loop back to planning for next level
-	start_level()
+	# Trigger rune selection first, then upgrade
+	_trigger_rune_selection()
 
 func _handle_loss() -> void:
 	print("Defeat!")
@@ -94,32 +99,140 @@ func _setup_initial_inventory() -> void:
 	# Clear inventory
 	inventory_manager.runes.clear()
 	
-	# Add 4 random Tier 1 runes
-	for i in range(4):
-		_grant_reward()
+	# Add fixed starting runes
+	if fixed_starting_runes.is_empty():
+		# Fallback to loading by path if not set in inspector
+		var common_a = load("res://resources/runes/common/common_a.tres")
+		var common_b = load("res://resources/runes/common/common_b.tres")
+		var common_c = load("res://resources/runes/common/common_c.tres")
+		
+		if common_a: inventory_manager.add_rune(RuneInstance.new(common_a))
+		if common_b: inventory_manager.add_rune(RuneInstance.new(common_b))
+		if common_c: inventory_manager.add_rune(RuneInstance.new(common_c))
+	else:
+		for rune_data in fixed_starting_runes:
+			var instance = RuneInstance.new(rune_data)
+			inventory_manager.add_rune(instance)
+	
+	# Trigger selection for the 4th rune
+	_trigger_rune_selection()
+
+func _trigger_rune_selection() -> void:
+	var options = _generate_rune_options(3)
+	current_phase = GamePhase.REWARD
+	phase_changed.emit(current_phase)
+	rune_selection_requested.emit(options)
+	print("Rune Selection Requested")
+
+func select_rune_reward(rune_data: RuneData) -> void:
+	if current_phase != GamePhase.REWARD:
+		print("Error: select_rune_reward called but phase is %s" % GamePhase.keys()[current_phase])
+		return
+		
+	var instance = RuneInstance.new(rune_data)
+	if inventory_manager.add_rune(instance):
+		print("Selected Reward: %s" % rune_data.rune_name)
+	else:
+		print("Error: Failed to add reward to inventory (Full?)")
+	
+	# If we are in setup (level 1), start the level
+	if is_initial_setup:
+		start_level()
+	else:
+		# If this was a mid-game reward, proceed to upgrade phase
+		_trigger_upgrade_phase()
+
+func _trigger_upgrade_phase() -> void:
+	current_phase = GamePhase.UPGRADE
+	phase_changed.emit(current_phase)
+	
+	# Filter upgradeable runes (those that have an upgrade)
+	var upgradeable_runes: Array[RuneInstance] = []
+	
+	# Check Inventory
+	for rune in inventory_manager.runes:
+		if rune.data.upgrades_to != null:
+			upgradeable_runes.append(rune)
+	
+	# Check Grid
+	for slot in grid_manager.grid:
+		if slot.rune and slot.rune.data.upgrades_to != null:
+			upgradeable_runes.append(slot.rune)
+			
+	upgrade_requested.emit(upgradeable_runes)
+	print("Upgrade Requested")
+	
+	# If no runes can be upgraded, skip to next level
+	if upgradeable_runes.is_empty():
+		print("No upgradeable runes, skipping upgrade.")
+		_finish_level_transition()
+
+func confirm_upgrade(rune_instance: RuneInstance) -> void:
+	if current_phase != GamePhase.UPGRADE:
+		return
+		
+	if rune_instance.data.upgrades_to:
+		print("Upgrading %s to %s" % [rune_instance.data.rune_name, rune_instance.data.upgrades_to.rune_name])
+		rune_instance.data = rune_instance.data.upgrades_to
+		# Notify inventory update if needed, though modifying the instance might be enough if signals are set up right.
+		# InventoryManager emits 'inventory_updated' on add/remove, but maybe not on internal change.
+		# We might want to force an update signal.
+		inventory_manager.inventory_updated.emit()
+	
+	_finish_level_transition()
+
+func _finish_level_transition() -> void:
+	current_level += 1
+	start_level()
+
+func _generate_rune_options(count: int = 3) -> Array[RuneData]:
+	var options: Array[RuneData] = []
+	# Filter for Tier 1 runes only
+	var tier1_runes = available_runes.filter(func(r): return r.tier == GameEnums.Tier.TIER_1)
+	
+	if tier1_runes.is_empty():
+		return []
+		
+	# Create a copy to avoid picking the same one multiple times if desired, 
+	# but usually duplicates are allowed or we remove them. 
+	# Let's allow duplicates for now or try to pick distinct ones if possible.
+	var pool = tier1_runes.duplicate()
+	
+	for i in range(count):
+		if pool.is_empty():
+			break
+		var picked = _pick_weighted_rune(pool)
+		if picked:
+			options.append(picked)
+			# Optional: Remove picked to ensure distinct options
+			pool.erase(picked)
+			
+	return options
+
+func _pick_weighted_rune(pool: Array[RuneData]) -> RuneData:
+	if pool.is_empty():
+		return null
+		
+	if not rune_drop_rates:
+		return pool.pick_random()
+		
+	var total_weight = 0
+	for rune in pool:
+		total_weight += rune_drop_rates.get_weight(rune.rarity)
+		
+	var roll = randi() % total_weight
+	var current_weight = 0
+	for rune in pool:
+		current_weight += rune_drop_rates.get_weight(rune.rarity)
+		if roll < current_weight:
+			return rune
+			
+	return pool[0]
 
 func _grant_reward() -> void:
-	var data: RuneData
-	
-	if available_runes.is_empty():
-		# Create a dummy rune for testing if no data is assigned
-		data = RuneData.new()
-		data.rune_name = "Test Rune"
-		data.element = GameEnums.Element.FIRE
-		
-		# Create a basic effect for the test rune
-		var effect = RuneEffect.new()
-		effect.condition = ConditionAlways.new()
-		effect.target = TargetSelf.new()
-		effect.payload = PayloadAddScore.new()
-		data.effects = [effect]
-	else:
-		data = available_runes.pick_random()
-	
-	var instance = RuneInstance.new(data)
-	inventory_manager.add_rune(instance)
-	print("Reward Granted: %s" % data.rune_name)
-
+	# Deprecated or used for debug
+	pass
 
 func _on_battle_button_pressed() -> void:
 	start_battle()
+
