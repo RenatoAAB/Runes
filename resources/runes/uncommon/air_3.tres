@@ -1,0 +1,90 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=25 format=3 uid="uid://bog2v1hoqleck"]
+
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_3xmv0"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_wgu6g"]
+[ext_resource type="Script" uid="uid://cxhlehsu2yoih" path="res://scripts/data/effects/payloads/payload_move_reader.gd" id="3_l4bj6"]
+[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_62o22"]
+[ext_resource type="Script" uid="uid://0skj8ywj5kre" path="res://scripts/data/effects/conditions/condition_activation_order.gd" id="5_7q38o"]
+[ext_resource type="Script" uid="uid://c72fbpcv4ijnw" path="res://scripts/data/effects/payloads/payload_meta_buff.gd" id="6_ufqw1"]
+[ext_resource type="Script" uid="uid://b6701e15r30t8" path="res://scripts/data/effects/targets/target_row_column.gd" id="7_n8y0i"]
+[ext_resource type="Script" uid="uid://cvsye27cmvyve" path="res://scripts/data/effects/conditions/condition_grid_position.gd" id="8_1p1q7"]
+[ext_resource type="Script" uid="uid://m21p8xdfbeom" path="res://scripts/data/effects/payloads/payload_buff_activation.gd" id="9_f4tr1"]
+[ext_resource type="Script" uid="uid://jitpaw7qra0i" path="res://scripts/data/effects/targets/target_element.gd" id="10_c3imn"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="11_g37xb"]
+[ext_resource type="Texture2D" uid="uid://b3283fyugwbql" path="res://sprites/icons/runes/Icon42.png" id="12_gjpee"]
+
+[sub_resource type="Resource" id="Resource_lkdrb"]
+script = ExtResource("2_wgu6g")
+metadata/_custom_type_script = "uid://bdoskjkqeggr8"
+
+[sub_resource type="Resource" id="Resource_j6frs"]
+script = ExtResource("3_l4bj6")
+move_type = 2
+target_element = 3
+metadata/_custom_type_script = "uid://cxhlehsu2yoih"
+
+[sub_resource type="Resource" id="Resource_a53do"]
+script = ExtResource("4_62o22")
+metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
+
+[sub_resource type="Resource" id="Resource_wa72s"]
+script = ExtResource("1_3xmv0")
+condition = SubResource("Resource_lkdrb")
+target = SubResource("Resource_a53do")
+payload = SubResource("Resource_j6frs")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[sub_resource type="Resource" id="Resource_ldqtr"]
+script = ExtResource("5_7q38o")
+comparison = 0
+step_index = 15
+metadata/_custom_type_script = "uid://0skj8ywj5kre"
+
+[sub_resource type="Resource" id="Resource_hmlgt"]
+script = ExtResource("6_ufqw1")
+score_growth = 20
+metadata/_custom_type_script = "uid://c72fbpcv4ijnw"
+
+[sub_resource type="Resource" id="Resource_4nwc6"]
+script = ExtResource("7_n8y0i")
+axis = 2
+metadata/_custom_type_script = "uid://b6701e15r30t8"
+
+[sub_resource type="Resource" id="Resource_pump7"]
+script = ExtResource("1_3xmv0")
+condition = SubResource("Resource_ldqtr")
+target = SubResource("Resource_4nwc6")
+payload = SubResource("Resource_hmlgt")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[sub_resource type="Resource" id="Resource_ewv21"]
+script = ExtResource("8_1p1q7")
+position_type = 2
+metadata/_custom_type_script = "uid://cvsye27cmvyve"
+
+[sub_resource type="Resource" id="Resource_5d017"]
+script = ExtResource("9_f4tr1")
+metadata/_custom_type_script = "uid://m21p8xdfbeom"
+
+[sub_resource type="Resource" id="Resource_25pvc"]
+script = ExtResource("10_c3imn")
+target_element = 3
+metadata/_custom_type_script = "uid://jitpaw7qra0i"
+
+[sub_resource type="Resource" id="Resource_mglb2"]
+script = ExtResource("1_3xmv0")
+condition = SubResource("Resource_ewv21")
+target = SubResource("Resource_25pvc")
+payload = SubResource("Resource_5d017")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[resource]
+script = ExtResource("11_g37xb")
+id = "air_3"
+rune_name = "Air Rune III"
+tier = 3
+rarity = 1
+element = 3
+textures = Array[Texture2D]([ExtResource("12_gjpee")])
+effects = Array[ExtResource("1_3xmv0")]([SubResource("Resource_wa72s"), SubResource("Resource_pump7"), SubResource("Resource_mglb2")])
+metadata/_custom_type_script = "uid://s48ipf5uo7mv"

@@ -71,6 +71,8 @@ func _on_mouse_entered() -> void:
 		text += "- %s (%d turns)" % [state_id.capitalize(), data["duration"]]
 		if data.get("score_bonus", 0) != 0:
 			text += "\n  Bonus: +%d Score" % data["score_bonus"]
+		if data.get("activation_bonus", 0) != 0:
+			text += "\n  Bonus: +%d Activations" % data["activation_bonus"]
 			
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager:

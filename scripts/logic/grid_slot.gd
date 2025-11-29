@@ -8,7 +8,7 @@ var grid_position: Vector2i
 var rune: RuneInstance = null
 
 # Dictionary to hold active slot states. 
-# Key: State ID (String), Value: Dictionary { "duration": int, "score_bonus": int }
+# Key: State ID (String), Value: Dictionary { "duration": int, "score_bonus": int, "activation_bonus": int }
 var active_states: Dictionary = {}
 
 func _init(pos: Vector2i):
@@ -31,10 +31,11 @@ func remove_rune() -> RuneInstance:
 
 # --- Slot State Logic ---
 
-func add_state(state_id: String, duration: int, score_bonus: int = 0) -> void:
+func add_state(state_id: String, duration: int, score_bonus: int = 0, activation_bonus: int = 0) -> void:
 	active_states[state_id] = {
 		"duration": duration,
-		"score_bonus": score_bonus
+		"score_bonus": score_bonus,
+		"activation_bonus": activation_bonus
 	}
 	# If there is a rune here, update its stats immediately
 	if rune:
@@ -48,6 +49,9 @@ func add_state(state_id: String, duration: int, score_bonus: int = 0) -> void:
 		# We need to be careful not to double add.
 		# Since this is a prototype, let's just add the new bonus directly.
 		rune.stat_modifiers["score_bonus"] += score_bonus
+		if not rune.stat_modifiers.has("activation_bonus"):
+			rune.stat_modifiers["activation_bonus"] = 0
+		rune.stat_modifiers["activation_bonus"] += activation_bonus
 
 func has_state(state_id: String) -> bool:
 	return active_states.has(state_id)
@@ -70,11 +74,16 @@ func apply_buffs(target_rune: RuneInstance) -> void:
 	for state_id in active_states:
 		var data = active_states[state_id]
 		target_rune.stat_modifiers["score_bonus"] += data["score_bonus"]
+		if not target_rune.stat_modifiers.has("activation_bonus"):
+			target_rune.stat_modifiers["activation_bonus"] = 0
+		target_rune.stat_modifiers["activation_bonus"] += data.get("activation_bonus", 0)
 
 func remove_buffs(target_rune: RuneInstance) -> void:
 	for state_id in active_states:
 		var data = active_states[state_id]
 		target_rune.stat_modifiers["score_bonus"] -= data["score_bonus"]
+		if target_rune.stat_modifiers.has("activation_bonus"):
+			target_rune.stat_modifiers["activation_bonus"] -= data.get("activation_bonus", 0)
 
 func clear_states() -> void:
 	active_states.clear()

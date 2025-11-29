@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3 uid="uid://ctvenr7c163hs"]
+
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_2j1ni"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="2_i8wcu"]
+
+[resource]
+script = ExtResource("2_i8wcu")
+metadata/_custom_type_script = "uid://s48ipf5uo7mv"

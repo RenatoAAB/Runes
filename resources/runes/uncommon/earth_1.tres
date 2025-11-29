@@ -1,0 +1,39 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=11 format=3 uid="uid://blrdbrjqlyild"]
+
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_p61o3"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_nvny6"]
+[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_mssl5"]
+[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_lqyma"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_13g10"]
+[ext_resource type="Texture2D" uid="uid://cojsngv40kha" path="res://sprites/icons/runes/Icon8.png" id="6_751p4"]
+
+[sub_resource type="Resource" id="Resource_jlfeg"]
+script = ExtResource("2_nvny6")
+metadata/_custom_type_script = "uid://bdoskjkqeggr8"
+
+[sub_resource type="Resource" id="Resource_cubkc"]
+script = ExtResource("3_mssl5")
+score_amount = 20
+metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
+
+[sub_resource type="Resource" id="Resource_kagsv"]
+script = ExtResource("4_lqyma")
+metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
+
+[sub_resource type="Resource" id="Resource_xr7t1"]
+script = ExtResource("1_p61o3")
+condition = SubResource("Resource_jlfeg")
+target = SubResource("Resource_kagsv")
+payload = SubResource("Resource_cubkc")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[resource]
+script = ExtResource("5_13g10")
+id = "earth_1"
+rune_name = "Earth Rune I"
+rarity = 1
+element = 2
+base_max_activations = 3
+textures = Array[Texture2D]([ExtResource("6_751p4")])
+effects = Array[ExtResource("1_p61o3")]([SubResource("Resource_xr7t1")])
+metadata/_custom_type_script = "uid://s48ipf5uo7mv"

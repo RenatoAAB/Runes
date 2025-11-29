@@ -1,0 +1,91 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=25 format=3 uid="uid://bur4kwx0x7b8g"]
+
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_fn5eb"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_gv11q"]
+[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_qcf2q"]
+[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_5sn8r"]
+[ext_resource type="Script" uid="uid://cvsye27cmvyve" path="res://scripts/data/effects/conditions/condition_grid_position.gd" id="5_kcm18"]
+[ext_resource type="Script" uid="uid://fn0m13eq2k6c" path="res://scripts/data/effects/payloads/payload_rotate_runes.gd" id="6_ripw6"]
+[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="7_qe1ju"]
+[ext_resource type="Script" uid="uid://bmriyufgo8y4m" path="res://scripts/data/effects/conditions/condition_activation_count.gd" id="8_lhgiv"]
+[ext_resource type="Script" uid="uid://c72fbpcv4ijnw" path="res://scripts/data/effects/payloads/payload_meta_buff.gd" id="9_hqbw6"]
+[ext_resource type="Script" uid="uid://jitpaw7qra0i" path="res://scripts/data/effects/targets/target_element.gd" id="10_jjagc"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="11_urnfk"]
+[ext_resource type="Texture2D" uid="uid://clly3gwi1paoh" path="res://sprites/icons/runes/Icon11.png" id="12_dv8yk"]
+
+[sub_resource type="Resource" id="Resource_a635g"]
+script = ExtResource("2_gv11q")
+metadata/_custom_type_script = "uid://bdoskjkqeggr8"
+
+[sub_resource type="Resource" id="Resource_nnbkf"]
+script = ExtResource("3_qcf2q")
+score_amount = 50
+metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
+
+[sub_resource type="Resource" id="Resource_xfavr"]
+script = ExtResource("4_5sn8r")
+metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
+
+[sub_resource type="Resource" id="Resource_3nvr6"]
+script = ExtResource("1_fn5eb")
+condition = SubResource("Resource_a635g")
+target = SubResource("Resource_xfavr")
+payload = SubResource("Resource_nnbkf")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[sub_resource type="Resource" id="Resource_s8llo"]
+script = ExtResource("5_kcm18")
+position_type = 3
+metadata/_custom_type_script = "uid://cvsye27cmvyve"
+
+[sub_resource type="Resource" id="Resource_x30si"]
+script = ExtResource("6_ripw6")
+metadata/_custom_type_script = "uid://fn0m13eq2k6c"
+
+[sub_resource type="Resource" id="Resource_vrce6"]
+script = ExtResource("7_qe1ju")
+include_diagonals = true
+metadata/_custom_type_script = "uid://dcsjurfbgmtve"
+
+[sub_resource type="Resource" id="Resource_1tpw8"]
+script = ExtResource("1_fn5eb")
+condition = SubResource("Resource_s8llo")
+target = SubResource("Resource_vrce6")
+payload = SubResource("Resource_x30si")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[sub_resource type="Resource" id="Resource_tdp0o"]
+script = ExtResource("8_lhgiv")
+comparison = 0
+threshold = 3
+metadata/_custom_type_script = "uid://bmriyufgo8y4m"
+
+[sub_resource type="Resource" id="Resource_mv8ii"]
+script = ExtResource("9_hqbw6")
+score_growth = 20
+metadata/_custom_type_script = "uid://c72fbpcv4ijnw"
+
+[sub_resource type="Resource" id="Resource_gnk0v"]
+script = ExtResource("10_jjagc")
+target_element = 2
+include_self = true
+metadata/_custom_type_script = "uid://jitpaw7qra0i"
+
+[sub_resource type="Resource" id="Resource_yupd0"]
+script = ExtResource("1_fn5eb")
+condition = SubResource("Resource_tdp0o")
+target = SubResource("Resource_gnk0v")
+payload = SubResource("Resource_mv8ii")
+metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+
+[resource]
+script = ExtResource("11_urnfk")
+id = "earth_3"
+rune_name = "Earth Rune III"
+tier = 3
+rarity = 1
+element = 2
+base_max_activations = 10
+textures = Array[Texture2D]([ExtResource("12_dv8yk")])
+effects = Array[ExtResource("1_fn5eb")]([SubResource("Resource_3nvr6"), SubResource("Resource_1tpw8"), SubResource("Resource_yupd0")])
+metadata/_custom_type_script = "uid://s48ipf5uo7mv"
