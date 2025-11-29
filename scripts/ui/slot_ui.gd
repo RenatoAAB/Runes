@@ -17,6 +17,8 @@ var buff_rect: ColorRect
 
 var current_slot_data: GridSlot
 
+@export var tooltip_label_settings: LabelSettings
+
 func _ready() -> void:
 	# Create buff overlay (persistent state)
 	buff_rect = ColorRect.new()
@@ -35,6 +37,9 @@ func _ready() -> void:
 	# Ensure order: Background -> Buff -> Highlight -> Rune
 	move_child(buff_rect, 0)
 	move_child(highlight_rect, 1)
+	
+	mouse_entered.connect(self._on_mouse_entered)
+	mouse_exited.connect(self._on_mouse_exited)
 
 func set_highlight(color: Color) -> void:
 	if highlight_rect:
@@ -53,30 +58,28 @@ func update_slot_info(slot: GridSlot) -> void:
 		# Ideally, we'd map state_id to color.
 		# Let's use a generic Blue for now as requested.
 		set_buff_highlight(Color(0.2, 0.2, 1.0, 0.3))
-		tooltip_text = "Slot Effects" # Trigger _make_custom_tooltip
 	else:
 		set_buff_highlight(Color(0, 0, 0, 0))
-		tooltip_text = ""
 
-func _make_custom_tooltip(for_text: String) -> Object:
-	# If we have a rune, let the rune handle it (or combine them)
-	# But RuneUI usually blocks mouse, so this might only trigger on empty slots or edges.
-	# However, if RuneUI is set to MouseFilter.PASS, this might work.
-	# Let's assume we want to show Slot info.
-	
+func _on_mouse_entered() -> void:
 	if not current_slot_data or current_slot_data.active_states.is_empty():
-		return null
+		return
 		
-	var label = Label.new()
-	var text = "Slot Effects:\n"
+	var text = "[color=cyan]Slot Effects:[/color]\n"
 	for state_id in current_slot_data.active_states:
 		var data = current_slot_data.active_states[state_id]
 		text += "- %s (%d turns)" % [state_id.capitalize(), data["duration"]]
 		if data.get("score_bonus", 0) != 0:
 			text += "\n  Bonus: +%d Score" % data["score_bonus"]
-	
-	label.text = text
-	return label
+			
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if tooltip_manager:
+		tooltip_manager.set_slot_tooltip(text)
+
+func _on_mouse_exited() -> void:
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if tooltip_manager:
+		tooltip_manager.clear_slot_tooltip()
 
 
 func set_rune(rune: RuneInstance) -> void:

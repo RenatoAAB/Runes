@@ -12,7 +12,6 @@
 
 [sub_resource type="Resource" id="Resource_cwn5c"]
 script = ExtResource("2_wq42c")
-required_count = 3
 check_diagonals = true
 filter_by_element = true
 required_element = 1

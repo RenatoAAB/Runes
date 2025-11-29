@@ -71,7 +71,10 @@ func _on_battle_finished(total_score: int) -> void:
 
 func _handle_win() -> void:
 	print("Victory!")
-	_grant_reward()
+	# Grant 2 runes as reward
+	for i in range(2):
+		_grant_reward()
+	
 	current_level += 1
 	# Loop back to planning for next level
 	start_level()

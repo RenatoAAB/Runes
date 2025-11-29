@@ -1,9 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://dh2haf4uh6kig"]
+[gd_scene load_steps=3 format=3 uid="uid://dh2haf4uh6kig"]
 
 [ext_resource type="Script" uid="uid://d3j7p6fmei4um" path="res://scripts/ui/slot_ui.gd" id="1_djgyf"]
+[ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="2_mlwvr"]
 
 [node name="Slot" type="PanelContainer"]
 custom_minimum_size = Vector2(36, 36)
 offset_right = 36.0
 offset_bottom = 36.0
 script = ExtResource("1_djgyf")
+tooltip_label_settings = ExtResource("2_mlwvr")

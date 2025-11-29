@@ -138,9 +138,14 @@ func process_round_end() -> void:
 			slot.rune.reset_state()
 			# Re-apply slot buffs because reset_state cleared them
 			slot.apply_buffs(slot.rune)
+		# Notify UI of potential state changes (buff expiration)
+		slot_changed.emit(slot.grid_position)
+		# Notify UI of potential state changes (buff expiration)
+		slot_changed.emit(slot.grid_position)
 
 func clear_grid() -> void:
 	for slot in grid:
+		slot.clear_states()
 		if not slot.is_empty():
 			slot.remove_rune()
-			slot_changed.emit(slot.grid_position)
+		slot_changed.emit(slot.grid_position)

@@ -15,11 +15,18 @@ extends Resource
 func execute(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> void:
 	if not condition or not target or not payload:
 		push_warning("RuneEffect missing components.")
+		source_rune.last_effect_success = false
 		return
 
 	if condition.evaluate(source_rune, context, source_slot):
 		var targets = target.get_targets(source_rune, context, source_slot)
-		payload.execute(targets, source_rune, context)
+		if targets.size() > 0:
+			payload.execute(targets, source_rune, context)
+			source_rune.last_effect_success = true
+		else:
+			source_rune.last_effect_success = false
+	else:
+		source_rune.last_effect_success = false
 
 func get_description() -> String:
 	var desc = ""

@@ -18,6 +18,7 @@ var stat_modifiers: Dictionary = {
 	"activation_bonus": 0
 }
 var is_disabled: bool = false
+var last_effect_success: bool = false
 
 func _init(p_data: RuneData):
 	data = p_data
@@ -28,6 +29,7 @@ func reset_state() -> void:
 	current_activations = 0
 	temporary_buffs.clear()
 	is_disabled = false
+	last_effect_success = false
 	
 	# Reset modifiers to default
 	stat_modifiers = {
@@ -57,11 +59,13 @@ func get_modified_score(base_score: int) -> int:
 	var bonus = stat_modifiers.get("score_bonus", 0)
 	var mult = stat_modifiers.get("score_multiplier", 1.0)
 	var perm_bonus = permanent_buffs.get("score_bonus", 0)
+	var perm_mult = permanent_buffs.get("score_multiplier", 1.0)
 	
-	return int((base_score + bonus + perm_bonus) * mult)
+	return int((base_score + bonus + perm_bonus) * mult * perm_mult)
 
 ## Called when the rune is triggered by the Reader.
 func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
+	last_effect_success = false
 	if can_activate():
 		current_activations += 1
 		

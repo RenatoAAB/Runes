@@ -22,6 +22,9 @@ extends Node
 
 @export var grid_highlighter: GridHighlighter
 
+# Default LabelSettings to style SlotUI tooltips
+@export var default_tooltip_label_settings: LabelSettings
+
 # Map to keep track of UI instances
 var grid_ui_slots: Dictionary = {} # Vector2i -> SlotUI
 var inventory_ui_slots: Array[SlotUI] = []
@@ -54,6 +57,12 @@ func _ready() -> void:
 	
 	if grid_highlighter:
 		grid_highlighter.request_highlight.connect(_on_request_highlight)
+	
+	# Configure TooltipManager if it exists
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if tooltip_manager and default_tooltip_label_settings:
+		tooltip_manager.label_settings = default_tooltip_label_settings
+		# RichTextLabel doesn't support label_settings directly, so we rely on TooltipManager to handle it.
 
 func _on_request_highlight(coord: Vector2i, color: Color) -> void:
 	if coord == Vector2i(-1, -1):
@@ -75,6 +84,9 @@ func _generate_grid_ui() -> void:
 		for x in range(GridManager.GRID_SIZE):
 			var slot_ui = _create_slot_ui()
 			grid_container.add_child(slot_ui)
+			# Apply default tooltip settings if available
+			if default_tooltip_label_settings:
+				slot_ui.tooltip_label_settings = default_tooltip_label_settings
 			
 			slot_ui.grid_coord = Vector2i(x, y)
 			slot_ui.rune_dropped.connect(_on_rune_dropped)
@@ -90,6 +102,9 @@ func _generate_inventory_ui() -> void:
 	for i in range(inventory_manager.max_slots):
 		var slot_ui = _create_slot_ui()
 		inventory_container.add_child(slot_ui)
+		# Apply default tooltip settings if available
+		if default_tooltip_label_settings:
+			slot_ui.tooltip_label_settings = default_tooltip_label_settings
 		
 		slot_ui.inventory_index = i
 		slot_ui.rune_dropped.connect(_on_rune_dropped)

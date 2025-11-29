@@ -1,9 +1,10 @@
-[gd_scene load_steps=18 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=21 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
 [ext_resource type="Script" uid="uid://bmvi2d1q3u4lg" path="res://scripts/logic/grid_manager.gd" id="2_tipki"]
 [ext_resource type="Script" uid="uid://qhromqhnu80e" path="res://scripts/logic/inventory_manager.gd" id="3_85g3d"]
+[ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="3_dp3eg"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="3_trceg"]
 [ext_resource type="Resource" uid="uid://bomciso2hvmip" path="res://resources/runes/rune_fire_1.tres" id="4_a8y0u"]
 [ext_resource type="Script" uid="uid://pjx26antyjld" path="res://scripts/logic/reader.gd" id="4_choun"]
@@ -17,6 +18,8 @@
 [ext_resource type="Resource" uid="uid://r68ny3q2wxqg" path="res://resources/runes/rune_crystal_1.tres" id="10_0ld40"]
 [ext_resource type="Resource" uid="uid://dl3ya4aaw0ub2" path="res://resources/runes/rune_earth_1.tres" id="11_gqmmt"]
 [ext_resource type="Resource" uid="uid://b1mpu0yt32o56" path="res://resources/runes/rune_grass_1.tres" id="12_yc10j"]
+[ext_resource type="Resource" uid="uid://boy8yi6sfverw" path="res://resources/runes/rune_double_1.tres" id="14_0ld40"]
+[ext_resource type="Resource" uid="uid://divt5r2qafj0i" path="res://resources/runes/rune_chaos_1.tres" id="15_gqmmt"]
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
@@ -30,6 +33,7 @@ score_label = NodePath("UI/GameUI/ScoreLabel")
 level_label = NodePath("UI/GameUI/LevelLabel")
 slot_scene = ExtResource("5_ya4ey")
 grid_highlighter = NodePath("UI/GridHighlighter")
+default_tooltip_label_settings = ExtResource("3_dp3eg")
 
 [node name="Managers" type="Node" parent="."]
 
@@ -38,8 +42,7 @@ script = ExtResource("1_o6xl0")
 reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
-base_target_score = 10
-available_runes = Array[ExtResource("3_trceg")]([ExtResource("4_a8y0u"), ExtResource("5_jkv2x"), ExtResource("6_jbj1t"), ExtResource("8_muem4"), ExtResource("9_dp3eg"), ExtResource("10_0ld40"), ExtResource("11_gqmmt"), ExtResource("12_yc10j")])
+available_runes = Array[ExtResource("3_trceg")]([ExtResource("4_a8y0u"), ExtResource("5_jkv2x"), ExtResource("6_jbj1t"), ExtResource("8_muem4"), ExtResource("9_dp3eg"), ExtResource("10_0ld40"), ExtResource("11_gqmmt"), ExtResource("12_yc10j"), ExtResource("14_0ld40"), ExtResource("15_gqmmt")])
 
 [node name="GridManager" type="Node" parent="Managers"]
 script = ExtResource("2_tipki")
@@ -222,5 +225,6 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("7_trceg")
+label_settings = ExtResource("3_dp3eg")
 
 [connection signal="pressed" from="UI/GameUI/BattleButton" to="Managers/GameManager" method="_on_battle_button_pressed"]

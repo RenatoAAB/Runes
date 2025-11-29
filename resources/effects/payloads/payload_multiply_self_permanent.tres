@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="PayloadMultiplyScorePermanent" load_steps=2 format=3 uid="uid://dqlgqj7xshw8e"]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_multiply_score_permanent.gd" id="1_cdefg"]
+
+[resource]
+script = ExtResource("1_cdefg")
+multiplier = 2.0

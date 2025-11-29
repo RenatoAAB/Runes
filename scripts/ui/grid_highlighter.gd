@@ -5,9 +5,15 @@ extends Node
 
 @export var grid_manager: GridManager
 # Colors
-const COLOR_TARGET = Color(1, 0, 0, 0.3) # Red
 const COLOR_CONDITION = Color(0, 1, 0, 0.3) # Green
 const COLOR_CLEAR = Color(0, 0, 0, 0)
+
+# Effect target colors (cycling)
+const EFFECT_COLORS = [
+	Color(1, 0, 0, 0.3),    # Red
+	Color(0, 0, 1, 0.3),    # Blue
+	Color(1, 1, 0, 0.3)     # Yellow
+]
 
 # We need a context to run the queries.
 var _preview_context: BattleContext
@@ -22,20 +28,21 @@ func highlight_rune_effects(rune: RuneInstance, origin_slot: GridSlot) -> void:
 	if not rune or not origin_slot:
 		return
 		
-	for effect in rune.data.effects:
+	for i in range(rune.data.effects.size()):
+		var effect = rune.data.effects[i]
+		
 		# 1. Highlight Condition Sources (Green)
 		if effect.condition:
 			var condition_slots = effect.condition.get_relevant_slots(rune, _preview_context, origin_slot)
 			for slot in condition_slots:
 				_set_slot_color(slot, COLOR_CONDITION)
 		
-		# 2. Highlight Targets (Red)
-		# Note: Targets usually override conditions if they overlap, or we blend them.
-		# For simplicity, we let Targets draw on top (last).
+		# 2. Highlight Targets (Cycling Colors)
 		if effect.target:
 			var target_slots = effect.target.get_targets(rune, _preview_context, origin_slot)
+			var color = EFFECT_COLORS[i % EFFECT_COLORS.size()]
 			for slot in target_slots:
-				_set_slot_color(slot, COLOR_TARGET)
+				_set_slot_color(slot, color)
 
 func clear_highlights() -> void:
 	# Or just iterate all valid coords

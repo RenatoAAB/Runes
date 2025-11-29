@@ -76,3 +76,6 @@ func remove_buffs(target_rune: RuneInstance) -> void:
 		var data = active_states[state_id]
 		target_rune.stat_modifiers["score_bonus"] -= data["score_bonus"]
 
+func clear_states() -> void:
+	active_states.clear()
+

@@ -5,6 +5,7 @@ extends TextureRect
 ## Handles the start of the Drag & Drop operation.
 
 var rune_instance: RuneInstance
+var disabled_material: ShaderMaterial
 
 func setup(rune: RuneInstance) -> void:
 	rune_instance = rune
@@ -16,36 +17,116 @@ func setup(rune: RuneInstance) -> void:
 	# We will use custom signals for hover to drive the Highlighter and TooltipManager
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
+	
+	# Setup disabled shader
+	disabled_material = ShaderMaterial.new()
+	disabled_material.shader = load("res://resources/shaders/disabled_rune.gdshader")
+
+func _process(_delta: float) -> void:
+	if rune_instance:
+		if rune_instance.can_activate():
+			material = null
+		else:
+			material = disabled_material
 
 func _on_mouse_entered() -> void:
 	# Find TooltipManager and GridHighlighter in the tree.
-	# This is a bit loose, but standard for decoupled UI components in Godot without a DI framework.
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
+	
+	var parent = get_parent()
+	var is_in_inventory = false
+	if parent and "inventory_index" in parent and parent.inventory_index != -1:
+		is_in_inventory = true
+	
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
-		var info = "%s\n%s\nTier: %d" % [rune_instance.data.rune_name, GameEnums.Element.keys()[rune_instance.data.element], rune_instance.data.tier]
+		var type_str = GameEnums.Element.keys()[rune_instance.data.element]
+		var activations = rune_instance.get_max_activations()
+		var info = "[b]%s[/b]\n%s | Activations: %d\nTier: %d" % [rune_instance.data.rune_name, type_str, activations, rune_instance.data.tier]
+		
+		# Context for evaluation
+		var context = null
+		var slot = null
+		if not is_in_inventory and highlighter and highlighter.grid_manager:
+			context = BattleContext.new(highlighter.grid_manager)
+			if parent and "grid_coord" in parent:
+				slot = highlighter.grid_manager.get_slot(parent.grid_coord)
 		
 		# Add effects description
-		for effect in rune_instance.data.effects:
-			info += "\n- " + effect.get_description()
+		for i in range(rune_instance.data.effects.size()):
+			var effect = rune_instance.data.effects[i]
 			
-		tooltip_manager.show_tooltip(info)
+			# Get color for this effect
+			var color = Color.WHITE
+			if highlighter and "EFFECT_COLORS" in highlighter:
+				var colors = highlighter.EFFECT_COLORS
+				if colors.size() > 0:
+					color = colors[i % colors.size()]
+			var hex_color = color.to_html()
+			
+			# Build description
+			var payload_desc = ""
+			if effect.payload:
+				payload_desc = effect.payload.get_description()
+			
+			# Color keywords in payload
+			var keywords = ["target", "line", "column"]
+			for kw in keywords:
+				var regex = RegEx.new()
+				regex.compile("(?i)\\b" + kw + "\\b")
+				payload_desc = regex.sub(payload_desc, "[color=#%s]%s[/color]" % [hex_color, "$0"], true)
+			
+			var final_desc = payload_desc
+			
+			# Handle Condition
+			if effect.condition:
+				var cond_desc = effect.condition.get_description()
+				if cond_desc != "Always":
+					var cond_text = " if " + cond_desc
+					var is_met = true
+					if context and slot:
+						is_met = effect.condition.evaluate(rune_instance, context, slot)
+					
+					var cond_color = "green" if is_met else "red"
+					if is_in_inventory:
+						cond_color = "white"
+					
+					final_desc += "[color=%s]%s[/color]" % [cond_color, cond_text]
+			
+			info += "\n- " + final_desc
+			
+		# Add Permanent Buffs
+		if rune_instance.permanent_buffs.size() > 0:
+			var has_buffs = false
+			var buff_text = ""
+			var buffs = rune_instance.permanent_buffs
+			
+			if buffs.has("score_multiplier") and buffs["score_multiplier"] != 1.0:
+				buff_text += "\n Score x%.1f" % buffs["score_multiplier"]
+				has_buffs = true
+			if buffs.has("score_bonus") and buffs["score_bonus"] != 0:
+				buff_text += "\n Score +%d" % buffs["score_bonus"]
+				has_buffs = true
+			if buffs.has("activation_bonus") and buffs["activation_bonus"] != 0:
+				buff_text += "\n Activations +%d" % buffs["activation_bonus"]
+				has_buffs = true
+				
+			if has_buffs:
+				info += "\n[color=yellow]Permanent Buffs:[/color]" + buff_text
+			
+		tooltip_manager.set_rune_tooltip(info, is_in_inventory)
 	
-	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
 	if highlighter and highlighter.has_method("highlight_rune_effects"):
-		# We need to know which slot we are in.
-		# RuneUI is a child of SlotUI.
-		var slot_ui = get_parent()
-		if slot_ui and "grid_coord" in slot_ui and slot_ui.grid_coord != Vector2i(-1, -1):
-			# We need the GridSlot object.
-			# We can get it from the GridManager if we can find it, or if SlotUI holds it.
-			# Let's assume highlighter has access to GridManager (it does).
-			var slot = highlighter.grid_manager.get_slot(slot_ui.grid_coord)
-			highlighter.highlight_rune_effects(rune_instance, slot)
+		if not is_in_inventory:
+			var slot_ui = get_parent()
+			if slot_ui and "grid_coord" in slot_ui and slot_ui.grid_coord != Vector2i(-1, -1):
+				var slot = highlighter.grid_manager.get_slot(slot_ui.grid_coord)
+				highlighter.highlight_rune_effects(rune_instance, slot)
 
 func _on_mouse_exited() -> void:
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager:
-		tooltip_manager.hide_tooltip()
+		tooltip_manager.clear_rune_tooltip()
 		
 	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
 	if highlighter:

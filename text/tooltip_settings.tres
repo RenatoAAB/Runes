@@ -1,0 +1,6 @@
+[gd_resource type="LabelSettings" load_steps=2 format=3 uid="uid://c7h3yy7bs4ftk"]
+
+[ext_resource type="FontFile" uid="uid://cfruhcno2uo4d" path="res://text/Born2bSportyFS.otf" id="1_5prq5"]
+
+[resource]
+font = ExtResource("1_5prq5")
