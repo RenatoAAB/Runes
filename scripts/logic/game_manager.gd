@@ -36,6 +36,7 @@ var is_initial_setup: bool = true
 @export var rune_drop_rates: RuneDropRates
 
 func _ready() -> void:
+	add_to_group("game_manager")
 	if reader:
 		reader.sequence_finished.connect(_on_battle_finished)
 	

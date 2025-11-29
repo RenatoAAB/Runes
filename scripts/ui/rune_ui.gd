@@ -70,9 +70,18 @@ func _on_mouse_entered() -> void:
 				payload_desc = effect.payload.get_description()
 			
 			# Color keywords in payload
-			var keywords = ["target", "line", "column"]
+			# We also want to color the target description if it appears.
+			# The target description is now part of payload_desc (via RuneEffect.get_description)
+			
+			var keywords = ["target", "runes", "line", "column", "row", "adjacent", "self"]
+			
+			# Add element names to keywords
+			for elem in GameEnums.Element.keys():
+				keywords.append(elem.capitalize())
+				
 			for kw in keywords:
 				var regex = RegEx.new()
+				# Match whole words, case insensitive
 				regex.compile("(?i)\\b" + kw + "\\b")
 				payload_desc = regex.sub(payload_desc, "[color=#%s]%s[/color]" % [hex_color, "$0"], true)
 			
@@ -133,6 +142,12 @@ func _on_mouse_exited() -> void:
 		highlighter.clear_highlights()
 
 func _get_drag_data(at_position: Vector2) -> Variant:
+	# Check if interaction is allowed (not in Battle or Resolution phase)
+	var game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager:
+		if game_manager.current_phase == GameManager.GamePhase.BATTLE or game_manager.current_phase == GameManager.GamePhase.RESOLUTION:
+			return null
+
 	# Create a visual preview for the drag
 	var preview = TextureRect.new()
 	preview.texture = texture

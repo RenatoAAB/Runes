@@ -32,6 +32,20 @@ func get_description() -> String:
 	var desc = ""
 	if payload and payload.has_method("get_description"):
 		desc += payload.get_description()
+	
+	# Append target description if it's specific (not just implied by payload)
+	# We can check if target has a meaningful description.
+	if target and target.has_method("get_description"):
+		var target_desc = target.get_description()
+		
+		# Simple heuristic: if target description is not empty and not just "Self"
+		if target_desc != "" and target_desc != "Self":
+			# If the payload description contains the word "targets", replace it for better flow.
+			if "targets" in desc:
+				desc = desc.replace("targets", target_desc)
+			else:
+				desc += " on " + target_desc
+
 	if condition and condition.has_method("get_description"):
 		desc += " if " + condition.get_description()
 	return desc

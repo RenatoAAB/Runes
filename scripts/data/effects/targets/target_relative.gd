@@ -10,3 +10,6 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 	if target_slot and not target_slot.is_empty():
 		targets.append(target_slot)
 	return targets
+
+func get_description() -> String:
+	return "Relative (%d, %d)" % [relative_position.x, relative_position.y]
