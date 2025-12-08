@@ -45,64 +45,31 @@ func _on_mouse_entered() -> void:
 		var info = "[b]%s[/b]\n%s | Activations: %d\nTier: %d" % [rune_instance.data.rune_name, type_str, activations, rune_instance.data.tier]
 		
 		# Context for evaluation
-		var context = null
-		var slot = null
-		if not is_in_inventory and highlighter and highlighter.grid_manager:
+		var context: BattleContext = null
+		var slot: GridSlot = null
+		var can_evaluate = not is_in_inventory
+		
+		if can_evaluate and highlighter and highlighter.grid_manager:
 			context = BattleContext.new(highlighter.grid_manager)
 			if parent and "grid_coord" in parent:
 				slot = highlighter.grid_manager.get_slot(parent.grid_coord)
 		
-		# Add effects description
+		# Add effects description using the new colored description system
 		for i in range(rune_instance.data.effects.size()):
 			var effect = rune_instance.data.effects[i]
 			
-			# Get color for this effect
-			var color = Color.WHITE
-			if highlighter and "EFFECT_COLORS" in highlighter:
-				var colors = highlighter.EFFECT_COLORS
-				if colors.size() > 0:
-					color = colors[i % colors.size()]
-			var hex_color = color.to_html()
+			# Get color marker for this effect (●)
+			var color_marker = EffectColors.get_color_marker(i)
 			
-			# Build description
-			var payload_desc = ""
-			if effect.payload:
-				payload_desc = effect.payload.get_description()
+			# Evaluate condition if possible
+			var is_condition_met = true
+			if can_evaluate and context and slot and effect.condition:
+				is_condition_met = effect.condition.evaluate(rune_instance, context, slot)
 			
-			# Color keywords in payload
-			# We also want to color the target description if it appears.
-			# The target description is now part of payload_desc (via RuneEffect.get_description)
+			# Get the colored description
+			var effect_desc = effect.get_description_colored(i, is_condition_met, can_evaluate)
 			
-			var keywords = ["target", "runes", "line", "column", "row", "adjacent", "self"]
-			
-			# Add element names to keywords
-			for elem in GameEnums.Element.keys():
-				keywords.append(elem.capitalize())
-				
-			for kw in keywords:
-				var regex = RegEx.new()
-				# Match whole words, case insensitive
-				regex.compile("(?i)\\b" + kw + "\\b")
-				payload_desc = regex.sub(payload_desc, "[color=#%s]%s[/color]" % [hex_color, "$0"], true)
-			
-			var final_desc = payload_desc
-			
-			# Handle Condition
-			if effect.condition:
-				var cond_desc = effect.condition.get_description()
-				if cond_desc != "Always":
-					var cond_text = " if " + cond_desc
-					var is_met = true
-					if context and slot:
-						is_met = effect.condition.evaluate(rune_instance, context, slot)
-					
-					var cond_color = "green" if is_met else "red"
-					if is_in_inventory:
-						cond_color = "white"
-					
-					final_desc += "[color=%s]%s[/color]" % [cond_color, cond_text]
-			
-			info += "\n- " + final_desc
+			info += "\n%s %s" % [color_marker, effect_desc]
 			
 		# Add Permanent Buffs
 		if rune_instance.permanent_buffs.size() > 0:

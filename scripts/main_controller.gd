@@ -60,7 +60,8 @@ func _ready() -> void:
 		_on_level_started(game_manager.current_level, game_manager.current_target_score)
 	
 	if grid_highlighter:
-		grid_highlighter.request_highlight.connect(_on_request_highlight)
+		grid_highlighter.request_multi_effect_highlight.connect(_on_request_multi_effect_highlight)
+		grid_highlighter.request_condition_highlight.connect(_on_request_condition_highlight)
 	
 	if upgrade_area:
 		upgrade_area.upgrade_confirmed.connect(_on_upgrade_confirmed)
@@ -74,13 +75,16 @@ func _ready() -> void:
 		tooltip_manager.label_settings = default_tooltip_label_settings
 		# RichTextLabel doesn't support label_settings directly, so we rely on TooltipManager to handle it.
 
-func _on_request_highlight(coord: Vector2i, color: Color) -> void:
-	if coord == Vector2i(-1, -1):
-		# Clear all
-		for slot in grid_ui_slots.values():
-			slot.set_highlight(Color(0, 0, 0, 0))
-	elif grid_ui_slots.has(coord):
-		grid_ui_slots[coord].set_highlight(color)
+## Handles multi-effect highlight requests from GridHighlighter.
+## effect_indices is an array of effect indices that target this slot.
+func _on_request_multi_effect_highlight(coord: Vector2i, effect_indices: Array) -> void:
+	if grid_ui_slots.has(coord):
+		grid_ui_slots[coord].set_effect_highlight(effect_indices)
+
+## Handles condition highlight requests from GridHighlighter.
+func _on_request_condition_highlight(coord: Vector2i, has_condition: bool) -> void:
+	if grid_ui_slots.has(coord):
+		grid_ui_slots[coord].set_condition_highlight(has_condition)
 
 # --- UI Generation ---
 

@@ -3,6 +3,7 @@ extends PanelContainer
 
 ## Visual representation of a GridSlot or Inventory Slot.
 ## Handles the Drop part of Drag & Drop.
+## Supports multi-effect visualization when multiple effects target this slot.
 
 signal rune_dropped(source_rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
 
@@ -12,10 +13,13 @@ var grid_coord: Vector2i = Vector2i(-1, -1)
 var inventory_index: int = -1
 
 var rune_ui: RuneUI
-var highlight_rect: ColorRect
+var multi_effect_overlay: MultiEffectOverlay
 var buff_rect: ColorRect
 
 var current_slot_data: GridSlot
+
+# Track which effect indices are currently highlighting this slot
+var _current_effect_indices: Array = []
 
 @export var tooltip_label_settings: LabelSettings
 
@@ -27,23 +31,43 @@ func _ready() -> void:
 	buff_rect.color = Color(0, 0, 0, 0)
 	add_child(buff_rect)
 
-	# Create highlight overlay (preview/interaction)
-	highlight_rect = ColorRect.new()
-	highlight_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	highlight_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	highlight_rect.color = Color(0, 0, 0, 0) # Transparent by default
-	add_child(highlight_rect)
+	# Create multi-effect overlay (preview/interaction) - replaces old highlight_rect
+	multi_effect_overlay = MultiEffectOverlay.new()
+	multi_effect_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(multi_effect_overlay)
 	
-	# Ensure order: Background -> Buff -> Highlight -> Rune
+	# Ensure order: Background -> Buff -> MultiEffectOverlay -> Rune
 	move_child(buff_rect, 0)
-	move_child(highlight_rect, 1)
+	move_child(multi_effect_overlay, 1)
 	
 	mouse_entered.connect(self._on_mouse_entered)
 	mouse_exited.connect(self._on_mouse_exited)
 
+## Sets effect highlighting using the new multi-effect system.
+## Pass an array of effect indices to show, or empty array to clear.
+func set_effect_highlight(effect_indices: Array) -> void:
+	_current_effect_indices = effect_indices.duplicate()
+	if multi_effect_overlay:
+		multi_effect_overlay.set_effect_indices(effect_indices)
+
+## Sets condition highlight (green border).
+func set_condition_highlight(has_condition: bool) -> void:
+	if multi_effect_overlay:
+		multi_effect_overlay.set_condition_highlight(has_condition)
+
+## Legacy method for backwards compatibility - converts single color to effect index.
+## Deprecated: use set_effect_highlight instead.
 func set_highlight(color: Color) -> void:
-	if highlight_rect:
-		highlight_rect.color = color
+	if color.a < 0.01:
+		set_effect_highlight([])
+	else:
+		# For legacy support, we can't determine the exact effect index
+		# So we just use index 0 for any non-clear color
+		set_effect_highlight([0])
+
+## Returns the current effect indices highlighting this slot.
+func get_effect_indices() -> Array:
+	return _current_effect_indices.duplicate()
 
 func set_buff_highlight(color: Color) -> void:
 	if buff_rect:

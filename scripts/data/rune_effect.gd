@@ -28,6 +28,7 @@ func execute(source_rune: RuneInstance, context: BattleContext, source_slot: Gri
 	else:
 		source_rune.last_effect_success = false
 
+## Returns a plain text description of this effect.
 func get_description() -> String:
 	var desc = ""
 	if payload and payload.has_method("get_description"):
@@ -49,3 +50,43 @@ func get_description() -> String:
 	if condition and condition.has_method("get_description"):
 		desc += " if " + condition.get_description()
 	return desc
+
+## Returns a BBCode-formatted description with colors matching the grid visualization.
+## effect_index: the index of this effect in the rune's effect array (for color coordination)
+## is_condition_met: whether the condition is currently satisfied (for condition coloring)
+## can_evaluate_condition: whether we can evaluate the condition (false if in inventory)
+func get_description_colored(effect_index: int, is_condition_met: bool = true, can_evaluate_condition: bool = true) -> String:
+	var parts: Array[String] = []
+	
+	# 1. Payload description (plain text)
+	var payload_desc = ""
+	if payload and payload.has_method("get_description"):
+		payload_desc = payload.get_description()
+	
+	# 2. Target description (colored with effect color)
+	var target_desc_colored = ""
+	if target and target.has_method("get_description"):
+		var target_desc = target.get_description()
+		if target_desc != "" and target_desc != "Self":
+			target_desc_colored = EffectColors.colorize_text(target_desc, effect_index)
+	
+	# 3. Combine payload with colored target
+	var main_desc = payload_desc
+	if target_desc_colored != "":
+		if "targets" in main_desc:
+			main_desc = main_desc.replace("targets", target_desc_colored)
+		elif "target" in main_desc:
+			main_desc = main_desc.replace("target", target_desc_colored)
+		else:
+			main_desc += " on " + target_desc_colored
+	
+	parts.append(main_desc)
+	
+	# 4. Condition description (colored based on whether it's met)
+	if condition and condition.has_method("get_description"):
+		var cond_desc = condition.get_description()
+		if cond_desc != "" and cond_desc != "Always":
+			var cond_colored = condition.get_description_colored(is_condition_met, can_evaluate_condition)
+			parts.append("if " + cond_colored)
+	
+	return " ".join(parts)
