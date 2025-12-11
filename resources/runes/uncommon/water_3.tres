@@ -1,89 +1,58 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=23 format=3 uid="uid://op5x4xm2hkpc"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=14 format=3 uid="uid://water3uid"]
 
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_mlcrb"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_hkfx6"]
-[ext_resource type="Script" uid="uid://m21p8xdfbeom" path="res://scripts/data/effects/payloads/payload_buff_activation.gd" id="3_5pk6g"]
-[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_cwk81"]
-[ext_resource type="Script" uid="uid://cvsye27cmvyve" path="res://scripts/data/effects/conditions/condition_grid_position.gd" id="5_vm371"]
-[ext_resource type="Script" uid="uid://b6701e15r30t8" path="res://scripts/data/effects/targets/target_row_column.gd" id="6_xvt27"]
-[ext_resource type="Script" uid="uid://du0abpy5ugyai" path="res://scripts/data/effects/conditions/condition_neighbor_count.gd" id="7_m0goe"]
-[ext_resource type="Script" uid="uid://c02lxo1pn6c8t" path="res://scripts/data/effects/payloads/payload_buff_slot.gd" id="8_7bo2u"]
-[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="9_sak8e"]
-[ext_resource type="Texture2D" uid="uid://dhjkk28rogbf8" path="res://sprites/icons/runes/Icon48.png" id="10_1cxe4"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_buff_activation.gd" id="3_payload"]
+[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_target"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Texture2D" uid="uid://yiofifoch6f2" path="res://sprites/icons/runes/Icon6.png" id="6_tex"]
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_trigger_rune.gd" id="7_payload2"]
+[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_element_nearby.gd" id="8_cond2"]
+[ext_resource type="Script" uid="uid://jitpaw7qra0i" path="res://scripts/data/effects/targets/target_element.gd" id="9_target2"]
 
-[sub_resource type="Resource" id="Resource_nwwqe"]
-script = ExtResource("2_hkfx6")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
+[sub_resource type="Resource" id="cond1"]
+script = ExtResource("2_cond")
 
-[sub_resource type="Resource" id="Resource_acjdb"]
-script = ExtResource("3_5pk6g")
-metadata/_custom_type_script = "uid://m21p8xdfbeom"
+[sub_resource type="Resource" id="payload1"]
+script = ExtResource("3_payload")
+activation_bonus = 2
 
-[sub_resource type="Resource" id="Resource_moc1f"]
-script = ExtResource("4_cwk81")
+[sub_resource type="Resource" id="target1"]
+script = ExtResource("4_target")
 include_diagonals = true
-metadata/_custom_type_script = "uid://dcsjurfbgmtve"
 
-[sub_resource type="Resource" id="Resource_hmhbb"]
-script = ExtResource("1_mlcrb")
-condition = SubResource("Resource_nwwqe")
-target = SubResource("Resource_moc1f")
-payload = SubResource("Resource_acjdb")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("1_effect")
+condition = SubResource("cond1")
+target = SubResource("target1")
+payload = SubResource("payload1")
 
-[sub_resource type="Resource" id="Resource_4puak"]
-script = ExtResource("5_vm371")
-position_type = 1
-metadata/_custom_type_script = "uid://cvsye27cmvyve"
-
-[sub_resource type="Resource" id="Resource_6yg8d"]
-script = ExtResource("3_5pk6g")
-metadata/_custom_type_script = "uid://m21p8xdfbeom"
-
-[sub_resource type="Resource" id="Resource_3mpg8"]
-script = ExtResource("6_xvt27")
-axis = 2
-metadata/_custom_type_script = "uid://b6701e15r30t8"
-
-[sub_resource type="Resource" id="Resource_0tqlm"]
-script = ExtResource("1_mlcrb")
-condition = SubResource("Resource_4puak")
-target = SubResource("Resource_3mpg8")
-payload = SubResource("Resource_6yg8d")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
-
-[sub_resource type="Resource" id="Resource_0ddtg"]
-script = ExtResource("7_m0goe")
-required_count = 0
-check_diagonals = true
-comparison = 1
-metadata/_custom_type_script = "uid://du0abpy5ugyai"
-
-[sub_resource type="Resource" id="Resource_oet6j"]
-script = ExtResource("8_7bo2u")
-state_id = "wet"
-activation_bonus = 1
-metadata/_custom_type_script = "uid://c02lxo1pn6c8t"
-
-[sub_resource type="Resource" id="Resource_dmdd0"]
-script = ExtResource("4_cwk81")
+[sub_resource type="Resource" id="cond2"]
+script = ExtResource("8_cond2")
+required_element = 2
 include_diagonals = true
-metadata/_custom_type_script = "uid://dcsjurfbgmtve"
+required_count = 1
 
-[sub_resource type="Resource" id="Resource_xg7x1"]
-script = ExtResource("1_mlcrb")
-condition = SubResource("Resource_0ddtg")
-target = SubResource("Resource_dmdd0")
-payload = SubResource("Resource_oet6j")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+[sub_resource type="Resource" id="payload2"]
+script = ExtResource("7_payload2")
+
+[sub_resource type="Resource" id="target2"]
+script = ExtResource("9_target2")
+target_element = 2
+include_self = false
+
+[sub_resource type="Resource" id="effect2"]
+script = ExtResource("1_effect")
+condition = SubResource("cond2")
+target = SubResource("target2")
+payload = SubResource("payload2")
 
 [resource]
-script = ExtResource("9_sak8e")
+script = ExtResource("5_data")
 id = "water_3"
-rune_name = "Water Rune III"
+rune_name = "Runa de Água III"
 tier = 3
 rarity = 1
 element = 1
-textures = Array[Texture2D]([ExtResource("10_1cxe4")])
-effects = Array[ExtResource("1_mlcrb")]([SubResource("Resource_hmhbb"), SubResource("Resource_0tqlm"), SubResource("Resource_xg7x1")])
-metadata/_custom_type_script = "uid://s48ipf5uo7mv"
+textures = Array[Texture2D]([ExtResource("6_tex")])
+effects = [SubResource("effect1"), SubResource("effect2")]

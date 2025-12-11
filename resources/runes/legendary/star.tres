@@ -1,8 +1,34 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3 uid="uid://c0fh6x7s876b4"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=10 format=3 uid="uid://staruid"]
 
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_dt3xr"]
-[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="2_hvv8a"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" uid="uid://k3rj4n76mf4a" path="res://scripts/data/effects/payloads/payload_multiply_global_score.gd" id="3_payload"]
+[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_target"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Texture2D" uid="uid://yiofifoch6f2" path="res://sprites/icons/runes/Icon6.png" id="6_tex"]
+
+[sub_resource type="Resource" id="cond1"]
+script = ExtResource("2_cond")
+
+[sub_resource type="Resource" id="payload1"]
+script = ExtResource("3_payload")
+multiplier = 1.5
+
+[sub_resource type="Resource" id="target1"]
+script = ExtResource("4_target")
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("1_effect")
+condition = SubResource("cond1")
+target = SubResource("target1")
+payload = SubResource("payload1")
 
 [resource]
-script = ExtResource("2_hvv8a")
-metadata/_custom_type_script = "uid://s48ipf5uo7mv"
+script = ExtResource("5_data")
+id = "star"
+rune_name = "Estrela"
+tier = 3
+rarity = 4
+element = 6
+textures = Array[Texture2D]([ExtResource("6_tex")])
+effects = [SubResource("effect1")]

@@ -1,40 +1,36 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=12 format=3 uid="uid://5tll8acmpwje"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=10 format=3 uid="uid://5tll8acmpwje"]
 
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_jnl3e"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_sedi7"]
-[ext_resource type="Script" uid="uid://k3rj4n76mf4a" path="res://scripts/data/effects/payloads/payload_multiply_global_score.gd" id="3_2g6k7"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_y653n"]
-[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_l7bpb"]
-[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="6_kfrjr"]
-[ext_resource type="Resource" uid="uid://bqlkdiyrdo0k8" path="res://resources/runes/uncommon/fire_2.tres" id="7_sedi7"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_multiply_self.gd" id="3_payload"]
+[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_target"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="6_tex"]
+[ext_resource type="Resource" uid="uid://bqlkdiyrdo0k8" path="res://resources/runes/uncommon/fire_2.tres" id="7_upgrade"]
 
-[sub_resource type="Resource" id="Resource_p7eua"]
-script = ExtResource("2_sedi7")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
+[sub_resource type="Resource" id="cond1"]
+script = ExtResource("2_cond")
 
-[sub_resource type="Resource" id="Resource_opqx8"]
-script = ExtResource("3_2g6k7")
-multiplier = 1.2
-metadata/_custom_type_script = "uid://k3rj4n76mf4a"
+[sub_resource type="Resource" id="payload1"]
+script = ExtResource("3_payload")
+multiplier = 1.5
 
-[sub_resource type="Resource" id="Resource_mnqxk"]
-script = ExtResource("4_y653n")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
+[sub_resource type="Resource" id="target1"]
+script = ExtResource("4_target")
 
-[sub_resource type="Resource" id="Resource_b6ei1"]
-script = ExtResource("1_jnl3e")
-condition = SubResource("Resource_p7eua")
-target = SubResource("Resource_mnqxk")
-payload = SubResource("Resource_opqx8")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("1_effect")
+condition = SubResource("cond1")
+target = SubResource("target1")
+payload = SubResource("payload1")
 
 [resource]
-script = ExtResource("5_l7bpb")
+script = ExtResource("5_data")
 id = "fire_1"
-rune_name = "Fire Rune I"
+rune_name = "Runa de Fogo I"
+tier = 1
 rarity = 1
 element = 0
-upgrades_to = ExtResource("7_sedi7")
-textures = Array[Texture2D]([ExtResource("6_kfrjr")])
-effects = Array[ExtResource("1_jnl3e")]([SubResource("Resource_b6ei1")])
-metadata/_custom_type_script = "uid://s48ipf5uo7mv"
+upgrades_to = ExtResource("7_upgrade")
+textures = Array[Texture2D]([ExtResource("6_tex")])
+effects = [SubResource("effect1")]

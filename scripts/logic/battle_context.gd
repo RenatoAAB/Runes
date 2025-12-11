@@ -7,10 +7,12 @@ extends RefCounted
 
 signal score_event(amount: int, source: RuneInstance)
 signal reader_jump_request(index: int)
+signal rune_activation_queued(slot: GridSlot)
 
 var grid: GridManager
 var current_score: int = 0
 var current_step_index: int = 0
+var queued_activations: Array[GridSlot] = []
 
 func _init(p_grid: GridManager):
 	grid = p_grid
@@ -26,3 +28,13 @@ func multiply_global_score(factor: float) -> void:
 
 func request_reader_jump(target_index: int) -> void:
 	reader_jump_request.emit(target_index)
+
+func queue_rune_activation(slot: GridSlot) -> void:
+	if slot not in queued_activations:
+		queued_activations.append(slot)
+		rune_activation_queued.emit(slot)
+
+func get_and_clear_queued_activations() -> Array[GridSlot]:
+	var result = queued_activations.duplicate()
+	queued_activations.clear()
+	return result
