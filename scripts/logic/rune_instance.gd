@@ -69,5 +69,9 @@ func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
 	if can_activate():
 		current_activations += 1
 		
+		# Track total activations for Memory rune and Rhythm conditions
+		var total = context.get_meta("total_activations", 0)
+		context.set_meta("total_activations", total + 1)
+		
 		for effect in data.effects:
 			effect.execute(self, context, my_slot)

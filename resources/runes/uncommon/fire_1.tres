@@ -1,19 +1,19 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=10 format=3 uid="uid://5tll8acmpwje"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=8 format=3]
 
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_multiply_self.gd" id="3_payload"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_target"]
-[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
-[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="6_tex"]
-[ext_resource type="Resource" uid="uid://bqlkdiyrdo0k8" path="res://resources/runes/uncommon/fire_2.tres" id="7_upgrade"]
+[ext_resource type="Script" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_multiply_global_score.gd" id="3_payload"]
+[ext_resource type="Script" path="res://scripts/data/effects/targets/target_self.gd" id="4_target"]
+[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/fire_2.tres" id="6_upgrade"]
+[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon4.png" id="7_tex"]
 
 [sub_resource type="Resource" id="cond1"]
 script = ExtResource("2_cond")
 
 [sub_resource type="Resource" id="payload1"]
 script = ExtResource("3_payload")
-multiplier = 1.5
+multiplier = 1.1
 
 [sub_resource type="Resource" id="target1"]
 script = ExtResource("4_target")
@@ -31,6 +31,7 @@ rune_name = "Runa de Fogo I"
 tier = 1
 rarity = 1
 element = 0
-upgrades_to = ExtResource("7_upgrade")
-textures = Array[Texture2D]([ExtResource("6_tex")])
+upgrades_to = ExtResource("6_upgrade")
+base_max_activations = 1
+textures = Array[Texture2D]([ExtResource("7_tex")])
 effects = [SubResource("effect1")]

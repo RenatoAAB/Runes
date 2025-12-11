@@ -1,25 +1,25 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=14 format=3 uid="uid://water3uid"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=11 format=3]
 
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
-[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_buff_activation.gd" id="3_payload"]
-[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_target"]
-[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
-[ext_resource type="Texture2D" uid="uid://yiofifoch6f2" path="res://sprites/icons/runes/Icon6.png" id="6_tex"]
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_trigger_rune.gd" id="7_payload2"]
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_element_nearby.gd" id="8_cond2"]
-[ext_resource type="Script" uid="uid://jitpaw7qra0i" path="res://scripts/data/effects/targets/target_element.gd" id="9_target2"]
+[ext_resource type="Script" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_buff_activation.gd" id="3_payload"]
+[ext_resource type="Script" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_target"]
+[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_wet_slot.gd" id="6_wet"]
+[ext_resource type="Script" path="res://scripts/data/effects/targets/target_self.gd" id="7_self"]
+[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon9.png" id="8_tex"]
 
 [sub_resource type="Resource" id="cond1"]
 script = ExtResource("2_cond")
 
 [sub_resource type="Resource" id="payload1"]
 script = ExtResource("3_payload")
-activation_bonus = 2
+activation_bonus = 1
 
 [sub_resource type="Resource" id="target1"]
 script = ExtResource("4_target")
 include_diagonals = true
+include_self = false
 
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("1_effect")
@@ -28,18 +28,16 @@ target = SubResource("target1")
 payload = SubResource("payload1")
 
 [sub_resource type="Resource" id="cond2"]
-script = ExtResource("8_cond2")
-required_element = 2
-include_diagonals = true
-required_count = 1
+script = ExtResource("2_cond")
 
 [sub_resource type="Resource" id="payload2"]
-script = ExtResource("7_payload2")
+script = ExtResource("6_wet")
+state_id = "wet"
+duration = 3
+activation_bonus = 1
 
 [sub_resource type="Resource" id="target2"]
-script = ExtResource("9_target2")
-target_element = 2
-include_self = false
+script = ExtResource("7_self")
 
 [sub_resource type="Resource" id="effect2"]
 script = ExtResource("1_effect")
@@ -54,5 +52,6 @@ rune_name = "Runa de Água III"
 tier = 3
 rarity = 1
 element = 1
-textures = Array[Texture2D]([ExtResource("6_tex")])
+base_max_activations = 1
+textures = Array[Texture2D]([ExtResource("8_tex")])
 effects = [SubResource("effect1"), SubResource("effect2")]

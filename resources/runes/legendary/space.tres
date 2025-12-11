@@ -1,0 +1,37 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_score_per_empty.gd" id="3_payload"]
+[ext_resource type="Script" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_target"]
+[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon3.png" id="6_tex"]
+
+[sub_resource type="Resource" id="cond1"]
+script = ExtResource("2_cond")
+
+[sub_resource type="Resource" id="payload1"]
+script = ExtResource("3_payload")
+score_per_empty = 50
+
+[sub_resource type="Resource" id="target1"]
+script = ExtResource("4_target")
+include_diagonals = true
+include_self = false
+
+[sub_resource type="Resource" id="effect1"]
+script = ExtResource("1_effect")
+condition = SubResource("cond1")
+target = SubResource("target1")
+payload = SubResource("payload1")
+
+[resource]
+script = ExtResource("5_data")
+id = "space"
+rune_name = "Espaço"
+tier = 3
+rarity = 4
+element = 25
+base_max_activations = 1
+textures = Array[Texture2D]([ExtResource("6_tex")])
+effects = [SubResource("effect1")]
