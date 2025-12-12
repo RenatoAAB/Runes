@@ -1,13 +1,13 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=11 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=17 format=3 uid="uid://ca76ftjys6j6r"]
 
-[ext_resource type="Script" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_payload"]
-[ext_resource type="Script" path="res://scripts/data/effects/targets/target_self.gd" id="4_target"]
-[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="5_data"]
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_grid_position.gd" id="6_pos"]
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_buff_element_permanent.gd" id="7_buff"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon12.png" id="8_tex"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_payload"]
+[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_target"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Script" uid="uid://cvsye27cmvyve" path="res://scripts/data/effects/conditions/condition_grid_position.gd" id="6_pos"]
+[ext_resource type="Script" uid="uid://b5cu3u2lv4sab" path="res://scripts/data/effects/payloads/payload_buff_element_permanent.gd" id="7_buff"]
+[ext_resource type="Texture2D" uid="uid://du3ing3fp8a4l" path="res://sprites/icons/runes/Icon12.png" id="8_tex"]
 
 [sub_resource type="Resource" id="cond1"]
 script = ExtResource("2_cond")
@@ -27,13 +27,9 @@ payload = SubResource("payload1")
 
 [sub_resource type="Resource" id="cond2"]
 script = ExtResource("6_pos")
-position_type = 0
-negate = false
 
 [sub_resource type="Resource" id="payload2"]
 script = ExtResource("7_buff")
-target_element = 2
-score_bonus = 10
 
 [sub_resource type="Resource" id="target2"]
 script = ExtResource("4_target")
@@ -53,4 +49,4 @@ rarity = 1
 element = 2
 base_max_activations = 10
 textures = Array[Texture2D]([ExtResource("8_tex")])
-effects = [SubResource("effect1"), SubResource("effect2")]
+effects = Array[ExtResource("1_effect")]([SubResource("effect1"), SubResource("effect2")])

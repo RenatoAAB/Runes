@@ -88,19 +88,43 @@ func update_slot_info(slot: GridSlot) -> void:
 func _on_mouse_entered() -> void:
 	if not current_slot_data or current_slot_data.active_states.is_empty():
 		return
-		
-	var text = "[color=cyan]Slot Effects:[/color]\n"
+	
+	var text = "Slot Effects"
 	for state_id in current_slot_data.active_states:
 		var data = current_slot_data.active_states[state_id]
-		text += "- %s (%d turns)" % [state_id.capitalize(), data["duration"]]
+		var state_desc = _get_state_description(state_id)
+		var duration_text = "(permanent)" if data["duration"] > 9999 else "(%d turns)" % data["duration"]
+		var state_name = state_id.capitalize().replace("_", " ")
+		text += "\n[color=yellow]%s[/color] %s" % [state_name, duration_text]
+		if state_desc != "":
+			text += "\n%s" % state_desc
 		if data.get("score_bonus", 0) != 0:
-			text += "\n  Bonus: +%d Score" % data["score_bonus"]
+			text += "\n[color=cyan]+%d Score[/color]" % data["score_bonus"]
 		if data.get("activation_bonus", 0) != 0:
-			text += "\n  Bonus: +%d Activations" % data["activation_bonus"]
+			text += "\n[color=cyan]+%d Activations[/color]" % data["activation_bonus"]
 			
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager:
 		tooltip_manager.set_slot_tooltip(text)
+
+func _get_state_description(state_id: String) -> String:
+	match state_id:
+		"petrified":
+			return "Rune cannot be moved from this slot."
+		"lead_residue":
+			return "Blocks gold effect. Slot is contaminated."
+		"illuminated":
+			return "Grants bonus activations to runes."
+		"burning":
+			return "Increases score from runes."
+		"wet":
+			return "Grants bonus activations."
+		"electrified":
+			return "Enables special metal synergies."
+		"prismatic":
+			return "Refracts light in all directions."
+		_:
+			return ""
 
 func _on_mouse_exited() -> void:
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")

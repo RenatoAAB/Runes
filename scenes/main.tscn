@@ -1,27 +1,14 @@
-[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=13 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
 [ext_resource type="Script" uid="uid://bmvi2d1q3u4lg" path="res://scripts/logic/grid_manager.gd" id="2_tipki"]
 [ext_resource type="Script" uid="uid://qhromqhnu80e" path="res://scripts/logic/inventory_manager.gd" id="3_85g3d"]
 [ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="3_dp3eg"]
-[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="3_trceg"]
 [ext_resource type="Script" uid="uid://pjx26antyjld" path="res://scripts/logic/reader.gd" id="4_choun"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" uid="uid://daw3k4qeq0hbo" path="res://resources/runes/uncommon/air_1.tres" id="6_jscy8"]
-[ext_resource type="Resource" uid="uid://b7gvbrs7wavbd" path="res://resources/runes/uncommon/air_2.tres" id="7_pm3ni"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" uid="uid://bog2v1hoqleck" path="res://resources/runes/uncommon/air_3.tres" id="8_y6deb"]
-[ext_resource type="Resource" uid="uid://blrdbrjqlyild" path="res://resources/runes/uncommon/earth_1.tres" id="9_og1vs"]
-[ext_resource type="Resource" uid="uid://besmp4do4qlfq" path="res://resources/runes/uncommon/earth_2.tres" id="10_2wyq8"]
-[ext_resource type="Resource" uid="uid://bur4kwx0x7b8g" path="res://resources/runes/uncommon/earth_3.tres" id="11_vxglm"]
-[ext_resource type="Resource" uid="uid://5tll8acmpwje" path="res://resources/runes/uncommon/fire_1.tres" id="12_2f3dj"]
-[ext_resource type="Resource" uid="uid://bqlkdiyrdo0k8" path="res://resources/runes/uncommon/fire_2.tres" id="13_yq6so"]
-[ext_resource type="Resource" uid="uid://waclbbny6wv8" path="res://resources/runes/uncommon/fire_3.tres" id="14_fv21b"]
-[ext_resource type="Resource" uid="uid://dowf3kmtasjmf" path="res://resources/runes/uncommon/water_1.tres" id="15_tel4y"]
-[ext_resource type="Resource" uid="uid://dd8n6smuirlpq" path="res://resources/runes/uncommon/water_2.tres" id="16_qkpxi"]
-[ext_resource type="Resource" uid="uid://op5x4xm2hkpc" path="res://resources/runes/uncommon/water_3.tres" id="17_5q0nq"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="Script" uid="uid://bcn1e8j0fr1u7" path="res://scripts/ui/choice_area.gd" id="22_og1vs"]
 [ext_resource type="Script" uid="uid://bnyk1gjrs36en" path="res://scripts/ui/upgrade_area.gd" id="23_2wyq8"]
@@ -50,7 +37,6 @@ reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
 base_target_score = 30
-available_runes = Array[ExtResource("3_trceg")]([ExtResource("6_jscy8"), ExtResource("7_pm3ni"), ExtResource("8_y6deb"), ExtResource("9_og1vs"), ExtResource("10_2wyq8"), ExtResource("11_vxglm"), ExtResource("12_2f3dj"), ExtResource("13_yq6so"), ExtResource("14_fv21b"), ExtResource("15_tel4y"), ExtResource("16_qkpxi"), ExtResource("17_5q0nq")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="GridManager" type="Node" parent="Managers"]

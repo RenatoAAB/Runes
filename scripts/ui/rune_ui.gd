@@ -114,6 +114,12 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	if game_manager:
 		if game_manager.current_phase == GameManager.GamePhase.BATTLE or game_manager.current_phase == GameManager.GamePhase.RESOLUTION:
 			return null
+	
+	# Check if rune is in a petrified slot (cannot be moved)
+	var parent = get_parent()
+	if parent and parent is SlotUI and parent.current_slot_data:
+		if parent.current_slot_data.has_state("petrified"):
+			return null
 
 	# Create a visual preview for the drag
 	var preview = TextureRect.new()

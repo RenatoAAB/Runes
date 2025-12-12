@@ -1,11 +1,11 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=11 format=3 uid="uid://06ekxpxi16ns"]
 
-[ext_resource type="Script" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_activate_region.gd" id="3_payload"]
-[ext_resource type="Script" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_target"]
-[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="5_data"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon40.png" id="6_tex"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
+[ext_resource type="Script" uid="uid://ey0qiy0ibn12" path="res://scripts/data/effects/payloads/payload_activate_region.gd" id="3_payload"]
+[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="4_target"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_data"]
+[ext_resource type="Texture2D" uid="uid://br57h23b10m8b" path="res://sprites/icons/runes/Icon40.png" id="6_tex"]
 
 [sub_resource type="Resource" id="cond1"]
 script = ExtResource("2_cond")
@@ -17,7 +17,6 @@ activation_bonus = 0
 [sub_resource type="Resource" id="target1"]
 script = ExtResource("4_target")
 include_diagonals = true
-include_self = false
 
 [sub_resource type="Resource" id="effect1"]
 script = ExtResource("1_effect")
@@ -29,9 +28,7 @@ payload = SubResource("payload1")
 script = ExtResource("5_data")
 id = "catalyst"
 rune_name = "Catalisador"
-tier = 3
 rarity = 4
 element = 14
-base_max_activations = 1
 textures = Array[Texture2D]([ExtResource("6_tex")])
-effects = [SubResource("effect1")]
+effects = Array[ExtResource("1_effect")]([SubResource("effect1")])

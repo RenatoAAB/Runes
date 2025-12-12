@@ -40,10 +40,39 @@ func _ready() -> void:
 	if reader:
 		reader.sequence_finished.connect(_on_battle_finished)
 	
+	# Load all runes dynamically if not set in inspector
+	if available_runes.is_empty():
+		_load_all_runes()
+	
 	# Start the game loop
 	# In a real scene, we might wait for a "Start" button or main menu.
 	# For this task, we auto-start.
 	call_deferred("start_game")
+
+func _load_all_runes() -> void:
+	var rune_folders = [
+		"res://resources/runes/uncommon/",
+		"res://resources/runes/rare/",
+		"res://resources/runes/epic/",
+		"res://resources/runes/legendary/"
+	]
+	
+	for folder_path in rune_folders:
+		var dir = DirAccess.open(folder_path)
+		if dir:
+			dir.list_dir_begin()
+			var file_name = dir.get_next()
+			while file_name != "":
+				if file_name.ends_with(".tres"):
+					var rune_path = folder_path + file_name
+					var rune_data = load(rune_path) as RuneData
+					if rune_data:
+						available_runes.append(rune_data)
+						print("Loaded rune: %s" % rune_data.rune_name)
+				file_name = dir.get_next()
+			dir.list_dir_end()
+	
+	print("Total runes loaded: %d" % available_runes.size())
 
 func start_game() -> void:
 	current_level = 1
