@@ -22,3 +22,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "All Rhythm runes gain +%d permanent Score" % score_bonus
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SCALING, Keywords.ELEMENT_TARGET, Keywords.BUFF]

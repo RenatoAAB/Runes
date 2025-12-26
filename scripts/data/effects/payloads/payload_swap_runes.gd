@@ -32,3 +32,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Swaps with target rune"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MOVE]

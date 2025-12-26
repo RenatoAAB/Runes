@@ -55,3 +55,6 @@ func get_description() -> String:
 			var elem_str = GameEnums.Element.keys()[target_element].capitalize()
 			return "Rewind to last %s rune" % elem_str
 	return ""
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MOVE]

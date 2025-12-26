@@ -15,3 +15,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Illuminates slots (+%d activations, %d turns)" % [activation_bonus, duration]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ILLUMINATED, Keywords.BUFF]

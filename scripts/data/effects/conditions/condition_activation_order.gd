@@ -31,3 +31,6 @@ func get_description() -> String:
 		Comparison.EXACTLY_AT:
 			return "At step %d" % step_index
 	return ""
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SEQUENCE]

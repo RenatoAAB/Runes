@@ -19,3 +19,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Sets slot on fire (%.1fx score multiplier)" % score_multiplier
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.BURNING, Keywords.MULTIPLY]

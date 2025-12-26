@@ -19,3 +19,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Doubles the effects of targets"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MIMIC, Keywords.MULTIPLY]

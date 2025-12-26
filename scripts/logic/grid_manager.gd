@@ -3,6 +3,7 @@ extends Node
 
 ## Manages the 5x5 Grid of GridSlots.
 ## Handles placement, movement, and coordinate queries.
+## Emits PlanningEvents through EventBus for tracking and statistics.
 
 const GRID_SIZE = 5
 
@@ -11,8 +12,14 @@ var grid: Array[GridSlot] = []
 
 signal slot_changed(coord: Vector2i)
 
+## Reference to EventBus (set in _ready)
+var event_bus: Node = null
+
 func _ready() -> void:
 	_init_grid()
+	# Try to get EventBus autoload
+	if has_node("/root/EventBus"):
+		event_bus = get_node("/root/EventBus")
 
 func _init_grid() -> void:
 	grid.clear()
@@ -78,8 +85,53 @@ func place_rune(rune_data: RuneData, coord: Vector2i) -> bool:
 		var instance = RuneInstance.new(rune_data)
 		slot.set_rune(instance)
 		slot_changed.emit(coord)
+		
+		# Emit planning event
+		_emit_planning_event(
+			PlanningEvent.ActionType.PLACE_RUNE,
+			_get_rune_id(instance),
+			"inventory",
+			coord
+		)
 		return true
 	return false
+
+
+## Place an existing RuneInstance (used when moving from inventory)
+func place_rune_instance(rune: RuneInstance, coord: Vector2i) -> bool:
+	var slot = get_slot(coord)
+	if slot and slot.is_empty():
+		slot.set_rune(rune)
+		slot_changed.emit(coord)
+		
+		# Emit planning event
+		_emit_planning_event(
+			PlanningEvent.ActionType.PLACE_RUNE,
+			_get_rune_id(rune),
+			"inventory",
+			coord
+		)
+		return true
+	return false
+
+
+## Remove a rune from grid (move to inventory)
+func remove_rune(coord: Vector2i) -> RuneInstance:
+	var slot = get_slot(coord)
+	if slot and not slot.is_empty():
+		var rune = slot.remove_rune()
+		slot_changed.emit(coord)
+		
+		# Emit planning event
+		_emit_planning_event(
+			PlanningEvent.ActionType.REMOVE_RUNE,
+			_get_rune_id(rune),
+			coord,
+			"inventory"
+		)
+		return rune
+	return null
+
 
 func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 	var from_slot = get_slot(from_coord)
@@ -104,6 +156,11 @@ func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 		
 	if from_slot.is_empty():
 		return false
+	
+	# Capture rune IDs before the move
+	var rune_a_id = _get_rune_id(from_slot.rune)
+	var rune_b_id = _get_rune_id(to_slot.rune) if to_slot.rune else &""
+	var is_swap = not to_slot.is_empty()
 		
 	# Swap logic
 	# Use remove_rune() to ensure buffs are stripped from the leaving runes
@@ -117,6 +174,17 @@ func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 	slot_changed.emit(from_coord)
 	slot_changed.emit(to_coord)
 	
+	# Emit planning event
+	if is_swap:
+		_emit_swap_event(rune_a_id, from_coord, rune_b_id, to_coord)
+	else:
+		_emit_planning_event(
+			PlanningEvent.ActionType.MOVE_RUNE,
+			rune_a_id,
+			from_coord,
+			to_coord
+		)
+	
 	return true
 
 func rotate_runes(slots: Array[GridSlot], clockwise: bool) -> void:
@@ -128,6 +196,12 @@ func rotate_runes(slots: Array[GridSlot], clockwise: bool) -> void:
 		if slot.has_state("petrified"):
 			print("Cannot rotate: slot at %s is petrified" % str(slot.grid_position))
 			return
+	
+	# Capture rune IDs before rotation
+	var rune_ids: Array[StringName] = []
+	for slot in slots:
+		if slot.rune:
+			rune_ids.append(_get_rune_id(slot.rune))
 		
 	var runes: Array[RuneInstance] = []
 	for slot in slots:
@@ -146,6 +220,16 @@ func rotate_runes(slots: Array[GridSlot], clockwise: bool) -> void:
 	for i in range(slots.size()):
 		slots[i].set_rune(runes[i])
 		slot_changed.emit(slots[i].grid_position)
+	
+	# Emit planning event for rotation
+	if event_bus:
+		var event = PlanningEvent.new()
+		event.action_type = PlanningEvent.ActionType.ROTATE_RUNES
+		event.rune_ids = rune_ids
+		event.source_location = slots[0].grid_position if slots.size() > 0 else Vector2i.ZERO
+		event.destination_location = slots[slots.size() - 1].grid_position if slots.size() > 0 else Vector2i.ZERO
+		event_bus.emit(event)
+
 
 func process_round_end() -> void:
 	for slot in grid:
@@ -156,8 +240,7 @@ func process_round_end() -> void:
 			slot.apply_buffs(slot.rune)
 		# Notify UI of potential state changes (buff expiration)
 		slot_changed.emit(slot.grid_position)
-		# Notify UI of potential state changes (buff expiration)
-		slot_changed.emit(slot.grid_position)
+
 
 func clear_grid() -> void:
 	for slot in grid:
@@ -165,3 +248,40 @@ func clear_grid() -> void:
 		if not slot.is_empty():
 			slot.remove_rune()
 		slot_changed.emit(slot.grid_position)
+
+
+# --- Event Emission Helpers ---
+
+func _get_rune_id(rune: RuneInstance) -> StringName:
+	if not rune or not rune.data:
+		return &""
+	if rune.data.id and not rune.data.id.is_empty():
+		return StringName(rune.data.id)
+	return StringName(rune.data.rune_name)
+
+
+func _emit_planning_event(action_type: PlanningEvent.ActionType, rune_id: StringName, source: Variant, destination: Variant) -> void:
+	if not event_bus:
+		return
+	
+	var event = PlanningEvent.new()
+	event.action_type = action_type
+	if rune_id:
+		event.rune_ids.append(rune_id)
+	event.source_location = source
+	event.destination_location = destination
+	event_bus.emit(event)
+
+
+func _emit_swap_event(rune_a_id: StringName, loc_a: Vector2i, rune_b_id: StringName, loc_b: Vector2i) -> void:
+	if not event_bus:
+		return
+	
+	var event = PlanningEvent.new()
+	event.action_type = PlanningEvent.ActionType.SWAP_RUNES
+	event.rune_ids.append(rune_a_id)
+	event.rune_ids.append(rune_b_id)
+	event.source_location = loc_a
+	event.destination_location = loc_b
+	event.swap_source = loc_b
+	event_bus.emit(event)

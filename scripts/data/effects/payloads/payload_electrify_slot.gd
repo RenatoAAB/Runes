@@ -14,3 +14,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Electrifies slot (runes activate twice, %d turns)" % duration
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.CHARGED, Keywords.BUFF]

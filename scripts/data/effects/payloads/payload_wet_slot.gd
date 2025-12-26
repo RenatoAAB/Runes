@@ -15,3 +15,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Wets slot (+%d activation, %d turns)" % [activation_bonus, duration]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.WET, Keywords.BUFF]

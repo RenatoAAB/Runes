@@ -29,3 +29,6 @@ func get_description() -> String:
 		return "adjacent to %s" % elem_name
 	else:
 		return "adjacent to %d+ %s" % [required_count, elem_name]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ADJACENT, Keywords.ELEMENT_SYNC]

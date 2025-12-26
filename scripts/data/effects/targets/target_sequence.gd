@@ -43,3 +43,6 @@ func get_description() -> String:
 	if include_self:
 		desc += " + Self"
 	return desc
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SEQUENCE]

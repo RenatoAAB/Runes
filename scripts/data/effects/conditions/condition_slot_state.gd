@@ -16,3 +16,14 @@ func get_description() -> String:
 	if negate:
 		return "slot is NOT %s" % required_state
 	return "slot is %s" % required_state
+
+func get_keywords() -> Array[StringName]:
+	# Return keyword based on the state being checked
+	match required_state:
+		"electrified": return [Keywords.CHARGED]
+		"burning": return [Keywords.BURNING]
+		"wet": return [Keywords.WET]
+		"illuminated": return [Keywords.ILLUMINATED]
+		"petrified": return [Keywords.PETRIFIED]
+		"prismatic": return [Keywords.PRISMATIC]
+	return []

@@ -19,3 +19,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Moves reader ±%d steps randomly" % max_steps
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MOVE, Keywords.RANDOM]

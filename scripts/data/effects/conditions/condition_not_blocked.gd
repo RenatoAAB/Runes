@@ -25,3 +25,6 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 func get_description() -> String:
 	var elem_name = GameEnums.Element.keys()[blocking_element].capitalize()
 	return "not blocked by %s" % elem_name
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ADJACENT, Keywords.ELEMENT_SYNC]

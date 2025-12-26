@@ -6,3 +6,6 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 
 func get_description() -> String:
 	return "Always"
+
+func get_keywords() -> Array[StringName]:
+	return []

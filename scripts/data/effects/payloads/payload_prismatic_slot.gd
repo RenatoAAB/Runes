@@ -14,3 +14,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Makes slot prismatic (activates any condition)"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.PRISMATIC, Keywords.BUFF]

@@ -9,3 +9,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Resets reader to beginning"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MOVE, Keywords.ECHO]

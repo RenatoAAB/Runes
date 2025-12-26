@@ -20,3 +20,6 @@ func get_description() -> String:
 	if activation_bonus != 0:
 		desc += " (Bonus: +%d Activations)" % activation_bonus
 	return desc
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.BUFF]

@@ -38,3 +38,10 @@ func get_description() -> String:
 		Axis.COLUMN: return "+%d activations to entire column" % activation_bonus
 		Axis.BOTH: return "+%d activations to row and column" % activation_bonus
 	return ""
+
+func get_keywords() -> Array[StringName]:
+	match axis:
+		Axis.ROW: return [Keywords.BUFF, Keywords.ROW]
+		Axis.COLUMN: return [Keywords.BUFF, Keywords.COLUMN]
+		Axis.BOTH: return [Keywords.BUFF, Keywords.ROW, Keywords.COLUMN]
+	return [Keywords.BUFF]

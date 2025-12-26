@@ -15,3 +15,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "All %s runes gain +%d permanent Score" % [GameEnums.Element.keys()[target_element], score_bonus]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.BUFF, Keywords.SCALING, Keywords.ELEMENT_TARGET]

@@ -14,7 +14,7 @@ func _ready() -> void:
 	hide()
 
 func show_choices(options: Array[RuneData]) -> void:
-	print("Showing choices: %s" % options)
+	print("Showing choices: %s" % [options])
 	active_options = options
 	_clear_slots()
 	

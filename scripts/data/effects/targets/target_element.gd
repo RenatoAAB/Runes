@@ -24,3 +24,6 @@ func get_description() -> String:
 	else:
 		desc += " (excl. Self)"
 	return desc
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ELEMENT_TARGET, Keywords.ALL]

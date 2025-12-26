@@ -16,3 +16,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Adds %d Score × previous activations" % score_per_activation
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SCORE, Keywords.COMBO]

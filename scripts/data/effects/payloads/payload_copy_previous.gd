@@ -39,3 +39,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Copies effects of previous rune"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MIMIC, Keywords.ECHO]

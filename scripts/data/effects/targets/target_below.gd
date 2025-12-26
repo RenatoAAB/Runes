@@ -13,3 +13,6 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 
 func get_description() -> String:
 	return "Below"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.COLUMN]

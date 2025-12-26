@@ -29,3 +29,6 @@ func get_description() -> String:
 		Comparison.EQUALS: comp_str = "="
 	
 	return "Score %s %d" % [comp_str, threshold]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.THRESHOLD]

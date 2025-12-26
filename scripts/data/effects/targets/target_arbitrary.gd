@@ -25,3 +25,6 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 
 func get_description() -> String:
 	return "Custom Area (%d offsets)" % offsets.size()
+
+func get_keywords() -> Array[StringName]:
+	return []

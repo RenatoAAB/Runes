@@ -17,3 +17,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Immediately triggers target runes"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.TRIGGER, Keywords.CHAIN]

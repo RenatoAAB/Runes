@@ -8,3 +8,6 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 
 func get_description() -> String:
 	return "another Rhythm activated"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.CHAIN, Keywords.ELEMENT_SYNC]

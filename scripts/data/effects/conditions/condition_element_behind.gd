@@ -39,3 +39,6 @@ func get_description() -> String:
 	for elem in required_elements:
 		elem_names.append(GameEnums.Element.keys()[elem])
 	return "previous slot has %s" % " or ".join(elem_names)
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SEQUENCE, Keywords.ELEMENT_SYNC]

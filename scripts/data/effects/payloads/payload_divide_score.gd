@@ -28,3 +28,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Freezes score (÷%d), starts new score to multiply" % divisor
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.META, Keywords.MULTIPLY]

@@ -36,3 +36,13 @@ func get_description() -> String:
 		ModificationType.DISABLE: return "Disables Rune"
 		ModificationType.ENABLE: return "Enables Rune"
 	return ""
+
+func get_keywords() -> Array[StringName]:
+	match modification:
+		ModificationType.BUFF_SCORE_FLAT, ModificationType.BUFF_SCORE_MULT, ModificationType.BUFF_ACTIVATION:
+			return [Keywords.BUFF]
+		ModificationType.DISABLE:
+			return [Keywords.DISABLED, Keywords.DEBUFF]
+		ModificationType.ENABLE:
+			return [Keywords.BUFF]
+	return []

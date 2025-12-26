@@ -17,3 +17,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Adds +%d Max Activations" % activation_bonus
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.BUFF, Keywords.CHARGED]

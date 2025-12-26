@@ -25,3 +25,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Creates a copy of self in empty target slot"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.CREATE, Keywords.SELF]

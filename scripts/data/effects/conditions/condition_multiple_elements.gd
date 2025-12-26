@@ -23,3 +23,6 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 
 func get_description() -> String:
 	return "adjacent to %d+ different elements" % required_count
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ADJACENT, Keywords.ELEMENT_SYNC]

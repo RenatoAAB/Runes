@@ -25,3 +25,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Destroys targets and gains +%d Score each" % score_per_destroyed
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.DESTROY, Keywords.ABSORB, Keywords.SCALING]

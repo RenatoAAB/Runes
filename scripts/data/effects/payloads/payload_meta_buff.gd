@@ -15,3 +15,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Permanently grants +%d Score to targets" % score_growth
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.BUFF, Keywords.SCALING]

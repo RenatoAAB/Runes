@@ -19,3 +19,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "+%d Score per empty adjacent slot" % score_per_empty
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SCORE, Keywords.NEIGHBORS]

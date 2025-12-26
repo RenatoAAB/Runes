@@ -63,3 +63,8 @@ func get_description() -> String:
 		Comparison.EQUAL:
 			return "exactly %d %s" % [required_count, type]
 	return ""
+
+func get_keywords() -> Array[StringName]:
+	if filter_by_element:
+		return [Keywords.ADJACENT, Keywords.ELEMENT_SYNC]
+	return [Keywords.ADJACENT]

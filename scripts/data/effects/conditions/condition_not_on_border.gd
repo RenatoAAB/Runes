@@ -13,3 +13,6 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 
 func get_description() -> String:
 	return "not on border"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.POSITION]

@@ -18,3 +18,6 @@ func get_description() -> String:
 	if include_diagonals:
 		desc += " (incl. diag)"
 	return desc
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.NEIGHBORS]

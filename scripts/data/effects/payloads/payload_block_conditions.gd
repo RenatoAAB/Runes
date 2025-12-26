@@ -14,3 +14,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Leaves lead residue (blocks conditional effects)"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.DEBUFF, Keywords.CURSED]

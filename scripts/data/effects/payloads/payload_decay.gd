@@ -18,3 +18,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Multiplies score by %.1f, adjacent runes lose 1 activation" % score_multiplier
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.DECAYING, Keywords.MULTIPLY, Keywords.NEIGHBORS]

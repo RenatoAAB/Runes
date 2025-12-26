@@ -23,3 +23,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Activates all targets (+%d activation)" % activation_bonus
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.TRIGGER, Keywords.CHAIN]

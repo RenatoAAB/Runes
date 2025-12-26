@@ -20,3 +20,6 @@ func get_description() -> String:
 		return "Previous Rune"
 	else:
 		return "%d Runes back" % steps_back
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SEQUENCE]

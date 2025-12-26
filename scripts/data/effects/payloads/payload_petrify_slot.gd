@@ -16,3 +16,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Petrifies slot permanently (rune cannot be moved)"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.PETRIFIED]

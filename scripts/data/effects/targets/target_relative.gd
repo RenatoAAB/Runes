@@ -13,3 +13,6 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 
 func get_description() -> String:
 	return "Relative (%d, %d)" % [relative_position.x, relative_position.y]
+
+func get_keywords() -> Array[StringName]:
+	return []
