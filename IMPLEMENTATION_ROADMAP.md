@@ -25,6 +25,8 @@
 | 4.2 Slots como Entidades | ✅ COMPLETO | `slot_data.gd`, `slot_instance.gd`, 6 tipos de slot, refatoração de grid_slot.gd |
 | 4.3 Controles do Reader | ✅ COMPLETO | `payload_skip_next.gd` (teleport/reset já existiam) |
 | 4.4 Sistema de Painéis | ❌ NÃO INICIADO | Multi-grid com multiplicadores globais |
+| 5.1 ShopManager | ✅ COMPLETO | `shop_config.gd`, `shop_manager.gd`, `shop_ui.gd` |
+| 5.2 Integração Game Loop | ✅ COMPLETO | `game_manager.gd` - fase SHOP, `main_controller.gd` - UI da loja |
 
 ---
 
@@ -299,28 +301,38 @@ Reverse não é necessário pois o sistema de teleport cobre esse caso.
 
 ---
 
-## FASE 5: Fase de Loja
+## FASE 5: Fase de Loja ✅ COMPLETO
 **Prioridade:** MÉDIA  
-**Status:** ❌ NÃO INICIADO  
+**Status:** ✅ IMPLEMENTADO  
 **Estimativa:** 2 sessões de trabalho
 
-### 5.1 Criar ShopManager
-**Arquivos a criar:**
-- [ ] `scripts/logic/shop_manager.gd`
-- [ ] `scripts/ui/shop_ui.gd`
-- [ ] `scenes/Shop.tscn`
+### 5.1 Criar ShopManager ✅
+**Arquivos criados:**
+- [x] `scripts/data/shop_config.gd` - Preços por raridade e configurações
+- [x] `scripts/logic/shop_manager.gd` - Gerencia toda lógica de compra/venda/upgrade
+- [x] `scripts/ui/shop_ui.gd` - Interface da loja (criada programaticamente)
 
-**Funcionalidades:**
-- Gerar ofertas baseadas em raridade (usando `RuneDropRates`)
-- Comprar runas (deduz dinheiro, adiciona ao inventário)
-- Comprar modificadores de slot
-- Refresh de loja (custo aumenta)
+**Funcionalidades implementadas:**
+- Preços de compra por raridade: Common $3, Uncommon $5, Rare $8, Epic $12, Legendary $20
+- Preços de venda por raridade: Common $1, Uncommon $2, Rare $3, Epic $5, Legendary $8
+- Compra de runas expostas (3 runas na loja)
+- Compra de slots (2 slots na loja): Amplifier $10, Repeater $15, Eternal $12, Merchant $8
+- Sistema de venda de runas e slots
+- Upgrade: requer 2 runas idênticas para gerar upgrade
+- Reroll da loja por $2
+- Unlock de painel por $25 (placeholder)
+- Relíquias expostas (placeholder)
 
-### 5.2 Integrar ao Game Loop
-**Arquivo a modificar:**
-- [ ] `scripts/logic/game_manager.gd`
+### 5.2 Integrar ao Game Loop ✅
+**Arquivos modificados:**
+- [x] `scripts/logic/game_manager.gd` - Fase SHOP após vitória, substituiu REWARD/UPGRADE separados
+- [x] `scripts/main_controller.gd` - Gerencia criação/exibição da loja
 
-**Nova fase:** `SHOP` entre `REWARD` e `PLANNING`
+**Novas funcionalidades:**
+- Dinheiro inicial: $10
+- Bônus de vitória: $3 + nível atual
+- Navegação entre loja e painel (placeholder para painel)
+- Botão "Continue to Battle" para sair da loja
 
 ---
 

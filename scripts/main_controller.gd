@@ -16,8 +16,10 @@ extends Node
 @export var score_label: Label
 @export var level_label: Label
 @export var money_label: Label
-@export var choice_area: ChoiceArea
-@export var upgrade_area: UpgradeArea
+
+# Shop references
+var _shop_manager: ShopManager = null
+var _shop_ui: ShopUI = null
 
 # We need a PackedScene for the SlotUI to instantiate them dynamically
 # You can assign this in Inspector, or we can try to load it if it exists.
@@ -58,21 +60,15 @@ func _ready() -> void:
 		
 	if game_manager:
 		game_manager.level_started.connect(_on_level_started)
-		game_manager.rune_selection_requested.connect(_on_rune_selection_requested)
-		game_manager.upgrade_requested.connect(_on_upgrade_requested)
 		game_manager.phase_changed.connect(_on_phase_changed)
+		game_manager.shop_phase_started.connect(_on_shop_phase_started)
+		game_manager.free_pick_granted.connect(_on_free_pick_granted)
 		# Force initial update in case level started before we connected
 		_on_level_started(game_manager.current_level, game_manager.current_target_score)
 	
 	if grid_highlighter:
 		grid_highlighter.request_multi_effect_highlight.connect(_on_request_multi_effect_highlight)
 		grid_highlighter.request_condition_highlight.connect(_on_request_condition_highlight)
-	
-	if upgrade_area:
-		upgrade_area.upgrade_confirmed.connect(_on_upgrade_confirmed)
-		# Connect the input slot drop signal so MainController can handle drops onto it
-		if upgrade_area.input_slot:
-			upgrade_area.input_slot.rune_dropped.connect(_on_rune_dropped)
 	
 	# Connect to EventBus for economy updates
 	var event_bus = get_node_or_null("/root/EventBus")
@@ -176,43 +172,20 @@ func _on_grid_slot_changed(coord: Vector2i) -> void:
 func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI) -> void:
 	# Determine source and destination
 	print("Rune Dropped. Source: %s, Target: %s" % [source_slot_ui, target_slot_ui])
-	
-	# Case 0: Drop from Choice Area (Selection)
-	if source_slot_ui and choice_area and choice_area.is_choice_slot(source_slot_ui):
-		print("Drop from Choice Area detected.")
-		# Must drop into Inventory to select
-		if target_slot_ui.inventory_index != -1:
-			print("Dropped into Inventory. Selecting reward.")
-			game_manager.select_rune_reward(rune.data)
-			choice_area.hide_choices()
-		else:
-			print("Dropped outside inventory (Index: %d). Ignoring." % target_slot_ui.inventory_index)
-		return
 
-	# Case 1: Drop into Upgrade Input
-	if upgrade_area and upgrade_area.is_upgrade_input_slot(target_slot_ui):
-		# Try to place the rune. The UpgradeArea checks if it's a valid upgradeable rune.
-		# This works for both Inventory and Grid runes since GameManager populates the valid list with both.
-		if upgrade_area.try_place_rune(rune):
-			pass 
-		return
-
-	# Case 2: Drop on Grid
+	# Case 1: Drop on Grid
 	if target_slot_ui.grid_coord != Vector2i(-1, -1):
 		if inventory_manager.runes.has(rune):
 			# Move from Inventory -> Grid
 			if grid_manager.place_rune(rune.data, target_slot_ui.grid_coord):
 				inventory_manager.remove_rune(rune)
-				# If it was in upgrade slot, clear it
-				if upgrade_area and upgrade_area.current_rune_in_input == rune:
-					upgrade_area._clear_input()
 		else:
 			# Move from Grid -> Grid (Swap/Move)
 			var source_coord = _find_rune_coord(rune)
 			if source_coord != Vector2i(-1, -1):
 				grid_manager.move_rune(source_coord, target_slot_ui.grid_coord)
 
-	# Case 3: Drop on Inventory (Unequip)
+	# Case 2: Drop on Inventory (Unequip)
 	elif target_slot_ui.inventory_index != -1:
 		# Move Grid -> Inventory
 		var source_coord = _find_rune_coord(rune)
@@ -222,21 +195,8 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 			slot.remove_rune()
 			grid_manager.slot_changed.emit(source_coord)
 			inventory_manager.add_rune(rune)
-		
-		# If dropped from Upgrade Input back to Inventory (Cancel Upgrade)
-		if source_slot_ui and upgrade_area and upgrade_area.is_upgrade_input_slot(source_slot_ui):
-			upgrade_area._clear_input()
 
-# --- Signal Handlers ---
-
-func _on_rune_selection_requested(options: Array[RuneData]) -> void:
-	print("chegou o signal aqui")
-	if choice_area:
-		choice_area.show_choices(options)
-
-func _on_upgrade_requested(runes: Array[RuneInstance]) -> void:
-	if upgrade_area:
-		upgrade_area.show_upgrade_ui(runes)
+# --- Legacy handlers removed - now handled by Shop ---
 
 func _on_upgrade_confirmed(rune: RuneInstance) -> void:
 	game_manager.confirm_upgrade(rune)
@@ -245,9 +205,6 @@ func _on_upgrade_confirmed(rune: RuneInstance) -> void:
 	_on_inventory_updated()
 	for coord in grid_ui_slots:
 		_on_grid_slot_changed(coord)
-		
-	if upgrade_area:
-		upgrade_area.hide_upgrade_ui()
 
 func _find_rune_coord(rune: RuneInstance) -> Vector2i:
 	for y in range(GridManager.GRID_SIZE):
@@ -296,11 +253,246 @@ func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:
 		GameEnums.GamePhase.BATTLE:
 			# Create stats display for battle
 			_create_stats_display()
+			# Hide shop during battle
+			_hide_shop()
 		GameEnums.GamePhase.RESOLUTION:
 			# Remove stats display after battle
 			_remove_stats_display()
+		GameEnums.GamePhase.PLANNING:
+			# Hide shop when planning starts
+			_hide_shop()
+		GameEnums.GamePhase.SHOP:
+			# Shop is shown via shop_phase_started signal
+			pass
 		_:
 			pass
+
+
+func _on_shop_phase_started() -> void:
+	_show_shop()
+
+
+func _show_shop() -> void:
+	# Hide the grid while in shop, but keep inventory visible
+	if grid_container:
+		grid_container.visible = false
+	if inventory_container:
+		inventory_container.visible = true
+	
+	# Create shop manager if needed
+	if not _shop_manager:
+		_shop_manager = ShopManager.new()
+		_shop_manager.name = "ShopManager"
+		add_child(_shop_manager)
+	
+	# Create shop UI if needed
+	if not _shop_ui:
+		_shop_ui = ShopUI.create_shop_ui()
+		
+		var ui_parent = get_tree().get_first_node_in_group("ui_layer")
+		if not ui_parent:
+			ui_parent = self
+		ui_parent.add_child(_shop_ui)
+		
+		# Connect shop signals
+		_shop_ui.rune_purchased.connect(_on_shop_rune_purchased)
+		_shop_ui.slot_purchased.connect(_on_shop_slot_purchased)
+		_shop_ui.upgrade_completed.connect(_on_shop_upgrade_completed)
+		_shop_ui.view_panel_requested.connect(_on_view_panel_requested)
+		
+		# Initialize with shop manager
+		var level = game_manager.current_level if game_manager else 1
+		_shop_ui.initialize(_shop_manager, level)
+	else:
+		# Refresh shop for new level
+		var level = game_manager.current_level if game_manager else 1
+		_shop_manager.refresh_shop(level)
+	
+	_shop_ui.visible = true
+	_is_panel_view = false
+	
+	# Add "Continue" button to proceed to next level
+	_add_shop_continue_button()
+
+
+func _hide_shop() -> void:
+	if _shop_ui:
+		_shop_ui.visible = false
+	_hide_panel_view()
+	_remove_shop_continue_button()
+	_remove_back_to_shop_button()
+	_remove_panel_battle_button()
+	
+	# Show the game panel again
+	_set_game_panel_visible(true)
+
+
+func _remove_back_to_shop_button() -> void:
+	if _back_to_shop_button:
+		_back_to_shop_button.queue_free()
+		_back_to_shop_button = null
+
+
+## Toggle visibility of game panel elements (grid, inventory, score, etc.)
+## This is called when entering/exiting shop phase entirely.
+func _set_game_panel_visible(is_visible: bool) -> void:
+	if grid_container:
+		grid_container.visible = is_visible
+	if inventory_container:
+		inventory_container.visible = is_visible
+
+
+var _shop_continue_button: Button = null
+
+func _add_shop_continue_button() -> void:
+	if _shop_continue_button:
+		return
+	
+	_shop_continue_button = Button.new()
+	_shop_continue_button.name = "ShopContinueButton"
+	_shop_continue_button.text = "Go to Panel →"
+	_shop_continue_button.custom_minimum_size = Vector2(150, 40)
+	_shop_continue_button.pressed.connect(_on_go_to_panel_pressed)
+	
+	var ui_parent = get_tree().get_first_node_in_group("ui_layer")
+	if ui_parent:
+		ui_parent.add_child(_shop_continue_button)
+		# Position at bottom right
+		_shop_continue_button.position = Vector2(
+			get_viewport().size.x - 170,
+			get_viewport().size.y - 60
+		)
+
+
+func _remove_shop_continue_button() -> void:
+	if _shop_continue_button:
+		_shop_continue_button.queue_free()
+		_shop_continue_button = null
+
+
+func _on_go_to_panel_pressed() -> void:
+	# Just switch to panel view (don't finish shop phase yet)
+	_toggle_panel_view()
+
+
+func _on_shop_rune_purchased(rune: RuneInstance) -> void:
+	if inventory_manager:
+		inventory_manager.add_rune(rune)
+		_on_inventory_updated()
+
+
+func _on_shop_slot_purchased(slot: SlotInstance) -> void:
+	# For now, slots go to a "slot inventory" or player can place them
+	# We'll add them to a pending slots list
+	print("Slot purchased: %s (place it on the grid)" % slot.data.slot_name)
+	# TODO: Add slot inventory or allow placing immediately
+
+
+func _on_shop_upgrade_completed(new_rune: RuneInstance) -> void:
+	if inventory_manager:
+		inventory_manager.add_rune(new_rune)
+		_on_inventory_updated()
+
+
+func _on_free_pick_granted(count: int) -> void:
+	if _shop_manager:
+		_shop_manager.grant_free_pick(count)
+
+
+# --- View Toggle: Shop vs Panel ---
+var _is_panel_view: bool = false
+var _back_to_shop_button: Button = null
+var _panel_battle_button: Button = null
+
+func _on_view_panel_requested() -> void:
+	_toggle_panel_view()
+
+
+func _toggle_panel_view() -> void:
+	_is_panel_view = not _is_panel_view
+	
+	if _is_panel_view:
+		# Hide shop, show real panel (grid + inventory)
+		if _shop_ui:
+			_shop_ui.visible = false
+		_remove_shop_continue_button()
+		_show_panel_view()
+	else:
+		# Hide panel, show shop
+		_hide_panel_view()
+		if _shop_ui:
+			_shop_ui.visible = true
+		_add_shop_continue_button()
+
+
+func _show_panel_view() -> void:
+	# Show grid and inventory (the actual game panel)
+	if grid_container:
+		grid_container.visible = true
+	if inventory_container:
+		inventory_container.visible = true
+	
+	var ui_parent = get_tree().get_first_node_in_group("ui_layer")
+	if not ui_parent:
+		ui_parent = self
+	
+	# Add "Go to Shop" button
+	if not _back_to_shop_button:
+		_back_to_shop_button = Button.new()
+		_back_to_shop_button.name = "BackToShopButton"
+		_back_to_shop_button.text = "← Go to Shop"
+		_back_to_shop_button.custom_minimum_size = Vector2(150, 40)
+		_back_to_shop_button.pressed.connect(_toggle_panel_view)
+		ui_parent.add_child(_back_to_shop_button)
+		_back_to_shop_button.position = Vector2(20, 20)
+	
+	_back_to_shop_button.visible = true
+	
+	# Add "Battle!" button
+	if not _panel_battle_button:
+		_panel_battle_button = Button.new()
+		_panel_battle_button.name = "PanelBattleButton"
+		_panel_battle_button.text = "⚔ Battle!"
+		_panel_battle_button.custom_minimum_size = Vector2(150, 40)
+		_panel_battle_button.pressed.connect(_on_panel_battle_pressed)
+		ui_parent.add_child(_panel_battle_button)
+		# Position at bottom right
+		_panel_battle_button.position = Vector2(
+			get_viewport().size.x - 170,
+			get_viewport().size.y - 60
+		)
+	
+	_panel_battle_button.visible = true
+
+
+func _on_panel_battle_pressed() -> void:
+	# Finish shop phase and start battle
+	if game_manager:
+		game_manager.finish_shop_phase()
+		# Hide panel UI elements
+		_hide_panel_view()
+		_remove_panel_battle_button()
+		_remove_back_to_shop_button()
+		# Start the battle
+		game_manager.start_battle()
+
+
+func _remove_panel_battle_button() -> void:
+	if _panel_battle_button:
+		_panel_battle_button.queue_free()
+		_panel_battle_button = null
+
+
+func _hide_panel_view() -> void:
+	# Hide grid when going back to shop (inventory stays visible)
+	if grid_container:
+		grid_container.visible = false
+	
+	# Hide buttons
+	if _back_to_shop_button:
+		_back_to_shop_button.visible = false
+	if _panel_battle_button:
+		_panel_battle_button.visible = false
 
 
 func _create_stats_display() -> void:

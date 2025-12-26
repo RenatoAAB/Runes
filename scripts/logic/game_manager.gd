@@ -7,6 +7,8 @@ signal game_lost(final_level: int)
 signal phase_changed(new_phase: GameEnums.GamePhase)
 signal rune_selection_requested(options: Array[RuneData])
 signal upgrade_requested(runes: Array[RuneInstance])
+signal shop_phase_started  # New: signals that shop should open
+signal free_pick_granted(count: int)  # Signals free rune picks available
 
 ## Alias for backwards compatibility - use GameEnums.GamePhase directly
 const GamePhase = GameEnums.GamePhase
@@ -72,6 +74,12 @@ func start_game() -> void:
 	current_level = 1
 	is_initial_setup = true
 	grid_manager.clear_grid()
+	
+	# Reset run statistics (including money) when starting a new game
+	var stats = get_node_or_null("/root/Stats")
+	if stats and stats.has_method("start_new_run"):
+		stats.start_new_run()
+	
 	_setup_initial_inventory()
 	# start_level() is now called by select_rune_reward after the player makes their choice.
 
@@ -142,8 +150,15 @@ func _handle_win() -> void:
 	# Grant money reward for winning
 	_grant_victory_money()
 	
-	# Trigger rune selection first, then upgrade
-	_trigger_rune_selection()
+	# Go to shop phase (replaces separate reward/upgrade phases)
+	_trigger_shop_phase()
+
+
+func _trigger_shop_phase() -> void:
+	current_phase = GamePhase.SHOP
+	phase_changed.emit(current_phase)
+	shop_phase_started.emit()
+	print("Shop Phase Started")
 
 
 func _grant_victory_money() -> void:
@@ -193,8 +208,30 @@ func _setup_initial_inventory() -> void:
 			var instance = RuneInstance.new(rune_data)
 			inventory_manager.add_rune(instance)
 	
-	# Trigger selection for the 4th rune
-	_trigger_rune_selection()
+	# Give starting money
+	_grant_starting_money()
+	
+	# Grant first free rune pick
+	free_pick_granted.emit(1)
+	
+	# Go to shop for initial purchases
+	_trigger_shop_phase()
+
+
+func _grant_starting_money() -> void:
+	var starting_money = 10
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		var event = EconomyEvent.new()
+		event.transaction_type = EconomyEvent.TransactionType.ROUND_BONUS
+		event.source = &"starting_bonus"
+		event.amount = starting_money
+		event.balance_before = 0
+		event.balance_after = starting_money
+		event.description = "Starting bonus"
+		event_bus.emit(event)
+	print("Granted $%d starting money" % starting_money)
+
 
 func _trigger_rune_selection() -> void:
 	var options = _generate_rune_options(3)
@@ -263,6 +300,19 @@ func confirm_upgrade(rune_instance: RuneInstance) -> void:
 func _finish_level_transition() -> void:
 	current_level += 1
 	start_level()
+
+
+## Called when player finishes shopping and wants to proceed to battle planning
+func finish_shop_phase() -> void:
+	if current_phase != GamePhase.SHOP:
+		print("Error: finish_shop_phase called but phase is %s" % GamePhase.keys()[current_phase])
+		return
+	
+	# Just go to PLANNING phase - level was already set when shop started
+	current_phase = GamePhase.PLANNING
+	phase_changed.emit(current_phase)
+	print("Exiting shop, entering planning phase for level %d" % current_level)
+
 
 func _generate_rune_options(count: int = 3) -> Array[RuneData]:
 	var options: Array[RuneData] = []
