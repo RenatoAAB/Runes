@@ -44,3 +44,14 @@ enum Tier {
 	TIER_2 = 2,
 	TIER_3 = 3
 }
+
+## Phases of the game loop
+enum GamePhase {
+	SETUP,
+	PLANNING,
+	BATTLE,
+	RESOLUTION,
+	REWARD,
+	UPGRADE,
+	SHOP  # Future: shop phase between reward and planning
+}

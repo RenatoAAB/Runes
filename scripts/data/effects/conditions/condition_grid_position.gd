@@ -42,3 +42,6 @@ func get_description() -> String:
 	if negate:
 		return "NOT on " + pos_str
 	return "On " + pos_str
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.POSITION]

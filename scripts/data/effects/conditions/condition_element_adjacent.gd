@@ -31,3 +31,6 @@ func get_description() -> String:
 		elem_names.append(GameEnums.Element.keys()[elem])
 	var diag_str = " (incl. diag)" if include_diagonals else ""
 	return "adjacent%s to %s" % [diag_str, " or ".join(elem_names)]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ADJACENT, Keywords.ELEMENT_SYNC]

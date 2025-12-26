@@ -112,7 +112,7 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	# Check if interaction is allowed (not in Battle or Resolution phase)
 	var game_manager = get_tree().get_first_node_in_group("game_manager")
 	if game_manager:
-		if game_manager.current_phase == GameManager.GamePhase.BATTLE or game_manager.current_phase == GameManager.GamePhase.RESOLUTION:
+		if game_manager.current_phase == GameEnums.GamePhase.BATTLE or game_manager.current_phase == GameEnums.GamePhase.RESOLUTION:
 			return null
 	
 	# Check if rune is in a petrified slot (cannot be moved)

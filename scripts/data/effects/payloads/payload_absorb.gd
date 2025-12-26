@@ -28,3 +28,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 func get_description() -> String:
 	var type_str = "Score" if absorb_type == AbsorbType.SCORE_BONUS else "Activations"
 	return "Gains +%d %s per target" % [amount_per_target, type_str]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ABSORB, Keywords.BUFF]

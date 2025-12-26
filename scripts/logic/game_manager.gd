@@ -4,18 +4,12 @@ extends Node
 signal level_started(level: int, target_score: int)
 signal game_won
 signal game_lost(final_level: int)
-signal phase_changed(new_phase: GamePhase)
+signal phase_changed(new_phase: GameEnums.GamePhase)
 signal rune_selection_requested(options: Array[RuneData])
 signal upgrade_requested(runes: Array[RuneInstance])
 
-enum GamePhase {
-	SETUP,
-	PLANNING,
-	BATTLE,
-	RESOLUTION,
-	REWARD,
-	UPGRADE
-}
+## Alias for backwards compatibility - use GameEnums.GamePhase directly
+const GamePhase = GameEnums.GamePhase
 
 @export var reader: Reader
 @export var inventory_manager: InventoryManager

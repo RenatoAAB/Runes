@@ -9,3 +9,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Permanently multiply score by %s" % multiplier
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.SCALING, Keywords.MULTIPLY]

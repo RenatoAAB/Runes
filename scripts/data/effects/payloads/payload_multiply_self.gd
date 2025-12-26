@@ -13,3 +13,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Multiplies own Score by x%.1f" % multiplier
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.MULTIPLY, Keywords.SELF]

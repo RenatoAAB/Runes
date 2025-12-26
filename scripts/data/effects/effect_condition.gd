@@ -21,3 +21,8 @@ func get_description_colored(is_met: bool, can_evaluate: bool = true) -> String:
 	if desc.is_empty() or desc == "Always":
 		return ""
 	return EffectColors.colorize_condition(desc, is_met, can_evaluate)
+
+## Returns the keywords associated with this condition.
+## Override in subclasses to return specific keywords.
+func get_keywords() -> Array[StringName]:
+	return []

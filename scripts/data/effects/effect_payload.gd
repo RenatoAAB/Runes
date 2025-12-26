@@ -25,3 +25,8 @@ func get_description_with_target(target_desc: String) -> String:
 	else:
 		# Append target info if no placeholder
 		return desc + " on " + target_desc
+
+## Returns the keywords associated with this payload.
+## Override in subclasses to return specific keywords.
+func get_keywords() -> Array[StringName]:
+	return []

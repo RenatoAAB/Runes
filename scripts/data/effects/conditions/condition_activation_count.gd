@@ -31,3 +31,6 @@ func get_description() -> String:
 		Comparison.LESS_THAN: comp_str = "<"
 	
 	return "Activations %s %d" % [comp_str, threshold]
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.COMBO]

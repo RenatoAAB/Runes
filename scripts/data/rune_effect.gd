@@ -90,3 +90,30 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 			parts.append("if " + cond_colored)
 	
 	return " ".join(parts)
+
+
+## Returns all keywords from this effect (aggregated from condition, target, and payload).
+func get_keywords() -> Array[StringName]:
+	var keywords: Array[StringName] = []
+	
+	if condition and condition.has_method("get_keywords"):
+		for kw in condition.get_keywords():
+			if kw not in keywords:
+				keywords.append(kw)
+	
+	if target and target.has_method("get_keywords"):
+		for kw in target.get_keywords():
+			if kw not in keywords:
+				keywords.append(kw)
+	
+	if payload and payload.has_method("get_keywords"):
+		for kw in payload.get_keywords():
+			if kw not in keywords:
+				keywords.append(kw)
+	
+	return keywords
+
+
+## Returns a formatted string of keyword badges for display.
+func get_keywords_display() -> String:
+	return Keywords.format_keyword_line(get_keywords())

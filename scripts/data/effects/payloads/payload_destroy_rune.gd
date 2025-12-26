@@ -10,3 +10,6 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 func get_description() -> String:
 	return "Destroys target runes"
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.DESTROY]

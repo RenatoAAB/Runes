@@ -16,3 +16,8 @@ func get_description_colored(effect_index: int) -> String:
 	if desc.is_empty():
 		return ""
 	return EffectColors.colorize_text(desc, effect_index)
+
+## Returns the keywords associated with this target.
+## Override in subclasses to return specific keywords.
+func get_keywords() -> Array[StringName]:
+	return []

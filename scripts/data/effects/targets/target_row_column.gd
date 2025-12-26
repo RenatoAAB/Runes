@@ -45,3 +45,10 @@ func get_description() -> String:
 	else:
 		desc += " (excl. Self)"
 	return desc
+
+func get_keywords() -> Array[StringName]:
+	match axis:
+		Axis.ROW: return [Keywords.ROW]
+		Axis.COLUMN: return [Keywords.COLUMN]
+		Axis.BOTH: return [Keywords.ROW, Keywords.COLUMN]
+	return []
