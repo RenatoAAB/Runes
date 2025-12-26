@@ -92,16 +92,49 @@ func start_battle() -> void:
 	phase_changed.emit(current_phase)
 	reader.start_sequence()
 
+## Reference to current result screen (if any)
+var _result_screen: BattleResultScreen = null
+var _last_battle_score: int = 0
+
 func _on_battle_finished(total_score: int) -> void:
 	current_phase = GamePhase.RESOLUTION
 	phase_changed.emit(current_phase)
+	_last_battle_score = total_score
 	
 	print("Battle Finished. Score: %d / %d" % [total_score, current_target_score])
 	
-	if total_score >= current_target_score:
+	var is_victory = total_score >= current_target_score
+	
+	# Show result screen with statistics
+	_show_result_screen(is_victory, total_score)
+
+
+func _show_result_screen(is_victory: bool, total_score: int) -> void:
+	# Find a parent node for the result screen (preferably the UI layer)
+	var ui_parent = get_tree().get_first_node_in_group("ui_layer")
+	if not ui_parent:
+		ui_parent = get_tree().root
+	
+	_result_screen = BattleResultScreen.create_popup(
+		ui_parent,
+		is_victory,
+		total_score,
+		current_target_score
+	)
+	
+	_result_screen.continue_pressed.connect(_on_result_continue.bind(is_victory))
+
+
+func _on_result_continue(was_victory: bool) -> void:
+	if _result_screen:
+		_result_screen.queue_free()
+		_result_screen = null
+	
+	if was_victory:
 		_handle_win()
 	else:
 		_handle_loss()
+
 
 func _handle_win() -> void:
 	print("Victory!")

@@ -31,6 +31,9 @@ extends Node
 var grid_ui_slots: Dictionary = {} # Vector2i -> SlotUI
 var inventory_ui_slots: Array[SlotUI] = []
 
+## Reference to live stats display during battle
+var _stats_display: StatsDisplay = null
+
 func _ready() -> void:
 	# Wait for managers to be ready
 	# await get_tree().process_frame
@@ -56,6 +59,7 @@ func _ready() -> void:
 		game_manager.level_started.connect(_on_level_started)
 		game_manager.rune_selection_requested.connect(_on_rune_selection_requested)
 		game_manager.upgrade_requested.connect(_on_upgrade_requested)
+		game_manager.phase_changed.connect(_on_phase_changed)
 		# Force initial update in case level started before we connected
 		_on_level_started(game_manager.current_level, game_manager.current_target_score)
 	
@@ -264,3 +268,32 @@ func _on_score_updated(new_total: int) -> void:
 func _on_level_started(level: int, target: int) -> void:
 	if level_label:
 		level_label.text = "Level: %d (Target: %d)" % [level, target]
+
+
+func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:
+	match new_phase:
+		GameEnums.GamePhase.BATTLE:
+			# Create stats display for battle
+			_create_stats_display()
+		GameEnums.GamePhase.RESOLUTION:
+			# Remove stats display after battle
+			_remove_stats_display()
+		_:
+			pass
+
+
+func _create_stats_display() -> void:
+	if _stats_display:
+		return  # Already exists
+	
+	var ui_parent = get_tree().get_first_node_in_group("ui_layer")
+	if not ui_parent:
+		ui_parent = self
+	
+	_stats_display = StatsDisplay.create_panel(ui_parent, Vector2(10, 270))
+
+
+func _remove_stats_display() -> void:
+	if _stats_display:
+		_stats_display.queue_free()
+		_stats_display = null

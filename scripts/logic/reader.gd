@@ -144,6 +144,19 @@ func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, 
 				"score_delta": total_score - score_before
 			})
 	
+	# Aggregate all keywords triggered from conditions and payloads
+	for cond_result in event.conditions_evaluated:
+		if cond_result.get("met", false):
+			for kw in cond_result.get("keywords", []):
+				if kw not in event.keywords_triggered:
+					event.keywords_triggered.append(kw)
+	
+	for payload_result in event.payloads_executed:
+		if payload_result.get("success", false):
+			for kw in payload_result.get("keywords", []):
+				if kw not in event.keywords_triggered:
+					event.keywords_triggered.append(kw)
+	
 	event_bus.emit(event)
 
 

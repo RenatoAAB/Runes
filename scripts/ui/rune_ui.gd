@@ -44,6 +44,17 @@ func _on_mouse_entered() -> void:
 		var activations = rune_instance.get_max_activations()
 		var info = "[b]%s[/b]\n%s | Activations: %d\nTier: %d" % [rune_instance.data.rune_name, type_str, activations, rune_instance.data.tier]
 		
+		# Collect all keywords from all effects
+		var all_keywords: Array[StringName] = []
+		for effect in rune_instance.data.effects:
+			for kw in effect.get_keywords():
+				if kw not in all_keywords:
+					all_keywords.append(kw)
+		
+		# Add keyword badges line
+		if all_keywords.size() > 0:
+			info += "\n" + Keywords.format_keyword_line(all_keywords)
+		
 		# Context for evaluation
 		var context: BattleContext = null
 		var slot: GridSlot = null

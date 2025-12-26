@@ -270,6 +270,21 @@ func _finalize_run(victory: bool) -> void:
 # QUERY METHODS (for conditions and UI)
 # =============================================================================
 
+## Get full battle stats dictionary (for UI display)
+func get_battle_stats() -> Dictionary:
+	return battle
+
+
+## Get full run stats dictionary (for UI display)
+func get_run_stats() -> Dictionary:
+	return run
+
+
+## Get full history stats dictionary (for UI display)
+func get_history_stats() -> Dictionary:
+	return history
+
+
 ## Get score contributed by a rune in current battle
 func get_battle_score_for_rune(rune_id: String) -> int:
 	return battle["score_by_rune"].get(rune_id, 0)

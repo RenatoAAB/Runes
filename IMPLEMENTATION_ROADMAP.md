@@ -18,6 +18,8 @@
 | 2.3 GridManager Eventos | ✅ COMPLETO | `logic/grid_manager.gd` - emite PlanningEvent |
 | 2.4 Keywords em Todos Efeitos | ✅ COMPLETO | 35 payloads, 13 conditions, 8 targets com get_keywords() |
 | 3.1 StatisticsManager | ✅ COMPLETO | `autoloads/statistics_manager.gd` - 3 níveis de stats |
+| 3.2 Persistência JSON | ✅ COMPLETO | `statistics_manager.gd` - save/load em user://statistics.json |
+| 3.3 UI de Estatísticas | ✅ COMPLETO | `ui/stats_display.gd`, `ui/battle_result_screen.gd` |
 | Configuração Autoloads | ✅ COMPLETO | `project.godot` - EventBus e Stats registrados |
 
 ---
@@ -30,18 +32,18 @@
 3. **Estatísticas Onipresentes:** Toda ação é rastreável em três níveis: Batalha → Run → Histórico.
 4. **Data-Driven:** Comportamentos definidos em Resources, não em código.
 
-### Estado Atual (66% implementado)
+### Estado Atual (75% implementado)
 - ✅ Core Loop (Reader, Grid, Slots, Runas)
 - ✅ Sistema de Efeitos (Condition/Target/Payload)
 - ✅ UI básica (Drag-drop, Tooltips, Highlights)
 - ✅ Sistema de eventos unificado (EventBus + 5 tipos de evento)
 - ✅ Keywords (50+ keywords em 5 categorias, integradas a todos efeitos)
 - ✅ Persistência (StatisticsManager com JSON)
+- ✅ UI de estatísticas (StatsDisplay, BattleResultScreen, keywords em tooltips)
 - ⚠️ Parcial: Slots (faltam multiplicadores locais)
 - ⚠️ Parcial: Reader (falta skip, reverse, teleport)
 - ❌ Faltando: Painéis (multi-grid)
 - ❌ Faltando: Economia (dinheiro, loja)
-- ❌ Faltando: UI de estatísticas conectada
 
 ---
 
@@ -157,9 +159,9 @@
 
 ---
 
-## FASE 3: Sistema de Estatísticas ⚠️ PARCIAL
+## FASE 3: Sistema de Estatísticas ✅ COMPLETO
 **Prioridade:** ALTA  
-**Status:** Backend ✅ | UI ❌
+**Status:** ✅ IMPLEMENTADO
 
 ### 3.1 Criar StatisticsManager (Autoload) ✅
 > Escuta eventos e agrega estatísticas.
@@ -212,12 +214,25 @@ var history_stats: Dictionary = {
 - `load_history()` - Carrega do arquivo JSON
 - Auto-save ao final de cada run
 
-### 3.3 Conectar UI às Estatísticas ❌ PENDENTE
+### 3.3 Conectar UI às Estatísticas ✅
 > Mostrar estatísticas em tempo real e no fim da run.
 
-**Arquivos a modificar:**
-- [ ] `scripts/ui/tooltip_manager.gd` - Mostrar keywords no tooltip
-- [ ] Criar `scripts/ui/stats_display.gd` - Painel de estatísticas
+**Arquivos criados:**
+- [x] `scripts/ui/stats_display.gd` - Painel de estatísticas em tempo real durante batalha
+- [x] `scripts/ui/battle_result_screen.gd` - Tela de resultado pós-batalha com stats
+
+**Arquivos modificados:**
+- [x] `scripts/ui/rune_ui.gd` - Keywords exibidas no tooltip
+- [x] `scripts/logic/game_manager.gd` - Integração com BattleResultScreen
+- [x] `scripts/main_controller.gd` - Cria/destrói StatsDisplay por fase
+- [x] `scripts/logic/reader.gd` - Agrega keywords_triggered no SlotReadEvent
+- [x] `scenes/main.tscn` - Grupo "ui_layer" adicionado
+
+**Funcionalidades implementadas:**
+- StatsDisplay mostra score, ativações e keywords em tempo real
+- BattleResultScreen exibe resumo completo ao fim da batalha
+- Keywords aparecem nos tooltips das runas
+- Clique em qualquer lugar fecha a tela de resultado
 
 ---
 
@@ -324,9 +339,9 @@ FASE 1.1 → 1.2 → 1.3 → 1.4  (Fundação)           ✅ COMPLETO
     ↓
 FASE 2.1 → 2.2 → 2.3 → 2.4  (Refatoração Core)   ✅ COMPLETO
     ↓
-FASE 3.1 → 3.2 → 3.3        (Estatísticas)       ⚠️ 3.1-3.2 ✅ | 3.3 ❌
+FASE 3.1 → 3.2 → 3.3        (Estatísticas)       ✅ COMPLETO
     ↓
-FASE 4.2 → 4.3 → 4.1 → 4.4  (Features GDD)       ❌ PENDENTE
+FASE 4.2 → 4.3 → 4.1 → 4.4  (Features GDD)       ❌ PENDENTE  ← PRÓXIMO
     ↓
 FASE 5.1 → 5.2              (Loja)               ❌ PENDENTE
     ↓
@@ -341,8 +356,10 @@ Após cada fase, verificar:
 - [x] Jogo ainda roda sem erros
 - [x] Eventos estão sendo emitidos corretamente (debug)
 - [x] Estatísticas estão sendo agregadas
-- [ ] Keywords aparecem nos tooltips
+- [x] Keywords aparecem nos tooltips
 - [x] Persistência funciona (fechar e reabrir)
+- [x] Tela de resultado aparece após batalha
+- [x] StatsDisplay aparece durante batalha
 
 ---
 
@@ -395,6 +412,22 @@ Após cada fase, verificar:
 | `effect_target.gd` | Adicionado `get_keywords()` base | ✅ |
 | `effect_payload.gd` | Adicionado `get_keywords()` base | ✅ |
 | `project.godot` | Adicionados autoloads `EventBus` e `Stats` | ✅ |
+
+### Criados na Fase 3
+| Arquivo | Descrição | Status |
+|---------|-----------|--------|
+| `ui/stats_display.gd` | Painel de stats em tempo real durante batalha | ✅ |
+| `ui/battle_result_screen.gd` | Tela de resultado pós-batalha | ✅ |
+
+### Modificados na Fase 3
+| Arquivo | Mudança | Status |
+|---------|---------|--------|
+| `ui/rune_ui.gd` | Keywords exibidas no tooltip | ✅ |
+| `logic/game_manager.gd` | Integração com BattleResultScreen | ✅ |
+| `main_controller.gd` | Cria/destrói StatsDisplay por fase | ✅ |
+| `logic/reader.gd` | Agrega keywords_triggered no evento | ✅ |
+| `scenes/main.tscn` | Grupo "ui_layer" adicionado | ✅ |
+| `autoloads/statistics_manager.gd` | Métodos get_battle/run/history_stats() | ✅ |
 
 ### Payloads com Keywords (35 arquivos)
 | Arquivo | Keywords |
