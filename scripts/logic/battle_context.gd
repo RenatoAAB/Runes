@@ -52,7 +52,12 @@ func record_effect_result(effect: RuneEffect, success: bool, score_delta: int, t
 
 
 func add_score(amount: int, source: RuneInstance) -> void:
-	score_event.emit(amount, source)
+	# Apply slot multiplier if there's a current slot
+	var final_amount = amount
+	if current_slot:
+		var multiplier = current_slot.get_multiplier()
+		final_amount = int(amount * multiplier)
+	score_event.emit(final_amount, source)
 
 
 func multiply_global_score(factor: float) -> void:
@@ -88,3 +93,58 @@ func clear_effects_tracking() -> void:
 	effects_this_activation.clear()
 	current_slot = null
 	current_rune = null
+
+
+# --- Economy Methods ---
+
+## Add money (emits EconomyEvent through EventBus)
+func add_money(amount: int, source: RuneInstance = null) -> void:
+	if not event_bus:
+		var root = Engine.get_main_loop().root if Engine.get_main_loop() else null
+		if root:
+			event_bus = root.get_node_or_null("EventBus")
+	
+	if event_bus:
+		var root = Engine.get_main_loop().root if Engine.get_main_loop() else null
+		var stats = root.get_node_or_null("Stats") if root else null
+		if stats:
+			var balance = stats.get_money()
+			var rune_id: StringName = source.data.id if source and source.data else &"unknown"
+			var economy_event = EconomyEvent.create_rune_income(rune_id, amount, balance)
+			event_bus.emit(economy_event)
+
+
+## Remove money (returns true if successful, false if not enough)
+func remove_money(amount: int, source: RuneInstance = null) -> bool:
+	if not event_bus:
+		var root = Engine.get_main_loop().root if Engine.get_main_loop() else null
+		if root:
+			event_bus = root.get_node_or_null("EventBus")
+	
+	if event_bus:
+		var root = Engine.get_main_loop().root if Engine.get_main_loop() else null
+		var stats = root.get_node_or_null("Stats") if root else null
+		if stats:
+			var balance = stats.get_money()
+			if balance < amount:
+				return false
+			var rune_id: StringName = source.data.id if source and source.data else &"cost"
+			var economy_event = EconomyEvent.new()
+			economy_event.transaction_type = EconomyEvent.TransactionType.COST
+			economy_event.source = rune_id
+			economy_event.amount = -amount
+			economy_event.balance_before = balance
+			economy_event.balance_after = balance - amount
+			event_bus.emit(economy_event)
+			return true
+	return false
+
+
+## Get current money balance
+func get_money() -> int:
+	var root = Engine.get_main_loop().root if Engine.get_main_loop() else null
+	if root:
+		var stats_node = root.get_node_or_null("Stats")
+		if stats_node and stats_node.has_method("get_money"):
+			return stats_node.get_money()
+	return 0

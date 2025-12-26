@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1_slot"]
+
+[resource]
+script = ExtResource("1_slot")
+id = "amplifier"
+slot_name = "Amplifier Slot"
+rarity = 1
+description = "Amplifies the score of runes placed here."
+base_multiplier = 1.5
+can_upgrade_multiplier = true
+multiplier_per_upgrade = 0.5
+max_upgrade_level = 3
+trigger_count = 1
+preserves_charges = false
+protects_fragile = false
+money_on_activation = 0
+money_on_round_end = 0
+is_broken = false
+is_void = false

@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://bcn1e8j0fr1u7" path="res://scripts/ui/choice_area.gd" id="22_og1vs"]
 [ext_resource type="Script" uid="uid://bnyk1gjrs36en" path="res://scripts/ui/upgrade_area.gd" id="23_2wyq8"]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "choice_area", "upgrade_area", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "money_label", "choice_area", "upgrade_area", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
 grid_manager = NodePath("Managers/GridManager")
@@ -23,6 +23,7 @@ grid_container = NodePath("UI/GameUI/GridContainer")
 inventory_container = NodePath("UI/GameUI/InventoryContainer")
 score_label = NodePath("UI/GameUI/ScoreLabel")
 level_label = NodePath("UI/GameUI/LevelLabel")
+money_label = NodePath("UI/GameUI/MoneyLabel")
 choice_area = NodePath("UI/GameUI/ChoiceArea")
 upgrade_area = NodePath("UI/GameUI/UpgradeArea")
 slot_scene = ExtResource("5_ya4ey")
@@ -209,6 +210,14 @@ offset_top = 234.0
 offset_right = 303.0
 offset_bottom = 257.0
 text = "Level"
+
+[node name="MoneyLabel" type="Label" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 96.0
+offset_top = 5.0
+offset_right = 156.0
+offset_bottom = 28.0
+text = "$0"
 
 [node name="ChoiceLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0

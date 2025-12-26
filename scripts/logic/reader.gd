@@ -97,11 +97,27 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		return
 	
 	if rune.can_activate():
+		# Set context before activation so slot multiplier can be applied
+		battle_context.set_current_context(slot, rune)
+		
 		# Capture state before activation
 		var activations_before = rune.current_activations
 		
-		# Execute the activation
-		rune.on_activate(battle_context, slot)
+		# Check if slot preserves charges
+		var should_preserve = slot.preserves_charges()
+		
+		# Get trigger count from slot (for Repeater slots)
+		var trigger_count = slot.get_trigger_count()
+		
+		# Execute the activation (potentially multiple times)
+		for i in range(trigger_count):
+			rune.on_activate(battle_context, slot)
+			# Execute slot's on-activation effects
+			slot.on_rune_activation(battle_context)
+		
+		# Restore activation count if slot preserves charges
+		if should_preserve:
+			rune.current_activations = activations_before
 		
 		# Emit the slot read event with all details
 		_emit_slot_read_event(coord, slot, rune, score_before, activations_before)
@@ -119,7 +135,7 @@ func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, 
 	event.rune_tier = rune.data.tier
 	event.score_before = score_before
 	event.score_after = total_score
-	event.slot_multiplier = 1.0  # TODO: Get from slot when slot multipliers are implemented
+	event.slot_multiplier = slot.get_multiplier()
 	event.activations_used = rune.current_activations - activations_before
 	event.activations_remaining = rune.get_max_activations() - rune.current_activations
 	event.was_empty = false

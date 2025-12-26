@@ -21,6 +21,10 @@
 | 3.2 Persistência JSON | ✅ COMPLETO | `statistics_manager.gd` - save/load em user://statistics.json |
 | 3.3 UI de Estatísticas | ✅ COMPLETO | `ui/stats_display.gd`, `ui/battle_result_screen.gd` |
 | Configuração Autoloads | ✅ COMPLETO | `project.godot` - EventBus e Stats registrados |
+| 4.1 Sistema de Economia | ✅ COMPLETO | `payload_add_money.gd`, `condition_money.gd`, `game_manager.gd` bônus de vitória |
+| 4.2 Slots como Entidades | ✅ COMPLETO | `slot_data.gd`, `slot_instance.gd`, 6 tipos de slot, refatoração de grid_slot.gd |
+| 4.3 Controles do Reader | ✅ COMPLETO | `payload_skip_next.gd` (teleport/reset já existiam) |
+| 4.4 Sistema de Painéis | ❌ NÃO INICIADO | Multi-grid com multiplicadores globais |
 
 ---
 
@@ -32,7 +36,7 @@
 3. **Estatísticas Onipresentes:** Toda ação é rastreável em três níveis: Batalha → Run → Histórico.
 4. **Data-Driven:** Comportamentos definidos em Resources, não em código.
 
-### Estado Atual (75% implementado)
+### Estado Atual (85% implementado)
 - ✅ Core Loop (Reader, Grid, Slots, Runas)
 - ✅ Sistema de Efeitos (Condition/Target/Payload)
 - ✅ UI básica (Drag-drop, Tooltips, Highlights)
@@ -40,10 +44,11 @@
 - ✅ Keywords (50+ keywords em 5 categorias, integradas a todos efeitos)
 - ✅ Persistência (StatisticsManager com JSON)
 - ✅ UI de estatísticas (StatsDisplay, BattleResultScreen, keywords em tooltips)
-- ⚠️ Parcial: Slots (faltam multiplicadores locais)
-- ⚠️ Parcial: Reader (falta skip, reverse, teleport)
+- ✅ Slots como entidades (SlotData/SlotInstance, 6 tipos, multiplicadores, triggers)
+- ✅ Economia básica (dinheiro, bônus de vitória, payloads de economia)
+- ✅ Controles do Reader (skip, teleport, reset)
 - ❌ Faltando: Painéis (multi-grid)
-- ❌ Faltando: Economia (dinheiro, loja)
+- ❌ Faltando: Loja (shop phase)
 
 ---
 
@@ -238,42 +243,52 @@ var history_stats: Dictionary = {
 
 ## FASE 4: Implementar Features Faltantes do GDD
 **Prioridade:** ALTA  
-**Status:** ❌ NÃO INICIADO  
+**Status:** ⚠️ EM PROGRESSO (4.1-4.3 completos)  
 **Estimativa:** 3-4 sessões de trabalho
 
-### 4.1 Sistema de Economia ⚠️ PARCIAL
+### 4.1 Sistema de Economia ✅ COMPLETO
 > Dinheiro, custos e recompensas.
 
 **Arquivos criados:**
-- [x] `scripts/core/events/economy_event.gd` - Evento de transação já existe
+- [x] `scripts/core/events/economy_event.gd` - Evento de transação
+- [x] `scripts/data/effects/payloads/payload_add_money.gd` - Adiciona dinheiro
+- [x] `scripts/data/effects/payloads/payload_score_for_money.gd` - Converte score↔dinheiro
+- [x] `scripts/data/effects/conditions/condition_money.gd` - Condição baseada em saldo
 
-**Arquivos a criar:**
-- [ ] `scripts/data/effects/payloads/payload_add_money.gd`
-- [ ] `scripts/data/effects/payloads/payload_remove_money.gd`
-- [ ] `scripts/data/effects/conditions/condition_money.gd`
+**Arquivos modificados:**
+- [x] `scripts/autoloads/statistics_manager.gd` - Gerencia `run_stats.money` via EconomyEvent
+- [x] `scripts/logic/battle_context.gd` - API de economia: `add_money()`, `remove_money()`, `get_money()`
+- [x] `scripts/logic/game_manager.gd` - Bônus de vitória em `_handle_win()`
+- [x] `scripts/logic/slot_instance.gd` - Slots podem gerar dinheiro via `money_on_activation`
 
-**Arquivos a modificar:**
-- [ ] `scripts/autoloads/statistics_manager.gd` - Gerenciar `run_stats.money`
-- [ ] `scripts/logic/game_manager.gd` - Integrar economia às fases
+### 4.2 Sistema de Slots como Entidades ✅ COMPLETO
+> Slots tratados como entidades de primeira classe, similar às runas.
 
-### 4.2 Multiplicadores de Slot
-> Slots aplicam multiplicadores ao score da runa.
+**Arquivos criados:**
+- [x] `scripts/data/slot_data.gd` - Resource definindo tipo de slot
+- [x] `scripts/logic/slot_instance.gd` - Instância runtime com estados e upgrades
+- [x] `resources/slots/slot_default.tres` - Slot padrão (1x)
+- [x] `resources/slots/slot_amplifier.tres` - Multiplicador 2x
+- [x] `resources/slots/slot_repeater.tres` - Dispara runa 2 vezes
+- [x] `resources/slots/slot_eternal.tres` - Preserva cargas
+- [x] `resources/slots/slot_merchant.tres` - Gera dinheiro por ativação
+- [x] `resources/slots/slot_broken.tres` - Multiplicador 0.5x
 
-**Arquivo a modificar:**
-- [ ] `scripts/logic/grid_slot.gd`
+**Arquivos modificados:**
+- [x] `scripts/logic/grid_slot.gd` - Refatorado para usar SlotInstance
+- [x] `scripts/ui/slot_ui.gd` - Drag & drop de slots, tooltips melhoradas
+- [x] `scripts/logic/reader.gd` - Usa slot.preserves_charges(), slot.get_trigger_count()
 
-### 4.3 Controles Avançados do Reader
-> Skip, reverse, teleport.
+### 4.3 Controles Avançados do Reader ✅ COMPLETO
+> Skip, teleport (reverse não necessário).
 
-**Arquivos a criar:**
-- [ ] `scripts/data/effects/payloads/payload_skip_slot.gd`
-- [ ] `scripts/data/effects/payloads/payload_reverse_reader.gd`
-- [ ] `scripts/data/effects/payloads/payload_teleport_reader.gd`
+**Arquivos criados:**
+- [x] `scripts/data/effects/payloads/payload_skip_next.gd` - Pula X slots à frente
 
-**Arquivo a modificar:**
-- [ ] `scripts/logic/reader.gd` - Adicionar suporte a direção e skip
+**Nota:** Teleport já existe via `payload_teleport_reader.gd` e reset via `payload_reset_reader.gd`.
+Reverse não é necessário pois o sistema de teleport cobre esse caso.
 
-### 4.4 Sistema de Painéis (Multi-Grid)
+### 4.4 Sistema de Painéis (Multi-Grid) ❌ NÃO INICIADO
 > Múltiplos grids com multiplicadores globais.
 
 **Arquivos a criar:**

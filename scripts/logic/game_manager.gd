@@ -138,8 +138,30 @@ func _on_result_continue(was_victory: bool) -> void:
 
 func _handle_win() -> void:
 	print("Victory!")
+	
+	# Grant money reward for winning
+	_grant_victory_money()
+	
 	# Trigger rune selection first, then upgrade
 	_trigger_rune_selection()
+
+
+func _grant_victory_money() -> void:
+	# Base reward + bonus per level
+	var base_reward = 3
+	var level_bonus = current_level
+	var total_reward = base_reward + level_bonus
+	
+	# Emit economy event
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		var stats = get_node_or_null("/root/Stats")
+		var balance = stats.get_money() if stats else 0
+		var event = EconomyEvent.create_round_bonus(current_level, total_reward, balance)
+		event_bus.emit(event)
+	
+	print("Granted $%d for winning level %d" % [total_reward, current_level])
+
 
 func _handle_loss() -> void:
 	print("Defeat!")

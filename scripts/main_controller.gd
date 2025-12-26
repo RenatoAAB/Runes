@@ -15,6 +15,7 @@ extends Node
 @export var inventory_container: Control # HBoxContainer or GridContainer
 @export var score_label: Label
 @export var level_label: Label
+@export var money_label: Label
 @export var choice_area: ChoiceArea
 @export var upgrade_area: UpgradeArea
 
@@ -72,6 +73,14 @@ func _ready() -> void:
 		# Connect the input slot drop signal so MainController can handle drops onto it
 		if upgrade_area.input_slot:
 			upgrade_area.input_slot.rune_dropped.connect(_on_rune_dropped)
+	
+	# Connect to EventBus for economy updates
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus and event_bus.has_signal("economy_transaction"):
+		event_bus.economy_transaction.connect(_on_economy_changed)
+	
+	# Initialize money display
+	_update_money_display()
 
 	# Configure TooltipManager if it exists
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
@@ -264,6 +273,18 @@ func _on_reader_step_done(coord: Vector2i) -> void:
 func _on_score_updated(new_total: int) -> void:
 	if score_label:
 		score_label.text = "Score: %d" % new_total
+
+
+func _on_economy_changed(_event) -> void:
+	_update_money_display()
+
+
+func _update_money_display() -> void:
+	if money_label:
+		var stats = get_node_or_null("/root/Stats")
+		var money = stats.get_money() if stats else 0
+		money_label.text = "$%d" % money
+
 
 func _on_level_started(level: int, target: int) -> void:
 	if level_label:

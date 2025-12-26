@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1_slot"]
+
+[resource]
+script = ExtResource("1_slot")
+id = "eternal"
+slot_name = "Eternal Slot"
+rarity = 3
+description = "Runes placed here never consume charges."
+base_multiplier = 1.0
+can_upgrade_multiplier = true
+multiplier_per_upgrade = 0.25
+max_upgrade_level = 2
+trigger_count = 1
+preserves_charges = true
+protects_fragile = true
+money_on_activation = 0
+money_on_round_end = 0
+is_broken = false
+is_void = false

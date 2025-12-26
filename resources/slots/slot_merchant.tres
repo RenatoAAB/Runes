@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1_slot"]
+
+[resource]
+script = ExtResource("1_slot")
+id = "merchant"
+slot_name = "Merchant Slot"
+rarity = 1
+description = "Generates money when runes activate here."
+base_multiplier = 1.0
+can_upgrade_multiplier = false
+multiplier_per_upgrade = 0.0
+max_upgrade_level = 0
+trigger_count = 1
+preserves_charges = false
+protects_fragile = false
+money_on_activation = 1
+money_on_round_end = 0
+is_broken = false
+is_void = false
