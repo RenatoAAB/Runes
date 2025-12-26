@@ -116,7 +116,7 @@ Grids modulares que contêm os slots. O Score final de um painel alimenta o pró
 *   **Juice:** Shake, Partículas, Pitch de som ascendente no combo.
 
 ## 6. Interface (UI/UX)
-*   **Destaque Matemático:** Tooltip mostra a equação: `(Base + Buff) x Slot x Painel = Total`.
+*   **Destaque Matemático:** Tooltip mostra a equação: `Soma[(Base_i + Buff_i) x Slot_i] x Painel + outros_paineis = Total`.
 *   **Visualização:** Barra de progresso vertical para o Target Score.
 
 ## 7. Desenvolvimento Técnico (Godot)
