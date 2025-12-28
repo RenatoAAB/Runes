@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=13 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -9,19 +9,27 @@
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
+[ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
+[ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "score_label", "level_label", "money_label", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "score_label", "level_label", "money_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
 grid_manager = NodePath("Managers/GridManager")
 inventory_manager = NodePath("Managers/InventoryManager")
 reader = NodePath("Managers/Reader")
 grid_container = NodePath("UI/GameUI/GridContainer")
-inventory_container = NodePath("UI/GameUI/InventoryContainer")
+inventory_container = NodePath("UI/GameUI/RunesInventoryContainer")
+other_inventory_container = NodePath("UI/GameUI/OtherInventoryContainer")
 score_label = NodePath("UI/GameUI/ScoreLabel")
 level_label = NodePath("UI/GameUI/LevelLabel")
 money_label = NodePath("UI/GameUI/MoneyLabel")
+enter_shop_button = NodePath("UI/GameUI/EnterShopButton")
+battle_button = NodePath("UI/GameUI/BattleButton")
+previous_panel_button = NodePath("UI/GameUI/PreviousPanel")
+next_panel_button = NodePath("UI/GameUI/NextPanel")
+shop_ui = NodePath("UI/ShopUI")
 slot_scene = ExtResource("5_ya4ey")
 grid_highlighter = NodePath("UI/GridHighlighter")
 default_tooltip_label_settings = ExtResource("3_dp3eg")
@@ -58,9 +66,9 @@ offset_bottom = 40.0
 
 [node name="GridContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 157.0
+offset_left = 90.0
 offset_top = 26.0
-offset_right = 353.0
+offset_right = 286.0
 offset_bottom = 222.0
 columns = 5
 
@@ -139,48 +147,80 @@ layout_mode = 2
 [node name="Slot25" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="InventoryContainer" type="GridContainer" parent="UI/GameUI"]
+[node name="RunesInventoryContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 384.0
-offset_top = 25.0
-offset_right = 460.0
-offset_bottom = 261.0
-columns = 2
+offset_left = 310.0
+offset_top = 26.0
+offset_right = 466.0
+offset_bottom = 151.0
+columns = 4
 
-[node name="Slot" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot2" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot2" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot3" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot3" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot4" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot4" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot5" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot5" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot6" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot6" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot7" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot7" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot8" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot8" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot9" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot9" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot10" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot10" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot11" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot11" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot12" parent="UI/GameUI/InventoryContainer" instance=ExtResource("5_ya4ey")]
+[node name="Slot12" parent="UI/GameUI/RunesInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="OtherInventoryContainer" type="GridContainer" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 310.0
+offset_top = 165.0
+offset_right = 466.0
+offset_bottom = 245.0
+columns = 4
+
+[node name="Slot" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot4" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot5" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot6" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot7" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot8" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
 [node name="BattleButton" type="Button" parent="UI/GameUI"]
@@ -191,29 +231,232 @@ offset_right = 74.0
 offset_bottom = 260.0
 text = "Battle!"
 
+[node name="EnterShopButton" type="Button" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 14.0
+offset_top = 42.0
+offset_right = 68.0
+offset_bottom = 96.0
+text = "Enter
+shop"
+
+[node name="PreviousPanel" type="Button" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 68.0
+offset_top = 111.0
+offset_right = 86.0
+offset_bottom = 142.0
+text = "<"
+
+[node name="NextPanel" type="Button" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 288.0
+offset_top = 111.0
+offset_right = 306.0
+offset_bottom = 142.0
+text = ">"
+
 [node name="ScoreLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 115.0
+offset_left = 109.0
 offset_top = 234.0
-offset_right = 163.0
-offset_bottom = 257.0
+offset_right = 157.0
+offset_bottom = 283.0
 text = "Score:"
 
 [node name="LevelLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 255.0
-offset_top = 234.0
-offset_right = 303.0
-offset_bottom = 257.0
-text = "Level"
+offset_left = 22.0
+offset_top = 174.0
+offset_right = 70.0
+offset_bottom = 223.0
+text = "Level
+"
 
 [node name="MoneyLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 96.0
-offset_top = 5.0
-offset_right = 156.0
-offset_bottom = 28.0
+offset_left = 16.0
+offset_top = 14.0
+offset_right = 76.0
+offset_bottom = 37.0
 text = "$0"
+
+[node name="ShopUI" type="Control" parent="UI"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("11_shop")
+
+[node name="EnterPanel" type="Button" parent="UI/ShopUI"]
+layout_mode = 0
+offset_left = 234.0
+offset_top = 117.0
+offset_right = 304.0
+offset_bottom = 171.0
+text = "Manage
+ Runes"
+
+[node name="PurchasableRunes" type="GridContainer" parent="UI/ShopUI"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 92.0
+offset_right = 148.0
+offset_bottom = 128.0
+columns = 4
+
+[node name="Slot" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="GetOneOfThree" type="Control" parent="UI/ShopUI"]
+anchors_preset = 0
+offset_left = -276.0
+offset_top = -4.0
+offset_right = -236.0
+offset_bottom = 36.0
+
+[node name="AvailableRunes" type="GridContainer" parent="UI/ShopUI/GetOneOfThree"]
+visible = false
+layout_mode = 0
+offset_left = 310.0
+offset_top = 42.0
+offset_right = 500.0
+offset_bottom = 96.0
+columns = 4
+
+[node name="Slot" parent="UI/ShopUI/GetOneOfThree/AvailableRunes" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/ShopUI/GetOneOfThree/AvailableRunes" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/ShopUI/GetOneOfThree/AvailableRunes" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="BuyRunePack" type="Button" parent="UI/ShopUI/GetOneOfThree"]
+layout_mode = 0
+offset_left = 335.0
+offset_top = 31.0
+offset_right = 408.0
+offset_bottom = 85.0
+text = "Random"
+
+[node name="PurchasableRelics" type="GridContainer" parent="UI/ShopUI"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 217.0
+offset_right = 149.0
+offset_bottom = 253.0
+columns = 4
+
+[node name="Slot" parent="UI/ShopUI/PurchasableRelics" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/ShopUI/PurchasableRelics" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="PurchasableSlots" type="GridContainer" parent="UI/ShopUI"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 153.0
+offset_right = 146.0
+offset_bottom = 189.0
+columns = 4
+
+[node name="Slot" parent="UI/ShopUI/PurchasableSlots" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/ShopUI/PurchasableSlots" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/ShopUI/PurchasableSlots" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Upgrade" type="Control" parent="UI/ShopUI"]
+anchors_preset = 0
+offset_left = -26.0
+offset_top = 102.0
+offset_right = 14.0
+offset_bottom = 142.0
+
+[node name="RunesToUpgrade" type="GridContainer" parent="UI/ShopUI/Upgrade"]
+layout_mode = 0
+offset_left = 189.0
+offset_top = 92.0
+offset_right = 305.0
+offset_bottom = 128.0
+columns = 4
+
+[node name="Slot" parent="UI/ShopUI/Upgrade/RunesToUpgrade" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/ShopUI/Upgrade/RunesToUpgrade" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="UpgradedRunePreview" type="GridContainer" parent="UI/ShopUI/Upgrade"]
+layout_mode = 0
+offset_left = 287.0
+offset_top = 92.0
+offset_right = 363.0
+offset_bottom = 128.0
+columns = 4
+
+[node name="Slot" parent="UI/ShopUI/Upgrade/UpgradedRunePreview" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/ShopUI/Upgrade"]
+layout_mode = 0
+offset_left = 238.0
+offset_top = 133.0
+offset_right = 278.0
+offset_bottom = 156.0
+text = "Cost"
+
+[node name="Reroll" type="Button" parent="UI/ShopUI"]
+layout_mode = 0
+offset_left = 152.0
+offset_top = 134.0
+offset_right = 232.0
+offset_bottom = 188.0
+text = "Reroll
+$2"
+
+[node name="SellArea" type="Control" parent="UI/ShopUI"]
+anchors_preset = 0
+offset_left = 175.0
+offset_top = 30.0
+offset_right = 295.0
+offset_bottom = 80.0
+script = ExtResource("12_sell")
+
+[node name="Panel" type="Panel" parent="UI/ShopUI/SellArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Label" type="Label" parent="UI/ShopUI/SellArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+text = "Drag here
+to sell"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="GridHighlighter" type="Node" parent="UI" node_paths=PackedStringArray("grid_manager") groups=["grid_highlighter"]]
 script = ExtResource("6_eb6dy")

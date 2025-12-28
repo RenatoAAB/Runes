@@ -120,6 +120,63 @@ func has_free_pick() -> bool:
 	return free_rune_picks > 0
 
 
+# --- Rune Pack System ---
+var _rune_pack_options: Array[RuneData] = []  # Current rune pack offerings
+
+
+## Generate a pack of 3 random runes for the player to choose from
+func generate_rune_pack() -> Array[RuneData]:
+	_rune_pack_options.clear()
+	
+	var level_pool = _get_level_filtered_pool(current_level)
+	if level_pool.is_empty():
+		return _rune_pack_options
+	
+	for i in range(3):
+		var rune_data = _pick_weighted_rune_from_pool(level_pool, current_level)
+		if rune_data:
+			_rune_pack_options.append(rune_data)
+	
+	return _rune_pack_options
+
+
+## Buy a rune pack (costs money, enables picking one rune)
+func buy_rune_pack() -> bool:
+	var cost = ShopConfig.RUNE_PACK_COST if "RUNE_PACK_COST" in ShopConfig else ShopConfig.REROLL_COST
+	
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Not enough money for rune pack")
+		return false
+	
+	_spend_money(cost, "rune_pack")
+	transaction_completed.emit(true, "Rune pack opened for $%d" % cost)
+	return true
+
+
+## Pick one rune from the current rune pack
+func pick_from_rune_pack(index: int) -> RuneInstance:
+	if index < 0 or index >= _rune_pack_options.size():
+		transaction_completed.emit(false, "Invalid rune pack selection")
+		return null
+	
+	var rune_data = _rune_pack_options[index]
+	
+	# Use free pick if available
+	if free_rune_picks > 0:
+		free_rune_picks -= 1
+		free_pick_available.emit(free_rune_picks)
+	
+	# Clear pack options
+	_rune_pack_options.clear()
+	
+	# Create instance
+	var rune_instance = RuneInstance.new(rune_data)
+	transaction_completed.emit(true, "Picked %s from rune pack!" % rune_data.rune_name)
+	
+	return rune_instance
+
+
 func _generate_rune_inventory(player_level: int) -> void:
 	available_runes.clear()
 	
@@ -150,18 +207,15 @@ func _get_level_filtered_pool(player_level: int) -> Array[RuneData]:
 
 ## Determine maximum rarity available at a given level
 func _get_max_rarity_for_level(player_level: int) -> GameEnums.Rarity:
-	# Level 1: Only Common
-	# Level 2-3: Up to Uncommon
-	# Level 4-5: Up to Rare
-	# Level 6-7: Up to Epic
-	# Level 8+: All including Legendary
-	if player_level <= 1:
-		return GameEnums.Rarity.COMMON
-	elif player_level <= 3:
+	# Level 1-2: Up to Uncommon (uncommon available from start)
+	# Level 3-4: Up to Rare
+	# Level 5-6: Up to Epic
+	# Level 7+: All including Legendary
+	if player_level <= 2:
 		return GameEnums.Rarity.UNCOMMON
-	elif player_level <= 5:
+	elif player_level <= 4:
 		return GameEnums.Rarity.RARE
-	elif player_level <= 7:
+	elif player_level <= 6:
 		return GameEnums.Rarity.EPIC
 	else:
 		return GameEnums.Rarity.LEGENDARY
@@ -401,6 +455,22 @@ func perform_upgrade() -> RuneInstance:
 		transaction_completed.emit(false, "Cannot upgrade - runes don't match or no upgrade available")
 		return null
 	
+	# Check if player can afford the upgrade
+	var cost = ShopConfig.UPGRADE_COST
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Not enough money to upgrade")
+		return null
+	
+	# Charge the upgrade cost
+	_spend_money(cost, "upgrade_rune")
+	
+	# Remove the consumed runes from inventory
+	var inventory_manager = get_node_or_null("/root/Main/Managers/InventoryManager")
+	if inventory_manager:
+		inventory_manager.remove_rune(_upgrade_slot_1)
+		inventory_manager.remove_rune(_upgrade_slot_2)
+	
 	var upgraded_data = _upgrade_slot_1.data.upgrades_to
 	var upgraded_rune = RuneInstance.new(upgraded_data)
 	
@@ -409,7 +479,7 @@ func perform_upgrade() -> RuneInstance:
 	_upgrade_slot_1 = null
 	_upgrade_slot_2 = null
 	
-	transaction_completed.emit(true, "Upgraded 2x %s into %s!" % [consumed_name, upgraded_data.rune_name])
+	transaction_completed.emit(true, "Upgraded 2x %s into %s for $%d!" % [consumed_name, upgraded_data.rune_name, cost])
 	
 	return upgraded_rune
 

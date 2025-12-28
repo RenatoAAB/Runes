@@ -7,7 +7,6 @@ signal game_lost(final_level: int)
 signal phase_changed(new_phase: GameEnums.GamePhase)
 signal rune_selection_requested(options: Array[RuneData])
 signal upgrade_requested(runes: Array[RuneInstance])
-signal shop_phase_started  # New: signals that shop should open
 signal free_pick_granted(count: int)  # Signals free rune picks available
 
 ## Alias for backwards compatibility - use GameEnums.GamePhase directly
@@ -150,20 +149,13 @@ func _handle_win() -> void:
 	# Grant money reward for winning
 	_grant_victory_money()
 	
-	# Go to shop phase (replaces separate reward/upgrade phases)
-	_trigger_shop_phase()
-
-
-func _trigger_shop_phase() -> void:
-	current_phase = GamePhase.SHOP
-	phase_changed.emit(current_phase)
-	shop_phase_started.emit()
-	print("Shop Phase Started")
+	# Go to planning phase (shop is available during planning)
+	_finish_level_transition()
 
 
 func _grant_victory_money() -> void:
-	# Base reward + bonus per level
-	var base_reward = 3
+	# Base reward + bonus per level (level 1 gives 5, level 2 gives 6, etc.)
+	var base_reward = 4
 	var level_bonus = current_level
 	var total_reward = base_reward + level_bonus
 	
@@ -191,7 +183,7 @@ func _calculate_target_score(level: int) -> int:
 
 func _setup_initial_inventory() -> void:
 	# Clear inventory
-	inventory_manager.runes.clear()
+	inventory_manager.clear_all()
 	
 	# Add fixed starting runes
 	if fixed_starting_runes.is_empty():
@@ -214,8 +206,8 @@ func _setup_initial_inventory() -> void:
 	# Grant first free rune pick
 	free_pick_granted.emit(1)
 	
-	# Go to shop for initial purchases
-	_trigger_shop_phase()
+	# Start the first level (shop is available during planning)
+	start_level()
 
 
 func _grant_starting_money() -> void:
@@ -302,16 +294,7 @@ func _finish_level_transition() -> void:
 	start_level()
 
 
-## Called when player finishes shopping and wants to proceed to battle planning
-func finish_shop_phase() -> void:
-	if current_phase != GamePhase.SHOP:
-		print("Error: finish_shop_phase called but phase is %s" % GamePhase.keys()[current_phase])
-		return
-	
-	# Just go to PLANNING phase - level was already set when shop started
-	current_phase = GamePhase.PLANNING
-	phase_changed.emit(current_phase)
-	print("Exiting shop, entering planning phase for level %d" % current_level)
+
 
 
 func _generate_rune_options(count: int = 3) -> Array[RuneData]:

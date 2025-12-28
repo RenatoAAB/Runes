@@ -234,3 +234,134 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	# Handle slot type drop
 	elif data.has("slot_instance"):
 		slot_type_dropped.emit(data["slot_instance"], self, source_slot_ui)
+
+
+# --- Shop Mode Support ---
+
+var _shop_mode: bool = false
+var _shop_price_text: String = ""  # Price text for tooltip display
+var _price_label: Label = null
+var _placeholder_label: Label = null
+
+## Get the current price text for tooltip display
+func get_shop_price_text() -> String:
+	return _shop_price_text if _shop_mode else ""
+
+## Enable/disable shop mode for this slot (shows price label)
+func set_shop_mode(enabled: bool, price_text: String = "") -> void:
+	_shop_mode = enabled
+	_shop_price_text = price_text
+	
+	if enabled:
+		if not _price_label:
+			_price_label = Label.new()
+			_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			_price_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+			_price_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+			_price_label.add_theme_font_size_override("font_size", 10)
+			add_child(_price_label)
+		
+		_price_label.text = price_text
+		_price_label.visible = true
+		
+		# Color based on price text
+		if price_text == "FREE!":
+			_price_label.add_theme_color_override("font_color", Color.LIME)
+		elif price_text.begins_with("$"):
+			_price_label.add_theme_color_override("font_color", Color.GOLD)
+		else:
+			_price_label.add_theme_color_override("font_color", Color.GRAY)
+	else:
+		if _price_label:
+			_price_label.visible = false
+
+
+## Display a slot type (SlotData) instead of a rune
+func update_slot_data_display(slot_data: SlotData) -> void:
+	# Clear any rune display
+	if rune_ui:
+		rune_ui.queue_free()
+		rune_ui = null
+	
+	# Update background color based on slot type
+	var style = StyleBoxFlat.new()
+	style.bg_color = slot_data.color_tint if slot_data.color_tint else Color(0.2, 0.2, 0.2)
+	style.set_border_width_all(2)
+	style.border_color = slot_data.color_tint.lightened(0.3) if slot_data.color_tint else Color.GRAY
+	style.set_corner_radius_all(4)
+	add_theme_stylebox_override("panel", style)
+	
+	# Show multiplier badge
+	if not slot_type_label:
+		slot_type_label = Label.new()
+		slot_type_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		slot_type_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		slot_type_label.set_anchors_preset(Control.PRESET_CENTER)
+		slot_type_label.add_theme_font_size_override("font_size", 14)
+		add_child(slot_type_label)
+	
+	# Build display text
+	var display_text = ""
+	if slot_data.base_multiplier != 1.0:
+		display_text = "x%.1f" % slot_data.base_multiplier
+	elif slot_data.trigger_count > 1:
+		display_text = "%dx" % slot_data.trigger_count
+	elif slot_data.preserves_charges:
+		display_text = "∞"
+	else:
+		display_text = slot_data.slot_name.substr(0, 3).to_upper()
+	
+	slot_type_label.text = display_text
+	slot_type_label.visible = true
+
+
+## Show placeholder display (for relics, etc.)
+func set_placeholder_display(text: String, bg_color: Color = Color(0.2, 0.2, 0.2)) -> void:
+	# Clear any rune display
+	if rune_ui:
+		rune_ui.queue_free()
+		rune_ui = null
+	
+	# Update background
+	var style = StyleBoxFlat.new()
+	style.bg_color = bg_color
+	style.set_border_width_all(2)
+	style.border_color = bg_color.lightened(0.3)
+	style.set_corner_radius_all(4)
+	add_theme_stylebox_override("panel", style)
+	
+	# Show placeholder text
+	if not _placeholder_label:
+		_placeholder_label = Label.new()
+		_placeholder_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		_placeholder_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		_placeholder_label.set_anchors_preset(Control.PRESET_CENTER)
+		_placeholder_label.add_theme_font_size_override("font_size", 24)
+		add_child(_placeholder_label)
+	
+	_placeholder_label.text = text
+	_placeholder_label.visible = true
+
+
+## Clear all display (rune, slot type, placeholder)
+func clear_display() -> void:
+	if rune_ui:
+		rune_ui.queue_free()
+		rune_ui = null
+	
+	if slot_type_label:
+		slot_type_label.visible = false
+	
+	if _placeholder_label:
+		_placeholder_label.visible = false
+	
+	if _price_label:
+		_price_label.visible = false
+	
+	# Reset to default style
+	var style = StyleBoxFlat.new()
+	style.bg_color = Color(0.2, 0.2, 0.2)
+	style.set_border_width_all(2)
+	style.border_color = Color(0.5, 0.5, 0.5)
+	style.set_corner_radius_all(4)
+	add_theme_stylebox_override("panel", style)

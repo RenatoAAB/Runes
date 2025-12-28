@@ -39,10 +39,21 @@ func _on_mouse_entered() -> void:
 	if parent and "inventory_index" in parent and parent.inventory_index != -1:
 		is_in_inventory = true
 	
+	# Check if parent has shop price info
+	var shop_price_text = ""
+	if parent and parent.has_method("get_shop_price_text"):
+		shop_price_text = parent.get_shop_price_text()
+	
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
 		var type_str = GameEnums.Element.keys()[rune_instance.data.element]
 		var activations = rune_instance.get_max_activations()
-		var info = "[b]%s[/b]\n%s | Activations: %d\nTier: %d" % [rune_instance.data.rune_name, type_str, activations, rune_instance.data.tier]
+		
+		# Build header with price in top-right if in shop mode
+		var header = "[b]%s[/b]" % rune_instance.data.rune_name
+		if shop_price_text != "":
+			header = "[b]%s[/b]  [color=gold][b]%s[/b][/color]" % [rune_instance.data.rune_name, shop_price_text]
+		
+		var info = "%s\n%s | Activations: %d\nTier: %d" % [header, type_str, activations, rune_instance.data.tier]
 		
 		# Collect all keywords from all effects
 		var all_keywords: Array[StringName] = []

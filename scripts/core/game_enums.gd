@@ -52,6 +52,5 @@ enum GamePhase {
 	BATTLE,
 	RESOLUTION,
 	REWARD,
-	UPGRADE,
-	SHOP  # Future: shop phase between reward and planning
+	UPGRADE
 }

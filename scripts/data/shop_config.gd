@@ -41,6 +41,8 @@ const SLOT_SELL_PRICES: Dictionary = {
 
 # --- Other Costs ---
 const REROLL_COST: int = 2
+const RUNE_PACK_COST: int = 3  # Cost to open a rune pack (pick 1 of 3)
+const UPGRADE_COST: int = 5  # Cost to upgrade 2 runes into 1
 const PANEL_UNLOCK_COST: int = 25
 const RELIC_BASE_COST: int = 15
 
