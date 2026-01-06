@@ -12,6 +12,7 @@ extends Control
 var _force_left: bool = false
 var _rune_text: String = ""
 var _slot_text: String = ""
+var _item_text: String = ""  # For relics, modifiers, pieces
 
 func _ready() -> void:
 	# Setup simple tooltip UI
@@ -67,10 +68,154 @@ func clear_slot_tooltip() -> void:
 	_slot_text = ""
 	_update_display()
 
+
+## Show tooltip for an ItemUI (relic, modifier, piece)
+func show_item_tooltip(item_ui: ItemUI) -> void:
+	if not item_ui or not item_ui.item_data:
+		return
+	
+	var text = ""
+	
+	match item_ui.item_type:
+		ItemUI.ItemType.RELIC:
+			var relic_data = item_ui.item_data as RelicData
+			text = _build_relic_tooltip(relic_data)
+		
+		ItemUI.ItemType.MODIFIER:
+			var modifier_data = item_ui.item_data as SlotModifierData
+			text = _build_modifier_tooltip(modifier_data)
+		
+		ItemUI.ItemType.PIECE:
+			var piece_data = item_ui.item_data as SlotPieceData
+			text = _build_piece_tooltip(piece_data)
+	
+	_item_text = text
+	_update_display()
+
+
+func hide_item_tooltip() -> void:
+	_item_text = ""
+	_update_display()
+
+
+func _build_relic_tooltip(data: RelicData) -> String:
+	if not data:
+		return ""
+	
+	var text = "[b]%s[/b]" % data.display_name
+	
+	# Rarity
+	var rarity_color = _get_rarity_color_name(data.rarity)
+	text += " [color=%s](%s)[/color]\n" % [rarity_color, _get_rarity_name(data.rarity)]
+	
+	# Description
+	if data.description and not data.description.is_empty():
+		text += "[color=silver]%s[/color]" % data.description
+	
+	return text
+
+
+func _build_modifier_tooltip(data: SlotModifierData) -> String:
+	if not data:
+		return ""
+	
+	var text = "[b]%s[/b]" % data.display_name
+	
+	# Rarity
+	var rarity_color = _get_rarity_color_name(data.rarity)
+	text += " [color=%s](%s)[/color]\n" % [rarity_color, _get_rarity_name(data.rarity)]
+	
+	# Type
+	var type_name = _get_modifier_type_name(data.modifier_type)
+	text += "[color=cyan]%s[/color]\n" % type_name
+	
+	# Description
+	if data.description and not data.description.is_empty():
+		text += "[color=silver]%s[/color]" % data.description
+	else:
+		# Generate description from type
+		text += "[color=silver]%s[/color]" % _get_modifier_auto_description(data)
+	
+	return text
+
+
+func _build_piece_tooltip(data: SlotPieceData) -> String:
+	if not data:
+		return ""
+	
+	var text = "[b]%s[/b]" % data.display_name
+	
+	# Rarity
+	var rarity_color = _get_rarity_color_name(data.rarity)
+	text += " [color=%s](%s)[/color]\n" % [rarity_color, _get_rarity_name(data.rarity)]
+	
+	# Size
+	text += "[color=yellow]%d slots[/color]\n" % data.get_slot_count()
+	
+	# Description
+	if data.description and not data.description.is_empty():
+		text += "[color=silver]%s[/color]" % data.description
+	
+	return text
+
+
+func _get_rarity_name(rarity: GameEnums.Rarity) -> String:
+	match rarity:
+		GameEnums.Rarity.COMMON: return "Common"
+		GameEnums.Rarity.UNCOMMON: return "Uncommon"
+		GameEnums.Rarity.RARE: return "Rare"
+		GameEnums.Rarity.EPIC: return "Epic"
+		GameEnums.Rarity.LEGENDARY: return "Legendary"
+		_: return "Unknown"
+
+
+func _get_rarity_color_name(rarity: GameEnums.Rarity) -> String:
+	match rarity:
+		GameEnums.Rarity.COMMON: return "gray"
+		GameEnums.Rarity.UNCOMMON: return "green"
+		GameEnums.Rarity.RARE: return "blue"
+		GameEnums.Rarity.EPIC: return "purple"
+		GameEnums.Rarity.LEGENDARY: return "orange"
+		_: return "white"
+
+
+func _get_modifier_type_name(type: SlotModifierData.ModifierType) -> String:
+	match type:
+		SlotModifierData.ModifierType.MULTIPLIER: return "Multiplier"
+		SlotModifierData.ModifierType.TRIGGER: return "Trigger"
+		SlotModifierData.ModifierType.ECONOMY: return "Economy"
+		SlotModifierData.ModifierType.PRESERVATION: return "Preservation"
+		SlotModifierData.ModifierType.PROTECTION: return "Protection"
+		SlotModifierData.ModifierType.STATE: return "State"
+		_: return "Unknown"
+
+
+func _get_modifier_auto_description(data: SlotModifierData) -> String:
+	match data.modifier_type:
+		SlotModifierData.ModifierType.MULTIPLIER:
+			return "Adds +%.1fx multiplier to this slot." % data.value
+		SlotModifierData.ModifierType.TRIGGER:
+			return "Slot triggers %d extra time(s)." % int(data.value)
+		SlotModifierData.ModifierType.ECONOMY:
+			return "Generates $%d per activation." % int(data.value)
+		SlotModifierData.ModifierType.PRESERVATION:
+			return "Runes in this slot don't consume charges."
+		SlotModifierData.ModifierType.PROTECTION:
+			return "Protects fragile runes from breaking."
+		SlotModifierData.ModifierType.STATE:
+			return "Applies a special state to the slot."
+		_:
+			return ""
+
 func _update_display() -> void:
 	var final_text = ""
 	if _rune_text != "":
 		final_text = _rune_text
+	
+	if _item_text != "":
+		if final_text != "":
+			final_text += "\n[color=gray]----------------[/color]\n"
+		final_text += _item_text
 		
 	if _slot_text != "":
 		if final_text != "":

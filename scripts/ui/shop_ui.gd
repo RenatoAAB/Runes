@@ -185,16 +185,19 @@ func _refresh_slots_shop() -> void:
 				var piece_data = item.data as SlotPieceData
 				slot_ui.set_placeholder_display(piece_data.display_name.substr(0, 2), _get_piece_shape_color(piece_data))
 				slot_ui.set_shop_mode(true, shop_manager.get_piece_price_display(piece_data))
+				slot_ui.set_shop_item("piece", piece_data)
 				_connect_slot_buy_signal(slot_ui, item.index, "piece")
 			else:  # modifier
 				var modifier_data = item.data as SlotModifierData
 				var color = SlotPieceUI.get_color_for_modifier_type(modifier_data.modifier_type)
 				slot_ui.set_placeholder_display(modifier_data.display_name.substr(0, 2), color)
 				slot_ui.set_shop_mode(true, shop_manager.get_modifier_price_display(modifier_data))
+				slot_ui.set_shop_item("modifier", modifier_data)
 				_connect_slot_buy_signal(slot_ui, item.index, "modifier")
 		else:
 			slot_ui.clear_display()
 			slot_ui.set_shop_mode(false)
+			slot_ui.set_shop_item("", null)
 
 
 func _get_piece_shape_color(piece_data: SlotPieceData) -> Color:
@@ -225,10 +228,12 @@ func _refresh_relic_shop() -> void:
 			var display_text = relic_data.display_name.substr(0, 2) if relic_data.display_name else "?"
 			slot_ui.set_placeholder_display(display_text, Color.PURPLE.darkened(0.3))
 			slot_ui.set_shop_mode(true, shop_manager.get_relic_price_display(relic_data))
+			slot_ui.set_shop_item("relic", relic_data)
 			_connect_slot_buy_signal(slot_ui, i, "relic")
 		else:
 			slot_ui.clear_display()
 			slot_ui.set_shop_mode(false)
+			slot_ui.set_shop_item("", null)
 
 
 # --- Free Pick Section (GetOneOfThree) ---

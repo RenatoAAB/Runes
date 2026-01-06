@@ -224,7 +224,7 @@ func _show_tooltip() -> void:
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
 		var info = current_relic.get_display_info()
 		var text = "[b]%s[/b]\n%s" % [info.name, info.description]
-		tooltip_manager.show_tooltip(text, self)
+		tooltip_manager.show_tooltip(text, false)
 
 
 func _hide_tooltip() -> void:
@@ -248,13 +248,33 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if not is_empty():
 		return false
 	
+	# Accept legacy format
 	if data is Dictionary and data.has("type") and data.type == "relic":
+		return true
+	
+	# Accept ItemUI format with relic_instance
+	if data is Dictionary and data.has("relic_instance") and data.relic_instance != null:
+		return true
+	
+	# Accept ItemUI format with item_type == "relic"
+	if data is Dictionary and data.get("item_type") == "relic" and data.has("item_instance"):
 		return true
 	
 	return false
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
+	var dropped_relic: RelicInstance = null
+	
+	# Legacy format
 	if data is Dictionary and data.has("relic"):
-		var dropped_relic = data.relic as RelicInstance
+		dropped_relic = data.relic as RelicInstance
+	# ItemUI format with relic_instance
+	elif data is Dictionary and data.has("relic_instance"):
+		dropped_relic = data.relic_instance as RelicInstance
+	# ItemUI format with item_instance
+	elif data is Dictionary and data.get("item_type") == "relic" and data.has("item_instance"):
+		dropped_relic = data.item_instance as RelicInstance
+	
+	if dropped_relic:
 		relic_dropped.emit(dropped_relic, self)

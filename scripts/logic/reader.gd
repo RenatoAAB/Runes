@@ -64,13 +64,21 @@ func _process_next_step() -> void:
 	var x = current_index % GridManager.GRID_SIZE
 	var coord = Vector2i(x, y)
 	
+	var slot = grid_manager.get_slot(coord)
+	
+	# Skip void/locked slots - they are not active slots
+	if slot and slot.is_void():
+		current_index += 1
+		if is_running:
+			_process_next_step()
+		return
+	
 	# Update context
 	if battle_context:
 		battle_context.current_step_index = current_index
 	
 	step_started.emit(coord)
 	
-	var slot = grid_manager.get_slot(coord)
 	var score_before = total_score
 	
 	if slot and not slot.is_empty():

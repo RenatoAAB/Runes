@@ -145,6 +145,11 @@ func update_slot_info(slot: GridSlot) -> void:
 	set_buff_highlight(highlight_color)
 
 func _on_mouse_entered() -> void:
+	# Handle shop item tooltip first
+	if _shop_mode and _shop_item_data:
+		_show_shop_item_tooltip()
+		return
+	
 	if not current_slot_data:
 		return
 	
@@ -226,6 +231,9 @@ func _on_mouse_exited() -> void:
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager:
 		tooltip_manager.clear_slot_tooltip()
+		if tooltip_manager.has_method("hide_item_tooltip"):
+			tooltip_manager.hide_item_tooltip()
+		tooltip_manager.hide_tooltip()
 
 
 func set_rune(rune: RuneInstance) -> void:
@@ -298,6 +306,10 @@ var _shop_price_text: String = ""  # Price text for tooltip display
 var _price_label: Label = null
 var _placeholder_label: Label = null
 
+## Shop item data for tooltips
+var _shop_item_type: String = ""  # "piece", "modifier", "relic", "rune"
+var _shop_item_data: Variant = null  # SlotPieceData, SlotModifierData, RelicData, RuneData
+
 ## Get the current price text for tooltip display
 func get_shop_price_text() -> String:
 	return _shop_price_text if _shop_mode else ""
@@ -329,6 +341,85 @@ func set_shop_mode(enabled: bool, price_text: String = "") -> void:
 	else:
 		if _price_label:
 			_price_label.visible = false
+
+
+## Set shop item data for tooltip display
+func set_shop_item(item_type: String, item_data: Variant) -> void:
+	_shop_item_type = item_type
+	_shop_item_data = item_data
+
+
+## Show tooltip for shop item
+func _show_shop_item_tooltip() -> void:
+	if not _shop_item_data:
+		return
+	
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if not tooltip_manager:
+		return
+	
+	var text = ""
+	
+	match _shop_item_type:
+		"piece":
+			var piece = _shop_item_data as SlotPieceData
+			if piece:
+				text = "[b]%s[/b]\n" % piece.display_name
+				text += "[color=yellow]%d slots[/color]\n" % piece.get_slot_count()
+				if piece.description and not piece.description.is_empty():
+					text += "[color=silver]%s[/color]\n" % piece.description
+				text += "[color=gold]%s[/color]" % _shop_price_text
+		
+		"modifier":
+			var modifier = _shop_item_data as SlotModifierData
+			if modifier:
+				text = "[b]%s[/b]\n" % modifier.display_name
+				text += "[color=cyan]%s[/color]\n" % _get_modifier_type_name(modifier.modifier_type)
+				if modifier.description and not modifier.description.is_empty():
+					text += "[color=silver]%s[/color]\n" % modifier.description
+				else:
+					text += "[color=silver]%s[/color]\n" % _get_modifier_auto_description(modifier)
+				text += "[color=gold]%s[/color]" % _shop_price_text
+		
+		"relic":
+			var relic = _shop_item_data as RelicData
+			if relic:
+				text = "[b]%s[/b]\n" % relic.display_name
+				if relic.description and not relic.description.is_empty():
+					text += "[color=silver]%s[/color]\n" % relic.description
+				text += "[color=gold]%s[/color]" % _shop_price_text
+	
+	if text != "":
+		tooltip_manager.show_tooltip(text, false)
+
+
+func _get_modifier_type_name(type: SlotModifierData.ModifierType) -> String:
+	match type:
+		SlotModifierData.ModifierType.MULTIPLIER: return "Multiplier"
+		SlotModifierData.ModifierType.TRIGGER: return "Trigger"
+		SlotModifierData.ModifierType.ECONOMY: return "Economy"
+		SlotModifierData.ModifierType.PRESERVATION: return "Preservation"
+		SlotModifierData.ModifierType.PROTECTION: return "Protection"
+		SlotModifierData.ModifierType.STATE: return "State"
+		_: return "Unknown"
+
+
+func _get_modifier_auto_description(data: SlotModifierData) -> String:
+	match data.modifier_type:
+		SlotModifierData.ModifierType.MULTIPLIER:
+			return "Adds +%.1fx multiplier to this slot." % data.value
+		SlotModifierData.ModifierType.TRIGGER:
+			return "Slot triggers %d extra time(s)." % int(data.value)
+		SlotModifierData.ModifierType.ECONOMY:
+			return "Generates $%d per activation." % int(data.value)
+		SlotModifierData.ModifierType.PRESERVATION:
+			return "Runes in this slot don't consume charges."
+		SlotModifierData.ModifierType.PROTECTION:
+			return "Protects fragile runes from breaking."
+		SlotModifierData.ModifierType.STATE:
+			return "Applies a special state to the slot."
+		_:
+			return ""
 
 
 ## Display a slot type (SlotData) instead of a rune
