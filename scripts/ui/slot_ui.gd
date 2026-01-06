@@ -258,8 +258,13 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 		return false
 	
 	# Can drop rune instances only on UNLOCKED slots
-	if data.has("rune_instance"):
+	if data.has("rune_instance") and not data.has("source_type"):
 		return is_unlocked
+	
+	# Can drop relics FROM relic slots back to inventory (other_inventory slots only)
+	if data.get("source_type") == "relic_slot" and data.has("relic_instance"):
+		# Only accept on inventory slots (not grid slots)
+		return grid_coord == Vector2i(-1, -1)
 	
 	# Can drop slot types (for replacing slot on grid) on UNLOCKED slots
 	if data.has("slot_instance") and grid_coord != Vector2i(-1, -1):
@@ -281,6 +286,11 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	var source_slot_ui = null
 	if source_ui and source_ui.get_parent() is SlotUI:
 		source_slot_ui = source_ui.get_parent()
+	
+	# Handle relic drop from relic slot back to inventory
+	if data.get("source_type") == "relic_slot" and data.has("relic_instance"):
+		extra_item_dropped.emit("relic", data.get("relic_instance").data, data.get("relic_instance"), self)
+		return
 	
 	# Handle rune drop
 	if data.has("rune_instance"):

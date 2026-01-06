@@ -80,6 +80,7 @@ func _ready() -> void:
 		game_manager.level_started.connect(_on_level_started)
 		game_manager.phase_changed.connect(_on_phase_changed)
 		game_manager.free_pick_granted.connect(_on_free_pick_granted)
+		game_manager.game_lost.connect(_on_game_lost)
 		# Force initial update in case level started before we connected
 		_on_level_started(game_manager.current_level, game_manager.current_target_score)
 	
@@ -251,28 +252,52 @@ func _update_panel_navigation() -> void:
 
 
 ## Handle relic dropped on a slot
-func _on_relic_dropped(relic: RelicInstance, slot_ui: RelicSlotUI) -> void:
+func _on_relic_dropped(relic: RelicInstance, target_slot_ui: RelicSlotUI, source_slot_ui: RelicSlotUI) -> void:
 	if not _panel_manager or not _extra_inventory:
 		return
 	
-	var panel = _panel_manager.get_panel(slot_ui.panel_index)
-	if not panel:
+	var target_panel = _panel_manager.get_panel(target_slot_ui.panel_index)
+	if not target_panel:
 		return
 	
-	# Try to attach relic to panel
-	if panel.attach_relic(relic):
-		relic.attach_to_panel(slot_ui.panel_index)
-		_update_relic_slots_display()
+	# If relic comes from another relic slot, detach from that panel first
+	if source_slot_ui:
+		var source_panel = _panel_manager.get_panel(source_slot_ui.panel_index)
+		if source_panel:
+			source_panel.detach_relic(relic)
+		relic.detach_from_panel()
+		source_slot_ui.clear_relic()
+	elif relic.is_attached():
+		# Relic is attached to a panel but dragged from somewhere else
+		var source_panel = _panel_manager.get_panel(relic.attached_panel_index)
+		if source_panel:
+			source_panel.detach_relic(relic)
+		relic.detach_from_panel()
+	else:
+		# Remove from extra inventory since it's coming from there
+		_extra_inventory.remove_relic(relic)
+	
+	# Try to attach relic to target panel
+	if target_panel.attach_relic(relic):
+		relic.attach_to_panel(target_slot_ui.panel_index)
+		target_slot_ui.set_relic(relic)
+	
+	_update_relic_slots_display()
+	_update_other_inventory_display()
 
 
 func _on_relic_clicked(relic: RelicInstance) -> void:
-	# Could show relic details or allow detaching
+	# Click on attached relic detaches it and returns to extra inventory
 	if relic and relic.is_attached():
 		var panel = _panel_manager.get_panel(relic.attached_panel_index)
 		if panel:
 			panel.detach_relic(relic)
 			relic.detach_from_panel()
+			# Add back to extra inventory
+			if _extra_inventory:
+				_extra_inventory.add_relic(relic)
 			_update_relic_slots_display()
+			_update_other_inventory_display()
 
 ## Handles multi-effect highlight requests from GridHighlighter.
 ## effect_indices is an array of effect indices that target this slot.
@@ -540,6 +565,21 @@ func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:
 			pass
 
 
+## Called when the player loses the game - reset panels to initial 3x3 state
+func _on_game_lost() -> void:
+	if _panel_manager:
+		_panel_manager.full_reset_all_panels()
+		_current_panel_index = 0
+		_generate_grid_ui()
+		_generate_relic_slots()
+		_update_panel_navigation()
+	
+	# Clear extra inventory (relics, modifiers, pieces)
+	if _extra_inventory:
+		_extra_inventory.clear_all()
+		_update_other_inventory_display()
+
+
 func _on_enter_shop_pressed() -> void:
 	# Allow entering shop during PLANNING phase
 	if game_manager and game_manager.current_phase == GameEnums.GamePhase.PLANNING:
@@ -756,9 +796,35 @@ func _update_other_inventory_display() -> void:
 		if not slot_ui:
 			continue
 		
+		# Connect signal for relic drop from relic slot back to inventory (only once)
+		if not slot_ui.extra_item_dropped.is_connected(_on_extra_item_returned):
+			slot_ui.extra_item_dropped.connect(_on_extra_item_returned)
+		
 		if i < items.size():
 			var item = items[i]
 			slot_ui.set_extra_item(item.type, item.data, item.instance)
 		else:
 			slot_ui.clear_display()
-			slot_ui.clear_display()
+
+
+## Handle item returned to other_inventory (e.g., relic dragged from relic slot)
+func _on_extra_item_returned(item_type: String, item_data: Variant, item_instance: Variant, _target_slot_ui: SlotUI) -> void:
+	if item_type == "relic" and item_instance is RelicInstance:
+		var relic = item_instance as RelicInstance
+		
+		# Remove from the panel it was attached to
+		if _panel_manager and relic.attached_panel_index >= 0:
+			var panel = _panel_manager.get_panel(relic.attached_panel_index)
+			if panel:
+				panel.detach_relic(relic)
+		
+		# Clear its panel attachment
+		relic.detach_from_panel()
+		
+		# Add back to extra inventory
+		if _extra_inventory:
+			_extra_inventory.add_relic(relic)
+		
+		# Update displays
+		_update_other_inventory_display()
+		_update_relic_slots_display()

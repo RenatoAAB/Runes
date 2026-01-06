@@ -5,7 +5,8 @@ extends PanelContainer
 ## Uses SlotInstance internally to store the relic data.
 ## Can be empty (for attachment) or filled (showing attached relic).
 
-signal relic_dropped(relic: RelicInstance, slot_ui: RelicSlotUI)
+signal relic_dropped(relic: RelicInstance, target_slot_ui: RelicSlotUI, source_slot_ui: RelicSlotUI)
+signal relic_removed(relic: RelicInstance, slot_ui: RelicSlotUI)
 signal relic_clicked(relic: RelicInstance)
 signal slot_clicked(slot_ui: RelicSlotUI)
 
@@ -37,6 +38,7 @@ var panel_index: int = 0
 var icon_rect: TextureRect
 var rarity_border: ColorRect
 var plus_label: Label
+var name_label: Label  # Fallback label showing relic name abbreviation
 var highlight_rect: ColorRect
 var type_indicator: Label  # Shows "R" for relic slot
 
@@ -115,6 +117,17 @@ func _setup_ui() -> void:
 	plus_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(plus_label)
 	
+	# Name label for relics without icons
+	name_label = Label.new()
+	name_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	name_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	name_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	name_label.add_theme_font_size_override("font_size", 14)
+	name_label.add_theme_color_override("font_color", Color.WHITE)
+	name_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	name_label.visible = false
+	add_child(name_label)
+	
 	# Highlight
 	highlight_rect = ColorRect.new()
 	highlight_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -160,9 +173,12 @@ func _update_visuals() -> void:
 		if current_relic.data.icon:
 			icon_rect.texture = current_relic.data.icon
 			icon_rect.visible = true
+			name_label.visible = false
 		else:
-			# Show placeholder for relic without icon
+			# Show abbreviation for relic without icon
 			icon_rect.visible = false
+			name_label.text = current_relic.data.display_name.substr(0, 2).to_upper() if current_relic.data.display_name else "R"
+			name_label.visible = true
 		
 		# Update background
 		var style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
@@ -176,6 +192,7 @@ func _update_visuals() -> void:
 		# Show empty slot
 		plus_label.visible = true
 		icon_rect.visible = false
+		name_label.visible = false
 		
 		var style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
 		if style:
@@ -243,6 +260,62 @@ func _gui_input(event: InputEvent) -> void:
 				slot_clicked.emit(self)
 
 
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	# Only allow dragging if there's a relic in this slot
+	var current_relic = relic
+	if not current_relic:
+		return null
+	
+	# Check if interaction is allowed (not in Battle or Resolution phase)
+	var game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager:
+		if game_manager.current_phase == GameEnums.GamePhase.BATTLE or game_manager.current_phase == GameEnums.GamePhase.RESOLUTION:
+			return null
+	
+	_is_dragging = true
+	_hide_tooltip()
+	
+	# Create a visual preview for the drag
+	var preview = TextureRect.new()
+	if current_relic.data.icon:
+		preview.texture = current_relic.data.icon
+	preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	preview.custom_minimum_size = slot_size
+	preview.size = slot_size
+	preview.modulate = Color(1, 1, 1, 0.7)
+	
+	# Center the preview on the mouse
+	var control = Control.new()
+	control.add_child(preview)
+	preview.position = -0.5 * slot_size
+	set_drag_preview(control)
+	
+	# Return data dictionary - mark as coming from relic slot
+	return {
+		"source_ui": self,
+		"source_type": "relic_slot",
+		"relic_instance": current_relic,
+		"item_type": "relic",
+		"item_instance": current_relic,
+		"panel_index": panel_index,
+		"slot_index": slot_index
+	}
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		_is_dragging = false
+
+
+## Called when the relic is successfully moved elsewhere - remove it from this slot
+func remove_relic_for_drag() -> RelicInstance:
+	var current_relic = relic
+	if current_relic:
+		clear_relic()
+		relic_removed.emit(current_relic, self)
+	return current_relic
+
+
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	# Can drop if this slot is empty and data is a relic
 	if not is_empty():
@@ -265,6 +338,11 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	var dropped_relic: RelicInstance = null
+	var source_relic_slot: RelicSlotUI = null
+	
+	# Extract source slot if coming from another relic slot
+	if data is Dictionary and data.get("source_type") == "relic_slot":
+		source_relic_slot = data.get("source_ui") as RelicSlotUI
 	
 	# Legacy format
 	if data is Dictionary and data.has("relic"):
@@ -277,4 +355,4 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 		dropped_relic = data.item_instance as RelicInstance
 	
 	if dropped_relic:
-		relic_dropped.emit(dropped_relic, self)
+		relic_dropped.emit(dropped_relic, self, source_relic_slot)

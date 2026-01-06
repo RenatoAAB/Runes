@@ -14,6 +14,7 @@ signal panel_battle_started(panel_index: int)
 signal panel_battle_completed(panel_index: int, score: int)
 signal all_panels_completed(final_score: int)
 signal panel_score_updated(panel_index: int, score: int)
+signal panel_reset()
 
 ## All panels in the game (unlocked or not)
 var panels: Array[PanelInstance] = []
@@ -330,6 +331,18 @@ func reset_all_panels() -> void:
 	is_battle_running = false
 	active_panel_index = 0
 	battle_panel_index = 0
+
+
+## Full reset all panels for game over - resets slots to initial 3x3
+func full_reset_all_panels() -> void:
+	for panel in panels:
+		panel.full_reset()
+	
+	panel_scores.clear()
+	is_battle_running = false
+	active_panel_index = 0
+	battle_panel_index = 0
+	panel_reset.emit()
 
 
 ## Clear all panels (for complete reset)

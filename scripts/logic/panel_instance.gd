@@ -279,6 +279,22 @@ func reset_for_battle() -> void:
 		battle_context.current_score = 0
 
 
+## Full reset for game over - resets unlocked slots back to initial 3x3
+func full_reset() -> void:
+	reset_for_battle()
+	attached_relics.clear()
+	relic_multiplier = 1.0
+	upgrade_level = 0
+	
+	# Reset unlocked slots to initial configuration
+	_initialize_unlocked_slots()
+	
+	# Sync with grid if it exists
+	if grid_manager:
+		grid_manager.clear_grid()
+		_sync_unlocked_to_grid()
+
+
 ## Start battle on this panel
 func start_battle() -> void:
 	if not reader or not grid_manager:
