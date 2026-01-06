@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SlotPieceData" load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://cxnqq7qy4qrmc" path="res://scripts/data/slot_piece_data.gd" id="1_data"]
+
+[resource]
+script = ExtResource("1_data")
+id = "piece_single"
+display_name = "Single Slot"
+description = "A simple single slot expansion."
+rarity = 0
+shape = [Vector2i(0, 0)]
+slot_types = []
+slot_modifiers = []
+color_hint = Color(0.6, 0.6, 0.6, 1)
+buy_price = 5
+sell_price = 2

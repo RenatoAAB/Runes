@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SlotModifierData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_modifier_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "modifier_preserver"
+display_name = "Eternal Seal"
+description = "Runes in this slot don't consume charges."
+rarity = 3
+modifier_type = 3
+value = 0.0
+stacks = false
+max_stacks = 1
+compatible_slot_ids = []
+incompatible_modifier_ids = []
+color_tint = Color(0.3, 1, 0.5, 1)
+buy_price = 12
+sell_price = 5

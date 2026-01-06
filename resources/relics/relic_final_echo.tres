@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "relic_final_echo"
+display_name = "Final Echo"
+description = "Doubles score if it exceeds 100 by the end of panel."
+rarity = 3
+trigger_type = 2
+threshold_value = 100
+can_repeat = false
+effects = []
+multiplier_bonus = 1.0
+score_bonus = 0
+element_affinity = 26
+affinity_multiplier = 1.0
+max_per_panel = 1
+incompatible_relic_ids = []
+buy_price = 25
+sell_price = 10

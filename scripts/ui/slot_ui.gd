@@ -4,9 +4,16 @@ extends PanelContainer
 ## Visual representation of a GridSlot or Inventory Slot.
 ## Handles the Drop part of Drag & Drop for both runes and slots.
 ## Supports multi-effect visualization when multiple effects target this slot.
+## Also supports ExtraInventory items (relics, modifiers, pieces) via ItemUI.
+## Grid slots can be in two states:
+##   - UNLOCKED: Can hold runes, can receive modifiers
+##   - LOCKED: Empty space, can receive slot pieces to unlock
 
 signal rune_dropped(source_rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
 signal slot_type_dropped(source_slot: SlotInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
+signal extra_item_dropped(item_type: String, item_data: Variant, item_instance: Variant, target_slot_ui: SlotUI)
+signal modifier_dropped(modifier: SlotModifierData, target_slot_ui: SlotUI)
+signal piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI)
 
 # If part of the grid, this will be set.
 var grid_coord: Vector2i = Vector2i(-1, -1)
@@ -14,8 +21,11 @@ var grid_coord: Vector2i = Vector2i(-1, -1)
 var inventory_index: int = -1
 # If this UI represents a slot type in inventory/shop
 var is_slot_type_ui: bool = false
+# Whether this slot is unlocked (can hold runes) or locked (empty space for pieces)
+var is_unlocked: bool = true
 
 var rune_ui: RuneUI
+var item_ui: ItemUI  # For extra inventory items
 var multi_effect_overlay: MultiEffectOverlay
 var buff_rect: ColorRect
 var slot_type_label: Label  # Shows multiplier badge
@@ -46,6 +56,35 @@ func _ready() -> void:
 	
 	mouse_entered.connect(self._on_mouse_entered)
 	mouse_exited.connect(self._on_mouse_exited)
+	
+	# Apply initial visual based on unlock state
+	_update_locked_visual()
+
+
+## Set whether this slot is unlocked (can hold runes) or locked (empty expansion space)
+func set_locked_state(unlocked: bool) -> void:
+	is_unlocked = unlocked
+	_update_locked_visual()
+
+
+## Update the visual appearance based on locked/unlocked state
+func _update_locked_visual() -> void:
+	var style = StyleBoxFlat.new()
+	style.set_corner_radius_all(4)
+	
+	if is_unlocked:
+		# Unlocked slot: normal appearance, can hold runes
+		style.bg_color = Color(0.15, 0.15, 0.18)
+		style.set_border_width_all(2)
+		style.border_color = Color(0.4, 0.4, 0.5)
+	else:
+		# Locked slot: darker, dashed-like appearance indicating expansion space
+		style.bg_color = Color(0.08, 0.08, 0.1, 0.5)
+		style.set_border_width_all(1)
+		style.border_color = Color(0.25, 0.25, 0.3, 0.6)
+	
+	add_theme_stylebox_override("panel", style)
+
 
 ## Sets effect highlighting using the new multi-effect system.
 ## Pass an array of effect indices to show, or empty array to clear.
@@ -210,13 +249,21 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:
 		return false
 	
-	# Can drop rune instances
+	# Can drop rune instances only on UNLOCKED slots
 	if data.has("rune_instance"):
-		return true
+		return is_unlocked
 	
-	# Can drop slot types (for replacing slot on grid)
+	# Can drop slot types (for replacing slot on grid) on UNLOCKED slots
 	if data.has("slot_instance") and grid_coord != Vector2i(-1, -1):
-		return true
+		return is_unlocked
+	
+	# Can drop MODIFIERS on UNLOCKED grid slots
+	if data.has("modifier_data") and grid_coord != Vector2i(-1, -1):
+		return is_unlocked
+	
+	# Can drop PIECES on LOCKED grid slots (to expand the panel)
+	if data.has("piece_data") and grid_coord != Vector2i(-1, -1):
+		return not is_unlocked
 	
 	return false
 
@@ -234,6 +281,14 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	# Handle slot type drop
 	elif data.has("slot_instance"):
 		slot_type_dropped.emit(data["slot_instance"], self, source_slot_ui)
+	
+	# Handle modifier drop on unlocked slot
+	elif data.has("modifier_data"):
+		modifier_dropped.emit(data["modifier_data"], self)
+	
+	# Handle piece drop on locked slot
+	elif data.has("piece_data"):
+		piece_dropped.emit(data["piece_data"], self)
 
 
 # --- Shop Mode Support ---
@@ -358,6 +413,11 @@ func clear_display() -> void:
 	if _price_label:
 		_price_label.visible = false
 	
+	# Clear item_ui if present
+	if item_ui:
+		item_ui.queue_free()
+		item_ui = null
+	
 	# Reset to default style
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0.2, 0.2, 0.2)
@@ -365,3 +425,47 @@ func clear_display() -> void:
 	style.border_color = Color(0.5, 0.5, 0.5)
 	style.set_corner_radius_all(4)
 	add_theme_stylebox_override("panel", style)
+
+
+## Set an extra inventory item (relic, modifier, piece) using ItemUI
+func set_extra_item(item_type: String, data: Variant, instance: Variant = null) -> void:
+	# Clear any existing rune display
+	if rune_ui:
+		rune_ui.queue_free()
+		rune_ui = null
+	
+	if _placeholder_label:
+		_placeholder_label.visible = false
+	
+	# Create or reuse ItemUI
+	if not item_ui:
+		item_ui = ItemUI.new()
+		item_ui.set_anchors_preset(Control.PRESET_FULL_RECT)
+		item_ui.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		item_ui.size_flags_vertical = Control.SIZE_EXPAND_FILL
+		add_child(item_ui)
+	
+	# Set the item based on type
+	match item_type:
+		"relic":
+			if instance:
+				item_ui.set_relic(instance as RelicInstance)
+			else:
+				item_ui.set_relic_data(data as RelicData)
+		"modifier":
+			item_ui.set_modifier(data as SlotModifierData)
+		"piece":
+			if instance:
+				item_ui.set_piece(instance as SlotPieceInstance)
+			else:
+				item_ui.set_piece_data(data as SlotPieceData)
+
+
+## Check if this slot has an extra item
+func has_extra_item() -> bool:
+	return item_ui != null and item_ui.item_type != ItemUI.ItemType.NONE
+
+
+## Get the item_ui if present
+func get_item_ui() -> ItemUI:
+	return item_ui

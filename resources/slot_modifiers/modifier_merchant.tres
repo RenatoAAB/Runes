@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="SlotModifierData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_modifier_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "modifier_merchant"
+display_name = "Merchant's Coin"
+description = "Generates money when runes activate in this slot."
+rarity = 1
+modifier_type = 2
+value = 1.0
+stacks = true
+max_stacks = 3
+compatible_slot_ids = []
+incompatible_modifier_ids = []
+color_tint = Color(1, 0.85, 0.3, 1)
+buy_price = 6
+sell_price = 2

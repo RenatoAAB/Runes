@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "score_label", "level_label", "money_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
 grid_manager = NodePath("Managers/GridManager")
@@ -22,9 +22,11 @@ reader = NodePath("Managers/Reader")
 grid_container = NodePath("UI/GameUI/GridContainer")
 inventory_container = NodePath("UI/GameUI/RunesInventoryContainer")
 other_inventory_container = NodePath("UI/GameUI/OtherInventoryContainer")
+relic_slots_container = NodePath("UI/GameUI/RelicContainer")
 score_label = NodePath("UI/GameUI/ScoreLabel")
 level_label = NodePath("UI/GameUI/LevelLabel")
 money_label = NodePath("UI/GameUI/MoneyLabel")
+panel_label = NodePath("UI/GameUI/PanelLabel")
 enter_shop_button = NodePath("UI/GameUI/EnterShopButton")
 battle_button = NodePath("UI/GameUI/BattleButton")
 previous_panel_button = NodePath("UI/GameUI/PreviousPanel")
@@ -223,6 +225,23 @@ layout_mode = 2
 [node name="Slot8" parent="UI/GameUI/OtherInventoryContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
+[node name="RelicContainer" type="GridContainer" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 134.0
+offset_top = 226.0
+offset_right = 290.0
+offset_bottom = 306.0
+columns = 3
+
+[node name="Slot" parent="UI/GameUI/RelicContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot2" parent="UI/GameUI/RelicContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
+[node name="Slot3" parent="UI/GameUI/RelicContainer" instance=ExtResource("5_ya4ey")]
+layout_mode = 2
+
 [node name="BattleButton" type="Button" parent="UI/GameUI"]
 layout_mode = 0
 offset_left = 15.0
@@ -258,10 +277,10 @@ text = ">"
 
 [node name="ScoreLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 109.0
-offset_top = 234.0
-offset_right = 157.0
-offset_bottom = 283.0
+offset_left = 91.0
+offset_top = 2.0
+offset_right = 139.0
+offset_bottom = 51.0
 text = "Score:"
 
 [node name="LevelLabel" type="Label" parent="UI/GameUI"]
@@ -280,6 +299,14 @@ offset_top = 14.0
 offset_right = 76.0
 offset_bottom = 37.0
 text = "$0"
+
+[node name="PanelLabel" type="Label" parent="UI/GameUI"]
+layout_mode = 0
+offset_left = 190.0
+offset_top = 2.0
+offset_right = 280.0
+offset_bottom = 25.0
+text = "Panel 1/1"
 
 [node name="ShopUI" type="Control" parent="UI"]
 visible = false
@@ -452,7 +479,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
 text = "Drag here
 to sell"
 horizontal_alignment = 1

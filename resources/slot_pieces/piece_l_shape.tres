@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="SlotPieceData" load_steps=3 format=3]
+
+[ext_resource type="Script" uid="uid://cxnqq7qy4qrmc" path="res://scripts/data/slot_piece_data.gd" id="1_data"]
+[ext_resource type="Resource" path="res://resources/slot_modifiers/modifier_merchant.tres" id="2_mod"]
+
+[resource]
+script = ExtResource("1_data")
+id = "piece_l_shape"
+display_name = "L-Shape"
+description = "Three slots arranged in an L pattern with economy bonus."
+rarity = 2
+shape = [Vector2i(0, 0), Vector2i(0, 1), Vector2i(1, 1)]
+slot_types = []
+slot_modifiers = [ExtResource("2_mod"), null, ExtResource("2_mod")]
+color_hint = Color(0.2, 1, 0.4, 1)
+buy_price = 18
+sell_price = 6

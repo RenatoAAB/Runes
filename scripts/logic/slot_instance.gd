@@ -4,8 +4,25 @@ extends RefCounted
 ## Runtime instance of a Slot.
 ## Created based on SlotData, holds mutable state like upgrade level and temporary buffs.
 ## Similar lifecycle to RuneInstance.
+## Extended to also support holding relics (when used as a relic slot).
+
+enum SlotContentType {
+	RUNE,   ## Normal slot that holds runes
+	RELIC,  ## Slot that holds a relic
+	PIECE,  ## Slot that holds a slot piece
+	EMPTY   ## Empty slot (no content)
+}
 
 var data: SlotData
+
+## What type of content this slot holds
+var content_type: SlotContentType = SlotContentType.RUNE
+
+## Relic reference (if content_type == RELIC)
+var held_relic: RefCounted = null  # RelicInstance
+
+## Slot piece reference (if content_type == PIECE)  
+var held_piece: RefCounted = null  # SlotPieceInstance
 
 ## Current upgrade level (0 = base, max = data.max_upgrade_level)
 var upgrade_level: int = 0
@@ -51,7 +68,8 @@ func get_multiplier() -> float:
 	var base = data.base_multiplier
 	var upgrade_bonus = upgrade_level * data.multiplier_per_upgrade
 	var state_bonus = _get_state_multiplier_bonus()
-	var total = base + upgrade_bonus + temp_multiplier_bonus + state_bonus
+	var permanent_bonus = get_meta("permanent_multiplier_bonus", 0.0)
+	var total = base + upgrade_bonus + temp_multiplier_bonus + state_bonus + permanent_bonus
 	
 	if data.is_broken:
 		total *= 0.5
@@ -61,22 +79,26 @@ func get_multiplier() -> float:
 
 ## Get the number of times a rune should trigger
 func get_trigger_count() -> int:
-	return maxi(data.trigger_count + temp_trigger_bonus, 1)
+	var permanent_bonus = get_meta("permanent_trigger_bonus", 0)
+	return maxi(data.trigger_count + temp_trigger_bonus + permanent_bonus, 1)
 
 
 ## Check if this slot preserves rune charges
 func preserves_charges() -> bool:
-	return data.preserves_charges or temp_preserves_charges
+	var permanent = get_meta("permanent_preserves_charges", false)
+	return data.preserves_charges or temp_preserves_charges or permanent
 
 
 ## Check if this slot protects fragile runes
 func protects_fragile() -> bool:
-	return data.protects_fragile or temp_protects_fragile
+	var permanent = get_meta("permanent_protects_fragile", false)
+	return data.protects_fragile or temp_protects_fragile or permanent
 
 
-## Get money generated on activation
+## Get money generated on activation (including modifier bonus)
 func get_money_on_activation() -> int:
-	return data.money_on_activation
+	var bonus = get_meta("bonus_money_on_activation", 0)
+	return data.money_on_activation + bonus
 
 
 ## Check if this is a void/gap (no physical slot)
@@ -223,5 +245,165 @@ func get_display_info() -> Dictionary:
 		"protects_fragile": protects_fragile(),
 		"is_broken": data.is_broken,
 		"is_void": data.is_void,
-		"states": active_states.keys()
+		"states": active_states.keys(),
+		"applied_modifiers": get_meta("applied_modifiers", {})
 	}
+
+
+# --- Modifier Support ---
+
+## Check if this slot has a specific modifier applied
+func has_modifier(modifier_id: String) -> bool:
+	var applied = get_meta("applied_modifiers", {})
+	return applied.has(modifier_id) and applied[modifier_id] > 0
+
+
+## Get the stack count of a specific modifier
+func get_modifier_stack_count(modifier_id: String) -> int:
+	var applied = get_meta("applied_modifiers", {})
+	return applied.get(modifier_id, 0)
+
+
+## Apply a modifier to this slot permanently
+## Returns true if successfully applied, false if incompatible or at max stacks
+func apply_modifier(modifier: SlotModifierData) -> bool:
+	if not modifier:
+		return false
+	
+	# Check if already at max stacks
+	var current_stacks = get_modifier_stack_count(modifier.id)
+	if not modifier.stacks and current_stacks > 0:
+		print("Modifier '%s' doesn't stack and is already applied" % modifier.id)
+		return false
+	if modifier.stacks and current_stacks >= modifier.max_stacks:
+		print("Modifier '%s' already at max stacks (%d)" % [modifier.id, modifier.max_stacks])
+		return false
+	
+	# Check incompatibilities
+	var applied = get_meta("applied_modifiers", {})
+	for incompatible_id in modifier.incompatible_modifier_ids:
+		if applied.has(incompatible_id) and applied[incompatible_id] > 0:
+			print("Modifier '%s' incompatible with '%s'" % [modifier.id, incompatible_id])
+			return false
+	
+	# Apply modifier based on type
+	match modifier.modifier_type:
+		SlotModifierData.ModifierType.MULTIPLIER:
+			var current = get_meta("permanent_multiplier_bonus", 0.0)
+			set_meta("permanent_multiplier_bonus", current + modifier.value)
+		
+		SlotModifierData.ModifierType.TRIGGER:
+			var current = get_meta("permanent_trigger_bonus", 0)
+			set_meta("permanent_trigger_bonus", current + int(modifier.value))
+		
+		SlotModifierData.ModifierType.ECONOMY:
+			var current = get_meta("bonus_money_on_activation", 0)
+			set_meta("bonus_money_on_activation", current + int(modifier.value))
+		
+		SlotModifierData.ModifierType.PRESERVATION:
+			set_meta("permanent_preserves_charges", true)
+		
+		SlotModifierData.ModifierType.PROTECTION:
+			set_meta("permanent_protects_fragile", true)
+		
+		SlotModifierData.ModifierType.STATE:
+			# Apply a permanent state
+			apply_state(modifier.id, -1, 0, 0, 0.0)
+	
+	# Track applied modifier
+	applied[modifier.id] = current_stacks + 1
+	set_meta("applied_modifiers", applied)
+	
+	print("Applied modifier '%s' (stack %d)" % [modifier.display_name, current_stacks + 1])
+	return true
+
+
+## Apply a state permanently (for state-type modifiers)
+func apply_state(state_id: String, duration: int, score_bonus: int = 0, 
+				activation_bonus: int = 0, multiplier_bonus: float = 0.0) -> void:
+	if duration < 0:
+		# Permanent state - use a very large duration
+		add_state(state_id, 999999, score_bonus, activation_bonus, multiplier_bonus)
+	else:
+		add_state(state_id, duration, score_bonus, activation_bonus, multiplier_bonus)
+
+
+# --- Relic Slot Support ---
+
+## Set this slot to hold a relic
+func set_as_relic_slot() -> void:
+	content_type = SlotContentType.RELIC
+	held_relic = null
+
+
+## Set this slot to hold a piece
+func set_as_piece_slot() -> void:
+	content_type = SlotContentType.PIECE
+	held_piece = null
+
+
+## Place a relic in this slot
+func place_relic(relic: RefCounted) -> bool:
+	if content_type != SlotContentType.RELIC:
+		return false
+	if held_relic != null:
+		return false
+	held_relic = relic
+	return true
+
+
+## Remove relic from this slot
+func remove_relic() -> RefCounted:
+	var relic = held_relic
+	held_relic = null
+	return relic
+
+
+## Check if slot has a relic
+func has_relic() -> bool:
+	return content_type == SlotContentType.RELIC and held_relic != null
+
+
+## Get the held relic
+func get_relic() -> RefCounted:
+	return held_relic
+
+
+## Place a slot piece in this slot
+func place_piece(piece: RefCounted) -> bool:
+	if content_type != SlotContentType.PIECE:
+		return false
+	if held_piece != null:
+		return false
+	held_piece = piece
+	return true
+
+
+## Remove piece from this slot
+func remove_piece() -> RefCounted:
+	var piece = held_piece
+	held_piece = null
+	return piece
+
+
+## Check if slot has a piece
+func has_piece() -> bool:
+	return content_type == SlotContentType.PIECE and held_piece != null
+
+
+## Get the held piece
+func get_piece() -> RefCounted:
+	return held_piece
+
+
+## Check if this slot is empty (no content regardless of type)
+func is_slot_empty() -> bool:
+	match content_type:
+		SlotContentType.RELIC:
+			return held_relic == null
+		SlotContentType.PIECE:
+			return held_piece == null
+		SlotContentType.RUNE:
+			return true  # Rune check is handled by GridSlot
+		_:
+			return true

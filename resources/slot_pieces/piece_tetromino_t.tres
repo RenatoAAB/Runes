@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SlotPieceData" load_steps=4 format=3]
+
+[ext_resource type="Script" uid="uid://cxnqq7qy4qrmc" path="res://scripts/data/slot_piece_data.gd" id="1_data"]
+[ext_resource type="Resource" path="res://resources/slot_modifiers/modifier_amplifier.tres" id="2_mult"]
+[ext_resource type="Resource" path="res://resources/slot_modifiers/modifier_repeater.tres" id="3_trig"]
+
+[resource]
+script = ExtResource("1_data")
+id = "piece_tetromino_t"
+display_name = "T-Block"
+description = "Four slots in a T-shape with mixed enchantments."
+rarity = 3
+shape = [Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0), Vector2i(1, 1)]
+slot_types = []
+slot_modifiers = [ExtResource("2_mult"), ExtResource("3_trig"), ExtResource("2_mult"), null]
+color_hint = Color(0.7, 0.3, 0.9, 1)
+buy_price = 25
+sell_price = 8

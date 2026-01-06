@@ -14,9 +14,11 @@ extends Node
 @export var grid_container: Control # GridContainer
 @export var inventory_container: Control # HBoxContainer or GridContainer
 @export var other_inventory_container: Control # For relics, etc.
+@export var relic_slots_container: Control # Container for 3 relic slots per panel
 @export var score_label: Label
 @export var level_label: Label
 @export var money_label: Label
+@export var panel_label: Label  # Shows current panel (e.g., "Panel 1/3")
 @export var enter_shop_button: Button
 @export var battle_button: Button
 @export var previous_panel_button: Button
@@ -26,6 +28,12 @@ extends Node
 @export_group("Shop")
 @export var shop_ui: ShopUI
 var _shop_manager: ShopManager = null
+
+# Panel system
+var _panel_manager: PanelManager = null
+var _extra_inventory: ExtraInventoryManager = null
+var _relic_slot_uis: Array[RelicSlotUI] = []
+var _current_panel_index: int = 0
 
 # We need a PackedScene for the SlotUI to instantiate them dynamically
 # You can assign this in Inspector, or we can try to load it if it exists.
@@ -47,8 +55,12 @@ func _ready() -> void:
 	# Wait for managers to be ready
 	# await get_tree().process_frame
 	
+	# Initialize panel system
+	_initialize_panel_system()
+	
 	_generate_grid_ui()
 	_generate_inventory_ui()
+	_generate_relic_slots()
 	
 	# Connect Signals
 	if inventory_manager:
@@ -81,6 +93,12 @@ func _ready() -> void:
 		# Initially hide it (will be shown during PLANNING phase)
 		enter_shop_button.visible = false
 	
+	# Connect panel navigation buttons
+	if previous_panel_button and not previous_panel_button.pressed.is_connected(_on_previous_panel_pressed):
+		previous_panel_button.pressed.connect(_on_previous_panel_pressed)
+	if next_panel_button and not next_panel_button.pressed.is_connected(_on_next_panel_pressed):
+		next_panel_button.pressed.connect(_on_next_panel_pressed)
+	
 	# Connect to EventBus for economy updates
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus and event_bus.has_signal("economy_transaction"):
@@ -88,12 +106,173 @@ func _ready() -> void:
 	
 	# Initialize money display
 	_update_money_display()
+	_update_panel_navigation()
 
 	# Configure TooltipManager if it exists
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager and default_tooltip_label_settings:
 		tooltip_manager.label_settings = default_tooltip_label_settings
 		# RichTextLabel doesn't support label_settings directly, so we rely on TooltipManager to handle it.
+
+
+## Initialize the panel management system
+func _initialize_panel_system() -> void:
+	# Create PanelManager
+	_panel_manager = PanelManager.new()
+	_panel_manager.name = "PanelManager"
+	add_child(_panel_manager)
+	_panel_manager.initialize_default()
+	
+	# Connect panel manager signals
+	_panel_manager.panel_switched.connect(_on_panel_switched)
+	_panel_manager.panel_unlocked.connect(_on_panel_unlocked)
+	
+	# Create ExtraInventoryManager for relics, modifiers, pieces
+	_extra_inventory = ExtraInventoryManager.new()
+	_extra_inventory.name = "ExtraInventory"
+	add_child(_extra_inventory)
+	
+	# Connect ExtraInventory signals for UI updates
+	_extra_inventory.inventory_changed.connect(_on_extra_inventory_updated)
+	_update_other_inventory_display()
+
+
+## Generate relic slots UI (3 slots per panel)
+func _generate_relic_slots() -> void:
+	if not relic_slots_container:
+		return
+	
+	# Clear existing
+	for child in relic_slots_container.get_children():
+		child.queue_free()
+	_relic_slot_uis.clear()
+	
+	# Create 3 relic slots
+	for i in range(3):
+		var relic_slot = RelicSlotUI.new()
+		relic_slot.slot_index = i
+		relic_slot.panel_index = _current_panel_index
+		relic_slot.relic_dropped.connect(_on_relic_dropped)
+		relic_slot.relic_clicked.connect(_on_relic_clicked)
+		relic_slots_container.add_child(relic_slot)
+		_relic_slot_uis.append(relic_slot)
+	
+	_update_relic_slots_display()
+
+
+## Update relic slots to show current panel's relics
+func _update_relic_slots_display() -> void:
+	if not _panel_manager:
+		return
+	
+	var panel = _panel_manager.get_panel(_current_panel_index)
+	if not panel:
+		return
+	
+	for i in range(_relic_slot_uis.size()):
+		var slot_ui = _relic_slot_uis[i]
+		slot_ui.panel_index = _current_panel_index
+		
+		# Set relic if panel has one at this index
+		if i < panel.attached_relics.size():
+			slot_ui.set_relic(panel.attached_relics[i])
+		else:
+			slot_ui.set_relic(null)
+
+
+## Handle panel navigation
+func _on_previous_panel_pressed() -> void:
+	if not _panel_manager:
+		return
+	
+	var unlocked = _panel_manager.get_unlocked_panels()
+	var current_idx = 0
+	for i in range(unlocked.size()):
+		if unlocked[i].panel_index == _current_panel_index:
+			current_idx = i
+			break
+	
+	if current_idx > 0:
+		_current_panel_index = unlocked[current_idx - 1].panel_index
+		_panel_manager.switch_to_panel(_current_panel_index)
+
+
+func _on_next_panel_pressed() -> void:
+	if not _panel_manager:
+		return
+	
+	var unlocked = _panel_manager.get_unlocked_panels()
+	var current_idx = 0
+	for i in range(unlocked.size()):
+		if unlocked[i].panel_index == _current_panel_index:
+			current_idx = i
+			break
+	
+	if current_idx < unlocked.size() - 1:
+		_current_panel_index = unlocked[current_idx + 1].panel_index
+		_panel_manager.switch_to_panel(_current_panel_index)
+
+
+func _on_panel_switched(_from_index: int, to_index: int) -> void:
+	_current_panel_index = to_index
+	_update_panel_navigation()
+	_update_relic_slots_display()
+	# TODO: Update grid to show the new panel's grid
+
+
+func _on_panel_unlocked(_panel: PanelInstance) -> void:
+	_update_panel_navigation()
+
+
+func _update_panel_navigation() -> void:
+	if not _panel_manager:
+		return
+	
+	var unlocked = _panel_manager.get_unlocked_panels()
+	var total = _panel_manager.panels.size()
+	var unlocked_count = unlocked.size()
+	
+	# Update panel label
+	if panel_label:
+		panel_label.text = "Panel %d/%d" % [_current_panel_index + 1, unlocked_count]
+	
+	# Find current position in unlocked panels
+	var current_idx = 0
+	for i in range(unlocked.size()):
+		if unlocked[i].panel_index == _current_panel_index:
+			current_idx = i
+			break
+	
+	# Update button states
+	if previous_panel_button:
+		previous_panel_button.disabled = current_idx <= 0
+	if next_panel_button:
+		next_panel_button.disabled = current_idx >= unlocked_count - 1
+
+
+## Handle relic dropped on a slot
+func _on_relic_dropped(relic: RelicInstance, slot_ui: RelicSlotUI) -> void:
+	if not _panel_manager or not _extra_inventory:
+		return
+	
+	var panel = _panel_manager.get_panel(slot_ui.panel_index)
+	if not panel:
+		return
+	
+	# Try to attach relic to panel
+	if panel.attach_relic(relic):
+		relic.attach_to_panel(slot_ui.panel_index)
+		_update_relic_slots_display()
+
+
+func _on_relic_clicked(relic: RelicInstance) -> void:
+	# Could show relic details or allow detaching
+	if relic and relic.is_attached():
+		var panel = _panel_manager.get_panel(relic.attached_panel_index)
+		if panel:
+			panel.detach_relic(relic)
+			relic.detach_from_panel()
+			_update_relic_slots_display()
 
 ## Handles multi-effect highlight requests from GridHighlighter.
 ## effect_indices is an array of effect indices that target this slot.
@@ -114,18 +293,34 @@ func _generate_grid_ui() -> void:
 		child.queue_free()
 	grid_ui_slots.clear()
 	
+	# Get current panel to determine which slots are unlocked
+	var panel: PanelInstance = null
+	if _panel_manager:
+		panel = _panel_manager.get_panel(_current_panel_index)
+	
 	for y in range(GridManager.GRID_SIZE):
 		for x in range(GridManager.GRID_SIZE):
+			var coord = Vector2i(x, y)
 			var slot_ui = _create_slot_ui()
 			grid_container.add_child(slot_ui)
+			
 			# Apply default tooltip settings if available
 			if default_tooltip_label_settings:
 				slot_ui.tooltip_label_settings = default_tooltip_label_settings
 			
-			slot_ui.grid_coord = Vector2i(x, y)
-			slot_ui.rune_dropped.connect(_on_rune_dropped)
+			slot_ui.grid_coord = coord
 			
-			grid_ui_slots[Vector2i(x, y)] = slot_ui
+			# Set locked/unlocked state based on panel
+			if panel:
+				var is_unlocked = panel.is_slot_unlocked(coord)
+				slot_ui.set_locked_state(is_unlocked)
+			
+			# Connect signals
+			slot_ui.rune_dropped.connect(_on_rune_dropped)
+			slot_ui.modifier_dropped.connect(_on_modifier_dropped)
+			slot_ui.piece_dropped.connect(_on_piece_dropped)
+			
+			grid_ui_slots[coord] = slot_ui
 
 func _generate_inventory_ui() -> void:
 	for child in inventory_container.get_children():
@@ -206,6 +401,69 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 			slot.remove_rune()
 			grid_manager.slot_changed.emit(source_coord)
 			inventory_manager.add_rune(rune)
+
+
+## Handle modifier dropped on a grid slot
+func _on_modifier_dropped(modifier: SlotModifierData, target_slot_ui: SlotUI) -> void:
+	if not modifier or not _panel_manager or not _extra_inventory:
+		return
+	
+	var coord = target_slot_ui.grid_coord
+	if coord == Vector2i(-1, -1):
+		return
+	
+	var panel = _panel_manager.get_panel(_current_panel_index)
+	if not panel or not panel.is_slot_unlocked(coord):
+		print("Cannot apply modifier: slot is not unlocked")
+		return
+	
+	# Get the GridSlot and apply the modifier
+	var grid_slot = grid_manager.get_slot(coord) if grid_manager else null
+	if grid_slot and grid_slot.slot:
+		if grid_slot.slot.apply_modifier(modifier):
+			# Remove from extra inventory
+			_extra_inventory.remove_modifier(modifier)
+			# Update visuals
+			_on_grid_slot_changed(coord)
+			_update_other_inventory_display()
+			print("Modifier '%s' applied to slot at %s" % [modifier.display_name, coord])
+		else:
+			print("Failed to apply modifier '%s'" % modifier.display_name)
+
+
+## Handle piece dropped on a locked grid slot
+func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
+	if not piece or not _panel_manager or not _extra_inventory:
+		return
+	
+	var coord = target_slot_ui.grid_coord
+	if coord == Vector2i(-1, -1):
+		return
+	
+	var panel = _panel_manager.get_panel(_current_panel_index)
+	if not panel:
+		return
+	
+	# Check if piece can be placed (must be adjacent to existing slots)
+	if not panel.can_place_piece(piece.shape, coord):
+		print("Cannot place piece: invalid position")
+		return
+	
+	# Unlock slots from the piece
+	var unlocked_count = panel.unlock_slots_from_piece(piece.shape, coord)
+	if unlocked_count > 0:
+		# Remove piece from extra inventory
+		var piece_instance = _extra_inventory.find_piece_by_data(piece)
+		if piece_instance:
+			_extra_inventory.remove_piece(piece_instance)
+		
+		# Regenerate grid UI to show newly unlocked slots
+		_generate_grid_ui()
+		_update_other_inventory_display()
+		print("Piece '%s' placed at %s, unlocked %d slots" % [piece.display_name, coord, unlocked_count])
+	else:
+		print("No slots were unlocked from piece")
+
 
 # --- Legacy handlers removed - now handled by Shop ---
 
@@ -310,6 +568,10 @@ func _show_shop() -> void:
 	if enter_shop_button:
 		enter_shop_button.visible = false
 	
+	# Hide relic slots while in shop (they're panel-specific)
+	if relic_slots_container:
+		relic_slots_container.visible = false
+	
 	# Keep inventory containers visible
 	if inventory_container:
 		inventory_container.visible = true
@@ -331,8 +593,12 @@ func _show_shop() -> void:
 		# Connect shop signals if not already connected
 		if not shop_ui.rune_purchased.is_connected(_on_shop_rune_purchased):
 			shop_ui.rune_purchased.connect(_on_shop_rune_purchased)
-		if not shop_ui.slot_purchased.is_connected(_on_shop_slot_purchased):
-			shop_ui.slot_purchased.connect(_on_shop_slot_purchased)
+		if not shop_ui.piece_purchased.is_connected(_on_shop_piece_purchased):
+			shop_ui.piece_purchased.connect(_on_shop_piece_purchased)
+		if not shop_ui.modifier_purchased.is_connected(_on_shop_modifier_purchased):
+			shop_ui.modifier_purchased.connect(_on_shop_modifier_purchased)
+		if not shop_ui.relic_purchased.is_connected(_on_shop_relic_purchased):
+			shop_ui.relic_purchased.connect(_on_shop_relic_purchased)
 		if not shop_ui.upgrade_completed.is_connected(_on_shop_upgrade_completed):
 			shop_ui.upgrade_completed.connect(_on_shop_upgrade_completed)
 		if not shop_ui.view_panel_requested.is_connected(_on_view_panel_requested):
@@ -371,6 +637,10 @@ func _hide_shop() -> void:
 		var in_planning_phase = game_manager and game_manager.current_phase == GameEnums.GamePhase.PLANNING
 		enter_shop_button.visible = in_planning_phase
 	
+	# Show relic slots again (they're panel-specific)
+	if relic_slots_container:
+		relic_slots_container.visible = true
+	
 	# Keep inventory containers visible (they're always visible)
 	if inventory_container:
 		inventory_container.visible = true
@@ -388,11 +658,31 @@ func _on_shop_rune_purchased(rune: RuneInstance) -> void:
 		_on_inventory_updated()
 
 
-func _on_shop_slot_purchased(slot: SlotInstance) -> void:
-	# For now, slots go to a "slot inventory" or player can place them
-	# We'll add them to a pending slots list
-	print("Slot purchased: %s (place it on the grid)" % slot.data.slot_name)
-	# TODO: Add slot inventory or allow placing immediately
+func _on_shop_piece_purchased(piece: SlotPieceInstance) -> void:
+	# Slot pieces go to ExtraInventory for placement on panels
+	if _extra_inventory:
+		_extra_inventory.add_slot_piece(piece)
+		print("Piece added to inventory: %s" % piece.data.display_name)
+	else:
+		push_warning("No ExtraInventory to store piece")
+
+
+func _on_shop_modifier_purchased(modifier: SlotModifierData) -> void:
+	# Modifiers go to ExtraInventory for application on slots
+	if _extra_inventory:
+		_extra_inventory.add_modifier(modifier)
+		print("Modifier added to inventory: %s" % modifier.display_name)
+	else:
+		push_warning("No ExtraInventory to store modifier")
+
+
+func _on_shop_relic_purchased(relic: RelicInstance) -> void:
+	# Relics go to ExtraInventory for attachment to panels
+	if _extra_inventory:
+		_extra_inventory.add_relic(relic)
+		print("Relic added to inventory: %s" % relic.data.display_name)
+	else:
+		push_warning("No ExtraInventory to store relic")
 
 
 func _on_shop_upgrade_completed(new_rune: RuneInstance) -> void:
@@ -433,3 +723,42 @@ func _remove_stats_display() -> void:
 	if _stats_display:
 		_stats_display.queue_free()
 		_stats_display = null
+
+
+# --- Extra Inventory (Pieces, Modifiers, Relics) Display ---
+
+func _on_extra_inventory_updated() -> void:
+	_update_other_inventory_display()
+
+
+## Update OtherInventoryContainer to show items from ExtraInventory
+func _update_other_inventory_display() -> void:
+	if not other_inventory_container or not _extra_inventory:
+		return
+	
+	var slots = other_inventory_container.get_children()
+	
+	# Collect all extra items
+	var items: Array = []  # {type: "relic"/"modifier"/"piece", data: ..., instance: ...}
+	
+	for relic in _extra_inventory.relics:
+		items.append({"type": "relic", "instance": relic, "data": relic.data})
+	
+	for modifier in _extra_inventory.modifiers:
+		items.append({"type": "modifier", "instance": null, "data": modifier})
+	
+	for piece in _extra_inventory.slot_pieces:
+		items.append({"type": "piece", "instance": piece, "data": piece.data})
+	
+	# Display items in slots using ItemUI
+	for i in range(slots.size()):
+		var slot_ui = slots[i] as SlotUI
+		if not slot_ui:
+			continue
+		
+		if i < items.size():
+			var item = items[i]
+			slot_ui.set_extra_item(item.type, item.data, item.instance)
+		else:
+			slot_ui.clear_display()
+			slot_ui.clear_display()

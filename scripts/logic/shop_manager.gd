@@ -3,6 +3,7 @@ extends Node
 
 ## Manages all shop transactions and inventory.
 ## Handles buying, selling, upgrading, and rerolling.
+## Sells: Runes, Slot Pieces, Slot Modifiers, Relics
 
 signal shop_updated  # Emitted when shop inventory changes
 signal transaction_completed(success: bool, message: String)
@@ -11,13 +12,16 @@ signal free_pick_available(count: int)  # Emitted when free picks are available
 
 # --- Shop Inventory ---
 var available_runes: Array[RuneData] = []
-var available_slots: Array[SlotData] = []
-var available_relics: Array = []  # Placeholder - will be RelicData when implemented
+var available_pieces: Array[SlotPieceData] = []
+var available_modifiers: Array[SlotModifierData] = []
+var available_relics: Array[RelicData] = []
 
-# --- References ---
-var _drop_rates: RuneDropRates
-var _slot_data_cache: Dictionary = {}  # slot_id -> SlotData
-var _rune_pool: Array[RuneData] = []  # All available runes for shop
+# --- Resource Pools (all loaded resources) ---
+var _rune_pool: Array[RuneData] = []
+var _piece_pool: Array[SlotPieceData] = []
+var _modifier_pool: Array[SlotModifierData] = []
+var _relic_pool: Array[RelicData] = []
+var _drop_rates: RuneDropRates = null
 
 # --- Upgrade Pending ---
 var _upgrade_slot_1: RuneInstance = null
@@ -54,25 +58,17 @@ func get_seed() -> int:
 
 
 func _load_resources() -> void:
-	# Load drop rates for rune generation
-	_drop_rates = load("res://resources/runes/drop_rates.tres") as RuneDropRates
-	
-	# Load all runes for shop pool
 	_load_rune_pool()
-	
-	# Cache slot data
-	var slot_dir = "res://resources/slots/"
-	var dir = DirAccess.open(slot_dir)
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if file_name.ends_with(".tres"):
-				var slot_data = load(slot_dir + file_name) as SlotData
-				if slot_data:
-					_slot_data_cache[slot_data.id] = slot_data
-			file_name = dir.get_next()
-		dir.list_dir_end()
+	_load_piece_pool()
+	_load_modifier_pool()
+	_load_relic_pool()
+	_load_drop_rates()
+
+
+func _load_drop_rates() -> void:
+	var drop_rates_path = "res://resources/runes/drop_rates.tres"
+	if ResourceLoader.exists(drop_rates_path):
+		_drop_rates = load(drop_rates_path) as RuneDropRates
 
 
 func _load_rune_pool() -> void:
@@ -100,12 +96,61 @@ func _load_rune_pool() -> void:
 			dir.list_dir_end()
 
 
+func _load_piece_pool() -> void:
+	_piece_pool.clear()
+	var piece_dir = "res://resources/slot_pieces/"
+	var dir = DirAccess.open(piece_dir)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if file_name.ends_with(".tres"):
+				var piece_data = load(piece_dir + file_name) as SlotPieceData
+				if piece_data:
+					_piece_pool.append(piece_data)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+
+
+func _load_modifier_pool() -> void:
+	_modifier_pool.clear()
+	var modifier_dir = "res://resources/slot_modifiers/"
+	var dir = DirAccess.open(modifier_dir)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if file_name.ends_with(".tres"):
+				var modifier_data = load(modifier_dir + file_name) as SlotModifierData
+				if modifier_data:
+					_modifier_pool.append(modifier_data)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+
+
+func _load_relic_pool() -> void:
+	_relic_pool.clear()
+	var relic_dir = "res://resources/relics/"
+	var dir = DirAccess.open(relic_dir)
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if file_name.ends_with(".tres"):
+				var relic_data = load(relic_dir + file_name) as RelicData
+				if relic_data:
+					_relic_pool.append(relic_data)
+			file_name = dir.get_next()
+		dir.list_dir_end()
+
+
 ## Initialize shop with fresh inventory
 func refresh_shop(player_level: int = 1) -> void:
 	current_level = player_level
 	_generate_rune_inventory(player_level)
-	_generate_slot_inventory()
-	_generate_relic_inventory()
+	_generate_piece_inventory(player_level)
+	_generate_modifier_inventory(player_level)
+	_generate_relic_inventory(player_level)
 	shop_updated.emit()
 
 
@@ -193,6 +238,41 @@ func _generate_rune_inventory(player_level: int) -> void:
 			available_runes.append(rune_data)
 
 
+func _generate_piece_inventory(_player_level: int) -> void:
+	available_pieces.clear()
+	
+	if _piece_pool.is_empty():
+		return
+	
+	# Ensure at least MIN_PIECES_IN_SHOP pieces are generated
+	var count = maxi(ShopConfig.PIECE_SHOP_SIZE, ShopConfig.MIN_PIECES_IN_SHOP)
+	for i in range(count):
+		var piece = _piece_pool[_rng.randi() % _piece_pool.size()]
+		available_pieces.append(piece)
+
+
+func _generate_modifier_inventory(_player_level: int) -> void:
+	available_modifiers.clear()
+	
+	if _modifier_pool.is_empty():
+		return
+	
+	for i in range(ShopConfig.MODIFIER_SHOP_SIZE):
+		var modifier = _modifier_pool[_rng.randi() % _modifier_pool.size()]
+		available_modifiers.append(modifier)
+
+
+func _generate_relic_inventory(_player_level: int) -> void:
+	available_relics.clear()
+	
+	if _relic_pool.is_empty():
+		return
+	
+	for i in range(ShopConfig.RELIC_SHOP_SIZE):
+		var relic = _relic_pool[_rng.randi() % _relic_pool.size()]
+		available_relics.append(relic)
+
+
 ## Get rune pool filtered by level restrictions
 func _get_level_filtered_pool(player_level: int) -> Array[RuneData]:
 	var filtered: Array[RuneData] = []
@@ -276,25 +356,6 @@ func _pick_weighted_rune() -> RuneData:
 	return _pick_weighted_rune_from_pool(pool, current_level)
 
 
-func _generate_slot_inventory() -> void:
-	available_slots.clear()
-	
-	# Available slot types for purchase (exclude default and broken)
-	var purchasable_slots = ["amplifier", "repeater", "eternal", "merchant"]
-	
-	for i in range(ShopConfig.SLOT_SHOP_SIZE):
-		var random_id = purchasable_slots[_rng.randi() % purchasable_slots.size()]
-		if _slot_data_cache.has(random_id):
-			available_slots.append(_slot_data_cache[random_id])
-
-
-func _generate_relic_inventory() -> void:
-	available_relics.clear()
-	# Placeholder - relics not implemented yet
-	for i in range(ShopConfig.RELIC_SHOP_SIZE):
-		available_relics.append({"id": "placeholder_relic_%d" % i, "name": "Relic %d" % (i + 1)})
-
-
 # --- Buy Operations ---
 
 ## Buy a rune from the shop (or take for free if free picks available)
@@ -332,14 +393,14 @@ func buy_rune(index: int) -> RuneInstance:
 	return rune_instance
 
 
-## Buy a slot from the shop
-func buy_slot(index: int) -> SlotInstance:
-	if index < 0 or index >= available_slots.size():
-		transaction_completed.emit(false, "Invalid slot index")
+## Buy a slot piece from the shop
+func buy_piece(index: int) -> SlotPieceInstance:
+	if index < 0 or index >= available_pieces.size():
+		transaction_completed.emit(false, "Invalid piece index")
 		return null
 	
-	var slot_data = available_slots[index]
-	var cost = ShopConfig.get_slot_buy_price(slot_data.id)
+	var piece_data = available_pieces[index]
+	var cost = ShopConfig.get_piece_buy_price(piece_data)
 	
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
@@ -347,42 +408,73 @@ func buy_slot(index: int) -> SlotInstance:
 		return null
 	
 	# Deduct money
-	_spend_money(cost, "shop_slot_%s" % slot_data.id)
+	_spend_money(cost, "shop_piece_%s" % piece_data.id)
 	
 	# Remove from shop
-	available_slots.remove_at(index)
+	available_pieces.remove_at(index)
 	
 	# Create instance
-	var slot_instance = SlotInstance.new(slot_data)
+	var piece_instance = SlotPieceInstance.new(piece_data)
 	
-	transaction_completed.emit(true, "Bought %s for $%d" % [slot_data.slot_name, cost])
+	transaction_completed.emit(true, "Bought %s for $%d" % [piece_data.display_name, cost])
 	shop_updated.emit()
 	
-	return slot_instance
+	return piece_instance
 
 
-## Buy a relic (placeholder)
-func buy_relic(index: int) -> Dictionary:
-	if index < 0 or index >= available_relics.size():
-		transaction_completed.emit(false, "Invalid relic index")
-		return {}
+## Buy a slot modifier from the shop
+func buy_modifier(index: int) -> SlotModifierData:
+	if index < 0 or index >= available_modifiers.size():
+		transaction_completed.emit(false, "Invalid modifier index")
+		return null
 	
-	var cost = ShopConfig.RELIC_BASE_COST
+	var modifier_data = available_modifiers[index]
+	var cost = ShopConfig.get_modifier_buy_price(modifier_data)
 	
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
 		transaction_completed.emit(false, "Not enough money")
-		return {}
+		return null
 	
-	_spend_money(cost, "shop_relic")
+	# Deduct money
+	_spend_money(cost, "shop_modifier_%s" % modifier_data.id)
 	
-	var relic = available_relics[index]
-	available_relics.remove_at(index)
+	# Remove from shop
+	available_modifiers.remove_at(index)
 	
-	transaction_completed.emit(true, "Bought relic for $%d" % cost)
+	transaction_completed.emit(true, "Bought %s for $%d" % [modifier_data.display_name, cost])
 	shop_updated.emit()
 	
-	return relic
+	# Return the data directly (modifiers are applied, not instantiated)
+	return modifier_data
+
+
+## Buy a relic from the shop
+func buy_relic(index: int) -> RelicInstance:
+	if index < 0 or index >= available_relics.size():
+		transaction_completed.emit(false, "Invalid relic index")
+		return null
+	
+	var relic_data = available_relics[index]
+	var cost = ShopConfig.get_relic_buy_price(relic_data)
+	
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Not enough money")
+		return null
+	
+	_spend_money(cost, "shop_relic_%s" % relic_data.id)
+	
+	# Remove from shop
+	available_relics.remove_at(index)
+	
+	# Create instance
+	var relic_instance = RelicInstance.new(relic_data)
+	
+	transaction_completed.emit(true, "Bought %s for $%d" % [relic_data.display_name, cost])
+	shop_updated.emit()
+	
+	return relic_instance
 
 
 # --- Sell Operations ---
@@ -400,16 +492,42 @@ func sell_rune(rune: RuneInstance) -> int:
 	return price
 
 
-## Sell a slot
-func sell_slot(slot: SlotInstance) -> int:
-	if not slot or not slot.data:
-		transaction_completed.emit(false, "Invalid slot")
+## Sell a slot piece
+func sell_piece(piece: SlotPieceInstance) -> int:
+	if not piece or not piece.data:
+		transaction_completed.emit(false, "Invalid piece")
 		return 0
 	
-	var price = ShopConfig.get_slot_sell_price(slot.data.id)
-	_add_money(price, "sell_slot_%s" % slot.data.id)
+	var price = ShopConfig.get_piece_sell_price(piece.data)
+	_add_money(price, "sell_piece_%s" % piece.data.id)
 	
-	transaction_completed.emit(true, "Sold %s for $%d" % [slot.data.slot_name, price])
+	transaction_completed.emit(true, "Sold %s for $%d" % [piece.data.display_name, price])
+	return price
+
+
+## Sell a modifier (if player has it in inventory)
+func sell_modifier(modifier: SlotModifierData) -> int:
+	if not modifier:
+		transaction_completed.emit(false, "Invalid modifier")
+		return 0
+	
+	var price = ShopConfig.get_modifier_sell_price(modifier)
+	_add_money(price, "sell_modifier_%s" % modifier.id)
+	
+	transaction_completed.emit(true, "Sold %s for $%d" % [modifier.display_name, price])
+	return price
+
+
+## Sell a relic
+func sell_relic(relic: RelicInstance) -> int:
+	if not relic or not relic.data:
+		transaction_completed.emit(false, "Invalid relic")
+		return 0
+	
+	var price = ShopConfig.get_relic_sell_price(relic.data)
+	_add_money(price, "sell_relic_%s" % relic.data.id)
+	
+	transaction_completed.emit(true, "Sold %s for $%d" % [relic.data.display_name, price])
 	return price
 
 
@@ -570,6 +688,16 @@ func get_rune_price_display(rune_data: RuneData) -> String:
 	return "$%d" % price
 
 
-func get_slot_price_display(slot_data: SlotData) -> String:
-	var price = ShopConfig.get_slot_buy_price(slot_data.id)
+func get_piece_price_display(piece_data: SlotPieceData) -> String:
+	var price = ShopConfig.get_piece_buy_price(piece_data)
+	return "$%d" % price
+
+
+func get_modifier_price_display(modifier_data: SlotModifierData) -> String:
+	var price = ShopConfig.get_modifier_buy_price(modifier_data)
+	return "$%d" % price
+
+
+func get_relic_price_display(relic_data: RelicData) -> String:
+	var price = ShopConfig.get_relic_buy_price(relic_data)
 	return "$%d" % price

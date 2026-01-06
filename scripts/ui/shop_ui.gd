@@ -3,12 +3,14 @@ extends Control
 
 ## UI for the shop scene.
 ## Uses nodes defined in the scene tree instead of creating via code.
-## Contains sections for: Buy Runes, Buy Slots, Upgrade, Sell, Relics (placeholder)
+## Contains sections for: Buy Runes, Buy Pieces, Buy Modifiers, Upgrade, Sell, Relics
 
 signal rune_purchased(rune: RuneInstance)
-signal slot_purchased(slot: SlotInstance)
+signal piece_purchased(piece: SlotPieceInstance)
+signal modifier_purchased(modifier: SlotModifierData)
+signal relic_purchased(relic: RelicInstance)
 signal rune_sold(rune: RuneInstance)
-signal slot_sold(slot: SlotInstance)
+signal piece_sold(piece: SlotPieceInstance)
 signal upgrade_completed(new_rune: RuneInstance)
 signal view_panel_requested
 signal shop_closed
@@ -19,10 +21,10 @@ var shop_manager: ShopManager
 # --- UI Node References (from scene via @onready) ---
 @onready var enter_panel_button: Button = $EnterPanel
 @onready var purchasable_runes_container: GridContainer = $PurchasableRunes
-@onready var purchasable_slots_container: GridContainer = $PurchasableSlots
-@onready var purchasable_relics_container: GridContainer = $PurchasableRelics
+@onready var purchasable_slots_container: GridContainer = get_node_or_null("PurchasableSlots")  # For pieces & modifiers
+@onready var purchasable_relics_container: GridContainer = get_node_or_null("PurchasableRelics")
 @onready var reroll_button: Button = $Reroll
-@onready var sell_area: SellArea = $SellArea
+@onready var sell_area: SellArea = get_node_or_null("SellArea")
 
 # GetOneOfThree section (free pick)
 @onready var get_one_of_three: Control = $GetOneOfThree
@@ -89,7 +91,7 @@ func initialize(manager: ShopManager, player_level: int = 1) -> void:
 
 func _on_shop_updated() -> void:
 	_refresh_rune_shop()
-	_refresh_slot_shop()
+	_refresh_slots_shop()  # Combined pieces & modifiers
 	_refresh_relic_shop()
 	_refresh_upgrade_slots()
 	_update_free_pick_section()
@@ -117,7 +119,7 @@ func _refresh_rune_shop() -> void:
 			slot_ui.set_shop_mode(true, _get_rune_price_text(rune_data))
 			
 			# Connect buy signal if not already connected
-			_connect_slot_buy_signal(slot_ui, i, true)
+			_connect_slot_buy_signal(slot_ui, i, "rune")
 		else:
 			slot_ui.set_rune(null)
 			slot_ui.set_shop_mode(false)
@@ -129,48 +131,82 @@ func _get_rune_price_text(rune_data: RuneData) -> String:
 	return "$%d" % ShopConfig.get_rune_buy_price(rune_data.rarity)
 
 
-func _connect_slot_buy_signal(slot_ui: SlotUI, index: int, is_rune: bool) -> void:
+func _connect_slot_buy_signal(slot_ui: SlotUI, index: int, item_type: String) -> void:
 	# Disconnect any existing connection first
 	if slot_ui.gui_input.is_connected(_on_shop_slot_clicked):
 		slot_ui.gui_input.disconnect(_on_shop_slot_clicked)
 	
-	# Connect new handler
-	slot_ui.gui_input.connect(_on_shop_slot_clicked.bind(index, is_rune))
+	# Connect new handler with item type
+	slot_ui.gui_input.connect(_on_shop_slot_clicked.bind(index, item_type))
 
 
-func _on_shop_slot_clicked(event: InputEvent, index: int, is_rune: bool) -> void:
+func _on_shop_slot_clicked(event: InputEvent, index: int, item_type: String) -> void:
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		if is_rune:
-			_on_buy_rune_pressed(index)
-		else:
-			_on_buy_slot_pressed(index)
+		match item_type:
+			"rune":
+				_on_buy_rune_pressed(index)
+			"piece":
+				_on_buy_piece_pressed(index)
+			"modifier":
+				_on_buy_modifier_pressed(index)
+			"relic":
+				_on_buy_relic_pressed(index)
 
 
-# --- Purchasable Slots Section ---
+# --- Purchasable Pieces Section ---
 
-func _refresh_slot_shop() -> void:
+# --- Purchasable Slots Section (Pieces & Modifiers combined) ---
+
+func _refresh_slots_shop() -> void:
 	if not purchasable_slots_container or not shop_manager:
 		return
 	
 	var slots = purchasable_slots_container.get_children()
 	
+	# Combine pieces and modifiers into a single list
+	var shop_items: Array = []  # Each item is {type: "piece"/"modifier", data: ..., index: ...}
+	
+	for i in range(shop_manager.available_pieces.size()):
+		shop_items.append({"type": "piece", "data": shop_manager.available_pieces[i], "index": i})
+	
+	for i in range(shop_manager.available_modifiers.size()):
+		shop_items.append({"type": "modifier", "data": shop_manager.available_modifiers[i], "index": i})
+	
+	# Display items in available slots
 	for i in range(slots.size()):
 		var slot_ui = slots[i] as SlotUI
 		if not slot_ui:
 			continue
 		
-		if i < shop_manager.available_slots.size():
-			var slot_data = shop_manager.available_slots[i]
-			slot_ui.update_slot_data_display(slot_data)
-			slot_ui.set_shop_mode(true, "$%d" % ShopConfig.get_slot_buy_price(slot_data.id))
+		if i < shop_items.size():
+			var item = shop_items[i]
 			
-			_connect_slot_buy_signal(slot_ui, i, false)
+			if item.type == "piece":
+				var piece_data = item.data as SlotPieceData
+				slot_ui.set_placeholder_display(piece_data.display_name.substr(0, 2), _get_piece_shape_color(piece_data))
+				slot_ui.set_shop_mode(true, shop_manager.get_piece_price_display(piece_data))
+				_connect_slot_buy_signal(slot_ui, item.index, "piece")
+			else:  # modifier
+				var modifier_data = item.data as SlotModifierData
+				var color = SlotPieceUI.get_color_for_modifier_type(modifier_data.modifier_type)
+				slot_ui.set_placeholder_display(modifier_data.display_name.substr(0, 2), color)
+				slot_ui.set_shop_mode(true, shop_manager.get_modifier_price_display(modifier_data))
+				_connect_slot_buy_signal(slot_ui, item.index, "modifier")
 		else:
 			slot_ui.clear_display()
 			slot_ui.set_shop_mode(false)
 
 
-# --- Relic Section (Placeholder) ---
+func _get_piece_shape_color(piece_data: SlotPieceData) -> Color:
+	# Return color based on first modifier if present
+	if piece_data.slot_modifiers.size() > 0 and piece_data.slot_modifiers[0]:
+		var modifier = piece_data.slot_modifiers[0] as SlotModifierData
+		if modifier:
+			return SlotPieceUI.get_color_for_modifier_type(modifier.modifier_type)
+	return Color.GRAY
+
+
+# --- Relic Section ---
 
 func _refresh_relic_shop() -> void:
 	if not purchasable_relics_container or not shop_manager:
@@ -184,9 +220,12 @@ func _refresh_relic_shop() -> void:
 			continue
 		
 		if i < shop_manager.available_relics.size():
-			# Placeholder - just show "?" for now
-			slot_ui.set_placeholder_display("?", Color.PURPLE.darkened(0.3))
-			slot_ui.set_shop_mode(true, "Soon™")
+			var relic_data = shop_manager.available_relics[i]
+			# Show relic icon or placeholder
+			var display_text = relic_data.display_name.substr(0, 2) if relic_data.display_name else "?"
+			slot_ui.set_placeholder_display(display_text, Color.PURPLE.darkened(0.3))
+			slot_ui.set_shop_mode(true, shop_manager.get_relic_price_display(relic_data))
+			_connect_slot_buy_signal(slot_ui, i, "relic")
 		else:
 			slot_ui.clear_display()
 			slot_ui.set_shop_mode(false)
@@ -340,14 +379,34 @@ func _on_buy_rune_pressed(index: int) -> void:
 		_refresh_rune_shop()
 
 
-func _on_buy_slot_pressed(index: int) -> void:
+func _on_buy_piece_pressed(index: int) -> void:
 	if not shop_manager:
 		return
 	
-	var slot = shop_manager.buy_slot(index)
-	if slot:
-		slot_purchased.emit(slot)
-		_refresh_slot_shop()
+	var piece = shop_manager.buy_piece(index)
+	if piece:
+		piece_purchased.emit(piece)
+		_refresh_slots_shop()
+
+
+func _on_buy_modifier_pressed(index: int) -> void:
+	if not shop_manager:
+		return
+	
+	var modifier = shop_manager.buy_modifier(index)
+	if modifier:
+		modifier_purchased.emit(modifier)
+		_refresh_slots_shop()
+
+
+func _on_buy_relic_pressed(index: int) -> void:
+	if not shop_manager:
+		return
+	
+	var relic = shop_manager.buy_relic(index)
+	if relic:
+		relic_purchased.emit(relic)
+		_refresh_relic_shop()
 
 
 func _on_buy_rune_pack_pressed() -> void:

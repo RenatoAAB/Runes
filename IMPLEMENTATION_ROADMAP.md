@@ -26,12 +26,12 @@
 | 4.3 Controles do Reader | ✅ COMPLETO | `payload_skip_next.gd` (teleport/reset já existiam) |
 | 5.1 ShopManager | ✅ COMPLETO | `shop_config.gd`, `shop_manager.gd`, `shop_ui.gd` |
 | 5.2 Integração Game Loop | ✅ COMPLETO | `game_manager.gd` - fase SHOP, `main_controller.gd` - UI da loja |
-| 6.1 Painéis Multi-Grid | ❌ NÃO INICIADO | `panel_data.gd`, `panel_instance.gd`, `panel_manager.gd` |
-| 6.2 Relíquias | ❌ NÃO INICIADO | `relic_data.gd`, `relic_instance.gd`, modificadores globais de painel |
-| 6.3 Peças de Slot | ❌ NÃO INICIADO | `slot_piece_data.gd`, geração procedural, drag & drop |
-| 6.4 Modificadores de Slot | ❌ NÃO INICIADO | Sistema de modificadores aplicáveis a slots |
-| 6.5 Extra Inventory | ❌ NÃO INICIADO | UI separada para relíquias, modificadores e peças |
-| 6.6 UI de Painel | ❌ NÃO INICIADO | Interface de construção de painel com relíquias anexadas |
+| 6.1 Painéis Multi-Grid | ✅ COMPLETO | `panel_data.gd`, `panel_instance.gd`, `panel_manager.gd` |
+| 6.2 Relíquias | ✅ COMPLETO | `relic_data.gd`, `relic_instance.gd`, 4 relíquias de exemplo |
+| 6.3 Peças de Slot | ✅ COMPLETO | `slot_piece_data.gd`, `slot_piece_instance.gd`, `slot_piece_generator.gd` |
+| 6.4 Modificadores de Slot | ✅ COMPLETO | `slot_modifier_data.gd`, `slot_modifier_manager.gd`, 4 modificadores de exemplo |
+| 6.5 Extra Inventory | ✅ COMPLETO | `extra_inventory_manager.gd`, `extra_inventory_ui.gd` |
+| 6.6 UI de Painel | ✅ COMPLETO | `panel_navigator_ui.gd`, `relic_slot_ui.gd`, `piece_preview_ui.gd` |
 
 ---
 
@@ -43,7 +43,7 @@
 3. **Estatísticas Onipresentes:** Toda ação é rastreável em três níveis: Batalha → Run → Histórico.
 4. **Data-Driven:** Comportamentos definidos em Resources, não em código.
 
-### Estado Atual (90% implementado)
+### Estado Atual (95% implementado)
 - ✅ Core Loop (Reader, Grid, Slots, Runas)
 - ✅ Sistema de Efeitos (Condition/Target/Payload)
 - ✅ UI básica (Drag-drop, Tooltips, Highlights)
@@ -55,9 +55,14 @@
 - ✅ Economia básica (dinheiro, bônus de vitória, payloads de economia)
 - ✅ Controles do Reader (skip, teleport, reset)
 - ✅ Loja completa (compra, venda, reroll, upgrade, rune packs)
-- ❌ Faltando: Painéis multi-grid com multiplicadores globais
-- ❌ Faltando: Relíquias (modificadores globais de painel)
-- ❌ Faltando: Peças de Slot (aglomerados de 1-4 slots)
+- ✅ Painéis multi-grid com multiplicadores globais (PanelData, PanelInstance, PanelManager)
+- ✅ Relíquias (RelicData, RelicInstance, 4 relíquias de exemplo)
+- ✅ Peças de Slot (SlotPieceData, SlotPieceInstance, SlotPieceGenerator)
+- ✅ Modificadores de Slot (SlotModifierData, SlotModifierManager, 4 modificadores de exemplo)
+- ✅ Extra Inventory (ExtraInventoryManager, ExtraInventoryUI)
+- ✅ UI de Painel (PanelNavigatorUI, RelicSlotUI, PiecePreviewUI)
+- ⏳ Faltando: Integração completa com GameManager e MainController
+- ⏳ Faltando: Persistência de painéis e relíquias
 - ❌ Faltando: Modificadores de Slot
 - ❌ Faltando: Extra Inventory (UI separada para itens não-runa)
 
@@ -273,17 +278,22 @@ var history_stats: Dictionary = {
 - [x] `scripts/logic/slot_instance.gd` - Slots podem gerar dinheiro via `money_on_activation`
 
 ### 4.2 Sistema de Slots como Entidades ✅ COMPLETO
-> Slots tratados como entidades de primeira classe, similar às runas.
+> Slots são composições de SlotPieces + SlotModifiers.
 
 **Arquivos criados:**
-- [x] `scripts/data/slot_data.gd` - Resource definindo tipo de slot
+- [x] `scripts/data/slot_data.gd` - Resource definindo tipo de slot base
+- [x] `scripts/data/slot_piece_data.gd` - Slot Pieces (formas de 1-4 slots)
+- [x] `scripts/data/slot_modifier_data.gd` - Modificadores aplicáveis a slots
 - [x] `scripts/logic/slot_instance.gd` - Instância runtime com estados e upgrades
-- [x] `resources/slots/slot_default.tres` - Slot padrão (1x)
-- [x] `resources/slots/slot_amplifier.tres` - Multiplicador 2x
-- [x] `resources/slots/slot_repeater.tres` - Dispara runa 2 vezes
-- [x] `resources/slots/slot_eternal.tres` - Preserva cargas
-- [x] `resources/slots/slot_merchant.tres` - Gera dinheiro por ativação
-- [x] `resources/slots/slot_broken.tres` - Multiplicador 0.5x
+- [x] `scripts/logic/slot_piece_instance.gd` - Instância runtime de slot pieces
+- [x] `resources/slot_pieces/piece_single.tres` - Peça de 1 slot
+- [x] `resources/slot_pieces/piece_domino_gold.tres` - Peça de 2 slots
+- [x] `resources/slot_pieces/piece_l_shape.tres` - Peça em L (3 slots)
+- [x] `resources/slot_pieces/piece_tetromino_t.tres` - Peça em T (4 slots)
+- [x] `resources/slot_modifiers/modifier_amplifier.tres` - Multiplicador +1x
+- [x] `resources/slot_modifiers/modifier_repeater.tres` - Dispara runa 2 vezes
+- [x] `resources/slot_modifiers/modifier_preserver.tres` - Preserva cargas (Eternal)
+- [x] `resources/slot_modifiers/modifier_merchant.tres` - Gera dinheiro por ativação
 
 **Arquivos modificados:**
 - [x] `scripts/logic/grid_slot.gd` - Refatorado para usar SlotInstance
@@ -629,9 +639,9 @@ FASE 4.1 → 4.2 → 4.3        (Features GDD)       ✅ COMPLETO
     ↓
 FASE 5.1 → 5.2              (Loja)               ✅ COMPLETO
     ↓
-FASE 6.1 → 6.2 → 6.3 → 6.4 → 6.5 → 6.6  (Painéis & Relíquias)  ❌ PENDENTE  ← PRÓXIMO
+FASE 6.1 → 6.2 → 6.3 → 6.4 → 6.5 → 6.6  (Painéis & Relíquias)  ✅ COMPLETO (estrutura base)
     ↓
-FASE 7.x                    (Polish)             ❌ PENDENTE
+FASE 7.x                    (Polish)             ❌ PENDENTE  ← PRÓXIMO
 ```
 
 ### Ordem Sugerida para Fase 6:
@@ -663,16 +673,26 @@ Após cada fase, verificar:
 - [x] StatsDisplay aparece durante batalha
 - [x] Loja funciona corretamente (compra, venda, upgrade, reroll)
 
-### Checklist Fase 6 (a validar):
-- [ ] Múltiplos painéis processam sequencialmente
-- [ ] Score final multiplica scores de cada painel
-- [ ] Peças de slot encaixam corretamente na área de expansão
-- [ ] Peças respeitam adjacência ortogonal
-- [ ] Modificadores de slot aplicam corretamente
-- [ ] Relíquias anexam aos painéis
-- [ ] Relíquias aplicam efeitos globais
-- [ ] Extra Inventory organiza itens por categoria
-- [ ] Drag & drop funciona para todos os tipos de item
+### Checklist Fase 6 (estrutura implementada - integração pendente):
+- [x] PanelData e PanelInstance criados
+- [x] PanelManager com lógica multi-painel
+- [x] Score final multiplica scores via `calculate_multi_panel_score()`
+- [x] SlotPieceData com validação de forma (polyominoes)
+- [x] SlotPieceGenerator com templates e geração procedural
+- [x] Peças respeitam adjacência ortogonal (`is_valid_shape()`)
+- [x] SlotModifierData com tipos e stacking
+- [x] SlotModifierManager aplica modificadores a slots
+- [x] SlotInstance atualizado para suportar modificadores permanentes
+- [x] RelicData com tipos de trigger (PASSIVE, ON_PANEL_START, etc.)
+- [x] RelicInstance com execução de efeitos
+- [x] ExtraInventoryManager para gerenciar itens não-runa
+- [x] UI components criados (PanelNavigatorUI, RelicSlotUI, PiecePreviewUI, ExtraInventoryUI)
+- [x] Resources de exemplo criados (3 painéis, 4 relíquias, 4 modificadores)
+- [ ] Integração com GameManager (inicialização de PanelManager)
+- [ ] Integração com MainController (UI de painéis e navegação)
+- [ ] Drag & drop de relíquias para painéis
+- [ ] Drag & drop de peças para expansão
+- [ ] Drag & drop de modificadores para slots
 
 ---
 
@@ -822,47 +842,52 @@ Após cada fase, verificar:
 | `target_arbitrary.gd` | (nenhuma) |
 | `target_relative.gd` | (nenhuma) |
 
-### Arquivos a Criar na Fase 6 (Painéis & Relíquias)
+### Arquivos Criados na Fase 6 (Painéis & Relíquias)
 
 #### Data (`scripts/data/`)
 | Arquivo | Descrição | Status |
 |---------|-----------|--------|
-| `panel_data.gd` | Resource definindo configuração de painel | ❌ |
-| `relic_data.gd` | Resource definindo relíquia | ❌ |
-| `slot_piece_data.gd` | Resource definindo peça de slots | ❌ |
-| `slot_modifier_data.gd` | Resource definindo modificador aplicável (item) | ❌ |
+| `panel_data.gd` | Resource definindo configuração de painel | ✅ |
+| `relic_data.gd` | Resource definindo relíquia | ✅ |
+| `slot_piece_data.gd` | Resource definindo peça de slots | ✅ |
+| `slot_modifier_data.gd` | Resource definindo modificador aplicável (item) | ✅ |
 
 #### Logic (`scripts/logic/`)
 | Arquivo | Descrição | Status |
 |---------|-----------|--------|
-| `panel_instance.gd` | Instância runtime de painel | ❌ |
-| `panel_manager.gd` | Gerencia múltiplos painéis | ❌ |
-| `relic_instance.gd` | Instância runtime de relíquia | ❌ |
-| `slot_piece_instance.gd` | Instância runtime de peça de slot | ❌ |
-| `slot_piece_generator.gd` | Geração procedural de peças | ❌ |
-| `slot_modifier_manager.gd` | Gerencia aplicação de modificadores | ❌ |
-| `extra_inventory_manager.gd` | Gerencia itens não-runa | ❌ |
+| `panel_instance.gd` | Instância runtime de painel | ✅ |
+| `panel_manager.gd` | Gerencia múltiplos painéis | ✅ |
+| `relic_instance.gd` | Instância runtime de relíquia | ✅ |
+| `slot_piece_instance.gd` | Instância runtime de peça de slot | ✅ |
+| `slot_piece_generator.gd` | Geração procedural de peças | ✅ |
+| `slot_modifier_manager.gd` | Gerencia aplicação de modificadores | ✅ |
+| `extra_inventory_manager.gd` | Gerencia itens não-runa | ✅ |
 
 #### UI (`scripts/ui/`)
 | Arquivo | Descrição | Status |
 |---------|-----------|--------|
-| `relic_slot_ui.gd` | UI de slot de relíquia | ❌ |
-| `piece_preview_ui.gd` | Preview de encaixe de peça | ❌ |
-| `panel_navigator_ui.gd` | Navegação entre painéis | ❌ |
-| `extra_inventory_ui.gd` | Interface do inventário extra | ❌ |
+| `relic_slot_ui.gd` | UI de slot de relíquia | ✅ |
+| `piece_preview_ui.gd` | Preview de encaixe de peça | ✅ |
+| `panel_navigator_ui.gd` | Navegação entre painéis | ✅ |
+| `extra_inventory_ui.gd` | Interface do inventário extra | ✅ |
 
-#### Existentes a Modificar
-| Arquivo | Mudança Necessária | Status |
+#### Existentes Modificados
+| Arquivo | Mudança Realizada | Status |
 |---------|-------------------|--------|
 | `slot_data.gd` | ✅ Já suporta tipos de slot | ✅ EXISTE |
-| `slot_instance.gd` | ✅ Já tem active_states para modificadores | ✅ EXISTE |
-| `main_controller.gd` | Suporte a múltiplos painéis | ❌ |
-| `slot_ui.gd` | Estado bloqueado/desbloqueado | ❌ |
-| `scenes/main.tscn` | Área de relíquias, navegação de painéis | ❌ |
+| `slot_instance.gd` | Suporte a modificadores permanentes (get_meta) | ✅ ATUALIZADO |
+| `game_enums.gd` | Adicionada fase SHOP ao enum | ✅ ATUALIZADO |
+| `main_controller.gd` | Suporte a múltiplos painéis | ⏳ PENDENTE |
+| `slot_ui.gd` | Estado bloqueado/desbloqueado | ⏳ PENDENTE |
+| `scenes/main.tscn` | Área de relíquias, navegação de painéis | ⏳ PENDENTE |
 
-#### Resources (`resources/`)
+#### Resources Criados (`resources/`)
 | Pasta | Conteúdo | Status |
 |-------|----------|--------|
+| `resources/panels/` | `panel_default.tres`, `panel_secondary.tres`, `panel_tertiary.tres` | ✅ |
+| `resources/relics/` | `relic_amplifier.tres`, `relic_opening_crystal.tres`, `relic_final_echo.tres`, `relic_catalyst.tres` | ✅ |
+| `resources/slot_modifiers/` | `modifier_amplifier.tres`, `modifier_repeater.tres`, `modifier_merchant.tres`, `modifier_preserver.tres` | ✅ |
+| `resources/slot_pieces/` | (gerados proceduralmente) | ✅ |
 | `resources/panels/` | Configurações de painéis (.tres) | ❌ |
 | `resources/relics/` | Definições de relíquias (.tres) | ❌ |
 | `resources/slot_pieces/` | Templates de peças (.tres) | ❌ |
