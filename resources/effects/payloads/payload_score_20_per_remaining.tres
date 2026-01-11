@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PayloadScorePerRemainingActivations" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_score_per_remaining_activations.gd" id="1_payload"]
+
+[resource]
+script = ExtResource("1_payload")
+score_per_activation = 20
+activation_source = 0
+is_permanent = false

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="PayloadScorePerElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_score_per_element.gd" id="1_payload"]
+
+[resource]
+script = ExtResource("1_payload")
+target_elements = [0]
+score_per_match = 10
+check_base_elements = true

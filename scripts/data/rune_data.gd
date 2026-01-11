@@ -4,6 +4,7 @@ extends Resource
 @export_group("Identity")
 @export var id: String
 @export var rune_name: String
+@export_multiline var description: String = "" ## Human-readable description of what the rune does
 @export var tier: GameEnums.Tier = GameEnums.Tier.TIER_1
 @export var rarity: GameEnums.Rarity = GameEnums.Rarity.COMMON
 @export var element: GameEnums.Element = GameEnums.Element.NEUTRAL
@@ -11,6 +12,7 @@ extends Resource
 
 @export_group("Stats")
 @export var base_max_activations: int = 1
+@export var is_indestructible: bool = true ## If false, the rune can be destroyed
 
 @export_group("Visuals")
 ## Array of Textures corresponding to Tier 1, 2, and 3 visuals.

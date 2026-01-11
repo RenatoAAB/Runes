@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Resource" path="res://resources/effects/effect_score_30.tres" id="2_effect"]
+
+[resource]
+script = ExtResource("1_data")
+id = "empathy"
+rune_name = "Empatia"
+description = "+30 pontos. (+1 ativação para runas do mesmo elemento - WIP)"
+tier = 1
+rarity = 1
+element = 36
+base_max_activations = 1
+is_indestructible = true
+effects = [ExtResource("2_effect")]

@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PayloadBuffActivationTarget" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_buff_activation_target.gd" id="1_buff"]
+
+[resource]
+script = ExtResource("1_buff")
+activation_bonus = 1
+is_permanent = false

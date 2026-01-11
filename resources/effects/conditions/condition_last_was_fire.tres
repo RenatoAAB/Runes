@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ConditionLastActivatedElement" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_last_activated_element.gd" id="1_cond"]
+
+[resource]
+script = ExtResource("1_cond")
+required_element = 0
+check_base_elements = true

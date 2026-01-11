@@ -1,5 +1,6 @@
 ## Central event bus for the game.
 ## All gameplay events flow through here for processing AND recording.
+## Also manages effect triggers for non-ON_READ effects.
 ## This is an Autoload - add to Project Settings > Autoload as "EventBus".
 extends Node
 
@@ -28,6 +29,23 @@ signal battle_started(panel_count: int)
 ## Emitted when the battle sequence ends
 signal battle_ended(total_score: int, target_score: int, victory: bool)
 
+# --- Trigger Signals (for non-ON_READ effects) ---
+
+## Emitted when a rune is destroyed
+signal rune_destroyed(slot: GridSlot, rune: RuneInstance)
+
+## Emitted when a rune is created during battle
+signal rune_created(slot: GridSlot, rune: RuneInstance)
+
+## Emitted when a rune is activated (after all its effects execute)
+signal rune_activated(slot: GridSlot, rune: RuneInstance)
+
+## Emitted at round start
+signal round_started()
+
+## Emitted at round end (before cleanup)
+signal round_ending()
+
 # =============================================================================
 # STATE - Current battle/round tracking
 # =============================================================================
@@ -53,12 +71,24 @@ var is_battle_active: bool = false
 ## The current panel index being processed
 var current_panel_index: int = 0
 
+## Reference to BattleContext (set by Reader when battle starts)
+var battle_context: BattleContext = null
+
+## Reference to GridManager (set during initialization or by battle)
+var grid_manager: GridManager = null
+
 # =============================================================================
 # LIFECYCLE
 # =============================================================================
 
 func _ready() -> void:
 	print("[EventBus] Initialized")
+
+
+## Set references for trigger processing
+func set_battle_references(context: BattleContext, grid: GridManager) -> void:
+	battle_context = context
+	grid_manager = grid
 
 
 ## Call at the start of a new battle sequence
@@ -68,12 +98,17 @@ func begin_battle(panel_count: int = 1) -> void:
 	current_score = 0
 	current_panel_index = 0
 	is_battle_active = true
+	round_started.emit()
 	battle_started.emit(panel_count)
 	print("[EventBus] Battle started with %d panel(s)" % panel_count)
 
 
 ## Call at the end of a battle sequence
 func end_battle(target_score: int) -> void:
+	# Process round end triggers before finalizing
+	round_ending.emit()
+	_process_round_end_effects()
+	
 	is_battle_active = false
 	var victory = current_score >= target_score
 	battle_ended.emit(current_score, target_score, victory)
@@ -272,3 +307,106 @@ func was_rune_activated_at(rune_id: StringName, coord: Vector2i) -> bool:
 				if not sre.was_disabled and sre.had_successful_payload():
 					return true
 	return false
+
+
+# =============================================================================
+# TRIGGER PROCESSING - Execute effects based on trigger type
+# =============================================================================
+
+## Notify that a rune was destroyed
+func notify_rune_destroyed(slot: GridSlot, rune: RuneInstance) -> void:
+	if not is_battle_active or not battle_context:
+		return
+	
+	battle_context.on_rune_destroyed(slot, rune)
+	rune_destroyed.emit(slot, rune)
+	
+	# Process ON_DESTROY effects for this rune
+	_process_trigger_effects(rune, slot, GameEnums.EffectTrigger.ON_DESTROY)
+
+
+## Notify that a rune was created during battle
+func notify_rune_created(slot: GridSlot, rune: RuneInstance) -> void:
+	if not is_battle_active or not battle_context:
+		return
+	
+	battle_context.on_rune_created(slot, rune)
+	rune_created.emit(slot, rune)
+	
+	# Process ON_CREATED effects for this rune
+	_process_trigger_effects(rune, slot, GameEnums.EffectTrigger.ON_CREATED)
+
+
+## Notify that a rune was activated (called after all ON_READ effects)
+func notify_rune_activated(slot: GridSlot, rune: RuneInstance) -> void:
+	if not is_battle_active or not battle_context:
+		return
+	
+	rune_activated.emit(slot, rune)
+	
+	# Check for ON_ADJACENT_ACTIVATED effects on neighbors
+	_process_adjacent_activation_effects(slot, rune)
+
+
+## Process effects with a specific trigger for a rune
+func _process_trigger_effects(rune: RuneInstance, slot: GridSlot, trigger_type: GameEnums.EffectTrigger) -> void:
+	if not rune or not rune.data or not battle_context:
+		return
+	
+	for effect in rune.data.effects:
+		if effect.trigger == trigger_type:
+			effect.execute(rune, battle_context, slot)
+
+
+## Process ON_ADJACENT_ACTIVATED effects when a rune activates
+func _process_adjacent_activation_effects(activated_slot: GridSlot, activated_rune: RuneInstance) -> void:
+	if not grid_manager or not battle_context:
+		return
+	
+	var neighbors = grid_manager.get_neighbors(activated_slot.grid_position, false)
+	for neighbor_slot in neighbors:
+		if neighbor_slot.is_empty():
+			continue
+		
+		var neighbor_rune = neighbor_slot.rune
+		for effect in neighbor_rune.data.effects:
+			if effect.trigger == GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED:
+				# Check if condition involves the activated rune's element
+				effect.execute(neighbor_rune, battle_context, neighbor_slot)
+
+
+## Process ON_ROUND_END effects for all runes on the grid
+func _process_round_end_effects() -> void:
+	if not grid_manager or not battle_context:
+		return
+	
+	print("[EventBus] Processing round end effects...")
+	
+	for slot in grid_manager.grid:
+		if slot.is_empty():
+			continue
+		
+		var rune = slot.rune
+		for effect in rune.data.effects:
+			if effect.trigger == GameEnums.EffectTrigger.ON_ROUND_END:
+				effect.execute(rune, battle_context, slot)
+	
+	# Process resurrections
+	battle_context.process_resurrections()
+
+
+## Process ON_ROUND_START effects for all runes (call at beginning of battle)
+func process_round_start_effects() -> void:
+	if not grid_manager or not battle_context:
+		return
+	
+	print("[EventBus] Processing round start effects...")
+	
+	for slot in grid_manager.grid:
+		if slot.is_empty():
+			continue
+		
+		var rune = slot.rune
+		for effect in rune.data.effects:
+			if effect.trigger == GameEnums.EffectTrigger.ON_ROUND_START:
+				effect.execute(rune, battle_context, slot)

@@ -5,12 +5,17 @@ extends RefCounted
 ## Acts as the API for effects to interact with the game state (Grid, Score, etc.)
 ## without coupling directly to Nodes like Reader or Main.
 ## 
-## In the new event-driven architecture, BattleContext still provides the API
-## but also tracks metadata for event generation.
+## Tracks round state for rune effects that depend on:
+## - Previous activations and their elements
+## - Destroyed/created runes this round
+## - Unique runes activated
+## - Visited slots for reader jumps
 
 signal score_event(amount: int, source: RuneInstance)
 signal reader_jump_request(index: int)
 signal rune_activation_queued(slot: GridSlot)
+signal rune_destroyed(slot: GridSlot, rune: RuneInstance)
+signal rune_created(slot: GridSlot, rune: RuneInstance)
 
 var grid: GridManager
 var current_score: int = 0
@@ -25,12 +30,43 @@ var effects_this_activation: Array[Dictionary] = []  # Track effect results
 ## Reference to EventBus (optional, for direct event emission)
 var event_bus: Node = null
 
+# --- Round State Tracking (for new rune effects) ---
+
+## History of activations this round: [{element, rune_id, slot_position, rune_instance}]
+var activation_history: Array[Dictionary] = []
+
+## Count of runes destroyed this round
+var runes_destroyed_this_round: int = 0
+
+## Count of runes created this round
+var runes_created_this_round: int = 0
+
+## Unique runes activated this round (rune_id -> activation count)
+var unique_runes_activated: Dictionary = {}
+
+## Slots visited by the reader this round (indices)
+var visited_slots: Array[int] = []
+
+## Runes marked for resurrection at end of round (e.g., Phoenix)
+var runes_to_resurrect: Array[Dictionary] = []  # [{rune_data, slot_position, permanent_buffs}]
+
 
 func _init(p_grid: GridManager):
 	grid = p_grid
 	# Try to get EventBus
 	if Engine.has_singleton("EventBus"):
 		event_bus = Engine.get_singleton("EventBus")
+
+
+## Resets round-specific tracking. Call at start of each round.
+func reset_round_state() -> void:
+	activation_history.clear()
+	runes_destroyed_this_round = 0
+	runes_created_this_round = 0
+	unique_runes_activated.clear()
+	visited_slots.clear()
+	runes_to_resurrect.clear()
+	set_meta("total_activations", 0)
 
 
 ## Set the current slot/rune being processed (called by Reader before activation)
@@ -93,6 +129,132 @@ func clear_effects_tracking() -> void:
 	effects_this_activation.clear()
 	current_slot = null
 	current_rune = null
+
+
+# --- Activation History Methods ---
+
+## Records a rune activation in history. Called by Reader after activation.
+func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
+	var entry = {
+		"element": rune.data.element,
+		"rune_id": rune.data.id,
+		"slot_position": slot.grid_position,
+		"rune_instance": rune
+	}
+	activation_history.append(entry)
+	
+	# Track unique runes
+	var rune_id = rune.data.id
+	if unique_runes_activated.has(rune_id):
+		unique_runes_activated[rune_id] += 1
+	else:
+		unique_runes_activated[rune_id] = 1
+	
+	# Track visited slot
+	var slot_index = slot.grid_position.y * GridManager.GRID_SIZE + slot.grid_position.x
+	if slot_index not in visited_slots:
+		visited_slots.append(slot_index)
+
+
+## Returns the element of the last activated rune, or -1 if none
+func get_last_activated_element() -> int:
+	if activation_history.is_empty():
+		return -1
+	return activation_history[-1].get("element", -1)
+
+
+## Returns the last N activation entries
+func get_last_n_activations(n: int) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	var start_idx = max(0, activation_history.size() - n)
+	for i in range(start_idx, activation_history.size()):
+		result.append(activation_history[i])
+	return result
+
+
+## Checks if the last N activations were all the same element
+func last_n_same_element(n: int) -> bool:
+	if activation_history.size() < n:
+		return false
+	var last_n = get_last_n_activations(n)
+	if last_n.is_empty():
+		return false
+	var first_element = last_n[0].get("element", -1)
+	for entry in last_n:
+		if entry.get("element", -1) != first_element:
+			return false
+	return true
+
+
+## Returns the common element if last N were same, or -1
+func get_common_element_of_last_n(n: int) -> int:
+	if not last_n_same_element(n):
+		return -1
+	return activation_history[-1].get("element", -1)
+
+
+## Returns total number of activations this round
+func get_total_activations_this_round() -> int:
+	return activation_history.size()
+
+
+## Returns count of unique individual runes activated
+func get_unique_runes_count() -> int:
+	return unique_runes_activated.size()
+
+
+## Returns a random visited slot index, or -1 if none
+func get_random_visited_slot() -> int:
+	if visited_slots.is_empty():
+		return -1
+	return visited_slots[randi() % visited_slots.size()]
+
+
+# --- Rune Creation/Destruction Tracking ---
+
+## Called when a rune is destroyed during the round
+func on_rune_destroyed(slot: GridSlot, rune: RuneInstance) -> void:
+	runes_destroyed_this_round += 1
+	rune_destroyed.emit(slot, rune)
+	
+	# Check if rune should resurrect (e.g., Phoenix)
+	if rune.get_meta("should_resurrect", false):
+		runes_to_resurrect.append({
+			"rune_data": rune.data,
+			"slot_position": slot.grid_position,
+			"permanent_buffs": rune.permanent_buffs.duplicate()
+		})
+
+
+## Called when a rune is created during the round
+func on_rune_created(slot: GridSlot, rune: RuneInstance) -> void:
+	runes_created_this_round += 1
+	rune_created.emit(slot, rune)
+
+
+## Mark a rune to resurrect at end of round
+func mark_for_resurrection(rune: RuneInstance, slot: GridSlot, bonus_permanent_score: int = 0) -> void:
+	var buffs = rune.permanent_buffs.duplicate()
+	buffs["score_bonus"] = buffs.get("score_bonus", 0) + bonus_permanent_score
+	runes_to_resurrect.append({
+		"rune_data": rune.data,
+		"slot_position": slot.grid_position,
+		"permanent_buffs": buffs
+	})
+
+
+## Process resurrections at end of round
+func process_resurrections() -> void:
+	for entry in runes_to_resurrect:
+		var slot = grid.get_slot(entry.slot_position)
+		if slot and slot.is_empty():
+			var new_rune = RuneInstance.new(entry.rune_data)
+			for key in entry.permanent_buffs:
+				new_rune.permanent_buffs[key] = entry.permanent_buffs[key]
+			slot.set_rune(new_rune)
+			grid.slot_changed.emit(slot.grid_position)
+			print("Resurrected %s at %s with buffs" % [entry.rune_data.rune_name, str(entry.slot_position)])
+	runes_to_resurrect.clear()
 
 
 # --- Economy Methods ---

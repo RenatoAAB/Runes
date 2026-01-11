@@ -25,9 +25,10 @@ var current_target_score: int = 0
 var current_phase: GamePhase = GamePhase.SETUP
 var is_initial_setup: bool = true
 
-# Temporary database of runes to pick rewards from
-@export var available_runes: Array[RuneData]
-@export var fixed_starting_runes: Array[RuneData]
+# Runes that start in the player's inventory
+@export var initial_runes: Array[RuneData]
+# Runes available for rewards/shop (loaded dynamically)
+var available_runes: Array[RuneData]
 @export var rune_drop_rates: RuneDropRates
 
 func _ready() -> void:
@@ -185,20 +186,10 @@ func _setup_initial_inventory() -> void:
 	# Clear inventory
 	inventory_manager.clear_all()
 	
-	# Add fixed starting runes
-	if fixed_starting_runes.is_empty():
-		# Fallback to loading by path if not set in inspector
-		var common_a = load("res://resources/runes/common/common_a.tres")
-		var common_b = load("res://resources/runes/common/common_b.tres")
-		var common_c = load("res://resources/runes/common/common_c.tres")
-		
-		if common_a: inventory_manager.add_rune(RuneInstance.new(common_a))
-		if common_b: inventory_manager.add_rune(RuneInstance.new(common_b))
-		if common_c: inventory_manager.add_rune(RuneInstance.new(common_c))
-	else:
-		for rune_data in fixed_starting_runes:
-			var instance = RuneInstance.new(rune_data)
-			inventory_manager.add_rune(instance)
+	# Add initial runes to inventory
+	for rune_data in initial_runes:
+		var instance = RuneInstance.new(rune_data)
+		inventory_manager.add_rune(instance)
 	
 	# Give starting money
 	_grant_starting_money()

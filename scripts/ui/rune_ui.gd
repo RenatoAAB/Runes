@@ -45,7 +45,18 @@ func _on_mouse_entered() -> void:
 		shop_price_text = parent.get_shop_price_text()
 	
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
-		var type_str = GameEnums.Element.keys()[rune_instance.data.element]
+		# Get element composition (base elements)
+		var base_elements = GameEnums.get_base_elements(rune_instance.data.element)
+		var elements_str = ""
+		if base_elements.size() > 0:
+			var element_names: Array[String] = []
+			for el in base_elements:
+				element_names.append(GameEnums.Element.keys()[el])
+			elements_str = " + ".join(element_names)
+		else:
+			# Pure element (no composition)
+			elements_str = GameEnums.Element.keys()[rune_instance.data.element]
+		
 		var activations = rune_instance.get_max_activations()
 		
 		# Build header with price in top-right if in shop mode
@@ -53,18 +64,7 @@ func _on_mouse_entered() -> void:
 		if shop_price_text != "":
 			header = "[b]%s[/b]  [color=gold][b]%s[/b][/color]" % [rune_instance.data.rune_name, shop_price_text]
 		
-		var info = "%s\n%s | Activations: %d\nTier: %d" % [header, type_str, activations, rune_instance.data.tier]
-		
-		# Collect all keywords from all effects
-		var all_keywords: Array[StringName] = []
-		for effect in rune_instance.data.effects:
-			for kw in effect.get_keywords():
-				if kw not in all_keywords:
-					all_keywords.append(kw)
-		
-		# Add keyword badges line
-		if all_keywords.size() > 0:
-			info += "\n" + Keywords.format_keyword_line(all_keywords)
+		var info = "%s\n%s | Activations: %d\nTier: %d" % [header, elements_str, activations, rune_instance.data.tier]
 		
 		# Context for evaluation
 		var context: BattleContext = null

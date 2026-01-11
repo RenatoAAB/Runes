@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Resource" path="res://resources/effects/effect_reader_per_adjacent.tres" id="2_effect"]
+
+[resource]
+script = ExtResource("1_data")
+id = "instability"
+rune_name = "Instabilidade"
+description = "O Reader volta 1 slot por cada vez que trocou de elemento. (WIP - implementado como 1 por adjacente)"
+tier = 1
+rarity = 2
+element = 24
+base_max_activations = 1
+is_indestructible = true
+effects = [ExtResource("2_effect")]

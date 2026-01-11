@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ConditionDistinctElementsAdjacent" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_distinct_elements_adjacent.gd" id="1_cond"]
+
+[resource]
+script = ExtResource("1_cond")
+min_distinct_elements = 5
+include_diagonals = false

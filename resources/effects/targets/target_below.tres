@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="TargetDirectionalSlot" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/targets/target_directional_slot.gd" id="1_dir"]
+
+[resource]
+script = ExtResource("1_dir")
+direction = 1
+include_if_empty = true

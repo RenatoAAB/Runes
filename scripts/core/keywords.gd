@@ -48,6 +48,7 @@ const PETRIFIED := &"PETRIFIED"          # Cannot be moved
 const BURNING := &"BURNING"              # Takes damage over time
 const WET := &"WET"                      # Extinguishes fire, conducts
 const ILLUMINATED := &"ILLUMINATED"      # Reveals/empowers
+const PERMANENT := &"PERMANENT"          # Effect is permanent
 const PRISMATIC := &"PRISMATIC"          # Multi-element
 const CURSED := &"CURSED"                # Negative persistent effect
 const DISABLED := &"DISABLED"            # Cannot activate
@@ -339,6 +340,14 @@ const DATABASE: Dictionary = {
 		"color": Color(1.0, 1.0, 0.7),  # Pale Yellow
 		"category": Category.STATE,
 		"icon": "illuminated"
+	},
+	&"PERMANENT": {
+		"name": "Permanente",
+		"description": "O efeito dura para sempre.",
+		"example": "Buff permanente",
+		"color": Color(0.9, 0.8, 0.5),  # Gold
+		"category": Category.STATE,
+		"icon": "permanent"
 	},
 	&"PRISMATIC": {
 		"name": "Prismático",
