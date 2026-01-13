@@ -219,6 +219,10 @@ func _on_reader_jump_request(target_index: int) -> void:
 
 func _finish_sequence() -> void:
 	is_running = false
+
+	# Clear temporary buffs/states now that the round is over so tooltips don't show stale bonuses
+	if grid_manager:
+		grid_manager.process_round_end()
 	
 	# Emit panel complete event
 	if event_bus and event_bus.has_method("emit"):
