@@ -31,7 +31,6 @@ script = ExtResource("1_data")
 id = "water"
 rune_name = "Agua"
 description = "+1 ativação para a próxima runa. +1 extra se tiver Agua adjacente."
-elements = [1]
+elements = Array[int]([1])
 textures = Array[Texture2D]([ExtResource("6_iuka2")])
 effects = Array[ExtResource("1_dygwn")]([SubResource("Resource_cdh4x")])
-

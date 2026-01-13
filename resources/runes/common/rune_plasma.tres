@@ -58,7 +58,6 @@ rune_name = "Plasma"
 description = "	+100 pontos
 	-5 ponto permanente para cada runa de agua proxima
 "
-elements = [0]
+elements = Array[int]([0])
 textures = Array[Texture2D]([ExtResource("9_t21h6")])
 effects = Array[ExtResource("1_ve8k6")]([SubResource("Resource_3vtkw"), SubResource("Resource_ykt8b")])
-

@@ -4,6 +4,14 @@ extends TextureRect
 ## Visual representation of a Rune.
 ## Handles the start of the Drag & Drop operation.
 
+const ELEMENT_ICON_PATHS := {
+	GameEnums.Element.FIRE: "res://sprites/icons/elements/fire-element-icon.png",
+	GameEnums.Element.WATER: "res://sprites/icons/elements/water-element-icon.png",
+	GameEnums.Element.EARTH: "res://sprites/icons/elements/earth-element-icon.png",
+	GameEnums.Element.AIR: "res://sprites/icons/elements/air-element-icon.png",
+	GameEnums.Element.SPIRIT: "res://sprites/icons/elements/spirit-element-icon.png",
+}
+
 var rune_instance: RuneInstance
 var disabled_material: ShaderMaterial
 
@@ -47,14 +55,7 @@ func _on_mouse_entered() -> void:
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
 		# Base elements are now stored directly on the rune
 		var base_elements = GameEnums.normalize_elements(rune_instance.data.elements)
-		var elements_str = ""
-		if base_elements.is_empty():
-			elements_str = "None"
-		else:
-			var element_names: Array[String] = []
-			for el in base_elements:
-				element_names.append(GameEnums.Element.keys()[el])
-			elements_str = " + ".join(element_names)
+		var elements_str = _build_element_icons_text(base_elements)
 		
 		var activations = rune_instance.get_max_activations()
 		var activation_text = _format_activation_text(activations)
@@ -152,6 +153,22 @@ func _format_activation_text(activations: int) -> String:
 	if perm_bonus != 0:
 		return "Activations: [color=yellow]%d[/color]" % activations
 	return "Activations: %d" % activations
+
+
+func _build_element_icons_text(base_elements: Array[GameEnums.Element]) -> String:
+	if base_elements.is_empty():
+		return "None"
+
+	var parts: Array[String] = []
+	for element in base_elements:
+		var icon_path: String = ELEMENT_ICON_PATHS.get(element, "")
+		if icon_path != "":
+			parts.append("[img=9x9]%s[/img]" % icon_path)
+		else:
+			# Fallback to text if an icon is missing
+			parts.append(GameEnums.Element.keys()[element])
+
+	return " ".join(parts)
 
 
 func _get_effect_description_with_permanents(effect: RuneEffect, effect_index: int, is_condition_met: bool, can_evaluate_condition: bool) -> String:
