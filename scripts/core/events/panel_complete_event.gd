@@ -37,11 +37,6 @@ var disabled_runes: int = 0
 ## Array of { "type": StringName, "description": String, "bonus": float }
 var synergies_applied: Array[Dictionary] = []
 
-## Aggregated keyword statistics for this panel
-## Dictionary of keyword_id -> count
-var keyword_counts: Dictionary = {}
-
-
 func _init() -> void:
 	super._init()
 
@@ -56,7 +51,6 @@ func aggregate_from_slots() -> void:
 	runes_activated = 0
 	empty_slots = 0
 	disabled_runes = 0
-	keyword_counts.clear()
 	
 	for event in slot_events:
 		if event.was_empty:
@@ -66,13 +60,6 @@ func aggregate_from_slots() -> void:
 		else:
 			runes_activated += 1
 			raw_score += event.get_score_delta()
-			
-			# Aggregate keywords
-			for kw in event.keywords_triggered:
-				if kw in keyword_counts:
-					keyword_counts[kw] += 1
-				else:
-					keyword_counts[kw] = 1
 	
 	# Apply panel multiplier
 	final_score = int(raw_score * panel_multiplier)
@@ -97,7 +84,6 @@ func to_dict() -> Dictionary:
 		"empty_slots": empty_slots,
 		"disabled_runes": disabled_runes,
 		"synergies_applied": synergies_applied,
-		"keyword_counts": keyword_counts,
 		"slot_event_count": slot_events.size(),
 	})
 	return base

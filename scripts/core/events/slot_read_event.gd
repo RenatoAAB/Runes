@@ -17,14 +17,14 @@ var rune_element: GameEnums.Element
 var rune_tier: GameEnums.Tier
 
 ## Results from evaluating each condition
-## Array of { "condition_type": StringName, "met": bool, "keywords": Array[StringName] }
+## Array of { "condition_type": StringName, "met": bool }
 var conditions_evaluated: Array[Dictionary] = []
 
 ## The target slots that were selected
 var targets_selected: Array[Vector2i] = []
 
 ## Results from executing each payload
-## Array of { "payload_type": StringName, "keywords": Array[StringName], "score_delta": int, "success": bool, "details": Dictionary }
+## Array of { "payload_type": StringName, "score_delta": int, "success": bool, "details": Dictionary }
 var payloads_executed: Array[Dictionary] = []
 
 ## Score before this slot was processed
@@ -47,10 +47,6 @@ var was_empty: bool = false
 
 ## Whether the rune was disabled and couldn't activate
 var was_disabled: bool = false
-
-## All keywords triggered during this read (aggregated from conditions + payloads)
-var keywords_triggered: Array[StringName] = []
-
 
 func _init() -> void:
 	super._init()
@@ -81,23 +77,6 @@ func all_conditions_met() -> bool:
 	return true
 
 
-## Aggregate all keywords from this event
-func aggregate_keywords() -> void:
-	keywords_triggered.clear()
-	
-	for condition in conditions_evaluated:
-		var kw = condition.get("keywords", []) as Array
-		for k in kw:
-			if k not in keywords_triggered:
-				keywords_triggered.append(k)
-	
-	for payload in payloads_executed:
-		var kw = payload.get("keywords", []) as Array
-		for k in kw:
-			if k not in keywords_triggered:
-				keywords_triggered.append(k)
-
-
 func to_dict() -> Dictionary:
 	var base = super.to_dict()
 	base.merge({
@@ -116,7 +95,6 @@ func to_dict() -> Dictionary:
 		"activations_remaining": activations_remaining,
 		"was_empty": was_empty,
 		"was_disabled": was_disabled,
-		"keywords_triggered": keywords_triggered,
 	})
 	return base
 

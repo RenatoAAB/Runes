@@ -171,9 +171,6 @@ func emit_economy(event: EconomyEvent) -> void:
 # =============================================================================
 
 func _handle_slot_read(event: SlotReadEvent) -> void:
-	# Aggregate keywords
-	event.aggregate_keywords()
-	
 	# Update score
 	current_score = event.score_after
 	
@@ -258,16 +255,6 @@ func get_total_activations() -> int:
 			var sre = event as SlotReadEvent
 			if not sre.was_empty and not sre.was_disabled:
 				count += sre.activations_used
-	return count
-
-
-## Get how many times a keyword was triggered in current battle
-func get_keyword_count(keyword: StringName) -> int:
-	var count = 0
-	for event in current_battle_events:
-		if event is SlotReadEvent:
-			var sre = event as SlotReadEvent
-			count += sre.keywords_triggered.count(keyword)
 	return count
 
 

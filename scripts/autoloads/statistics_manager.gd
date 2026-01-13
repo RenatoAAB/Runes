@@ -21,7 +21,6 @@ func _reset_battle_stats() -> void:
 		"score_by_rune": {},        # rune_id -> total_score
 		"activations_by_rune": {},  # rune_id -> count
 		"activations_by_element": {},# Element -> count
-		"keywords_triggered": {},   # keyword_id -> count
 		"empty_slots_read": 0,
 		"disabled_runes": 0,
 		"total_score": 0,
@@ -75,7 +74,6 @@ func _init_history_stats() -> void:
 		"total_rounds_played": 0,
 		"total_runes_activated": 0,
 		"total_score_all_time": 0,
-		"keyword_usage": {},        # keyword_id -> total count all time
 		"rune_usage": {},           # rune_id -> {times_used, total_score}
 		"achievements": {},         # achievement_id -> {unlocked, date}
 	}
@@ -186,18 +184,6 @@ func _on_slot_read(event: SlotReadEvent) -> void:
 		battle["activations_by_element"][element_str] = 0
 	battle["activations_by_element"][element_str] += event.activations_used
 	
-	# Track keywords
-	for kw in event.keywords_triggered:
-		var kw_str = str(kw)
-		if kw_str not in battle["keywords_triggered"]:
-			battle["keywords_triggered"][kw_str] = 0
-		battle["keywords_triggered"][kw_str] += 1
-		
-		# Also track in history
-		if kw_str not in history["keyword_usage"]:
-			history["keyword_usage"][kw_str] = 0
-		history["keyword_usage"][kw_str] += 1
-	
 	# Track highest single activation
 	if score_delta > battle["highest_single_activation"]:
 		battle["highest_single_activation"] = score_delta
@@ -298,11 +284,6 @@ func get_battle_activations_for_rune(rune_id: String) -> int:
 ## Get total activations for an element in current battle
 func get_battle_activations_for_element(element: GameEnums.Element) -> int:
 	return battle["activations_by_element"].get(str(element), 0)
-
-
-## Get how many times a keyword was triggered in current battle
-func get_battle_keyword_count(keyword: StringName) -> int:
-	return battle["keywords_triggered"].get(str(keyword), 0)
 
 
 ## Get lifetime usage of a rune

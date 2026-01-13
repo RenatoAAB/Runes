@@ -8,7 +8,6 @@ signal continue_pressed
 @export var title_label: Label
 @export var score_label: RichTextLabel
 @export var stats_container: VBoxContainer
-@export var keywords_container: HFlowContainer
 @export var continue_button: Button
 
 ## Colors for victory/defeat styling
@@ -48,9 +47,6 @@ func show_result(is_victory: bool, final_score: int, target_score: int) -> void:
 	
 	# Update statistics from StatisticsManager
 	_update_stats_display()
-	
-	# Update keywords display
-	_update_keywords_display()
 	
 	# Show the screen
 	show()
@@ -99,53 +95,6 @@ func _update_stats_display() -> void:
 			var rune_name = sorted_runes[i]
 			var rune_score = score_by_rune[rune_name]
 			_add_stat_line(str(rune_name), "%d pts" % rune_score)
-
-
-func _update_keywords_display() -> void:
-	if not keywords_container:
-		return
-	
-	# Clear previous keywords
-	for child in keywords_container.get_children():
-		child.queue_free()
-	
-	var stats = get_node_or_null("/root/Stats")
-	if not stats:
-		return
-	
-	var battle_stats = stats.get_battle_stats()
-	if battle_stats.is_empty():
-		return
-	
-	var keyword_counts: Dictionary = battle_stats.get("keywords_triggered", {})
-	if keyword_counts.is_empty():
-		return
-	
-	# Sort by count
-	var sorted_keywords = keyword_counts.keys()
-	sorted_keywords.sort_custom(func(a, b): return keyword_counts[a] > keyword_counts[b])
-	
-	# Show top 8 keywords
-	for i in range(mini(8, sorted_keywords.size())):
-		var kw_id = sorted_keywords[i]
-		var count = keyword_counts[kw_id]
-		_create_keyword_badge(kw_id, count)
-
-
-func _create_keyword_badge(keyword_id: StringName, count: int) -> void:
-	var panel = PanelContainer.new()
-	
-	var label = Label.new()
-	var kw_data = Keywords.get_keyword(keyword_id)
-	
-	label.text = "%s ×%d" % [kw_data.get("name", keyword_id), count]
-	
-	# Set color from keyword data
-	var color = kw_data.get("color", Color.WHITE)
-	label.add_theme_color_override("font_color", color)
-	
-	panel.add_child(label)
-	keywords_container.add_child(panel)
 
 
 func _add_stat_line(stat_name: String, stat_value: String) -> void:
@@ -237,19 +186,6 @@ static func create_popup(parent: Node, is_victory: bool, final_score: int, targe
 	stats_vbox.add_theme_constant_override("separation", 2)
 	screen.stats_container = stats_vbox
 	vbox.add_child(stats_vbox)
-	
-	# Keywords header
-	var kw_header = Label.new()
-	kw_header.text = "Keywords Used"
-	kw_header.add_theme_color_override("font_color", Color(0.7, 0.7, 0.4))
-	kw_header.add_theme_font_size_override("font_size", 12)
-	vbox.add_child(kw_header)
-	
-	# Keywords container
-	var kw_flow = HFlowContainer.new()
-	kw_flow.custom_minimum_size = Vector2(250, 30)
-	screen.keywords_container = kw_flow
-	vbox.add_child(kw_flow)
 	
 	# Continue button
 	var button = Button.new()

@@ -2,10 +2,9 @@ class_name StatsDisplay
 extends Control
 
 ## Displays real-time statistics during gameplay.
-## Shows keyword usage, score breakdown, and rune performance.
+## Shows score breakdown and rune performance.
 
 @export var stats_container: VBoxContainer
-@export var keyword_container: HFlowContainer
 @export var score_label: RichTextLabel
 @export var activations_label: Label
 
@@ -43,7 +42,6 @@ func _refresh_display() -> void:
 		return
 	
 	_update_score_display()
-	_update_keyword_display()
 	_update_activations_display()
 
 
@@ -59,44 +57,6 @@ func _update_score_display() -> void:
 	var high_activation = battle_stats.get("highest_single_activation", 0)
 	
 	score_label.text = "[b]Score:[/b] %d\n[color=yellow]Best: %d[/color]" % [score, high_activation]
-
-
-func _update_keyword_display() -> void:
-	if not keyword_container:
-		return
-	
-	# Clear existing badges
-	for child in keyword_container.get_children():
-		child.queue_free()
-	
-	var battle_stats = stats.get_battle_stats()
-	if battle_stats.is_empty():
-		return
-	
-	var keyword_counts: Dictionary = battle_stats.get("keywords_triggered", {})
-	
-	# Create badges for top keywords (sorted by count)
-	var sorted_keywords = keyword_counts.keys()
-	sorted_keywords.sort_custom(func(a, b): return keyword_counts[a] > keyword_counts[b])
-	
-	# Show top 5 keywords
-	for i in range(mini(5, sorted_keywords.size())):
-		var kw_id = sorted_keywords[i]
-		var count = keyword_counts[kw_id]
-		_create_keyword_badge(kw_id, count)
-
-
-func _create_keyword_badge(keyword_id: StringName, count: int) -> void:
-	var label = Label.new()
-	var kw_data = Keywords.get_keyword(keyword_id)
-	
-	label.text = "%s ×%d" % [kw_data.get("name", keyword_id), count]
-	
-	# Set color from keyword data
-	var color = kw_data.get("color", Color.WHITE)
-	label.add_theme_color_override("font_color", color)
-	
-	keyword_container.add_child(label)
 
 
 func _update_activations_display() -> void:
@@ -145,18 +105,6 @@ func get_battle_summary() -> String:
 			var rune_id = sorted_runes[i]
 			summary += "  %s: %d pts\n" % [rune_id, score_by_rune[rune_id]]
 		summary += "\n"
-	
-	# Keywords used
-	var keywords: Dictionary = battle_stats.get("keywords_triggered", {})
-	if keywords.size() > 0:
-		summary += "[b]Keywords Triggered:[/b]\n"
-		var sorted_kw = keywords.keys()
-		sorted_kw.sort_custom(func(a, b): return keywords[a] > keywords[b])
-		
-		for kw_id in sorted_kw:
-			var kw_data = Keywords.get_keyword(kw_id)
-			var color = kw_data.get("color", Color.WHITE).to_html(false)
-			summary += "  [color=#%s]%s[/color]: ×%d\n" % [color, kw_data.get("name", kw_id), keywords[kw_id]]
 	
 	return summary
 
@@ -211,19 +159,6 @@ static func create_panel(parent: Node, position: Vector2 = Vector2(10, 270)) -> 
 	activations.add_theme_font_size_override("font_size", 12)
 	vbox.add_child(activations)
 	display.activations_label = activations
-	
-	# Keywords header
-	var kw_header = Label.new()
-	kw_header.text = "Keywords"
-	kw_header.add_theme_font_size_override("font_size", 10)
-	kw_header.add_theme_color_override("font_color", Color(0.7, 0.7, 0.4))
-	vbox.add_child(kw_header)
-	
-	# Keywords flow container
-	var kw_flow = HFlowContainer.new()
-	kw_flow.custom_minimum_size = Vector2(140, 30)
-	vbox.add_child(kw_flow)
-	display.keyword_container = kw_flow
 	
 	parent.add_child(display)
 	return display

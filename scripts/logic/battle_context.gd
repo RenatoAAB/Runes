@@ -82,8 +82,7 @@ func record_effect_result(effect: RuneEffect, success: bool, score_delta: int, t
 		"effect": effect,
 		"success": success,
 		"score_delta": score_delta,
-		"targets": targets.map(func(s): return s.grid_position),
-		"keywords": effect.get_keywords() if effect.has_method("get_keywords") else []
+		"targets": targets.map(func(s): return s.grid_position)
 	})
 
 
