@@ -5,4 +5,3 @@
 [resource]
 script = ExtResource("1_cond")
 required_element = 4
-check_base_elements = true

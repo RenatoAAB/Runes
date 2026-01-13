@@ -45,17 +45,16 @@ func _on_mouse_entered() -> void:
 		shop_price_text = parent.get_shop_price_text()
 	
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
-		# Get element composition (base elements)
-		var base_elements = GameEnums.get_base_elements(rune_instance.data.element)
+		# Base elements are now stored directly on the rune
+		var base_elements = GameEnums.normalize_elements(rune_instance.data.elements)
 		var elements_str = ""
-		if base_elements.size() > 0:
+		if base_elements.is_empty():
+			elements_str = "None"
+		else:
 			var element_names: Array[String] = []
 			for el in base_elements:
 				element_names.append(GameEnums.Element.keys()[el])
 			elements_str = " + ".join(element_names)
-		else:
-			# Pure element (no composition)
-			elements_str = GameEnums.Element.keys()[rune_instance.data.element]
 		
 		var activations = rune_instance.get_max_activations()
 		var activation_text = _format_activation_text(activations)

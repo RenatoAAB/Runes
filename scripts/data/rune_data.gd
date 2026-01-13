@@ -7,7 +7,7 @@ extends Resource
 @export_multiline var description: String = "" ## Human-readable description of what the rune does
 @export var tier: GameEnums.Tier = GameEnums.Tier.TIER_1
 @export var rarity: GameEnums.Rarity = GameEnums.Rarity.COMMON
-@export var element: GameEnums.Element = GameEnums.Element.NEUTRAL
+@export var elements: Array[GameEnums.Element] = []
 @export var upgrades_to: RuneData
 
 @export_group("Stats")

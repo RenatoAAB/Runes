@@ -14,9 +14,11 @@ can_repeat = true
 effects = []
 multiplier_bonus = 0.0
 score_bonus = 1
-element_affinity = 26
+element_affinity = []
 affinity_multiplier = 1.0
 max_per_panel = 2
 incompatible_relic_ids = []
 buy_price = 12
 sell_price = 4
+
+

@@ -15,8 +15,7 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 		if slot.is_empty():
 			continue
 		
-		var rune_element = slot.rune.data.element
-		var base_elements = GameEnums.get_base_elements(rune_element)
+		var base_elements = GameEnums.normalize_elements(slot.rune.data.elements)
 		
 		for base in base_elements:
 			if base not in distinct_elements:

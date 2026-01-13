@@ -11,7 +11,8 @@ rune_name = "Lava"
 description = "+10 pontos por runa de Fogo adjacente. Petrifica slots adjacentes."
 tier = 1
 rarity = 1
-element = 16
+elements = [0, 2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

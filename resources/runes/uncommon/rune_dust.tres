@@ -10,7 +10,8 @@ rune_name = "Poeira"
 description = "Move para slot vazio adjacente. (+10 por slot vazio no painel - WIP)"
 tier = 1
 rarity = 1
-element = 22
+elements = [3, 2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

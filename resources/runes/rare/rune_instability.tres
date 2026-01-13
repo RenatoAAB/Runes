@@ -10,7 +10,8 @@ rune_name = "Instabilidade"
 description = "O Reader volta 1 slot por cada vez que trocou de elemento. (WIP - implementado como 1 por adjacente)"
 tier = 1
 rarity = 2
-element = 24
+elements = [0, 1, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

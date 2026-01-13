@@ -11,7 +11,8 @@ rune_name = "Mundo"
 description = "+1 ativação para adjacentes. +200 pontos. (Para todas runas do painel - WIP)"
 tier = 1
 rarity = 4
-element = 42
+elements = [4, 0, 1, 2, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

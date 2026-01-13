@@ -139,7 +139,7 @@ func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, 
 	event.phase = GameEnums.GamePhase.BATTLE
 	event.slot_coord = coord
 	event.rune_id = rune.data.id if rune.data.id else StringName(rune.data.rune_name)
-	event.rune_element = rune.data.element
+	event.rune_elements = rune.data.elements
 	event.rune_tier = rune.data.tier
 	event.score_before = score_before
 	event.score_after = total_score
@@ -191,7 +191,7 @@ func _emit_disabled_slot_event(coord: Vector2i, rune: RuneInstance, score_before
 	event.phase = GameEnums.GamePhase.BATTLE
 	event.slot_coord = coord
 	event.rune_id = StringName(rune.data.id) if rune.data.id else StringName(rune.data.rune_name)
-	event.rune_element = rune.data.element
+	event.rune_elements = rune.data.elements
 	event.was_disabled = true
 	event.score_before = score_before
 	event.score_after = score_before

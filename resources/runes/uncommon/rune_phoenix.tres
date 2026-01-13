@@ -10,7 +10,8 @@ rune_name = "Fenix"
 description = "+30 pontos. (Ressurge no final da rodada se destruída - WIP)"
 tier = 1
 rarity = 1
-element = 34
+elements = [4, 0]
 base_max_activations = 1
 is_indestructible = false
 effects = [ExtResource("2_effect")]
+

@@ -10,7 +10,8 @@ rune_name = "Esterilidade"
 description = "+50 pontos se não há runas adjacentes."
 tier = 1
 rarity = 2
-element = 25
+elements = [0, 2, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

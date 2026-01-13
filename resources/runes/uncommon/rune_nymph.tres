@@ -10,7 +10,8 @@ rune_name = "Ninfa"
 description = "+30 pontos. (Cria runa Water em slot vazio abaixo - WIP)"
 tier = 1
 rarity = 1
-element = 37
+elements = [4, 1]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

@@ -10,7 +10,8 @@ rune_name = "Gravidade"
 description = "Consome runas adjacentes. (Transfere ativações - WIP)"
 tier = 1
 rarity = 2
-element = 27
+elements = [0, 1, 2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

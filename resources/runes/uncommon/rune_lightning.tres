@@ -10,7 +10,8 @@ rune_name = "Raio"
 description = "Ativa a próxima runa duas vezes."
 tier = 1
 rarity = 1
-element = 15
+elements = [0, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

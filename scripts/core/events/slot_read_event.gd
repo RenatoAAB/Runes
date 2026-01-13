@@ -10,8 +10,8 @@ var slot_coord: Vector2i
 ## The rune that was in the slot (null if empty)
 var rune_id: StringName
 
-## The rune's element (for statistics)
-var rune_element: GameEnums.Element
+## The rune's base elements (for statistics)
+var rune_elements: Array[GameEnums.Element] = []
 
 ## The rune's tier
 var rune_tier: GameEnums.Tier
@@ -82,7 +82,7 @@ func to_dict() -> Dictionary:
 	base.merge({
 		"slot_coord": {"x": slot_coord.x, "y": slot_coord.y},
 		"rune_id": rune_id,
-		"rune_element": rune_element,
+		"rune_elements": rune_elements,
 		"rune_tier": rune_tier,
 		"conditions_evaluated": conditions_evaluated,
 		"targets_selected": targets_selected.map(func(v): return {"x": v.x, "y": v.y}),

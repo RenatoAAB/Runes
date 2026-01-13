@@ -242,7 +242,7 @@ func get_activations_for_element(element: GameEnums.Element) -> int:
 	for event in current_battle_events:
 		if event is SlotReadEvent:
 			var sre = event as SlotReadEvent
-			if sre.rune_element == element and not sre.was_empty and not sre.was_disabled:
+			if element in sre.rune_elements and not sre.was_empty and not sre.was_disabled:
 				count += sre.activations_used
 	return count
 

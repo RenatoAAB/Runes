@@ -11,7 +11,8 @@ rune_name = "Energia"
 description = "+1 ativação para adjacentes. +2 ativações extras se 5 elementos distintos adjacentes."
 tier = 1
 rarity = 3
-element = 28
+elements = [0, 1, 2, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

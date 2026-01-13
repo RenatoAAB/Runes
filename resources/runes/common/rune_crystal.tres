@@ -10,7 +10,8 @@ rune_name = "Cristal"
 description = "+10 pontos se estiver em um canto do painel."
 tier = 1
 rarity = 0
-element = 8
+elements = [2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

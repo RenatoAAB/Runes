@@ -11,7 +11,8 @@ rune_name = "Obsidiana"
 description = "+50 pontos se estiver em canto. Petrifica slot abaixo."
 tier = 1
 rarity = 1
-element = 17
+elements = [0, 2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

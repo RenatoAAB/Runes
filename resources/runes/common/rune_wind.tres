@@ -10,7 +10,8 @@ rune_name = "Vento"
 description = "O Reader volta 1 slot por runa adjacente."
 tier = 1
 rarity = 0
-element = 11
+elements = [3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

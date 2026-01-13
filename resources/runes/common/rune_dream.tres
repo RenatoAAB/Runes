@@ -10,7 +10,8 @@ rune_name = "Sonho"
 description = "+100 pontos no final da rodada se não foi ativada."
 tier = 1
 rarity = 0
-element = 32
+elements = [4]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

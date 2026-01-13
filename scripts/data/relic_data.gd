@@ -41,10 +41,10 @@ enum RelicTrigger {
 ## Global score flat bonus (for PASSIVE relics)
 @export var score_bonus: int = 0
 
-## Element affinity (boosts specific elements if set)
-@export var element_affinity: GameEnums.Element = GameEnums.Element.NEUTRAL
+## Element affinity (boosts specific elements if set). Empty = no affinity.
+@export var element_affinity: Array[GameEnums.Element] = []
 
-## Affinity multiplier (only if element_affinity is not NEUTRAL)
+## Affinity multiplier (applied if affinity list is not empty)
 @export var affinity_multiplier: float = 1.0
 
 @export_group("Restrictions")
@@ -94,9 +94,11 @@ func get_full_description() -> String:
 	if score_bonus > 0:
 		text += "\n[color=cyan]+%d Base Score[/color]" % score_bonus
 	
-	if element_affinity != GameEnums.Element.NEUTRAL and affinity_multiplier > 1.0:
-		var element_name = GameEnums.Element.keys()[element_affinity]
-		text += "\n[color=magenta]%s x%.1f[/color]" % [element_name, affinity_multiplier]
+	if element_affinity.size() > 0 and affinity_multiplier > 1.0:
+		var names: Array[String] = []
+		for e in element_affinity:
+			names.append(GameEnums.Element.keys()[e])
+		text += "\n[color=magenta]%s x%.1f[/color]" % [", ".join(names), affinity_multiplier]
 	
 	return text
 
@@ -138,7 +140,7 @@ func get_keywords() -> Array[StringName]:
 		all_keywords.append(&"MULTIPLY")
 	if score_bonus > 0:
 		all_keywords.append(&"SCORE")
-	if element_affinity != GameEnums.Element.NEUTRAL:
+	if element_affinity.size() > 0:
 		all_keywords.append(&"ELEMENT_TARGET")
 	
 	# Add keywords from effects

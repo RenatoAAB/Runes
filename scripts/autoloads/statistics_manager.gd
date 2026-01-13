@@ -178,11 +178,13 @@ func _on_slot_read(event: SlotReadEvent) -> void:
 		battle["activations_by_rune"][rune_id] = 0
 	battle["activations_by_rune"][rune_id] += event.activations_used
 	
-	# Track activations by element
-	var element_str = str(event.rune_element)
-	if element_str not in battle["activations_by_element"]:
-		battle["activations_by_element"][element_str] = 0
-	battle["activations_by_element"][element_str] += event.activations_used
+	# Track activations by element (each base element present on the rune)
+	var elements: Array[GameEnums.Element] = GameEnums.normalize_elements(event.rune_elements)
+	for elem in elements:
+		var element_key = GameEnums.Element.keys()[elem]
+		if element_key not in battle["activations_by_element"]:
+			battle["activations_by_element"][element_key] = 0
+		battle["activations_by_element"][element_key] += event.activations_used
 	
 	# Track highest single activation
 	if score_delta > battle["highest_single_activation"]:
@@ -283,7 +285,8 @@ func get_battle_activations_for_rune(rune_id: String) -> int:
 
 ## Get total activations for an element in current battle
 func get_battle_activations_for_element(element: GameEnums.Element) -> int:
-	return battle["activations_by_element"].get(str(element), 0)
+	var key = GameEnums.Element.keys()[element]
+	return battle["activations_by_element"].get(key, 0)
 
 
 ## Get lifetime usage of a rune

@@ -10,7 +10,8 @@ rune_name = "Gelo"
 description = "+10 pontos por ativação restante própria."
 tier = 1
 rarity = 1
-element = 19
+elements = [1, 3]
 base_max_activations = 2
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

@@ -5,17 +5,12 @@ extends EffectCondition
 ## Used for: Fogo (+20 if last was fire).
 
 @export var required_element: GameEnums.Element = GameEnums.Element.FIRE
-@export var check_base_elements: bool = true  ## If true, checks element composition
 
 func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> bool:
-	var last_element = context.get_last_activated_element()
-	if last_element == -1:
+	var last_elements = context.get_last_activated_elements()
+	if last_elements.is_empty():
 		return false
-	
-	if check_base_elements:
-		return GameEnums.has_base_element(last_element, required_element)
-	
-	return last_element == required_element
+	return required_element in last_elements
 
 
 func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:

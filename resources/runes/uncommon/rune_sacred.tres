@@ -11,7 +11,8 @@ rune_name = "Sagrado"
 description = "+20 pontos se última foi Spirit. +20 pontos se última foi Fire."
 tier = 1
 rarity = 1
-element = 35
+elements = [4, 0]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

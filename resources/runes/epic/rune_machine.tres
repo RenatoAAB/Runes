@@ -10,7 +10,8 @@ rune_name = "Maquina"
 description = "+100 pontos se todos os elementos base foram ativados nesta rodada. (WIP - implementado como +30 se 4 distintos)"
 tier = 1
 rarity = 3
-element = 29
+elements = [0, 1, 2, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

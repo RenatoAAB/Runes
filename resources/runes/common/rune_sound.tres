@@ -10,7 +10,8 @@ rune_name = "Som"
 description = "+30 pontos por ativação restante própria."
 tier = 1
 rarity = 0
-element = 12
+elements = [3]
 base_max_activations = 2
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

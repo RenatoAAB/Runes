@@ -10,7 +10,8 @@ rune_name = "Luz"
 description = "+50 pontos quando uma runa adjacente é ativada."
 tier = 1
 rarity = 0
-element = 30
+elements = [4]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

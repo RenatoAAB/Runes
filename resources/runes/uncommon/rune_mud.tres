@@ -11,7 +11,8 @@ rune_name = "Lama"
 description = "+30 pontos. +20 pontos por ativação restante."
 tier = 1
 rarity = 1
-element = 21
+elements = [1, 2]
 base_max_activations = 2
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

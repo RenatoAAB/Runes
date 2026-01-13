@@ -7,7 +7,6 @@ extends EffectPayload
 
 @export var score_per_match: int = 10
 @export var target_elements: Array[GameEnums.Element] = []
-@export var check_base_elements: bool = true  ## If true, checks element composition (e.g., LAVA matches FIRE)
 @export var is_permanent: bool = false  ## If true, adds to permanent buffs instead of immediate score
 
 func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: BattleContext) -> void:
@@ -17,19 +16,13 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 		if slot.is_empty():
 			continue
 		
-		var rune_element = slot.rune.data.element
+		var rune_elements = GameEnums.normalize_elements(slot.rune.data.elements)
 		var is_match = false
 		
-		if check_base_elements:
-			# Check if the rune's base elements include any target element
-			var base_elements = GameEnums.get_base_elements(rune_element)
-			for target_elem in target_elements:
-				if target_elem in base_elements:
-					is_match = true
-					break
-		else:
-			# Direct element match only
-			is_match = rune_element in target_elements
+		for target_elem in target_elements:
+			if target_elem in rune_elements:
+				is_match = true
+				break
 		
 		if is_match:
 			match_count += 1

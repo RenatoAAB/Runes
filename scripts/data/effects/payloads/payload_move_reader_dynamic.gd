@@ -77,11 +77,7 @@ func _find_previous_element(context: BattleContext, current_index: int) -> int:
 		if i < context.grid.grid.size():
 			var slot = context.grid.grid[i]
 			if not slot.is_empty():
-				var rune_element = slot.rune.data.element
-				# Check both direct match and base element composition
-				if rune_element == target_element:
-					return i
-				if GameEnums.has_base_element(rune_element, target_element):
+				if target_element in slot.rune.data.elements:
 					return i
 	return -1
 

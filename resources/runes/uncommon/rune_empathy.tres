@@ -10,7 +10,8 @@ rune_name = "Empatia"
 description = "+30 pontos. (+1 ativação para runas do mesmo elemento - WIP)"
 tier = 1
 rarity = 1
-element = 36
+elements = [4, 1]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

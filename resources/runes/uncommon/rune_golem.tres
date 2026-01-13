@@ -10,7 +10,8 @@ rune_name = "Golem"
 description = "+30 pontos. (Cria runa Earth em slot vazio de canto - WIP)"
 tier = 1
 rarity = 1
-element = 38
+elements = [4, 2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

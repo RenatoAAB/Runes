@@ -6,4 +6,3 @@
 script = ExtResource("1_payload")
 target_elements = [2]
 score_per_match = 10
-check_base_elements = true

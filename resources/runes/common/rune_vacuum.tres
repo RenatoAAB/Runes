@@ -11,7 +11,8 @@ rune_name = "Vacuo"
 description = "Move para slot vazio adjacente. +30 pontos."
 tier = 1
 rarity = 0
-element = 33
+elements = [4]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

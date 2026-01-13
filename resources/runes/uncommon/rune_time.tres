@@ -10,7 +10,8 @@ rune_name = "Tempo"
 description = "O Reader volta 2 slots. (Volta para última posição visitada - WIP)"
 tier = 1
 rarity = 1
-element = 39
+elements = [4, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

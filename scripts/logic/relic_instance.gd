@@ -97,17 +97,18 @@ func get_score_bonus() -> int:
 	return data.score_bonus
 
 
-## Get element affinity multiplier for a specific element
-func get_element_multiplier(element: GameEnums.Element) -> float:
+## Get element affinity multiplier for a rune's elements
+func get_element_multiplier(elements: Array[GameEnums.Element]) -> float:
 	if not is_active:
 		return 1.0
 	
-	if data.element_affinity == GameEnums.Element.NEUTRAL:
+	if data.element_affinity.is_empty():
 		return 1.0
 	
-	if element == data.element_affinity:
-		return data.affinity_multiplier
-	
+	for elem in elements:
+		if elem in data.element_affinity:
+			return data.affinity_multiplier
+
 	return 1.0
 
 

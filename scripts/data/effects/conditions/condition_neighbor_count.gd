@@ -14,7 +14,7 @@ enum Comparison {
 
 @export_group("Filter")
 @export var filter_by_element: bool = false
-@export var required_element: GameEnums.Element = GameEnums.Element.NEUTRAL
+@export var required_element: GameEnums.Element = GameEnums.Element.FIRE
 
 func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> bool:
 	var neighbors = context.grid.get_neighbors(source_slot.grid_position, check_diagonals)
@@ -22,7 +22,7 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 	for neighbor in neighbors:
 		if not neighbor.is_empty():
 			if filter_by_element:
-				if neighbor.rune.data.element == required_element:
+				if required_element in neighbor.rune.data.elements:
 					count += 1
 			else:
 				count += 1
@@ -43,7 +43,7 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 	
 	var filtered: Array[GridSlot] = []
 	for n in neighbors:
-		if not n.is_empty() and n.rune.data.element == required_element:
+		if not n.is_empty() and required_element in n.rune.data.elements:
 			filtered.append(n)
 	return filtered
 

@@ -10,7 +10,8 @@ rune_name = "Osso"
 description = "+10 pontos por runa de Terra adjacente. (+30 se tiver runa destruída nesta rodada - WIP)"
 tier = 1
 rarity = 0
-element = 10
+elements = [2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

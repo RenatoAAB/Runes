@@ -11,7 +11,8 @@ rune_name = "Acido"
 description = "+10 pontos por runa de Fogo adjacente. +10 pontos por runa de Água adjacente."
 tier = 1
 rarity = 1
-element = 13
+elements = [0, 1]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
+

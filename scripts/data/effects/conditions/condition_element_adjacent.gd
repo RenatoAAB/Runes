@@ -10,8 +10,10 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 	var neighbors = context.grid.get_neighbors(source_slot.grid_position, include_diagonals)
 	
 	for slot in neighbors:
-		if not slot.is_empty():
-			var elem = slot.rune.data.element
+		if slot.is_empty():
+			continue
+		
+		for elem in slot.rune.data.elements:
 			if elem in required_elements:
 				return true
 	
@@ -21,8 +23,13 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 	var neighbors = context.grid.get_neighbors(source_slot.grid_position, include_diagonals)
 	var relevant: Array[GridSlot] = []
 	for slot in neighbors:
-		if not slot.is_empty() and slot.rune.data.element in required_elements:
-			relevant.append(slot)
+		if slot.is_empty():
+			continue
+		
+		for elem in slot.rune.data.elements:
+			if elem in required_elements:
+				relevant.append(slot)
+				break
 	return relevant
 
 func get_description() -> String:

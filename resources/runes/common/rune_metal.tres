@@ -10,7 +10,8 @@ rune_name = "Metal"
 description = "+20 pontos se houver 3 ou mais elementos diferentes adjacentes."
 tier = 1
 rarity = 0
-element = 7
+elements = [2]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

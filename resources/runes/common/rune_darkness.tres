@@ -10,7 +10,8 @@ rune_name = "Trevas"
 description = "Destrói todas as runas adjacentes. (+10 pontos por runa destruída - WIP)"
 tier = 1
 rarity = 0
-element = 31
+elements = [4]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

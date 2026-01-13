@@ -10,7 +10,8 @@ rune_name = "Djinn"
 description = "+30 pontos se 4+ elementos distintos adjacentes."
 tier = 1
 rarity = 1
-element = 40
+elements = [4, 3]
 base_max_activations = 1
 is_indestructible = true
 effects = [ExtResource("2_effect")]
+

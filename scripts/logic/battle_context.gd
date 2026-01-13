@@ -32,7 +32,7 @@ var event_bus: Node = null
 
 # --- Round State Tracking (for new rune effects) ---
 
-## History of activations this round: [{element, rune_id, slot_position, rune_instance}]
+## History of activations this round: [{elements, rune_id, slot_position, rune_instance}]
 var activation_history: Array[Dictionary] = []
 
 ## Count of runes destroyed this round
@@ -135,7 +135,7 @@ func clear_effects_tracking() -> void:
 ## Records a rune activation in history. Called by Reader after activation.
 func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 	var entry = {
-		"element": rune.data.element,
+		"elements": GameEnums.normalize_elements(rune.data.elements),
 		"rune_id": rune.data.id,
 		"slot_position": slot.grid_position,
 		"rune_instance": rune
@@ -155,11 +155,16 @@ func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 		visited_slots.append(slot_index)
 
 
-## Returns the element of the last activated rune, or -1 if none
-func get_last_activated_element() -> int:
+## Returns the elements of the last activated rune, or an empty array if none
+func get_last_activated_elements() -> Array[GameEnums.Element]:
 	if activation_history.is_empty():
-		return -1
-	return activation_history[-1].get("element", -1)
+		return []
+	return activation_history[-1].get("elements", [])
+
+## Backward-compatible helper that returns the first element or -1 if none exist
+func get_last_activated_element() -> int:
+	var elements = get_last_activated_elements()
+	return elements[0] if elements.size() > 0 else -1
 
 
 ## Returns the last N activation entries
@@ -178,18 +183,24 @@ func last_n_same_element(n: int) -> bool:
 	var last_n = get_last_n_activations(n)
 	if last_n.is_empty():
 		return false
-	var first_element = last_n[0].get("element", -1)
+	var first_elements = GameEnums.normalize_elements(last_n[0].get("elements", []))
 	for entry in last_n:
-		if entry.get("element", -1) != first_element:
+		var elements = GameEnums.normalize_elements(entry.get("elements", []))
+		if elements != first_elements:
 			return false
 	return true
 
 
-## Returns the common element if last N were same, or -1
-func get_common_element_of_last_n(n: int) -> int:
+## Returns the common elements if last N were the same, or an empty array
+func get_common_elements_of_last_n(n: int) -> Array[GameEnums.Element]:
 	if not last_n_same_element(n):
-		return -1
-	return activation_history[-1].get("element", -1)
+		return []
+	return GameEnums.normalize_elements(activation_history[-1].get("elements", []))
+
+## Legacy helper to keep existing signatures functioning
+func get_common_element_of_last_n(n: int) -> int:
+	var elements = get_common_elements_of_last_n(n)
+	return elements[0] if elements.size() > 0 else -1
 
 
 ## Returns total number of activations this round
