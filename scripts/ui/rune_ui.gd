@@ -58,13 +58,14 @@ func _on_mouse_entered() -> void:
 			elements_str = GameEnums.Element.keys()[rune_instance.data.element]
 		
 		var activations = rune_instance.get_max_activations()
+		var activation_text = _format_activation_text(activations)
 		
 		# Build header with price in top-right if in shop mode
 		var header = "[b]%s[/b]" % rune_instance.data.rune_name
 		if shop_price_text != "":
 			header = "[b]%s[/b]  [color=gold][b]%s[/b][/color]" % [rune_instance.data.rune_name, shop_price_text]
 		
-		var info = "%s\n%s | Activations: %d\nTier: %d" % [header, elements_str, activations, rune_instance.data.tier]
+		var info = "%s\n%s | %s\nTier: %d" % [header, elements_str, activation_text, rune_instance.data.tier]
 		
 		# Context for evaluation
 		var context: BattleContext = null
@@ -88,29 +89,10 @@ func _on_mouse_entered() -> void:
 			if can_evaluate and context and slot and effect.condition:
 				is_condition_met = effect.condition.evaluate(rune_instance, context, slot)
 			
-			# Get the colored description
-			var effect_desc = effect.get_description_colored(i, is_condition_met, can_evaluate)
+			# Get the colored description with permanent adjustments surfaced inline
+			var effect_desc = _get_effect_description_with_permanents(effect, i, is_condition_met, can_evaluate)
 			
 			info += "\n%s %s" % [color_marker, effect_desc]
-			
-		# Add Permanent Buffs
-		if rune_instance.permanent_buffs.size() > 0:
-			var has_buffs = false
-			var buff_text = ""
-			var buffs = rune_instance.permanent_buffs
-			
-			if buffs.has("score_multiplier") and buffs["score_multiplier"] != 1.0:
-				buff_text += "\n Score x%.1f" % buffs["score_multiplier"]
-				has_buffs = true
-			if buffs.has("score_bonus") and buffs["score_bonus"] != 0:
-				buff_text += "\n Score +%d" % buffs["score_bonus"]
-				has_buffs = true
-			if buffs.has("activation_bonus") and buffs["activation_bonus"] != 0:
-				buff_text += "\n Activations +%d" % buffs["activation_bonus"]
-				has_buffs = true
-				
-			if has_buffs:
-				info += "\n[color=yellow]Permanent Buffs:[/color]" + buff_text
 			
 		tooltip_manager.set_rune_tooltip(info, is_in_inventory)
 	
@@ -161,3 +143,61 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 		"source_ui": self,
 		"rune_instance": rune_instance
 	}
+
+
+func _format_activation_text(activations: int) -> String:
+	var perm_bonus = 0
+	if rune_instance:
+		perm_bonus = rune_instance.permanent_buffs.get("activation_bonus", 0)
+
+	if perm_bonus != 0:
+		return "Activations: [color=yellow]%d[/color]" % activations
+	return "Activations: %d" % activations
+
+
+func _get_effect_description_with_permanents(effect: RuneEffect, effect_index: int, is_condition_met: bool, can_evaluate_condition: bool) -> String:
+	var desc = effect.get_description_colored(effect_index, is_condition_met, can_evaluate_condition)
+	if not rune_instance or not effect or not effect.payload:
+		return desc
+
+	var payload = effect.payload
+	if payload is PayloadAddScore:
+		return _apply_score_modifiers_to_desc(desc, payload.score_amount, true)
+	if payload is PayloadScorePerEmpty:
+		return _apply_score_modifiers_to_desc(desc, payload.score_per_empty, false)
+	if payload is PayloadScorePerElement:
+		return _apply_score_modifiers_to_desc(desc, payload.score_per_match, false)
+	if payload is PayloadScorePerRemainingActivations:
+		return _apply_score_modifiers_to_desc(desc, payload.score_per_activation, false)
+	return desc
+
+
+func _apply_score_modifiers_to_desc(desc: String, base_amount: int, replace_number: bool) -> String:
+	if not rune_instance:
+		return desc
+
+	var perm_bonus = rune_instance.permanent_buffs.get("score_bonus", 0)
+	var perm_mult = rune_instance.permanent_buffs.get("score_multiplier", 1.0)
+	if perm_bonus == 0 and perm_mult == 1.0:
+		return desc
+
+	var final_amount = rune_instance.get_modified_score(base_amount)
+	var updated_desc = desc
+	if replace_number:
+		updated_desc = _replace_first_number_with_value(desc, base_amount, "[color=yellow]%d[/color]" % final_amount)
+
+	var hints: Array[String] = []
+	if perm_bonus != 0:
+		hints.append("bonus %+d" % perm_bonus)
+	if perm_mult != 1.0:
+		hints.append("mult x%.1f" % perm_mult)
+
+	return updated_desc
+
+
+func _replace_first_number_with_value(text: String, original_value: int, replacement: String) -> String:
+	var original_str = str(original_value)
+	var idx = text.find(original_str)
+	if idx == -1:
+		return text
+	return text.substr(0, idx) + replacement + text.substr(idx + original_str.length())
