@@ -407,8 +407,8 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 	# Case 1: Drop on Grid
 	if target_slot_ui.grid_coord != Vector2i(-1, -1):
 		if inventory_manager.has_rune(rune):
-			# Move from Inventory -> Grid
-			if grid_manager.place_rune(rune.data, target_slot_ui.grid_coord):
+			# Move from Inventory -> Grid (keep RuneInstance to preserve permanent buffs)
+			if grid_manager.place_rune_instance(rune, target_slot_ui.grid_coord):
 				inventory_manager.remove_rune(rune)
 		else:
 			# Move from Grid -> Grid (Swap/Move)
