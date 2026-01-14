@@ -1,14 +1,6 @@
-[gd_resource type="Resource" script_class="RuneEffect" load_steps=5 format=3 uid="uid://dbjd780yge3i6"]
+[gd_resource type="Resource" script_class="RuneEffect" load_steps=2 format=3 uid="uid://dbjd780yge3i6"]
 
 [ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="2_cond"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="3_bk2y2"]
-
-[sub_resource type="Resource" id="Resource_ejh36"]
-script = ExtResource("3_bk2y2")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
 
 [resource]
 script = ExtResource("1_effect")
-condition = ExtResource("2_cond")
-target = SubResource("Resource_ejh36")

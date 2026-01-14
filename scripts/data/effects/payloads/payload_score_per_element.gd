@@ -1,6 +1,8 @@
 class_name PayloadScorePerElement
 extends EffectPayload
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 ## Adds score for each rune of specified element(s) in the targets.
 ## Highly flexible - can be used for adjacency bonuses, panel-wide bonuses, etc.
 ## The score can be positive or negative.
@@ -43,13 +45,10 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 
 
 func get_description() -> String:
-	var elem_names: Array[String] = []
-	for elem in target_elements:
-		elem_names.append(GameEnums.Element.keys()[elem].capitalize())
-	
+	var elems_str = ElementIcons.join(target_elements)
 	var perm_str = " permanent" if is_permanent else ""
 	var sign = "+" if score_per_match >= 0 else ""
-	return "%s%d%s Score per %s" % [sign, score_per_match, perm_str, " or ".join(elem_names)]
+	return "%s%d%s Score per %s" % [sign, score_per_match, perm_str, elems_str]
 
 
 func get_keywords() -> Array[StringName]:

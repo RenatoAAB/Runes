@@ -1,6 +1,8 @@
 class_name ConditionElementAdjacent
 extends EffectCondition
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 ## Returns true if any adjacent slot has a rune of specific element(s).
 
 @export var required_elements: Array[GameEnums.Element] = []
@@ -33,11 +35,9 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 	return relevant
 
 func get_description() -> String:
-	var elem_names: Array[String] = []
-	for elem in required_elements:
-		elem_names.append(GameEnums.Element.keys()[elem])
 	var diag_str = " (incl. diag)" if include_diagonals else ""
-	return "adjacent%s to %s" % [diag_str, " or ".join(elem_names)]
+	var elems_str = ElementIcons.join(required_elements)
+	return "adjacent%s to %s" % [diag_str, elems_str]
 
 func get_keywords() -> Array[StringName]:
 	return [Keywords.ADJACENT, Keywords.ELEMENT_SYNC]

@@ -1,6 +1,8 @@
 class_name ConditionLastActivatedElement
 extends EffectCondition
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 ## Returns true if the last activated rune had a specific element.
 ## Used for: Fogo (+20 if last was fire).
 
@@ -26,8 +28,8 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 
 
 func get_description() -> String:
-	var elem_name = GameEnums.Element.keys()[required_element].capitalize()
-	return "last activated rune was %s" % elem_name
+	var elem_icon = ElementIcons.get_bbcode(required_element)
+	return "last activated rune was %s" % elem_icon
 
 
 func get_keywords() -> Array[StringName]:

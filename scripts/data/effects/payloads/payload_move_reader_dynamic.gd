@@ -1,6 +1,8 @@
 class_name PayloadMoveReaderDynamic
 extends EffectPayload
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 ## Moves the reader dynamically based on various conditions.
 ## Flexible payload for: Ar, Vento, Som, Tempo, Djinn, Instabilidade.
 
@@ -91,8 +93,7 @@ func get_description() -> String:
 		MoveMode.STEPS_PER_REMAINING:
 			return "Reader rewinds %d step(s) per remaining activation" % steps
 		MoveMode.TO_PREVIOUS_ELEMENT:
-			var elem_name = GameEnums.Element.keys()[target_element].capitalize()
-			return "Reader jumps to previous %s rune" % elem_name
+			return "Reader jumps to previous %s rune" % ElementIcons.get_bbcode(target_element)
 		MoveMode.TO_RANDOM_VISITED:
 			return "Reader jumps to random visited slot"
 		MoveMode.TO_SLOT_ABOVE:

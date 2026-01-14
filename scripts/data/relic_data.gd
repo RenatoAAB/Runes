@@ -1,6 +1,8 @@
 class_name RelicData
 extends Resource
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 ## Defines a Relic - a global modifier that affects an entire panel.
 ## Relics are attached to panels and apply effects to all activations.
 ## They can trigger at different moments (start, end, each activation, passive).
@@ -95,10 +97,8 @@ func get_full_description() -> String:
 		text += "\n[color=cyan]+%d Base Score[/color]" % score_bonus
 	
 	if element_affinity.size() > 0 and affinity_multiplier > 1.0:
-		var names: Array[String] = []
-		for e in element_affinity:
-			names.append(GameEnums.Element.keys()[e])
-		text += "\n[color=magenta]%s x%.1f[/color]" % [", ".join(names), affinity_multiplier]
+		var names = ElementIcons.join(element_affinity, 9, ", ")
+		text += "\n[color=magenta]%s x%.1f[/color]" % [names, affinity_multiplier]
 	
 	return text
 

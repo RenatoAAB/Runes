@@ -129,6 +129,10 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		
 		# Emit the slot read event with all details
 		_emit_slot_read_event(coord, slot, rune, score_before, activations_before)
+		
+		# Track this activation for sequence-dependent effects (e.g., last element)
+		if battle_context:
+			battle_context.record_activation(rune, slot)
 
 
 func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, score_before: int, activations_before: int) -> void:

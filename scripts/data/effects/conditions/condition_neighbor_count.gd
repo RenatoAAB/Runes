@@ -1,6 +1,8 @@
 class_name ConditionNeighborCount
 extends EffectCondition
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 @export var required_count: int = 1
 @export var check_diagonals: bool = false
 
@@ -50,7 +52,7 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 func get_description() -> String:
 	var type = "neighbors"
 	if filter_by_element:
-		type = GameEnums.Element.keys()[required_element].capitalize() + " neighbors"
+		type = "%s neighbors" % ElementIcons.get_bbcode(required_element)
 	
 	if check_diagonals:
 		type += " (incl. diag)"
