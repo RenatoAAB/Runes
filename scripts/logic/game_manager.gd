@@ -48,7 +48,7 @@ func _ready() -> void:
 	call_deferred("start_game")
 
 
-func fix_bind_panel_manager() -> void:
+func _bind_panel_manager() -> void:
 	if _panel_manager:
 		return
 	var node = get_tree().get_first_node_in_group("panel_manager")
