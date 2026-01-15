@@ -130,7 +130,8 @@ func _initialize_panel_system() -> void:
 	_panel_manager.add_to_group("panel_manager")
 	_panel_manager.initialize_default()
 	# Instantiate grids/readers for unlocked panels at game start
-	_panel_manager.setup_all_panels(self)
+	var initial_step_delay = reader.step_delay if reader else -1.0
+	_panel_manager.setup_all_panels(self, initial_step_delay)
 	_bind_active_panel_nodes()
 	
 	# Connect panel manager signals

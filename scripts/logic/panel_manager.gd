@@ -33,6 +33,17 @@ var panel_scores: Array[int] = []
 
 ## Reference to EventBus
 var event_bus: Node = null
+var reader_step_delay: float = -1.0
+
+
+func _get_scene_reader_delay(parent_node: Node) -> float:
+	if not parent_node:
+		return -1.0
+	# Check direct children for an existing Reader instance to mirror its step_delay
+	for child in parent_node.get_children():
+		if child is Reader:
+			return child.step_delay
+	return -1.0
 
 
 func _ready() -> void:
@@ -151,10 +162,17 @@ func get_panel_unlock_cost(index: int) -> int:
 
 
 ## Setup grid and reader for all unlocked panels
-func setup_all_panels(parent_node: Node) -> void:
+func setup_all_panels(parent_node: Node, p_step_delay: float = -1.0) -> void:
+	var effective_delay = reader_step_delay
+	if p_step_delay >= 0.0:
+		effective_delay = p_step_delay
+	elif effective_delay < 0.0:
+		effective_delay = _get_scene_reader_delay(parent_node)
+	reader_step_delay = effective_delay
+
 	for panel in panels:
 		if panel.is_unlocked:
-			panel.setup_grid_and_reader(parent_node)
+			panel.setup_grid_and_reader(parent_node, reader_step_delay)
 
 
 # --- Battle Flow ---
@@ -166,7 +184,7 @@ func start_multi_panel_battle() -> void:
 		return
 
 	# Ensure grids/readers exist for unlocked panels before battle
-	setup_all_panels(get_parent())
+	setup_all_panels(get_parent(), reader_step_delay)
 	
 	is_battle_running = true
 	panel_scores.clear()

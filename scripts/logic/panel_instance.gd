@@ -86,7 +86,7 @@ func _initialize_unlocked_slots() -> void:
 
 
 ## Setup the grid and reader for this panel (called when panel becomes active)
-func setup_grid_and_reader(parent_node: Node) -> void:
+func setup_grid_and_reader(parent_node: Node, p_step_delay: float = -1.0) -> void:
 	if grid_manager != null:
 		return  # Already setup
 	
@@ -102,6 +102,8 @@ func setup_grid_and_reader(parent_node: Node) -> void:
 	reader = Reader.new()
 	reader.name = "Reader_Panel%d" % panel_index
 	reader.grid_manager = grid_manager
+	if p_step_delay >= 0.0:
+		reader.step_delay = p_step_delay
 	parent_node.add_child(reader)
 
 
