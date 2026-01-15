@@ -48,7 +48,7 @@ func _ready() -> void:
 	call_deferred("start_game")
 
 
-func _bind_panel_manager() -> void:
+func fix_bind_panel_manager() -> void:
 	if _panel_manager:
 		return
 	var node = get_tree().get_first_node_in_group("panel_manager")
@@ -86,6 +86,9 @@ func start_game() -> void:
 	current_level = 1
 	is_initial_setup = true
 	grid_manager.clear_grid()
+	_bind_panel_manager()
+	if _panel_manager:
+		_panel_manager.full_reset_all_panels()
 	
 	# Reset run statistics (including money) when starting a new game
 	var stats = get_node_or_null("/root/Stats")
