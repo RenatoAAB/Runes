@@ -21,6 +21,17 @@ func _ready() -> void:
 	if grid_manager:
 		_preview_context = BattleContext.new(grid_manager)
 
+
+func set_grid_manager(new_grid_manager: GridManager) -> void:
+	if new_grid_manager == grid_manager:
+		return
+	grid_manager = new_grid_manager
+	if grid_manager:
+		_preview_context = BattleContext.new(grid_manager)
+	else:
+		_preview_context = null
+	clear_highlights()
+
 ## Main entry point: highlights all effects of a rune from a given slot.
 func highlight_rune_effects(rune: RuneInstance, origin_slot: GridSlot) -> void:
 	clear_highlights()

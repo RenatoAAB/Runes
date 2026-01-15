@@ -165,6 +165,8 @@ func _bind_panel_nodes(panel: PanelInstance) -> void:
 	
 	grid_manager = panel.grid_manager
 	reader = panel.reader
+	if grid_highlighter and grid_highlighter.has_method("set_grid_manager"):
+		grid_highlighter.set_grid_manager(grid_manager)
 	
 	if grid_manager and not grid_manager.slot_changed.is_connected(_on_grid_slot_changed):
 		grid_manager.slot_changed.connect(_on_grid_slot_changed)
