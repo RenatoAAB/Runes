@@ -30,3 +30,29 @@ func get_description_with_target(target_desc: String) -> String:
 ## Override in subclasses to return specific keywords.
 func get_keywords() -> Array[StringName]:
 	return []
+
+
+## Unified helper to apply score or permanent bonus
+func apply_score(amount: int, source_rune: RuneInstance, context: BattleContext, is_permanent: bool) -> void:
+	if amount == 0:
+		return
+	if is_permanent:
+		# Permanent score gains ignore temporary/permanent score multipliers/bonuses
+		var current = source_rune.permanent_buffs.get("score_bonus", 0)
+		source_rune.permanent_buffs["score_bonus"] = current + amount
+	else:
+		var final_score = source_rune.get_modified_score(amount)
+		context.add_score(final_score, source_rune)
+
+
+## Helper to apply score/permanent bonus to an arbitrary rune (used for aura effects)
+func apply_score_to_rune(target_rune: RuneInstance, context: BattleContext, amount: int, is_permanent: bool) -> void:
+	if amount == 0 or not target_rune:
+		return
+	if is_permanent:
+		# Permanent score gains ignore temporary/permanent score multipliers/bonuses
+		var current = target_rune.permanent_buffs.get("score_bonus", 0)
+		target_rune.permanent_buffs["score_bonus"] = current + amount
+	else:
+		var final_score = target_rune.get_modified_score(amount)
+		context.add_score(final_score, target_rune)

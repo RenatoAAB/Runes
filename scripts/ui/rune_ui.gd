@@ -180,11 +180,17 @@ func _get_effect_description_with_permanents(effect: RuneEffect, effect_index: i
 	if payload is PayloadAddScore:
 		return _apply_score_modifiers_to_desc(desc, payload.score_amount, true)
 	if payload is PayloadScorePerEmpty:
-		return _apply_score_modifiers_to_desc(desc, payload.score_per_empty, false)
+		if payload.is_permanent:
+			return desc
+		return _apply_score_modifiers_to_desc(desc, payload.score_per_empty, true)
 	if payload is PayloadScorePerElement:
-		return _apply_score_modifiers_to_desc(desc, payload.score_per_match, false)
+		if payload.is_permanent:
+			return desc
+		return _apply_score_modifiers_to_desc(desc, payload.score_per_match, true)
 	if payload is PayloadScorePerRemainingActivations:
-		return _apply_score_modifiers_to_desc(desc, payload.score_per_activation, false)
+		if payload.is_permanent:
+			return desc
+		return _apply_score_modifiers_to_desc(desc, payload.score_per_activation, true)
 	return desc
 
 
@@ -204,9 +210,11 @@ func _apply_score_modifiers_to_desc(desc: String, base_amount: int, replace_numb
 
 	var hints: Array[String] = []
 	if perm_bonus != 0:
-		hints.append("bonus %+d" % perm_bonus)
+		hints.append("perm %+d" % perm_bonus)
 	if perm_mult != 1.0:
 		hints.append("mult x%.1f" % perm_mult)
+	if hints.size() > 0:
+		updated_desc += " [color=yellow](%s)[/color]" % ", ".join(hints)
 
 	return updated_desc
 

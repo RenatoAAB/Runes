@@ -42,15 +42,7 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 		return
 	
 	var total = activation_count * score_per_activation
-	
-	if is_permanent:
-		var current = source_rune.permanent_buffs.get("score_bonus", 0)
-		source_rune.permanent_buffs["score_bonus"] = current + total
-		print("%s: +%d permanent score for %d remaining activations" % [source_rune.data.rune_name, total, activation_count])
-	else:
-		var final_score = source_rune.get_modified_score(total)
-		context.add_score(final_score, source_rune)
-		print("%s: +%d score for %d remaining activations" % [source_rune.data.rune_name, final_score, activation_count])
+	apply_score(total, source_rune, context, is_permanent)
 
 
 func get_description() -> String:

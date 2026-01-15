@@ -31,17 +31,15 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 	
 	if match_count == 0:
 		return
-	
-	var total = match_count * score_per_match
-	
+
 	if is_permanent:
-		var current_bonus = source_rune.permanent_buffs.get("score_bonus", 0)
-		source_rune.permanent_buffs["score_bonus"] = current_bonus + total
-		print("%s: +%d permanent score (%d × %d matches)" % [source_rune.data.rune_name, total, score_per_match, match_count])
+		var total_perm = match_count * score_per_match
+		apply_score(total_perm, source_rune, context, true)
 	else:
-		var final_score = source_rune.get_modified_score(total)
-		context.add_score(final_score, source_rune)
-		print("%s: +%d score (%d × %d matches)" % [source_rune.data.rune_name, final_score, score_per_match, match_count])
+		# Apply rune score modifiers per match so permanent bonuses are counted once per adjacency
+		var per_match = source_rune.get_modified_score(score_per_match)
+		var total = per_match * match_count
+		context.add_score(total, source_rune)
 
 
 func get_description() -> String:

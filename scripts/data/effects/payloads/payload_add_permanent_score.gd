@@ -9,9 +9,7 @@ extends EffectPayload
 func execute(_targets: Array[GridSlot], source_rune: RuneInstance, _context: BattleContext) -> void:
 	if amount == 0:
 		return
-	var current = source_rune.permanent_buffs.get("score_bonus", 0)
-	source_rune.permanent_buffs["score_bonus"] = current + amount
-	print("%s: +%d permanent score" % [source_rune.data.rune_name, amount])
+	apply_score(amount, source_rune, _context, true)
 
 
 func get_description() -> String:
