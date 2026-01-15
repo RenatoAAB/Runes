@@ -34,6 +34,8 @@ var _panel_manager: PanelManager = null
 var _extra_inventory: ExtraInventoryManager = null
 var _relic_slot_uis: Array[RelicSlotUI] = []
 var _current_panel_index: int = 0
+var _bound_grid_manager: GridManager = null
+var _bound_reader: Reader = null
 
 # We need a PackedScene for the SlotUI to instantiate them dynamically
 # You can assign this in Inspector, or we can try to load it if it exists.
@@ -68,13 +70,16 @@ func _ready() -> void:
 		# Force initial update in case items were added before we connected
 		_on_inventory_updated()
 	
-	if grid_manager:
+	if grid_manager and not grid_manager.slot_changed.is_connected(_on_grid_slot_changed):
 		grid_manager.slot_changed.connect(_on_grid_slot_changed)
 		
 	if reader:
-		reader.step_started.connect(_on_reader_step)
-		reader.step_completed.connect(_on_reader_step_done)
-		reader.score_updated.connect(_on_score_updated)
+		if not reader.step_started.is_connected(_on_reader_step):
+			reader.step_started.connect(_on_reader_step)
+		if not reader.step_completed.is_connected(_on_reader_step_done):
+			reader.step_completed.connect(_on_reader_step_done)
+		if not reader.score_updated.is_connected(_on_score_updated):
+			reader.score_updated.connect(_on_score_updated)
 		
 	if game_manager:
 		game_manager.level_started.connect(_on_level_started)
@@ -122,7 +127,11 @@ func _initialize_panel_system() -> void:
 	_panel_manager = PanelManager.new()
 	_panel_manager.name = "PanelManager"
 	add_child(_panel_manager)
+	_panel_manager.add_to_group("panel_manager")
 	_panel_manager.initialize_default()
+	# Instantiate grids/readers for unlocked panels at game start
+	_panel_manager.setup_all_panels(self)
+	_bind_active_panel_nodes()
 	
 	# Connect panel manager signals
 	_panel_manager.panel_switched.connect(_on_panel_switched)
@@ -136,6 +145,52 @@ func _initialize_panel_system() -> void:
 	# Connect ExtraInventory signals for UI updates
 	_extra_inventory.inventory_changed.connect(_on_extra_inventory_updated)
 	_update_other_inventory_display()
+
+
+## Bind grid/reader references and signals to the currently active panel
+func _bind_active_panel_nodes() -> void:
+	if not _panel_manager:
+		return
+	var panel = _panel_manager.get_panel(_current_panel_index)
+	_bind_panel_nodes(panel)
+
+
+func _bind_panel_nodes(panel: PanelInstance) -> void:
+	_disconnect_panel_nodes()
+	if not panel:
+		grid_manager = null
+		reader = null
+		return
+	
+	grid_manager = panel.grid_manager
+	reader = panel.reader
+	
+	if grid_manager and not grid_manager.slot_changed.is_connected(_on_grid_slot_changed):
+		grid_manager.slot_changed.connect(_on_grid_slot_changed)
+	if reader:
+		if not reader.step_started.is_connected(_on_reader_step):
+			reader.step_started.connect(_on_reader_step)
+		if not reader.step_completed.is_connected(_on_reader_step_done):
+			reader.step_completed.connect(_on_reader_step_done)
+		if not reader.score_updated.is_connected(_on_score_updated):
+			reader.score_updated.connect(_on_score_updated)
+	
+	_bound_grid_manager = grid_manager
+	_bound_reader = reader
+
+
+func _disconnect_panel_nodes() -> void:
+	if _bound_grid_manager and _bound_grid_manager.slot_changed.is_connected(_on_grid_slot_changed):
+		_bound_grid_manager.slot_changed.disconnect(_on_grid_slot_changed)
+	if _bound_reader:
+		if _bound_reader.step_started.is_connected(_on_reader_step):
+			_bound_reader.step_started.disconnect(_on_reader_step)
+		if _bound_reader.step_completed.is_connected(_on_reader_step_done):
+			_bound_reader.step_completed.disconnect(_on_reader_step_done)
+		if _bound_reader.score_updated.is_connected(_on_score_updated):
+			_bound_reader.score_updated.disconnect(_on_score_updated)
+	_bound_grid_manager = null
+	_bound_reader = null
 
 
 ## Generate relic slots UI (3 slots per panel)
@@ -216,9 +271,10 @@ func _on_next_panel_pressed() -> void:
 
 func _on_panel_switched(_from_index: int, to_index: int) -> void:
 	_current_panel_index = to_index
+	_bind_active_panel_nodes()
 	_update_panel_navigation()
 	_update_relic_slots_display()
-	# TODO: Update grid to show the new panel's grid
+	_generate_grid_ui()
 
 
 func _on_panel_unlocked(_panel: PanelInstance) -> void:
@@ -346,6 +402,26 @@ func _generate_grid_ui() -> void:
 			slot_ui.piece_dropped.connect(_on_piece_dropped)
 			
 			grid_ui_slots[coord] = slot_ui
+
+	_refresh_grid_ui_from_logic()
+
+
+func _refresh_grid_ui_from_logic() -> void:
+	if not _panel_manager:
+		return
+	var panel = _panel_manager.get_panel(_current_panel_index)
+	if not panel or not panel.grid_manager:
+		return
+
+	for coord in grid_ui_slots.keys():
+		var slot_ui = grid_ui_slots[coord]
+		var logic_slot = panel.grid_manager.get_slot(coord)
+		slot_ui.set_locked_state(panel.is_slot_unlocked(coord))
+		if logic_slot:
+			slot_ui.set_rune(logic_slot.rune)
+			slot_ui.update_slot_info(logic_slot)
+		else:
+			slot_ui.set_rune(null)
 
 func _generate_inventory_ui() -> void:
 	for child in inventory_container.get_children():

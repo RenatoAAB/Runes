@@ -30,11 +30,13 @@ var is_initial_setup: bool = true
 # Runes available for rewards/shop (loaded dynamically)
 var available_runes: Array[RuneData]
 @export var rune_drop_rates: RuneDropRates
+var _panel_manager: PanelManager = null
 
 func _ready() -> void:
 	add_to_group("game_manager")
 	if reader:
 		reader.sequence_finished.connect(_on_battle_finished)
+	_bind_panel_manager()
 	
 	# Load all runes dynamically if not set in inspector
 	if available_runes.is_empty():
@@ -44,6 +46,16 @@ func _ready() -> void:
 	# In a real scene, we might wait for a "Start" button or main menu.
 	# For this task, we auto-start.
 	call_deferred("start_game")
+
+
+func _bind_panel_manager() -> void:
+	if _panel_manager:
+		return
+	var node = get_tree().get_first_node_in_group("panel_manager")
+	if node and node is PanelManager:
+		_panel_manager = node
+		if not _panel_manager.all_panels_completed.is_connected(_on_battle_finished):
+			_panel_manager.all_panels_completed.connect(_on_battle_finished)
 
 func _load_all_runes() -> void:
 	var rune_folders = [
@@ -95,10 +107,22 @@ func start_battle() -> void:
 	if current_phase != GamePhase.PLANNING:
 		print("Cannot start battle. Current phase: %s" % GamePhase.keys()[current_phase])
 		return
-	
+
+	_bind_panel_manager()
+
 	current_phase = GamePhase.BATTLE
 	phase_changed.emit(current_phase)
-	reader.start_sequence()
+
+	# Delegate battle flow to PanelManager (supports multi-panel even with one panel)
+	var panel_manager = get_tree().get_first_node_in_group("panel_manager")
+	if panel_manager and panel_manager.has_method("start_multi_panel_battle"):
+		panel_manager.start_multi_panel_battle()
+	else:
+		# Fallback: start reader directly if no panel manager is present
+		if reader:
+			reader.start_sequence()
+		else:
+			print("No reader or panel manager available to start battle")
 
 ## Reference to current result screen (if any)
 var _result_screen: BattleResultScreen = null

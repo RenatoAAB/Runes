@@ -17,6 +17,7 @@ var is_running: bool = false
 var current_index: int = 0
 var total_score: int = 0
 var battle_context: BattleContext
+var traversal_order: Array[Vector2i] = []
 
 ## Reference to EventBus autoload (set in _ready or via export)
 var event_bus: Node = null
@@ -39,10 +40,18 @@ func start_sequence() -> void:
 	battle_context = BattleContext.new(grid_manager)
 	battle_context.score_event.connect(_on_score_event)
 	battle_context.reader_jump_request.connect(_on_reader_jump_request)
+
+	# Build traversal order based on valid slots and share with context
+	traversal_order = _build_traversal_order()
+	battle_context.set_reader_path(traversal_order)
 	
 	# Reset grid state before starting
 	grid_manager.process_round_end()
 	
+	if traversal_order.is_empty():
+		_finish_sequence()
+		return
+
 	# Notify EventBus that battle is starting
 	if event_bus and event_bus.has_method("begin_battle"):
 		event_bus.begin_battle(1)  # 1 panel for now
@@ -51,8 +60,23 @@ func start_sequence() -> void:
 	_process_next_step()
 
 
+func _build_traversal_order() -> Array[Vector2i]:
+	var coords: Array[Vector2i] = []
+	if not grid_manager:
+		return coords
+	
+	# Traverse row-major order but include only non-void slots
+	for y in range(GridManager.GRID_SIZE):
+		for x in range(GridManager.GRID_SIZE):
+			var coord = Vector2i(x, y)
+			var slot = grid_manager.get_slot(coord)
+			if slot and not slot.is_void():
+				coords.append(coord)
+	return coords
+
+
 func _process_next_step() -> void:
-	if current_index >= GridManager.GRID_SIZE * GridManager.GRID_SIZE:
+	if current_index >= traversal_order.size():
 		_finish_sequence()
 		return
 	
@@ -60,20 +84,17 @@ func _process_next_step() -> void:
 	if current_index < 0:
 		current_index = 0
 	
-	var y = current_index / GridManager.GRID_SIZE
-	var x = current_index % GridManager.GRID_SIZE
-	var coord = Vector2i(x, y)
-	
+	var coord = traversal_order[current_index]
 	var slot = grid_manager.get_slot(coord)
 	
-	# Skip void/locked slots - they are not active slots
-	if slot and slot.is_void():
+	# Skip any invalid/void slot defensively
+	if not slot or slot.is_void():
 		current_index += 1
 		if is_running:
 			_process_next_step()
 		return
 	
-	# Update context
+	# Update context with traversal index
 	if battle_context:
 		battle_context.current_step_index = current_index
 	
@@ -211,14 +232,11 @@ func _on_score_event(amount: int, _source: RuneInstance) -> void:
 
 
 func _on_reader_jump_request(target_index: int) -> void:
-	# We modify current_index. 
-	# Note: _process_next_step increments current_index at the end.
-	# If we want to jump TO index X, we should set current_index = X - 1 (if we are inside the loop)
-	# But _process_next_step is recursive via await.
-	# The jump happens during _activate_rune.
-	# So when _activate_rune returns, we wait, then increment.
-	# So if we want the NEXT step to be target_index, we set current_index = target_index - 1.
-	current_index = target_index - 1
+	if traversal_order.is_empty():
+		return
+	# _process_next_step increments current_index at the end, so offset by -1
+	var clamped = clamp(target_index, 0, traversal_order.size() - 1)
+	current_index = clamped - 1
 
 
 func _finish_sequence() -> void:

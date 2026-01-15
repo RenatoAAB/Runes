@@ -22,6 +22,9 @@ var current_score: int = 0
 var current_step_index: int = 0
 var queued_activations: Array[GridSlot] = []
 
+## Ordered list of coordinates the reader will traverse this round
+var reader_path: Array[Vector2i] = []
+
 ## Tracking for event generation
 var current_slot: GridSlot = null
 var current_rune: RuneInstance = null
@@ -56,6 +59,31 @@ func _init(p_grid: GridManager):
 	# Try to get EventBus
 	if Engine.has_singleton("EventBus"):
 		event_bus = Engine.get_singleton("EventBus")
+
+
+## Update the traversal order for this battle
+func set_reader_path(path: Array[Vector2i]) -> void:
+	reader_path = path.duplicate()
+
+
+## Get the traversal length (number of valid slots)
+func get_reader_path_length() -> int:
+	return reader_path.size()
+
+
+## Get the coordinate at a traversal index
+func get_reader_coord(index: int) -> Vector2i:
+	if index < 0 or index >= reader_path.size():
+		return Vector2i(-1, -1)
+	return reader_path[index]
+
+
+## Find traversal index for a given coordinate (-1 if not present)
+func find_reader_index(coord: Vector2i) -> int:
+	for i in range(reader_path.size()):
+		if reader_path[i] == coord:
+			return i
+	return -1
 
 
 ## Resets round-specific tracking. Call at start of each round.
@@ -149,8 +177,8 @@ func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 	else:
 		unique_runes_activated[rune_id] = 1
 	
-	# Track visited slot
-	var slot_index = slot.grid_position.y * GridManager.GRID_SIZE + slot.grid_position.x
+	# Track visited slot using traversal index when available
+	var slot_index = current_step_index if current_step_index >= 0 else slot.grid_position.y * GridManager.GRID_SIZE + slot.grid_position.x
 	if slot_index not in visited_slots:
 		visited_slots.append(slot_index)
 

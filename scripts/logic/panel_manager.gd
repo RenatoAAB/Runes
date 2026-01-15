@@ -164,6 +164,9 @@ func start_multi_panel_battle() -> void:
 	if is_battle_running:
 		push_warning("Battle already in progress")
 		return
+
+	# Ensure grids/readers exist for unlocked panels before battle
+	setup_all_panels(get_parent())
 	
 	is_battle_running = true
 	panel_scores.clear()
@@ -189,6 +192,10 @@ func start_multi_panel_battle() -> void:
 ## Start battle on the current panel
 func _start_current_panel_battle() -> void:
 	var panel = panels[battle_panel_index]
+
+	# Ensure reader targets this panel's grid
+	if panel.reader:
+		panel.reader.grid_manager = panel.grid_manager
 	
 	if event_bus and event_bus.has_method("begin_panel"):
 		event_bus.begin_panel(battle_panel_index)

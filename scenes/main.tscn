@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=24 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -19,6 +19,9 @@
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Resource" uid="uid://cbsfn5616uj0h" path="res://resources/runes/common/rune_drop.tres" id="12_yc10j"]
+[ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="13_pm3ni"]
+[ext_resource type="Resource" uid="uid://bub1031y2cc0f" path="res://resources/runes/common/rune_wind.tres" id="14_y6deb"]
+[ext_resource type="Resource" uid="uid://ckyhnu5tbt81e" path="res://resources/runes/common/rune_sound.tres" id="15_og1vs"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
@@ -52,7 +55,7 @@ reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_jkv2x"), ExtResource("7_jbj1t"), ExtResource("8_jbj1t"), ExtResource("9_muem4"), ExtResource("10_dp3eg"), ExtResource("11_gqmmt"), ExtResource("12_yc10j")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_jkv2x"), ExtResource("7_jbj1t"), ExtResource("8_jbj1t"), ExtResource("9_muem4"), ExtResource("10_dp3eg"), ExtResource("11_gqmmt"), ExtResource("12_yc10j"), ExtResource("13_pm3ni"), ExtResource("14_y6deb"), ExtResource("15_og1vs")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="GridManager" type="Node" parent="Managers"]
