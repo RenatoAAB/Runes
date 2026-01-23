@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "obsidian": {
+      "command": "npx",
+      "args": ["@mauricio.wolff/mcp-obsidian@latest", "C:\\Users\\Renato Augusto\\Documents\\Obsidian Vault\\Psicodelila"]
+    }
+  }
+}
