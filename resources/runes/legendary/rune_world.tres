@@ -1,18 +1,17 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=6 format=3 uid="uid://brjc7l604yw8u"]
 
-[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_kbagr"]
 [ext_resource type="Resource" path="res://resources/effects/effect_buff_adjacent_activation.tres" id="2_effect1"]
 [ext_resource type="Resource" path="res://resources/effects/effect_score_200.tres" id="3_effect2"]
+[ext_resource type="Texture2D" uid="uid://clly3gwi1paoh" path="res://sprites/icons/runes/Icon11.png" id="5_ipv8y"]
 
 [resource]
 script = ExtResource("1_data")
 id = "world"
 rune_name = "Mundo"
 description = "+1 ativação para adjacentes. +200 pontos. (Para todas runas do painel - WIP)"
-tier = 1
 rarity = 4
-elements = [4, 0, 1, 2, 3]
-base_max_activations = 1
-is_indestructible = true
-effects = [ExtResource("2_effect1"), ExtResource("3_effect2")]
-
+elements = Array[int]([0, 1, 2, 3, 4])
+textures = Array[Texture2D]([ExtResource("5_ipv8y")])
+effects = Array[ExtResource("1_kbagr")]([ExtResource("2_effect1"), ExtResource("3_effect2")])

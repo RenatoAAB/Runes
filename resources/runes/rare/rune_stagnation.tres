@@ -1,17 +1,24 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=8 format=3 uid="uid://b4wy2q1rnl0cb"]
 
-[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/effect_score_50_if_corner.tres" id="2_effect"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="2_effect"]
+[ext_resource type="Resource" path="res://resources/effects/conditions/condition_last_5_same_element.tres" id="3_cond_last5"]
+[ext_resource type="Resource" uid="uid://bc0luj0n0d4j2" path="res://resources/effects/targets/target_panel_all.tres" id="4_target_panel"]
+[ext_resource type="Resource" path="res://resources/effects/payloads/payload_permanent_score_last_sequence.tres" id="5_payload_last"]
+[ext_resource type="Texture2D" uid="uid://dv8jxh35mbun8" path="res://sprites/icons/runes/Icon7.png" id="6_omt46"]
+
+[sub_resource type="Resource" id="EffectStagnation"]
+script = ExtResource("2_effect")
+condition = ExtResource("3_cond_last5")
+target = ExtResource("4_target_panel")
+payload = ExtResource("5_payload_last")
 
 [resource]
 script = ExtResource("1_data")
 id = "stagnation"
-rune_name = "Estagnacao"
-description = "+50 pontos se as últimas 3 runas ativadas foram do mesmo elemento. (WIP - implementado como +50 em canto)"
-tier = 1
+rune_name = "Estagnação"
+description = "Se as últimas 5 ativações tiverem o mesmo elemento, todas as runas desse elemento ganham +10 pontos permanentes"
 rarity = 2
-elements = [1, 3, 2]
-base_max_activations = 1
-is_indestructible = true
-effects = [ExtResource("2_effect")]
-
+elements = Array[int]([1, 3, 2])
+textures = Array[Texture2D]([ExtResource("6_omt46")])
+effects = Array[ExtResource("2_effect")]([SubResource("EffectStagnation")])

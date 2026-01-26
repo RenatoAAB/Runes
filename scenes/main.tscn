@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -12,17 +12,18 @@
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
-[ext_resource type="Resource" uid="uid://cbsfn5616uj0h" path="res://resources/runes/common/rune_drop.tres" id="12_yc10j"]
+[ext_resource type="Resource" uid="uid://dh6yg1oku5je7" path="res://resources/runes/rare/rune_instability.tres" id="13_og1vs"]
 [ext_resource type="Resource" uid="uid://bbtjk5hmdjtik" path="res://resources/runes/uncommon/rune_erosion.tres" id="14_jscy8"]
-[ext_resource type="Resource" uid="uid://ku8l814wlnyq" path="res://resources/runes/uncommon/rune_lightning.tres" id="14_y6deb"]
-[ext_resource type="Resource" uid="uid://cinxv3ffxhab6" path="res://resources/runes/uncommon/rune_lava.tres" id="15_og1vs"]
 [ext_resource type="Resource" uid="uid://ddl1xxtx0uouu" path="res://resources/runes/uncommon/rune_dust.tres" id="15_pm3ni"]
-[ext_resource type="Resource" uid="uid://ml10vvmqv6al" path="res://resources/runes/common/rune_plasma.tres" id="15_vxglm"]
-[ext_resource type="Resource" uid="uid://xtdyw6q0mvfr" path="res://resources/runes/uncommon/rune_meteor.tres" id="16_2wyq8"]
+[ext_resource type="Resource" uid="uid://b4wy2q1rnl0cb" path="res://resources/runes/rare/rune_stagnation.tres" id="15_vxglm"]
+[ext_resource type="Resource" uid="uid://rti8qrt6p4pg" path="res://resources/runes/rare/rune_sterility.tres" id="16_2f3dj"]
+[ext_resource type="Resource" uid="uid://cv2jfp2qgyt2n" path="res://resources/runes/epic/rune_energy.tres" id="16_2wyq8"]
 [ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
 [ext_resource type="Resource" uid="uid://dawftohoid1yg" path="res://resources/runes/uncommon/rune_mud.tres" id="16_y6deb"]
+[ext_resource type="Resource" uid="uid://brjc7l604yw8u" path="res://resources/runes/legendary/rune_world.tres" id="17_2f3dj"]
 [ext_resource type="Resource" uid="uid://du7qyukvntuwb" path="res://resources/runes/uncommon/rune_cloud.tres" id="17_2wyq8"]
 [ext_resource type="Resource" uid="uid://b0yxbylhw4bix" path="res://resources/runes/uncommon/rune_ice.tres" id="17_og1vs"]
+[ext_resource type="Resource" uid="uid://c45euh0d5cuc1" path="res://resources/runes/epic/rune_machine.tres" id="17_vxglm"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
@@ -56,7 +57,7 @@ reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("12_yc10j"), ExtResource("15_vxglm"), ExtResource("14_y6deb"), ExtResource("15_og1vs"), ExtResource("16_2wyq8"), ExtResource("17_og1vs"), ExtResource("17_2wyq8"), ExtResource("16_y6deb"), ExtResource("14_jscy8"), ExtResource("15_pm3ni"), ExtResource("16_og1vs")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("17_og1vs"), ExtResource("17_2wyq8"), ExtResource("16_y6deb"), ExtResource("14_jscy8"), ExtResource("15_pm3ni"), ExtResource("16_og1vs"), ExtResource("13_og1vs"), ExtResource("15_vxglm"), ExtResource("16_2f3dj"), ExtResource("16_2wyq8"), ExtResource("17_vxglm"), ExtResource("17_2f3dj")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="GridManager" type="Node" parent="Managers"]

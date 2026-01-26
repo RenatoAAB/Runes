@@ -225,9 +225,42 @@ func _update_display() -> void:
 	if final_text == "":
 		panel.hide()
 	else:
-		label.text = final_text
+		label.text = _wrap_text(final_text, 90)
 		panel.show()
 		panel.size = Vector2.ZERO # Reset size to fit content
+
+## Wrap long tooltip lines so individual rune descriptions don't need manual breaks.
+func _wrap_text(text: String, max_chars: int = 90) -> String:
+	if text.is_empty() or max_chars <= 10:
+		return text
+	var result: Array[String] = []
+	for raw_line in text.split("\n"):
+		var line = raw_line.strip_edges(false, false)
+		# Keep elemental icon rows intact so icons stay on the same line
+		if line.find("[img") != -1:
+			result.append(line)
+			continue
+		if line.length() <= max_chars:
+			result.append(line)
+			continue
+		var words = line.split(" ")
+		var current = ""
+		for word in words:
+			if current.is_empty():
+				current = word
+				continue
+			var candidate = current + " " + word
+			if candidate.length() > max_chars:
+				result.append(current)
+				current = word
+			else:
+				current = candidate
+		if not current.is_empty():
+			result.append(current)
+		# Preserve blank line if original ended with newline
+	if text.ends_with("\n"):
+		result.append("")
+	return "\n".join(result)
 
 func _apply_label_settings() -> void:
 	if not label_settings or not label:

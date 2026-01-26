@@ -204,26 +204,29 @@ func get_last_n_activations(n: int) -> Array[Dictionary]:
 	return result
 
 
-## Checks if the last N activations were all the same element
+## Checks if the last N activations share at least one common element
 func last_n_same_element(n: int) -> bool:
+	return not get_common_elements_of_last_n(n).is_empty()
+
+
+## Returns the intersection of elements across the last N activations
+func get_common_elements_of_last_n(n: int) -> Array[GameEnums.Element]:
 	if activation_history.size() < n:
-		return false
+		return []
 	var last_n = get_last_n_activations(n)
 	if last_n.is_empty():
-		return false
-	var first_elements = GameEnums.normalize_elements(last_n[0].get("elements", []))
+		return []
+	var common: Array[GameEnums.Element] = GameEnums.normalize_elements(last_n[0].get("elements", []))
 	for entry in last_n:
 		var elements = GameEnums.normalize_elements(entry.get("elements", []))
-		if elements != first_elements:
-			return false
-	return true
-
-
-## Returns the common elements if last N were the same, or an empty array
-func get_common_elements_of_last_n(n: int) -> Array[GameEnums.Element]:
-	if not last_n_same_element(n):
-		return []
-	return GameEnums.normalize_elements(activation_history[-1].get("elements", []))
+		var next_common: Array[GameEnums.Element] = []
+		for elem in common:
+			if elem in elements:
+				next_common.append(elem)
+		common = next_common
+		if common.is_empty():
+			return []
+	return common
 
 ## Legacy helper to keep existing signatures functioning
 func get_common_element_of_last_n(n: int) -> int:

@@ -209,12 +209,12 @@ func _apply_score_modifiers_to_desc(desc: String, base_amount: int, replace_numb
 		updated_desc = _replace_first_number_with_value(desc, base_amount, "[color=yellow]%d[/color]" % final_amount)
 
 	var hints: Array[String] = []
-	if perm_bonus != 0:
-		hints.append("perm %+d" % perm_bonus)
-	if perm_mult != 1.0:
-		hints.append("mult x%.1f" % perm_mult)
-	if hints.size() > 0:
-		updated_desc += " [color=yellow](%s)[/color]" % ", ".join(hints)
+	#if perm_bonus != 0:
+	#	hints.append("perm %+d" % perm_bonus)
+	#if perm_mult != 1.0:
+	#	hints.append("mult x%.1f" % perm_mult)
+	#if hints.size() > 0:
+	#	updated_desc += " [color=yellow](%s)[/color]" % ", ".join(hints)
 
 	return updated_desc
 
