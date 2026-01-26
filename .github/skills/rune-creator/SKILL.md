@@ -20,7 +20,7 @@ How to author a new rune using existing reusable pieces.
 - Score per remaining activations: `payload_score_per_remaining_activations.gd` with `score_per_activation`, `activation_source` (SELF, TARGETS, TARGETS_SUM), optional `allowed_elements` to filter (e.g., `[FIRE]`). Pair with `target_adjacent` (diagonals optional).
 - Flat score: `effect_score_30.tres` (or variants) targets self.
 - Conditions: usually `condition_always.tres`; use more specific only if required.
-- Targets: `target_adjacent.tres`, `target_below.tres`, `target_next.tres`, etc. Set `include_diagonals`/`include_self` on sub-resources when needed.
+- Targets: `target_adjacent.tres`, `target_below.tres`, `target_next.tres`, etc. Set `include_diagonals`/`include_self` on sub-resources when needed. Use `target_panel_all.tres` for whole-panel effects (skips void slots; tooltip shows “All valid panel slots”). For empty-slot effects, prefer `target_empty_all.tres` (TargetEmptyInPanel) which now ignores void slots and shows “Empty slots in panel”.
 
 ## Minimal rune template (edit values)
 ```gdresource

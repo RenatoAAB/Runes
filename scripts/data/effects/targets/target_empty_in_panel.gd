@@ -22,17 +22,23 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 	match selection_mode:
 		SelectionMode.ALL:
 			for slot in context.grid.grid:
+				if slot.is_void():
+					continue
 				if slot.is_empty():
 					empty_slots.append(slot)
 		
 		SelectionMode.FIRST:
 			for slot in context.grid.grid:
+				if slot.is_void():
+					continue
 				if slot.is_empty():
 					return [slot]
 		
 		SelectionMode.RANDOM:
 			var all_empty: Array[GridSlot] = []
 			for slot in context.grid.grid:
+				if slot.is_void():
+					continue
 				if slot.is_empty():
 					all_empty.append(slot)
 			if all_empty.size() > 0:
@@ -47,19 +53,21 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 			]
 			for pos in corners:
 				var slot = context.grid.get_slot(pos)
-				if slot and slot.is_empty():
+				if slot and not slot.is_void() and slot.is_empty():
 					empty_slots.append(slot)
 		
 		SelectionMode.EDGES:
 			for slot in context.grid.grid:
 				var pos = slot.grid_position
 				if pos.x == 0 or pos.x == grid_size - 1 or pos.y == 0 or pos.y == grid_size - 1:
-					if slot.is_empty():
+					if not slot.is_void() and slot.is_empty():
 						empty_slots.append(slot)
 		
 		SelectionMode.ADJACENT:
 			var neighbors = context.grid.get_neighbors(source_slot.grid_position, false)
 			for slot in neighbors:
+				if slot.is_void():
+					continue
 				if slot.is_empty():
 					empty_slots.append(slot)
 	
@@ -69,7 +77,7 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 func get_description() -> String:
 	match selection_mode:
 		SelectionMode.ALL:
-			return "All empty slots"
+			return "panel"
 		SelectionMode.FIRST:
 			return "First empty slot"
 		SelectionMode.RANDOM:

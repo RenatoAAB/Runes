@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=25 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -9,21 +9,20 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" uid="uid://bpgga3tetlmun" path="res://resources/runes/common/rune_water.tres" id="7_jbj1t"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" uid="uid://d4c7213tdx4ar" path="res://resources/runes/common/rune_rain.tres" id="11_gqmmt"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
-[ext_resource type="Resource" uid="uid://tyjpv4xrba67" path="res://resources/runes/uncommon/rune_acid.tres" id="12_pm3ni"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Resource" uid="uid://cbsfn5616uj0h" path="res://resources/runes/common/rune_drop.tres" id="12_yc10j"]
-[ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="13_pm3ni"]
-[ext_resource type="Resource" uid="uid://gvpsjpvb5tkd" path="res://resources/runes/uncommon/rune_oil.tres" id="13_y6deb"]
-[ext_resource type="Resource" uid="uid://c6gjg03cc4ok1" path="res://resources/runes/common/rune_fire.tres" id="14_og1vs"]
-[ext_resource type="Resource" uid="uid://bub1031y2cc0f" path="res://resources/runes/common/rune_wind.tres" id="14_y6deb"]
-[ext_resource type="Resource" uid="uid://2s5sow7ix6xs" path="res://resources/runes/common/rune_crystal.tres" id="15_2wyq8"]
-[ext_resource type="Resource" uid="uid://ckyhnu5tbt81e" path="res://resources/runes/common/rune_sound.tres" id="15_og1vs"]
+[ext_resource type="Resource" uid="uid://bbtjk5hmdjtik" path="res://resources/runes/uncommon/rune_erosion.tres" id="14_jscy8"]
+[ext_resource type="Resource" uid="uid://ku8l814wlnyq" path="res://resources/runes/uncommon/rune_lightning.tres" id="14_y6deb"]
+[ext_resource type="Resource" uid="uid://cinxv3ffxhab6" path="res://resources/runes/uncommon/rune_lava.tres" id="15_og1vs"]
+[ext_resource type="Resource" uid="uid://ddl1xxtx0uouu" path="res://resources/runes/uncommon/rune_dust.tres" id="15_pm3ni"]
 [ext_resource type="Resource" uid="uid://ml10vvmqv6al" path="res://resources/runes/common/rune_plasma.tres" id="15_vxglm"]
-[ext_resource type="Resource" uid="uid://ir0f66cvciev" path="res://resources/runes/common/rune_bone.tres" id="16_vxglm"]
+[ext_resource type="Resource" uid="uid://xtdyw6q0mvfr" path="res://resources/runes/uncommon/rune_meteor.tres" id="16_2wyq8"]
+[ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
+[ext_resource type="Resource" uid="uid://dawftohoid1yg" path="res://resources/runes/uncommon/rune_mud.tres" id="16_y6deb"]
+[ext_resource type="Resource" uid="uid://du7qyukvntuwb" path="res://resources/runes/uncommon/rune_cloud.tres" id="17_2wyq8"]
+[ext_resource type="Resource" uid="uid://b0yxbylhw4bix" path="res://resources/runes/uncommon/rune_ice.tres" id="17_og1vs"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
@@ -57,7 +56,7 @@ reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
 grid_manager = NodePath("../GridManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("7_jbj1t"), ExtResource("11_gqmmt"), ExtResource("12_yc10j"), ExtResource("13_pm3ni"), ExtResource("15_2wyq8"), ExtResource("16_vxglm"), ExtResource("12_pm3ni"), ExtResource("13_y6deb"), ExtResource("14_og1vs"), ExtResource("15_vxglm"), ExtResource("14_y6deb"), ExtResource("15_og1vs")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("12_yc10j"), ExtResource("15_vxglm"), ExtResource("14_y6deb"), ExtResource("15_og1vs"), ExtResource("16_2wyq8"), ExtResource("17_og1vs"), ExtResource("17_2wyq8"), ExtResource("16_y6deb"), ExtResource("14_jscy8"), ExtResource("15_pm3ni"), ExtResource("16_og1vs")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="GridManager" type="Node" parent="Managers"]

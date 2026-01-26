@@ -22,7 +22,7 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 	
 	match activation_source:
 		ActivationSource.SELF:
-			activation_count = source_rune.get_max_activations() - source_rune.current_activations
+			activation_count = max(0, source_rune.get_max_activations() - source_rune.current_activations + 1)
 		
 		ActivationSource.TARGETS:
 			for slot in targets:

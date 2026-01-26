@@ -1,17 +1,31 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=10 format=3 uid="uid://ku8l814wlnyq"]
 
-[ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/effect_trigger_next_twice.tres" id="2_effect"]
+[ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
+[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="2_cond_always"]
+[ext_resource type="Resource" path="res://resources/effects/conditions/condition_water_adjacent.tres" id="2_cond_water"]
+[ext_resource type="Resource" uid="uid://dor0piyxrw5d8" path="res://resources/effects/targets/target_adjacent.tres" id="3_target_adjacent"]
+[ext_resource type="Resource" uid="uid://bgelfn0dgvex1" path="res://resources/effects/payloads/payload_trigger_next.tres" id="4_payload_trigger"]
+[ext_resource type="Texture2D" uid="uid://du3ing3fp8a4l" path="res://sprites/icons/runes/Icon12.png" id="7_npaa6"]
+
+[sub_resource type="Resource" id="EffectBase"]
+script = ExtResource("1_effect")
+condition = ExtResource("2_cond_always")
+target = ExtResource("3_target_adjacent")
+payload = ExtResource("4_payload_trigger")
+
+[sub_resource type="Resource" id="EffectWater"]
+script = ExtResource("1_effect")
+condition = ExtResource("2_cond_water")
+target = ExtResource("3_target_adjacent")
+payload = ExtResource("4_payload_trigger")
 
 [resource]
 script = ExtResource("1_data")
 id = "lightning"
 rune_name = "Raio"
-description = "Ativa a próxima runa duas vezes."
-tier = 1
+description = "Ativa runas adjacentes 1 vez; se adjacente a Água, repete."
 rarity = 1
-elements = [0, 3]
-base_max_activations = 1
-is_indestructible = true
-effects = [ExtResource("2_effect")]
-
+elements = Array[int]([0, 3])
+textures = Array[Texture2D]([ExtResource("7_npaa6")])
+effects = Array[ExtResource("1_effect")]([SubResource("EffectBase"), SubResource("EffectWater")])
