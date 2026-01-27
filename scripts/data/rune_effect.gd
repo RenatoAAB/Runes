@@ -51,7 +51,8 @@ func get_description() -> String:
 				desc += " on " + target_desc
 
 	if condition and condition.has_method("get_description"):
-		desc += " if " + condition.get_description()
+		var connector = "when" if trigger == GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED else "if"
+		desc += " " + connector + " " + condition.get_description()
 	return desc
 
 ## Returns a BBCode-formatted description with colors matching the grid visualization.
@@ -90,7 +91,8 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 		var cond_desc = condition.get_description()
 		if cond_desc != "" and cond_desc != "Always":
 			var cond_colored = condition.get_description_colored(is_condition_met, can_evaluate_condition)
-			parts.append("if " + cond_colored)
+			var connector = "when" if trigger == GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED else "if"
+			parts.append(connector + " " + cond_colored)
 	
 	return " ".join(parts)
 

@@ -1,17 +1,20 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/effect_score_100_if_not_activated.tres" id="2_effect"]
+[ext_resource type="Resource" path="res://resources/effects/effect_score_30.tres" id="2_effect_score"]
+[ext_resource type="Resource" path="res://resources/effects/effect_permanent_score_50_if_not_activated.tres" id="3_effect_permanent"]
+[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon43.png" id="4_icon"]
 
 [resource]
 script = ExtResource("1_data")
 id = "dream"
 rune_name = "Sonho"
-description = "+100 pontos no final da rodada se não foi ativada."
+description = "+30 pontos. Se não for ativada na rodada, +50 pontos permanentes. Leituras sem consumo de carga não contam como ativação."
 tier = 1
 rarity = 0
 elements = [4]
 base_max_activations = 1
 is_indestructible = true
-effects = [ExtResource("2_effect")]
+textures = [ExtResource("4_icon")]
+effects = [ExtResource("2_effect_score"), ExtResource("3_effect_permanent")]
 

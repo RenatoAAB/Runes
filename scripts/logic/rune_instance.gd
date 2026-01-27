@@ -74,4 +74,7 @@ func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
 		context.set_meta("total_activations", total + 1)
 		
 		for effect in data.effects:
+			# ON_READ executes during the rune's own activation; other triggers are handled by EventBus
+			if effect.trigger != GameEnums.EffectTrigger.ON_READ:
+				continue
 			effect.execute(self, context, my_slot)

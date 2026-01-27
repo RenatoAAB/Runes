@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="PayloadPermanentScorePerEmpty" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_permanent_score_per_empty.gd" id="1_payload"]
+
+[resource]
+script = ExtResource("1_payload")
+amount_per_empty = 10

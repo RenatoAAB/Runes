@@ -41,6 +41,10 @@ func start_sequence() -> void:
 	battle_context.score_event.connect(_on_score_event)
 	battle_context.reader_jump_request.connect(_on_reader_jump_request)
 
+	# Share references with EventBus so non-ON_READ triggers work
+	if event_bus and event_bus.has_method("set_battle_references"):
+		event_bus.set_battle_references(battle_context, grid_manager)
+
 	# Build traversal order based on valid slots and share with context
 	traversal_order = _build_traversal_order()
 	battle_context.set_reader_path(traversal_order)
@@ -131,6 +135,7 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		
 		# Capture state before activation
 		var activations_before = rune.current_activations
+		var activations_spent = 0
 		
 		# Check if slot preserves charges
 		var should_preserve = slot.preserves_charges()
@@ -143,20 +148,23 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 			rune.on_activate(battle_context, slot)
 			# Execute slot's on-activation effects
 			slot.on_rune_activation(battle_context)
+			activations_spent += 1
 		
 		# Restore activation count if slot preserves charges
 		if should_preserve:
 			rune.current_activations = activations_before
 		
 		# Emit the slot read event with all details
-		_emit_slot_read_event(coord, slot, rune, score_before, activations_before)
+		_emit_slot_read_event(coord, slot, rune, score_before, activations_before, activations_spent)
 		
 		# Track this activation for sequence-dependent effects (e.g., last element)
-		if battle_context:
+		if battle_context and activations_spent > 0:
 			battle_context.record_activation(rune, slot)
+			if event_bus and event_bus.has_method("notify_rune_activated"):
+				event_bus.notify_rune_activated(slot, rune)
 
 
-func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, score_before: int, activations_before: int) -> void:
+func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, score_before: int, activations_before: int, activations_spent: int) -> void:
 	if not event_bus:
 		return
 	
@@ -169,7 +177,7 @@ func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, 
 	event.score_before = score_before
 	event.score_after = total_score
 	event.slot_multiplier = slot.get_multiplier()
-	event.activations_used = rune.current_activations - activations_before
+	event.activations_used = activations_spent
 	event.activations_remaining = rune.get_max_activations() - rune.current_activations
 	event.was_empty = false
 	event.was_disabled = false
@@ -243,9 +251,6 @@ func _finish_sequence() -> void:
 	is_running = false
 
 	# Clear temporary buffs/states now that the round is over so tooltips don't show stale bonuses
-	if grid_manager:
-		grid_manager.process_round_end()
-	
 	# Emit panel complete event
 	if event_bus and event_bus.has_method("emit"):
 		var panel_event = PanelCompleteEvent.new()
@@ -264,6 +269,10 @@ func _finish_sequence() -> void:
 		if game_manager:
 			target = game_manager.current_target_score
 		event_bus.end_battle(target)
+
+	# Reset grid state after end-of-round effects have resolved
+	if grid_manager:
+		grid_manager.process_round_end()
 	
 	sequence_finished.emit(total_score)
 	
