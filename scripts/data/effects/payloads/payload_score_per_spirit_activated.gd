@@ -3,6 +3,8 @@ extends EffectPayload
 
 ## Grants score based on distinct Spirit runes that activated this round.
 
+const ElementIcons = preload("res://scripts/core/element_icons.gd")
+
 @export var amount_per_rune: int = 20
 
 func execute(_targets: Array[GridSlot], source_rune: RuneInstance, context: BattleContext) -> void:
@@ -24,7 +26,8 @@ func execute(_targets: Array[GridSlot], source_rune: RuneInstance, context: Batt
 
 
 func get_description() -> String:
-	return "+%d score per Spirit rune activated this round" % amount_per_rune
+	var spirit_icon = ElementIcons.get_bbcode(GameEnums.Element.SPIRIT)
+	return "+%d score per %s rune activated this round" % [amount_per_rune, spirit_icon]
 
 
 func get_keywords() -> Array[StringName]:

@@ -1,7 +1,6 @@
-[gd_resource type="Resource" script_class="PayloadScorePerSpiritActivated" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PayloadScorePerSpiritActivated" load_steps=2 format=3 uid="uid://cooek6ei7gf62"]
 
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_score_per_spirit_activated.gd" id="1_payload"]
+[ext_resource type="Script" uid="uid://coo37t4kfwqjp" path="res://scripts/data/effects/payloads/payload_score_per_spirit_activated.gd" id="1_payload"]
 
 [resource]
 script = ExtResource("1_payload")
-amount_per_rune = 20

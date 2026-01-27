@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="PayloadCreatePureWaterIfEmpty" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_create_pure_water_if_empty.gd" id="1_payload"]
+
+[resource]
+script = ExtResource("1_payload")
