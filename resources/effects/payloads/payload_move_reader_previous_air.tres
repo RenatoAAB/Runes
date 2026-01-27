@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="PayloadMoveReaderDynamic" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_move_reader_dynamic.gd" id="1_script"]
+
+[resource]
+script = ExtResource("1_script")
+mode = 3
+previous_element_target = 3
+steps = 1
+adjacent_include_diagonals = false
+adjacent_filter_elements = Array[int]([])

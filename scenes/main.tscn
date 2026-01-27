@@ -11,16 +11,16 @@
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
 [ext_resource type="Resource" uid="uid://xtdyw6q0mvfr" path="res://resources/runes/uncommon/rune_meteor.tres" id="10_pm3ni"]
 [ext_resource type="Resource" uid="uid://ddrpf7ipqa6ho" path="res://resources/runes/common/rune_darkness.tres" id="11_0ld40"]
-[ext_resource type="Resource" uid="uid://los6hsochy4j" path="res://resources/runes/common/rune_vacuum.tres" id="11_gqmmt"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
-[ext_resource type="Resource" uid="uid://d3ui0cqhaq8lf" path="res://resources/runes/rare/rune_gravity.tres" id="12_dp3eg"]
-[ext_resource type="Resource" uid="uid://cn6hk3tc2dfs7" path="res://resources/runes/common/rune_light.tres" id="12_gqmmt"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
-[ext_resource type="Resource" uid="uid://doyhkjvdfum17" path="res://resources/runes/common/rune_dream.tres" id="13_yc10j"]
+[ext_resource type="Resource" uid="uid://dis2x0g1cs6x3" path="res://resources/runes/uncommon/rune_golem.tres" id="14_pm3ni"]
 [ext_resource type="Resource" uid="uid://ckse0lfiw6q1d" path="res://resources/runes/uncommon/rune_phoenix.tres" id="14_yc10j"]
 [ext_resource type="Resource" uid="uid://dixlohqkt4vcl" path="res://resources/runes/uncommon/rune_sacred.tres" id="15_jscy8"]
+[ext_resource type="Resource" uid="uid://drfb4f02n7xg7" path="res://resources/runes/uncommon/rune_time.tres" id="15_y6deb"]
+[ext_resource type="Resource" uid="uid://c4ubr7pti7rf5" path="res://resources/runes/uncommon/rune_djinn.tres" id="16_2wyq8"]
 [ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
 [ext_resource type="Resource" uid="uid://b165vm8geww4y" path="res://resources/runes/uncommon/rune_empathy.tres" id="16_pm3ni"]
+[ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="17_vxglm"]
 [ext_resource type="Resource" uid="uid://dsagb67rf2ptx" path="res://resources/runes/uncommon/rune_nymph.tres" id="17_y6deb"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
@@ -51,7 +51,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_jkv2x"), ExtResource("16_og1vs"), ExtResource("11_gqmmt"), ExtResource("12_dp3eg"), ExtResource("10_pm3ni"), ExtResource("11_0ld40"), ExtResource("12_gqmmt"), ExtResource("13_yc10j"), ExtResource("14_yc10j"), ExtResource("15_jscy8"), ExtResource("16_pm3ni"), ExtResource("17_y6deb")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_jkv2x"), ExtResource("16_og1vs"), ExtResource("10_pm3ni"), ExtResource("11_0ld40"), ExtResource("14_yc10j"), ExtResource("15_jscy8"), ExtResource("16_pm3ni"), ExtResource("17_y6deb"), ExtResource("14_pm3ni"), ExtResource("15_y6deb"), ExtResource("16_2wyq8"), ExtResource("17_vxglm")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]

@@ -57,6 +57,8 @@ func highlight_rune_effects(rune: RuneInstance, origin_slot: GridSlot) -> void:
 		# 2. Track Target slots with their effect index (only if condition is met)
 		if effect.target and condition_met:
 			var target_slots = effect.target.get_targets(rune, _preview_context, origin_slot)
+			if effect.target.has_method("get_preview_targets"):
+				target_slots = effect.target.get_preview_targets(rune, _preview_context, origin_slot)
 			for slot in target_slots:
 				var pos = slot.grid_position
 				if not _slot_effect_indices.has(pos):

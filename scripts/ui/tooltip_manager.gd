@@ -236,11 +236,7 @@ func _wrap_text(text: String, max_chars: int = 90) -> String:
 	var result: Array[String] = []
 	for raw_line in text.split("\n"):
 		var line = raw_line.strip_edges(false, false)
-		# Keep elemental icon rows intact so icons stay on the same line
-		if line.find("[img") != -1:
-			result.append(line)
-			continue
-		if line.length() <= max_chars:
+		if _visible_length(line) <= max_chars:
 			result.append(line)
 			continue
 		var words = line.split(" ")
@@ -250,7 +246,7 @@ func _wrap_text(text: String, max_chars: int = 90) -> String:
 				current = word
 				continue
 			var candidate = current + " " + word
-			if candidate.length() > max_chars:
+			if _visible_length(candidate) > max_chars:
 				result.append(current)
 				current = word
 			else:
@@ -261,6 +257,23 @@ func _wrap_text(text: String, max_chars: int = 90) -> String:
 	if text.ends_with("\n"):
 		result.append("")
 	return "\n".join(result)
+
+
+func _visible_length(text: String) -> int:
+	var length = 0
+	var i = 0
+	while i < text.length():
+		if text.find("[img", i) == i:
+			var close_idx = text.find("[/img]", i)
+			length += 2
+			if close_idx == -1:
+				i += 4
+			else:
+				i = close_idx + 6
+			continue
+		length += 1
+		i += 1
+	return length
 
 func _apply_label_settings() -> void:
 	if not label_settings or not label:

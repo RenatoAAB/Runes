@@ -74,6 +74,19 @@ func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot:
 	return empty_slots
 
 
+func get_preview_targets(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:
+	# For preview, show all candidates for RANDOM instead of a single pick.
+	if selection_mode == SelectionMode.RANDOM:
+		var all_empty: Array[GridSlot] = []
+		for slot in context.grid.grid:
+			if slot.is_void():
+				continue
+			if slot.is_empty():
+				all_empty.append(slot)
+		return all_empty
+	return get_targets(source_rune, context, source_slot)
+
+
 func get_description() -> String:
 	match selection_mode:
 		SelectionMode.ALL:
@@ -81,7 +94,7 @@ func get_description() -> String:
 		SelectionMode.FIRST:
 			return "First empty slot"
 		SelectionMode.RANDOM:
-			return "Random empty slot"
+			return "Random slot"
 		SelectionMode.CORNERS:
 			return "Empty corner slot"
 		SelectionMode.EDGES:

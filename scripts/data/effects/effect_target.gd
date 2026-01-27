@@ -6,6 +6,10 @@ extends Resource
 func get_targets(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:
 	return []
 
+## Returns targets for preview/highlight. Defaults to real targets.
+func get_preview_targets(source_rune: RuneInstance, context: BattleContext, source_slot: GridSlot) -> Array[GridSlot]:
+	return get_targets(source_rune, context, source_slot)
+
 ## Returns a plain text description of this target.
 func get_description() -> String:
 	return ""

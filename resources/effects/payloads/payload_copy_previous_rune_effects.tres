@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="PayloadCopyPreviousRuneEffects" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PayloadCopyPreviousRuneEffects" load_steps=2 format=3 uid="uid://c2tjrc488m54b"]
 
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_copy_previous_rune_effects.gd" id="1_payload"]
+[ext_resource type="Script" uid="uid://dierpc614hl3s" path="res://scripts/data/effects/payloads/payload_copy_previous_rune_effects.gd" id="1_payload"]
 
 [resource]
 script = ExtResource("1_payload")
