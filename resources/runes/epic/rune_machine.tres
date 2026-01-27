@@ -5,7 +5,7 @@
 [ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="3_cond_always"]
 [ext_resource type="Resource" uid="uid://16yatdx658me" path="res://resources/effects/targets/target_self.tres" id="4_target_self"]
 [ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="5_bcdi7"]
-[ext_resource type="Resource" path="res://resources/effects/payloads/payload_permanent_score_from_history.tres" id="5_payload_history"]
+[ext_resource type="Resource" uid="uid://dkwnthnmmqlll" path="res://resources/effects/payloads/payload_permanent_score_from_history.tres" id="5_payload_history"]
 [ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="6_jv7qb"]
 [ext_resource type="Texture2D" uid="uid://dcxf7yfnk5rub" path="res://sprites/icons/runes/Icon39.png" id="6_rsi3p"]
 [ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="7_tbtid"]

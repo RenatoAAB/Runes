@@ -1,8 +1,6 @@
-[gd_resource type="Resource" script_class="PayloadDestroyClusterAndBuff" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PayloadDestroyClusterAndBuff" load_steps=2 format=3 uid="uid://cl310aaucbkfk"]
 
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_destroy_cluster_and_buff.gd" id="1_payload"]
+[ext_resource type="Script" uid="uid://e64ep7iqcer4" path="res://scripts/data/effects/payloads/payload_destroy_cluster_and_buff.gd" id="1_payload"]
 
 [resource]
 script = ExtResource("1_payload")
-activation_bonus = 1
-include_diagonals = false

@@ -12,9 +12,25 @@ signal free_pick_granted(count: int)  # Signals free rune picks available
 ## Alias for backwards compatibility - use GameEnums.GamePhase directly
 const GamePhase = GameEnums.GamePhase
 
-@export var reader: Reader
+## Reader is now obtained from the active panel via PanelManager
+var reader: Reader:
+	get:
+		if _panel_manager:
+			var panel = _panel_manager.get_active_panel()
+			if panel:
+				return panel.reader
+		return null
+
+## GridManager is now obtained from the active panel via PanelManager
+var grid_manager: GridManager:
+	get:
+		if _panel_manager:
+			var panel = _panel_manager.get_active_panel()
+			if panel:
+				return panel.grid_manager
+		return null
+
 @export var inventory_manager: InventoryManager
-@export var grid_manager: GridManager
 
 # Curve settings
 @export var base_target_score: int = 50
@@ -31,26 +47,69 @@ var is_initial_setup: bool = true
 var available_runes: Array[RuneData]
 @export var rune_drop_rates: RuneDropRates
 var _panel_manager: PanelManager = null
+var _main_controller: Node = null  # Reference set during initialization
+
+
+## Set the PanelManager reference directly (called by MainController)
+func set_panel_manager(pm: PanelManager) -> void:
+	if _panel_manager == pm:
+		return
+	_panel_manager = pm
+	print("[GameManager] PanelManager reference set (panels=%d)" % pm.panels.size())
+	if _panel_manager and not _panel_manager.all_panels_completed.is_connected(_on_battle_finished):
+		_panel_manager.all_panels_completed.connect(_on_battle_finished)
+
 
 func _ready() -> void:
+	print("[GameManager] Initialization starting...")
 	add_to_group("game_manager")
-	if reader:
-		reader.sequence_finished.connect(_on_battle_finished)
-	_bind_panel_manager()
+	
+	# Validate required exports
+	assert(inventory_manager != null, "GameManager: inventory_manager export is required")
+	
+	# Reader signal connection is now handled by PanelManager
 	
 	# Load all runes dynamically if not set in inspector
 	if available_runes.is_empty():
 		_load_all_runes()
 	
-	# Start the game loop
-	# In a real scene, we might wait for a "Start" button or main menu.
-	# For this task, we auto-start.
+	print("[GameManager] Waiting for MainController initialization...")
+	# Wait for MainController to complete initialization before starting game
+	# This ensures PanelManager and other dependencies are ready
+	_wait_for_initialization()
+
+
+## Wait for MainController initialization before starting game
+func _wait_for_initialization() -> void:
+	# Try to find MainController
+	var main_controller = get_tree().get_first_node_in_group("main_controller")
+	if main_controller:
+		_main_controller = main_controller
+		# Check if it has initialization_complete signal
+		if main_controller.has_signal("initialization_complete"):
+			# Connect and wait
+			if not main_controller.initialization_complete.is_connected(_on_main_controller_ready):
+				main_controller.initialization_complete.connect(_on_main_controller_ready, CONNECT_ONE_SHOT)
+			return
+	
+	# Fallback: if MainController not found or no signal, use deferred call
+	push_warning("GameManager: MainController not found, using deferred start_game")
 	call_deferred("start_game")
+
+
+func _on_main_controller_ready() -> void:
+	print("[GameManager] MainController ready signal received")
+	# Validate that PanelManager was set
+	if not _panel_manager:
+		push_error("GameManager: PanelManager was not set by MainController!")
+	# MainController is fully initialized, safe to start game
+	start_game()
 
 
 func _bind_panel_manager() -> void:
 	if _panel_manager:
 		return
+	# Fallback: try to find via group if not set directly
 	var node = get_tree().get_first_node_in_group("panel_manager")
 	if node and node is PanelManager:
 		_panel_manager = node
@@ -59,6 +118,7 @@ func _bind_panel_manager() -> void:
 
 func _load_all_runes() -> void:
 	var rune_folders = [
+		"res://resources/runes/common/",
 		"res://resources/runes/uncommon/",
 		"res://resources/runes/rare/",
 		"res://resources/runes/epic/",
@@ -85,15 +145,22 @@ func _load_all_runes() -> void:
 func start_game() -> void:
 	current_level = 1
 	is_initial_setup = true
-	grid_manager.clear_grid()
 	_bind_panel_manager()
+
 	if _panel_manager:
 		_panel_manager.full_reset_all_panels()
+	
+	# Clear all grids via panel manager (grid_manager getter may return null before panels are ready)
+	if grid_manager:
+		grid_manager.clear_grid()
 	
 	# Reset run statistics (including money) when starting a new game
 	var stats = get_node_or_null("/root/Stats")
 	if stats and stats.has_method("start_new_run"):
 		stats.start_new_run()
+	
+	# Refresh shop inventory at game start
+	_refresh_shop_after_victory()
 	
 	_setup_initial_inventory()
 	# start_level() is now called by select_rune_reward after the player makes their choice.
@@ -101,6 +168,10 @@ func start_game() -> void:
 func start_level() -> void:
 	is_initial_setup = false
 	current_target_score = _calculate_target_score(current_level)
+	
+	# Refresh shop inventory at the start of each level
+	_refresh_shop_after_victory()
+	
 	current_phase = GamePhase.PLANNING
 	phase_changed.emit(current_phase)
 	level_started.emit(current_level, current_target_score)
@@ -111,21 +182,18 @@ func start_battle() -> void:
 		print("Cannot start battle. Current phase: %s" % GamePhase.keys()[current_phase])
 		return
 
-	_bind_panel_manager()
-
 	current_phase = GamePhase.BATTLE
 	phase_changed.emit(current_phase)
 
 	# Delegate battle flow to PanelManager (supports multi-panel even with one panel)
-	var panel_manager = get_tree().get_first_node_in_group("panel_manager")
-	if panel_manager and panel_manager.has_method("start_multi_panel_battle"):
-		panel_manager.start_multi_panel_battle()
+	if _panel_manager and _panel_manager.has_method("start_multi_panel_battle"):
+		_panel_manager.start_multi_panel_battle()
 	else:
 		# Fallback: start reader directly if no panel manager is present
 		if reader:
 			reader.start_sequence()
 		else:
-			print("No reader or panel manager available to start battle")
+			push_error("No reader or panel manager available to start battle")
 
 ## Reference to current result screen (if any)
 var _result_screen: BattleResultScreen = null
@@ -177,6 +245,9 @@ func _handle_win() -> void:
 	# Grant money reward for winning
 	_grant_victory_money()
 	
+	# Refresh shop after victory
+	_refresh_shop_after_victory()
+	
 	# Go to planning phase (shop is available during planning)
 	_finish_level_transition()
 
@@ -196,6 +267,17 @@ func _grant_victory_money() -> void:
 		event_bus.emit(event)
 	
 	print("Granted $%d for winning level %d" % [total_reward, current_level])
+
+
+func _refresh_shop_after_victory() -> void:
+	# Use direct reference to MainController if available
+	if _main_controller and _main_controller.has_method("refresh_shop"):
+		_main_controller.refresh_shop()
+	else:
+		# Fallback: find via group
+		var main_controller = get_tree().get_first_node_in_group("main_controller")
+		if main_controller and main_controller.has_method("refresh_shop"):
+			main_controller.refresh_shop()
 
 
 func _handle_loss() -> void:

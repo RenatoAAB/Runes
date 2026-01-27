@@ -4,10 +4,9 @@
 
 [resource]
 script = ExtResource("1_tbknl")
-common_weight = 0
+common_weight = 200
 uncommon_weight = 100
 rare_weight = 50
 epic_weight = 50
 legendary_weight = 50
 metadata/_custom_type_script = "uid://b0g75gel7g2gv"
-

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="2_effect"]
-[ext_resource type="Resource" path="res://resources/effects/conditions/condition_is_center.tres" id="3_cond_center"]
+[ext_resource type="Resource" uid="uid://cc8id3omxqcmt" path="res://resources/effects/conditions/condition_is_center.tres" id="3_cond_center"]
 [ext_resource type="Resource" uid="uid://16yatdx658me" path="res://resources/effects/targets/target_self.tres" id="4_target_self"]
 [ext_resource type="Script" uid="uid://wad1adtpmc4x" path="res://scripts/data/effects/payloads/payload_move_reader_dynamic.gd" id="5_payload_move"]
 [ext_resource type="Texture2D" uid="uid://n2u3u4q6apqk" path="res://sprites/icons/runes/Icon31.png" id="6_icon"]

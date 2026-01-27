@@ -1,37 +1,23 @@
-[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=14 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
-[ext_resource type="Script" uid="uid://bmvi2d1q3u4lg" path="res://scripts/logic/grid_manager.gd" id="2_tipki"]
 [ext_resource type="Script" uid="uid://qhromqhnu80e" path="res://scripts/logic/inventory_manager.gd" id="3_85g3d"]
 [ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="3_dp3eg"]
-[ext_resource type="Script" uid="uid://pjx26antyjld" path="res://scripts/logic/reader.gd" id="4_choun"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
+[ext_resource type="Resource" uid="uid://c6gjg03cc4ok1" path="res://resources/runes/common/rune_fire.tres" id="6_jkv2x"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
-[ext_resource type="Resource" uid="uid://dh6yg1oku5je7" path="res://resources/runes/rare/rune_instability.tres" id="13_og1vs"]
-[ext_resource type="Resource" uid="uid://bbtjk5hmdjtik" path="res://resources/runes/uncommon/rune_erosion.tres" id="14_jscy8"]
-[ext_resource type="Resource" uid="uid://ddl1xxtx0uouu" path="res://resources/runes/uncommon/rune_dust.tres" id="15_pm3ni"]
-[ext_resource type="Resource" uid="uid://b4wy2q1rnl0cb" path="res://resources/runes/rare/rune_stagnation.tres" id="15_vxglm"]
-[ext_resource type="Resource" uid="uid://rti8qrt6p4pg" path="res://resources/runes/rare/rune_sterility.tres" id="16_2f3dj"]
-[ext_resource type="Resource" uid="uid://cv2jfp2qgyt2n" path="res://resources/runes/epic/rune_energy.tres" id="16_2wyq8"]
 [ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
-[ext_resource type="Resource" uid="uid://dawftohoid1yg" path="res://resources/runes/uncommon/rune_mud.tres" id="16_y6deb"]
-[ext_resource type="Resource" uid="uid://brjc7l604yw8u" path="res://resources/runes/legendary/rune_world.tres" id="17_2f3dj"]
-[ext_resource type="Resource" uid="uid://du7qyukvntuwb" path="res://resources/runes/uncommon/rune_cloud.tres" id="17_2wyq8"]
-[ext_resource type="Resource" uid="uid://b0yxbylhw4bix" path="res://resources/runes/uncommon/rune_ice.tres" id="17_og1vs"]
-[ext_resource type="Resource" uid="uid://c45euh0d5cuc1" path="res://resources/runes/epic/rune_machine.tres" id="17_vxglm"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "grid_manager", "inventory_manager", "reader", "grid_container", "inventory_container", "other_inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "inventory_manager", "grid_container", "inventory_container", "other_inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
-grid_manager = NodePath("Managers/GridManager")
 inventory_manager = NodePath("Managers/InventoryManager")
-reader = NodePath("Managers/Reader")
 grid_container = NodePath("UI/GameUI/GridContainer")
 inventory_container = NodePath("UI/GameUI/RunesInventoryContainer")
 other_inventory_container = NodePath("UI/GameUI/OtherInventoryContainer")
@@ -51,26 +37,16 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 
 [node name="Managers" type="Node" parent="."]
 
-[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("reader", "inventory_manager", "grid_manager")]
+[node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("inventory_manager")]
 script = ExtResource("1_o6xl0")
-reader = NodePath("../Reader")
 inventory_manager = NodePath("../InventoryManager")
-grid_manager = NodePath("../GridManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("17_og1vs"), ExtResource("17_2wyq8"), ExtResource("16_y6deb"), ExtResource("14_jscy8"), ExtResource("15_pm3ni"), ExtResource("16_og1vs"), ExtResource("13_og1vs"), ExtResource("15_vxglm"), ExtResource("16_2f3dj"), ExtResource("16_2wyq8"), ExtResource("17_vxglm"), ExtResource("17_2f3dj")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_jkv2x"), ExtResource("16_og1vs")])
 rune_drop_rates = ExtResource("18_pm3ni")
-
-[node name="GridManager" type="Node" parent="Managers"]
-script = ExtResource("2_tipki")
 
 [node name="InventoryManager" type="Node" parent="Managers"]
 script = ExtResource("3_85g3d")
 max_slots = 12
-
-[node name="Reader" type="Node" parent="Managers" node_paths=PackedStringArray("grid_manager")]
-script = ExtResource("4_choun")
-grid_manager = NodePath("../GridManager")
-step_delay = 0.2
 
 [node name="UI" type="CanvasLayer" parent="." groups=["ui_layer"]]
 
@@ -498,9 +474,8 @@ to sell"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="GridHighlighter" type="Node" parent="UI" node_paths=PackedStringArray("grid_manager") groups=["grid_highlighter"]]
+[node name="GridHighlighter" type="Node" parent="UI" groups=["grid_highlighter"]]
 script = ExtResource("6_eb6dy")
-grid_manager = NodePath("../../Managers/GridManager")
 
 [node name="TooltipManager" type="Control" parent="UI" groups=["tooltip_manager"]]
 layout_mode = 3

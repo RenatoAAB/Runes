@@ -4,11 +4,17 @@ extends Node
 ## The "Glue" script that connects Logic to UI.
 ## Attaches to the Root Node of the Main Scene.
 
+## Emitted when all managers and UI are initialized and ready
+signal initialization_complete
+
 @export_group("Managers")
 @export var game_manager: GameManager
-@export var grid_manager: GridManager
 @export var inventory_manager: InventoryManager
-@export var reader: Reader
+
+## GridManager and Reader are obtained from the active panel via PanelManager
+## These are set by _bind_active_panel_nodes()
+var grid_manager: GridManager = null
+var reader: Reader = null
 
 @export_group("UI Containers")
 @export var grid_container: Control # GridContainer
@@ -54,6 +60,15 @@ var inventory_ui_slots: Array[SlotUI] = []
 var _stats_display: StatsDisplay = null
 
 func _ready() -> void:
+	print("[MainController] Initialization starting...")
+	
+	# Add to main_controller group
+	add_to_group("main_controller")
+	
+	# Validate required exports
+	assert(game_manager != null, "MainController: game_manager export is required")
+	assert(inventory_manager != null, "MainController: inventory_manager export is required")
+	
 	# Wait for managers to be ready
 	# await get_tree().process_frame
 	
@@ -119,20 +134,45 @@ func _ready() -> void:
 	if tooltip_manager and default_tooltip_label_settings:
 		tooltip_manager.label_settings = default_tooltip_label_settings
 		# RichTextLabel doesn't support label_settings directly, so we rely on TooltipManager to handle it.
+	
+	# Pass PanelManager reference to GameManager for direct access
+	if game_manager and _panel_manager:
+		game_manager.set_panel_manager(_panel_manager)
+		print("[MainController] PanelManager reference passed to GameManager")
+	
+	print("[MainController] Initialization complete!")
+	# Signal that initialization is complete - GameManager waits for this
+	initialization_complete.emit()
+
+
+## Refresh shop inventory (called after victory or manual reroll)
+func refresh_shop() -> void:
+	if not _shop_manager:
+		push_warning("MainController.refresh_shop() called but _shop_manager is null")
+		return
+	if not game_manager:
+		push_warning("MainController.refresh_shop() called but game_manager is null")
+		return
+	_shop_manager.refresh_shop(game_manager.current_level)
 
 
 ## Initialize the panel management system
 func _initialize_panel_system() -> void:
+	print("[MainController] Initializing panel system...")
+	
 	# Create PanelManager
 	_panel_manager = PanelManager.new()
 	_panel_manager.name = "PanelManager"
 	add_child(_panel_manager)
 	_panel_manager.add_to_group("panel_manager")
 	_panel_manager.initialize_default()
+	print("[MainController] PanelManager created with %d panels" % _panel_manager.panels.size())
+	
 	# Instantiate grids/readers for unlocked panels at game start
 	var initial_step_delay = reader.step_delay if reader else -1.0
 	_panel_manager.setup_all_panels(self, initial_step_delay)
 	_bind_active_panel_nodes()
+	print("[MainController] Panel nodes bound (grid_manager=%s, reader=%s)" % [grid_manager != null, reader != null])
 	
 	# Connect panel manager signals
 	_panel_manager.panel_switched.connect(_on_panel_switched)
@@ -146,6 +186,11 @@ func _initialize_panel_system() -> void:
 	# Connect ExtraInventory signals for UI updates
 	_extra_inventory.inventory_changed.connect(_on_extra_inventory_updated)
 	_update_other_inventory_display()
+	
+	# Create ShopManager early so it's available for refresh_shop calls
+	_shop_manager = ShopManager.new()
+	_shop_manager.name = "ShopManager"
+	add_child(_shop_manager)
 
 
 ## Bind grid/reader references and signals to the currently active panel
@@ -701,11 +746,10 @@ func _show_shop() -> void:
 	if money_label:
 		money_label.visible = true
 	
-	# Create shop manager if needed
+	# ShopManager is now created in _initialize_panel_system()
 	if not _shop_manager:
-		_shop_manager = ShopManager.new()
-		_shop_manager.name = "ShopManager"
-		add_child(_shop_manager)
+		push_error("MainController._show_shop() called but _shop_manager was not initialized!")
+		return
 	
 	# Use shop UI from scene (assigned via @export)
 	if shop_ui:
@@ -723,9 +767,9 @@ func _show_shop() -> void:
 		if not shop_ui.view_panel_requested.is_connected(_on_view_panel_requested):
 			shop_ui.view_panel_requested.connect(_on_view_panel_requested)
 		
-		# Initialize with shop manager
+		# Initialize with shop manager (but don't refresh shop items yet)
 		var level = game_manager.current_level if game_manager else 1
-		shop_ui.initialize(_shop_manager, level)
+		shop_ui.initialize(_shop_manager, level, false)
 		shop_ui.visible = true
 	else:
 		push_warning("MainController: shop_ui not assigned in scene!")

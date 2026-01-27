@@ -1,8 +1,6 @@
-[gd_resource type="Resource" script_class="PayloadPermanentScoreFromHistory" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PayloadPermanentScoreFromHistory" load_steps=2 format=3 uid="uid://dkwnthnmmqlll"]
 
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_permanent_score_from_history.gd" id="1_payload"]
+[ext_resource type="Script" uid="uid://gdosldntslbp" path="res://scripts/data/effects/payloads/payload_permanent_score_from_history.gd" id="1_payload"]
 
 [resource]
 script = ExtResource("1_payload")
-per_activation = 1
-per_unique_rune = -1

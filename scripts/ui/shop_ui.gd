@@ -83,10 +83,11 @@ func _setup_ui() -> void:
 	_setup_sell_area()
 
 
-func initialize(manager: ShopManager, player_level: int = 1) -> void:
+func initialize(manager: ShopManager, player_level: int = 1, refresh_now: bool = true) -> void:
 	shop_manager = manager
 	_connect_shop_manager_signals()
-	shop_manager.refresh_shop(player_level)
+	if refresh_now:
+		shop_manager.refresh_shop(player_level)
 
 
 func _on_shop_updated() -> void:

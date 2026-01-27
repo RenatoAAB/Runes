@@ -2,9 +2,9 @@
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="2_effect"]
-[ext_resource type="Resource" path="res://resources/effects/conditions/condition_last_5_same_element.tres" id="3_cond_last5"]
+[ext_resource type="Resource" uid="uid://c457yhufia0cy" path="res://resources/effects/conditions/condition_last_5_same_element.tres" id="3_cond_last5"]
 [ext_resource type="Resource" uid="uid://bc0luj0n0d4j2" path="res://resources/effects/targets/target_panel_all.tres" id="4_target_panel"]
-[ext_resource type="Resource" path="res://resources/effects/payloads/payload_permanent_score_last_sequence.tres" id="5_payload_last"]
+[ext_resource type="Resource" uid="uid://bmhtsu1q7g5qx" path="res://resources/effects/payloads/payload_permanent_score_last_sequence.tres" id="5_payload_last"]
 [ext_resource type="Texture2D" uid="uid://dv8jxh35mbun8" path="res://sprites/icons/runes/Icon7.png" id="6_omt46"]
 
 [sub_resource type="Resource" id="EffectStagnation"]

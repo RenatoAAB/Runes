@@ -54,7 +54,10 @@ func _ready() -> void:
 ## Initialize with default panel configuration
 func initialize_default() -> void:
 	if panels.size() > 0:
+		print("[PanelManager] Already initialized with %d panels" % panels.size())
 		return  # Already initialized
+	
+	print("[PanelManager] Creating default panel configuration...")
 	
 	# Create the first panel (always unlocked)
 	var first_panel_data = _create_default_panel_data(0)
@@ -67,6 +70,8 @@ func initialize_default() -> void:
 		var panel_data = _create_default_panel_data(i)
 		var panel = PanelInstance.new(panel_data, i)
 		add_panel(panel)
+	
+	print("[PanelManager] Created %d panels (1 unlocked, %d locked)" % [panels.size(), panels.size() - 1])
 
 
 ## Create default panel data for a given index
