@@ -1,8 +1,6 @@
-[gd_resource type="Resource" script_class="ConditionAdjacentActivationElement" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ConditionAdjacentActivationElement" load_steps=2 format=3 uid="uid://crr3bne8622aj"]
 
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_adjacent_activation_element.gd" id="1_cond"]
+[ext_resource type="Script" uid="uid://dclmtvdxgeo51" path="res://scripts/data/effects/conditions/condition_adjacent_activation_element.gd" id="1_cond"]
 
 [resource]
 script = ExtResource("1_cond")
-required_elements = []
-include_diagonals = false

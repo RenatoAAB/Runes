@@ -40,6 +40,8 @@ func start_sequence() -> void:
 	battle_context = BattleContext.new(grid_manager)
 	battle_context.score_event.connect(_on_score_event)
 	battle_context.reader_jump_request.connect(_on_reader_jump_request)
+	# Share EventBus reference with context for destroy/create notifications
+	battle_context.event_bus = event_bus
 
 	# Share references with EventBus so non-ON_READ triggers work
 	if event_bus and event_bus.has_method("set_battle_references"):

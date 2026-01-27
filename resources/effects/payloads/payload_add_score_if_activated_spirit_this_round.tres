@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="PayloadAddScoreIfActivatedElementThisRound" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_add_score_if_activated_element_this_round.gd" id="1_payload"]
+
+[resource]
+script = ExtResource("1_payload")
+amount = 20
+target_elements = [4]
