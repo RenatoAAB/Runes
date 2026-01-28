@@ -128,6 +128,13 @@ func _build_modifier_tooltip(data: SlotModifierData) -> String:
 	# Type
 	var type_name = _get_modifier_type_name(data.modifier_type)
 	text += "[color=cyan]%s[/color]\n" % type_name
+
+	# Slot type override
+	if data.slot_data_override:
+		text += "[color=orange]Tipo de Slot:[/color] %s\n" % data.slot_data_override.slot_name
+		var slot_desc = data.slot_data_override.get_full_description()
+		if slot_desc and not slot_desc.is_empty():
+			text += "[color=gray]%s[/color]\n" % slot_desc
 	
 	# Description
 	if data.description and not data.description.is_empty():

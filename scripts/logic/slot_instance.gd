@@ -6,6 +6,8 @@ extends RefCounted
 ## Similar lifecycle to RuneInstance.
 ## Extended to also support holding relics (when used as a relic slot).
 
+const SlotEffect = preload("res://scripts/data/slot_effects/slot_effect.gd")
+
 enum SlotContentType {
 	RUNE,   ## Normal slot that holds runes
 	RELIC,  ## Slot that holds a relic
@@ -14,6 +16,11 @@ enum SlotContentType {
 }
 
 var data: SlotData
+
+## Current slot modifier (slot type) applied to this slot
+var slot_modifier_id: String = ""
+## Current slot type id (for save/load)
+var slot_type_id: String = ""
 
 ## What type of content this slot holds
 var content_type: SlotContentType = SlotContentType.RUNE
@@ -51,6 +58,7 @@ func _init(p_data: SlotData = null):
 	else:
 		# Create default empty slot
 		data = _create_default_slot_data()
+	slot_type_id = data.id if data else ""
 
 
 ## Create a default "empty" slot data
@@ -200,24 +208,33 @@ func clear_states() -> void:
 
 # --- Effect Execution ---
 
-## Execute on-activation effects (including money generation)
-func execute_on_activation(rune: RuneInstance, context: BattleContext, grid_slot) -> void:
+## Execute slot effects for a given trigger
+func execute_slot_effects(trigger: SlotEffect.SlotEffectTrigger, context: BattleContext, grid_slot) -> void:
+	if not data or data.slot_effects.is_empty():
+		return
+	for effect in data.slot_effects:
+		if effect and effect.trigger == trigger:
+			effect.execute(context, grid_slot)
+
+
+## Execute before-rune-read effects
+func execute_before_rune_read(context: BattleContext, grid_slot) -> void:
+	execute_slot_effects(SlotEffect.SlotEffectTrigger.BEFORE_RUNE_READ, context, grid_slot)
+
+
+## Execute after-rune-read effects (including money generation)
+func execute_after_rune_read(rune: RuneInstance, context: BattleContext, grid_slot) -> void:
 	# Generate money if slot has money_on_activation
 	if data.money_on_activation > 0:
 		context.add_money(data.money_on_activation, rune)
 		money_generated_this_round += data.money_on_activation
-	
-	# Execute custom effects
-	for effect in data.on_activation_effects:
-		effect.execute(rune, context, grid_slot)
+
+	execute_slot_effects(SlotEffect.SlotEffectTrigger.AFTER_RUNE_READ, context, grid_slot)
 
 
 ## Execute round-start effects
 func execute_on_round_start(context: BattleContext, grid_slot) -> void:
-	for effect in data.on_round_start_effects:
-		# For slot effects without a rune, we pass null
-		var rune = grid_slot.rune if grid_slot else null
-		effect.execute(rune, context, grid_slot)
+	execute_slot_effects(SlotEffect.SlotEffectTrigger.ROUND_START, context, grid_slot)
 
 
 ## Execute round-end effects (including money generation)
@@ -226,11 +243,8 @@ func execute_on_round_end(context: BattleContext, grid_slot) -> void:
 	if data.money_on_round_end > 0 and grid_slot and grid_slot.rune:
 		context.add_money(data.money_on_round_end, grid_slot.rune)
 		money_generated_this_round += data.money_on_round_end
-	
-	# Execute custom effects
-	for effect in data.on_round_end_effects:
-		var rune = grid_slot.rune if grid_slot else null
-		effect.execute(rune, context, grid_slot)
+
+	execute_slot_effects(SlotEffect.SlotEffectTrigger.ROUND_END, context, grid_slot)
 
 
 ## Get display info for UI
@@ -269,6 +283,17 @@ func get_modifier_stack_count(modifier_id: String) -> int:
 func apply_modifier(modifier: SlotModifierData) -> bool:
 	if not modifier:
 		return false
+	if not modifier.can_apply_to_slot(self):
+		return false
+	
+	# Slot type override replaces current slot data and modifier
+	if modifier.slot_data_override:
+		data = modifier.slot_data_override
+		slot_modifier_id = modifier.id
+		slot_type_id = data.id if data else ""
+		upgrade_level = clamp(upgrade_level, 0, data.max_upgrade_level if data else 0)
+		set_meta("applied_modifiers", { modifier.id: 1 })
+		return true
 	
 	# Check if already at max stacks
 	var current_stacks = get_modifier_stack_count(modifier.id)

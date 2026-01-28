@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SlotModifierData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_modifier_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/slot_data/slot_accumulator.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "slot_accumulator"
+display_name = "Accumulator"
+description = "Esse slot recebe uma cópia do buff de score permanente que uma runa em cima dele recebeu e o armazena permanentemente. Qualquer runa em cima dele recebe esse adicional ao ser ativada."
+rarity = 0
+modifier_type = 5
+value = 0.0
+stacks = false
+max_stacks = 1
+compatible_slot_ids = []
+incompatible_modifier_ids = []
+slot_data_override = ExtResource("2")

@@ -169,7 +169,12 @@ func reset_temp_effects() -> void:
 ## Called when a rune activates in this slot
 func on_rune_activation(context: BattleContext) -> void:
 	if rune:
-		slot.execute_on_activation(rune, context, self)
+		slot.execute_after_rune_read(rune, context, self)
+
+
+## Called before a rune activates in this slot
+func on_before_rune_read(context: BattleContext) -> void:
+	slot.execute_before_rune_read(context, self)
 
 
 ## Called at round start

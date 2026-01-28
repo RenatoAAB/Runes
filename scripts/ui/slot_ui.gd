@@ -385,6 +385,11 @@ func _show_shop_item_tooltip() -> void:
 			if modifier:
 				text = "[b]%s[/b]\n" % modifier.display_name
 				text += "[color=cyan]%s[/color]\n" % _get_modifier_type_name(modifier.modifier_type)
+				if modifier.slot_data_override:
+					text += "[color=orange]Tipo de Slot:[/color] %s\n" % modifier.slot_data_override.slot_name
+					var slot_desc = modifier.slot_data_override.get_full_description()
+					if slot_desc and not slot_desc.is_empty():
+						text += "[color=gray]%s[/color]\n" % slot_desc
 				if modifier.description and not modifier.description.is_empty():
 					text += "[color=silver]%s[/color]\n" % modifier.description
 				else:

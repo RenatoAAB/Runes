@@ -147,12 +147,22 @@ func unlock_slot(coord: Vector2i) -> bool:
 
 
 ## Unlock multiple slots from a slot piece
-func unlock_slots_from_piece(positions: Array[Vector2i], base_coord: Vector2i) -> int:
+func unlock_slots_from_piece(piece: SlotPieceData, base_coord: Vector2i) -> int:
+	if not piece:
+		return 0
 	var unlocked_count = 0
-	for offset in positions:
-		var actual_coord = base_coord + offset
+	var positions = piece.shape
+	for i in range(positions.size()):
+		var actual_coord = base_coord + positions[i]
 		if unlock_slot(actual_coord):
 			unlocked_count += 1
+			# Apply slot modifier from the piece, if provided
+			if piece.slot_modifiers and i < piece.slot_modifiers.size():
+				var mod = piece.slot_modifiers[i]
+				if mod and mod is SlotModifierData and grid_manager:
+					var grid_slot = grid_manager.get_slot(actual_coord)
+					if grid_slot and grid_slot.slot:
+						grid_slot.slot.apply_modifier(mod)
 	return unlocked_count
 
 

@@ -599,7 +599,7 @@ func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
 		return
 	
 	# Unlock slots from the piece
-	var unlocked_count = panel.unlock_slots_from_piece(piece.shape, coord)
+	var unlocked_count = panel.unlock_slots_from_piece(piece, coord)
 	if unlocked_count > 0:
 		# Remove piece from extra inventory
 		var piece_instance = _extra_inventory.find_piece_by_data(piece)

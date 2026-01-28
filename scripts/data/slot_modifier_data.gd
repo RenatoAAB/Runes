@@ -22,6 +22,8 @@ enum ModifierType {
 
 @export_group("Type")
 @export var modifier_type: ModifierType = ModifierType.MULTIPLIER
+## If set, this modifier replaces the slot's data (turning it into a slot type).
+@export var slot_data_override: SlotData
 
 @export_group("Value")
 ## The value of the modifier (interpretation depends on type)
@@ -97,6 +99,10 @@ func can_apply_to_slot(slot_instance) -> bool:  # SlotInstance
 		if slot_id not in compatible_slot_ids:
 			return false
 	
+	# Slot type overrides replace existing modifiers, so skip stacking checks
+	if slot_data_override:
+		return true
+
 	# Check for incompatible modifiers already applied
 	if slot_instance.has_method("has_modifier"):
 		for incompatible_id in incompatible_modifier_ids:

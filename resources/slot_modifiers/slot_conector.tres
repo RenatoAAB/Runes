@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="SlotModifierData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_modifier_data.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/slot_data/slot_conector.tres" id="2"]
+
+[resource]
+script = ExtResource("1")
+id = "slot_conector"
+display_name = "Conector"
+description = "Quando uma runa é lida aqui, ativa todas as outras runas que estão em conectores."
+rarity = 0
+modifier_type = 5
+value = 0.0
+stacks = false
+max_stacks = 1
+compatible_slot_ids = []
+incompatible_modifier_ids = []
+slot_data_override = ExtResource("2")

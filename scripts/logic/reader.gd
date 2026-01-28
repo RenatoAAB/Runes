@@ -53,6 +53,8 @@ func start_sequence() -> void:
 	
 	# Reset grid state before starting
 	grid_manager.process_round_end()
+	# Execute slot round-start effects
+	_execute_round_start_slot_effects()
 	
 	if traversal_order.is_empty():
 		_finish_sequence()
@@ -147,6 +149,7 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		
 		# Execute the activation (potentially multiple times)
 		for i in range(trigger_count):
+			slot.on_before_rune_read(battle_context)
 			rune.on_activate(battle_context, slot)
 			# Execute slot's on-activation effects
 			slot.on_rune_activation(battle_context)
@@ -252,6 +255,9 @@ func _on_reader_jump_request(target_index: int) -> void:
 func _finish_sequence() -> void:
 	is_running = false
 
+	# Execute slot round-end effects after the last step
+	_execute_round_end_slot_effects()
+
 	# Clear temporary buffs/states now that the round is over so tooltips don't show stale bonuses
 	# Emit panel complete event
 	if event_bus and event_bus.has_method("emit"):
@@ -287,3 +293,19 @@ func _finish_sequence() -> void:
 
 func stop_sequence() -> void:
 	is_running = false
+
+
+func _execute_round_start_slot_effects() -> void:
+	if not grid_manager or not battle_context:
+		return
+	for slot in grid_manager.grid:
+		if slot and not slot.is_void():
+			slot.on_round_start(battle_context)
+
+
+func _execute_round_end_slot_effects() -> void:
+	if not grid_manager or not battle_context:
+		return
+	for slot in grid_manager.grid:
+		if slot and not slot.is_void():
+			slot.on_round_end(battle_context)

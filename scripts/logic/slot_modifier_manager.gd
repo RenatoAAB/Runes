@@ -22,11 +22,9 @@ func apply_modifier(slot: GridSlot, modifier: SlotModifierData) -> bool:
 		application_failed.emit(slot, modifier, "Modifier incompatible with slot")
 		return false
 	
-	# Apply the modifier effect
-	_apply_modifier_effect(slot_instance, modifier)
-	
-	# Track the modifier on the slot
-	_track_modifier(slot_instance, modifier)
+	if not slot_instance.apply_modifier(modifier):
+		application_failed.emit(slot, modifier, "Modifier application failed")
+		return false
 	
 	modifier_applied.emit(slot, modifier)
 	return true

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "slot_stabilizer"
+slot_name = "Stabilizer"
+rarity = 0
+description = "O score da runa aqui é settado em 100 pela rodada."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+id = "slot_overclocker"
+slot_name = "Overclocker"
+rarity = 0
+description = "A runa aqui pode ser ativada mesmo sem ter ativações restantes. Se esse for o caso, ela tem 50% de chance de quebrar."

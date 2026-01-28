@@ -5,6 +5,8 @@ extends Resource
 ## Similar to RuneData, this is the static data that defines slot behavior.
 ## Slots can have multipliers, effects, and special properties.
 
+const SlotEffect = preload("res://scripts/data/slot_effects/slot_effect.gd")
+
 @export_group("Identity")
 @export var id: String
 @export var slot_name: String
@@ -46,15 +48,8 @@ extends Resource
 @export var is_void: bool = false
 
 @export_group("Behavior")
-## Effects that trigger when a rune activates in this slot
-## Reuses RuneEffect for maximum flexibility
-@export var on_activation_effects: Array[RuneEffect]
-## Effects that trigger at round start
-@export var on_round_start_effects: Array[RuneEffect]
-## Effects that trigger at round end
-@export var on_round_end_effects: Array[RuneEffect]
-## Passive effects (conditions checked during rune activation)
-@export var passive_effects: Array[RuneEffect]
+## Slot effects that trigger during the round lifecycle
+@export var slot_effects: Array[SlotEffect] = []
 
 
 ## Get the full description including stats
@@ -99,15 +94,11 @@ func get_keywords() -> Array[StringName]:
 	if money_on_activation > 0 or money_on_round_end > 0:
 		all_keywords.append(Keywords.INCOME)
 	
-	# Collect from effects
-	for effect in on_activation_effects:
-		for kw in effect.get_keywords():
-			if kw not in all_keywords:
-				all_keywords.append(kw)
-	
-	for effect in passive_effects:
-		for kw in effect.get_keywords():
-			if kw not in all_keywords:
-				all_keywords.append(kw)
+	# Collect from slot effects
+	for effect in slot_effects:
+		if effect:
+			for kw in effect.get_keywords():
+				if kw not in all_keywords:
+					all_keywords.append(kw)
 	
 	return all_keywords
