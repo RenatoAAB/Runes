@@ -118,8 +118,15 @@ func add_score(amount: int, source: RuneInstance) -> void:
 	# Apply slot multiplier if there's a current slot
 	var final_amount = amount
 	if current_slot:
-		var multiplier = current_slot.get_multiplier()
-		final_amount = int(amount * multiplier)
+		if current_slot.slot and current_slot.slot.data and current_slot.slot.data.id == "slot_stabilizer":
+			if not get_meta("stabilizer_used", false):
+				final_amount = 100
+				set_meta("stabilizer_used", true)
+			else:
+				final_amount = 0
+		else:
+			var multiplier = current_slot.get_multiplier()
+			final_amount = int(amount * multiplier)
 	score_event.emit(final_amount, source)
 
 
@@ -163,7 +170,7 @@ func clear_effects_tracking() -> void:
 ## Records a rune activation in history. Called by Reader after activation.
 func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 	var entry = {
-		"elements": GameEnums.normalize_elements(rune.data.elements),
+		"elements": GameEnums.normalize_elements(rune.get_elements()),
 		"rune_id": rune.data.id,
 		"slot_position": slot.grid_position,
 		"rune_instance": rune

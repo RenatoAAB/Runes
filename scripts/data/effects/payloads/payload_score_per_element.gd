@@ -18,7 +18,7 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 		if slot.is_empty():
 			continue
 		
-		var rune_elements = GameEnums.normalize_elements(slot.rune.data.elements)
+		var rune_elements = GameEnums.normalize_elements(slot.rune.get_elements())
 		var is_match = false
 		
 		for target_elem in target_elements:

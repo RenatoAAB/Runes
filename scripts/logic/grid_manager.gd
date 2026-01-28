@@ -12,6 +12,11 @@ var grid: Array[GridSlot] = []
 
 signal slot_changed(coord: Vector2i)
 
+const ResidueProcessor = preload("res://scripts/logic/residue_processor.gd")
+
+## Centralized residue processing
+var residue_processor: ResidueProcessor = ResidueProcessor.new()
+
 ## Reference to EventBus (set in _ready)
 var event_bus: Node = null
 
@@ -233,6 +238,8 @@ func rotate_runes(slots: Array[GridSlot], clockwise: bool) -> void:
 
 func process_round_end() -> void:
 	for slot in grid:
+		if residue_processor:
+			residue_processor.handle_round_end_for_slot(slot, self)
 		slot.process_states()
 		if slot.rune:
 			slot.rune.reset_state()

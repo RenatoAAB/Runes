@@ -21,7 +21,7 @@ func execute(targets: Array[GridSlot], _source_rune: RuneInstance, _context: Bat
 func _matches_element_filter(slot: GridSlot) -> bool:
 	if target_elements.is_empty():
 		return true
-	var elems = GameEnums.normalize_elements(slot.rune.data.elements)
+	var elems = GameEnums.normalize_elements(slot.rune.get_elements())
 	for e in target_elements:
 		if e in elems:
 			return true

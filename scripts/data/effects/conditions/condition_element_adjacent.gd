@@ -15,7 +15,7 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 		if slot.is_empty():
 			continue
 		
-		for elem in slot.rune.data.elements:
+		for elem in slot.rune.get_elements():
 			if elem in required_elements:
 				return true
 	
@@ -28,7 +28,7 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 		if slot.is_empty():
 			continue
 		
-		for elem in slot.rune.data.elements:
+		for elem in slot.rune.get_elements():
 			if elem in required_elements:
 				relevant.append(slot)
 				break

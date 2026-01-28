@@ -85,6 +85,12 @@ func remove_rune() -> RuneInstance:
 func _apply_slot_buffs_to_rune() -> void:
 	if not rune:
 		return
+
+	# Apply element overrides for residues
+	if slot.has_state("obscurecido"):
+		rune.set_element_override([])
+	else:
+		rune.clear_element_override()
 	
 	# Apply activation bonus from slot states
 	var activation_bonus = slot.get_state_activation_bonus()
@@ -117,18 +123,31 @@ func add_state(state_id: String, duration: int, score_bonus: int = 0,
 		if not rune.stat_modifiers.has("activation_bonus"):
 			rune.stat_modifiers["activation_bonus"] = 0
 		rune.stat_modifiers["activation_bonus"] += activation_bonus
+		if state_id == "obscurecido":
+			rune.set_element_override([])
 
 
 func has_state(state_id: String) -> bool:
 	return slot.has_state(state_id)
 
 
+func remove_state(state_id: String) -> void:
+	slot.remove_state(state_id)
+	if rune and state_id == "obscurecido":
+		rune.clear_element_override()
+
+
 func process_states() -> void:
 	slot.process_states()
+	# Ensure element override is cleared if residue expired
+	if rune and not slot.has_state("obscurecido"):
+		rune.clear_element_override()
 
 
 func clear_states() -> void:
 	slot.clear_states()
+	if rune:
+		rune.clear_element_override()
 
 
 # --- Convenience Getters for UI ---

@@ -132,10 +132,26 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 	if rune.is_disabled:
 		_emit_disabled_slot_event(coord, rune, score_before)
 		return
+
+	# Residue processing
+	if grid_manager and grid_manager.residue_processor:
+		if grid_manager.residue_processor.should_skip_read(slot):
+			return
 	
-	if rune.can_activate():
+	var can_activate = rune.can_activate()
+	var forced_activation = false
+	if not can_activate and slot.slot and slot.slot.data and slot.slot.data.id == "slot_overclocker":
+		forced_activation = true
+		can_activate = true
+
+	if can_activate:
 		# Set context before activation so slot multiplier can be applied
 		battle_context.set_current_context(slot, rune)
+
+		# Residue: pre-activation hooks
+		var residue_snapshot := {}
+		if grid_manager and grid_manager.residue_processor:
+			residue_snapshot = grid_manager.residue_processor.before_activation(slot, rune)
 		
 		# Capture state before activation
 		var activations_before = rune.current_activations
@@ -146,18 +162,38 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		
 		# Get trigger count from slot (for Repeater slots)
 		var trigger_count = slot.get_trigger_count()
+		if slot.slot and slot.slot.data and slot.slot.data.id == "slot_catalyzer":
+			trigger_count = max(rune.get_max_activations() - rune.current_activations, 1)
+		if forced_activation:
+			trigger_count = 1
 		
 		# Execute the activation (potentially multiple times)
 		for i in range(trigger_count):
 			slot.on_before_rune_read(battle_context)
-			rune.on_activate(battle_context, slot)
+			if forced_activation:
+				var original_activations = rune.current_activations
+				rune.current_activations = max(rune.get_max_activations() - 1, 0)
+				rune.on_activate(battle_context, slot)
+				rune.current_activations = original_activations
+			else:
+				rune.on_activate(battle_context, slot)
 			# Execute slot's on-activation effects
 			slot.on_rune_activation(battle_context)
+			# Residue: per-activation hooks
+			if grid_manager and grid_manager.residue_processor:
+				grid_manager.residue_processor.on_activation(slot, rune)
 			activations_spent += 1
 		
 		# Restore activation count if slot preserves charges
 		if should_preserve:
 			rune.current_activations = activations_before
+		# Residue: post-activation hooks
+		if grid_manager and grid_manager.residue_processor:
+			grid_manager.residue_processor.after_activation(slot, rune, residue_snapshot)
+		# Overclocker: 50% chance to break if forced activation
+		if forced_activation and randf() < 0.5:
+			if not slot.protects_fragile() and not rune.data.is_indestructible:
+				_destroy_rune(slot, rune)
 		
 		# Emit the slot read event with all details
 		_emit_slot_read_event(coord, slot, rune, score_before, activations_before, activations_spent)
@@ -177,7 +213,7 @@ func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, 
 	event.phase = GameEnums.GamePhase.BATTLE
 	event.slot_coord = coord
 	event.rune_id = rune.data.id if rune.data.id else StringName(rune.data.rune_name)
-	event.rune_elements = rune.data.elements
+	event.rune_elements = rune.get_elements()
 	event.rune_tier = rune.data.tier
 	event.score_before = score_before
 	event.score_after = total_score
@@ -229,7 +265,7 @@ func _emit_disabled_slot_event(coord: Vector2i, rune: RuneInstance, score_before
 	event.phase = GameEnums.GamePhase.BATTLE
 	event.slot_coord = coord
 	event.rune_id = StringName(rune.data.id) if rune.data.id else StringName(rune.data.rune_name)
-	event.rune_elements = rune.data.elements
+	event.rune_elements = rune.get_elements()
 	event.was_disabled = true
 	event.score_before = score_before
 	event.score_after = score_before
@@ -293,6 +329,19 @@ func _finish_sequence() -> void:
 
 func stop_sequence() -> void:
 	is_running = false
+
+
+func _destroy_rune(slot: GridSlot, rune: RuneInstance) -> void:
+	if not slot or not rune:
+		return
+	if battle_context:
+		if battle_context.event_bus:
+			battle_context.event_bus.notify_rune_destroyed(slot, rune)
+		else:
+			battle_context.on_rune_destroyed(slot, rune)
+	slot.remove_rune()
+	if grid_manager:
+		grid_manager.slot_changed.emit(slot.grid_position)
 
 
 func _execute_round_start_slot_effects() -> void:

@@ -28,7 +28,7 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 			for slot in targets:
 				if slot.is_empty():
 					continue
-				if not _is_element_allowed(slot.rune.data.elements):
+				if not _is_element_allowed(slot.rune.get_elements()):
 					continue
 				var target_rune = slot.rune
 				var remaining = target_rune.get_max_activations() - target_rune.current_activations
@@ -39,7 +39,7 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 			for slot in targets:
 				if slot.is_empty():
 					continue
-				if not _is_element_allowed(slot.rune.data.elements):
+				if not _is_element_allowed(slot.rune.get_elements()):
 					continue
 				var target_rune = slot.rune
 				var remaining = target_rune.get_max_activations() - target_rune.current_activations

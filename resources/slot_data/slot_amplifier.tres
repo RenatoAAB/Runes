@@ -8,3 +8,4 @@ id = "slot_amplifier"
 slot_name = "Amplifier"
 rarity = 0
 description = "A runa aqui tem sua pontuação x2."
+base_multiplier = 2.0

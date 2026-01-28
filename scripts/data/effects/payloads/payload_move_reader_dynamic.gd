@@ -43,7 +43,7 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 					if adjacent_filter_elements.is_empty():
 						adjacent_count += 1
 					else:
-						var rune_elements = GameEnums.normalize_elements(slot.rune.data.elements)
+						var rune_elements = GameEnums.normalize_elements(slot.rune.get_elements())
 						for elem in adjacent_filter_elements:
 							if elem in rune_elements:
 								adjacent_count += 1
@@ -94,7 +94,7 @@ func _find_previous_element(context: BattleContext, current_index: int) -> int:
 		if coord.x >= 0:
 			var slot = context.grid.get_slot(coord)
 			if slot and not slot.is_empty():
-				if previous_element_target in slot.rune.data.elements:
+				if previous_element_target in slot.rune.get_elements():
 					return i
 	return -1
 

@@ -20,6 +20,13 @@ var stat_modifiers: Dictionary = {
 var is_disabled: bool = false
 var last_effect_success: bool = false
 
+## Element override (used by residues like Obscurecido)
+var _element_override: Array[GameEnums.Element] = []
+var _has_element_override: bool = false
+
+## Optional override for max activations (used by residues like Descarregado)
+var _max_activations_override: int = -1
+
 func _init(p_data: RuneData):
 	data = p_data
 	reset_state()
@@ -30,6 +37,9 @@ func reset_state() -> void:
 	temporary_buffs.clear()
 	is_disabled = false
 	last_effect_success = false
+	_has_element_override = false
+	_element_override = []
+	_max_activations_override = -1
 	
 	# Reset modifiers to default
 	stat_modifiers = {
@@ -50,9 +60,34 @@ func can_activate() -> bool:
 
 ## Returns the max activations, accounting for any buffs.
 func get_max_activations() -> int:
+	if _max_activations_override >= 0:
+		return _max_activations_override
 	var bonus = stat_modifiers.get("activation_bonus", 0)
 	var perm_bonus = permanent_buffs.get("activation_bonus", 0)
 	return data.base_max_activations + bonus + perm_bonus
+
+
+## Returns effective elements for this rune (with residue overrides)
+func get_elements() -> Array[GameEnums.Element]:
+	return _element_override if _has_element_override else data.elements
+
+
+func set_element_override(elements: Array[GameEnums.Element]) -> void:
+	_element_override = elements
+	_has_element_override = true
+
+
+func clear_element_override() -> void:
+	_has_element_override = false
+	_element_override = []
+
+
+func set_max_activations_override(value: int) -> void:
+	_max_activations_override = max(value, 0)
+
+
+func clear_max_activations_override() -> void:
+	_max_activations_override = -1
 
 ## Helper to get modified score
 func get_modified_score(base_score: int) -> int:

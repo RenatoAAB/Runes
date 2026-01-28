@@ -7,6 +7,8 @@ extends EffectPayload
 
 func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: BattleContext) -> void:
 	for slot in targets:
+		if slot.slot and slot.slot.data and slot.slot.data.id == "slot_distiller":
+			continue
 		# Add state with very long duration (effectively permanent)
 		slot.add_state(state_id, 999999, 0, 0)
 		if not slot.is_empty():

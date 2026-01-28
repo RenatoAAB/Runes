@@ -212,6 +212,20 @@ func _get_state_description(state_id: String) -> String:
 	match state_id:
 		"petrified":
 			return "Rune cannot be moved from this slot."
+		"descompassado":
+			return "Rune is skipped on the first reader pass each round."
+		"obscurecido":
+			return "Rune has no elements while in this slot."
+		"desestabilizado":
+			return "50% chance the rune does nothing when read."
+		"gosmento":
+			return "Rune gains -5 permanent score per activation."
+		"vitrificado":
+			return "Rune cannot receive buffs in this slot."
+		"descarregado":
+			return "Rune can only activate once per round."
+		"faminto":
+			return "Rune is destroyed at end of round."
 		"lead_residue":
 			return "Blocks gold effect. Slot is contaminated."
 		"illuminated":

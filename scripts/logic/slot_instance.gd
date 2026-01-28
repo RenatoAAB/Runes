@@ -7,6 +7,7 @@ extends RefCounted
 ## Extended to also support holding relics (when used as a relic slot).
 
 const SlotEffect = preload("res://scripts/data/slot_effects/slot_effect.gd")
+const SlotEffectFactory = preload("res://scripts/data/slot_effects/slot_effect_factory.gd")
 
 enum SlotContentType {
 	RUNE,   ## Normal slot that holds runes
@@ -51,6 +52,9 @@ var active_states: Dictionary = {}
 ## Economy tracking for this round
 var money_generated_this_round: int = 0
 
+## Residue helpers (per round)
+var skipped_first_read_this_round: bool = false
+
 
 func _init(p_data: SlotData = null):
 	if p_data:
@@ -58,6 +62,8 @@ func _init(p_data: SlotData = null):
 	else:
 		# Create default empty slot
 		data = _create_default_slot_data()
+	if data and data.slot_effects.is_empty() and data.id.begins_with("slot_"):
+		data.slot_effects = SlotEffectFactory.build(data.id)
 	slot_type_id = data.id if data else ""
 
 
@@ -134,6 +140,7 @@ func reset_temp_effects() -> void:
 	temp_preserves_charges = false
 	temp_protects_fragile = false
 	money_generated_this_round = 0
+	skipped_first_read_this_round = false
 
 
 ## Add a temporary multiplier bonus (lasts one round)
@@ -289,6 +296,8 @@ func apply_modifier(modifier: SlotModifierData) -> bool:
 	# Slot type override replaces current slot data and modifier
 	if modifier.slot_data_override:
 		data = modifier.slot_data_override
+		if data and data.slot_effects.is_empty() and data.id.begins_with("slot_"):
+			data.slot_effects = SlotEffectFactory.build(data.id)
 		slot_modifier_id = modifier.id
 		slot_type_id = data.id if data else ""
 		upgrade_level = clamp(upgrade_level, 0, data.max_upgrade_level if data else 0)

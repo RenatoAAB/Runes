@@ -21,7 +21,10 @@ func execute(source_rune: RuneInstance, context: BattleContext, source_slot: Gri
 		source_rune.last_effect_success = false
 		return
 
-	if condition.evaluate(source_rune, context, source_slot):
+	var condition_met = condition.evaluate(source_rune, context, source_slot)
+	if source_slot and source_slot.slot and source_slot.slot.data and source_slot.slot.data.id == "slot_refractor":
+		condition_met = true
+	if condition_met:
 		var targets = target.get_targets(source_rune, context, source_slot)
 		if targets.size() > 0:
 			payload.execute(targets, source_rune, context)

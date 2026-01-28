@@ -24,7 +24,7 @@ func evaluate(source_rune: RuneInstance, context: BattleContext, source_slot: Gr
 	for neighbor in neighbors:
 		if not neighbor.is_empty():
 			if filter_by_element:
-				if required_element in neighbor.rune.data.elements:
+				if required_element in neighbor.rune.get_elements():
 					count += 1
 			else:
 				count += 1
@@ -45,7 +45,7 @@ func get_relevant_slots(source_rune: RuneInstance, context: BattleContext, sourc
 	
 	var filtered: Array[GridSlot] = []
 	for n in neighbors:
-		if not n.is_empty() and required_element in n.rune.data.elements:
+		if not n.is_empty() and required_element in n.rune.get_elements():
 			filtered.append(n)
 	return filtered
 

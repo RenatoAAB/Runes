@@ -54,7 +54,7 @@ func _on_mouse_entered() -> void:
 	
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
 		# Base elements are now stored directly on the rune
-		var base_elements = GameEnums.normalize_elements(rune_instance.data.elements)
+		var base_elements = GameEnums.normalize_elements(rune_instance.get_elements())
 		var elements_str = _build_element_icons_text(base_elements)
 		
 		var activations = rune_instance.get_max_activations()
