@@ -94,7 +94,7 @@ func get_description() -> String:
 		SelectionMode.FIRST:
 			return "First empty slot"
 		SelectionMode.RANDOM:
-			return "Random slot"
+			return "Random"
 		SelectionMode.CORNERS:
 			return "Empty corner slot"
 		SelectionMode.EDGES:

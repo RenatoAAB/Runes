@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=23 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -7,19 +7,18 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" uid="uid://c6gjg03cc4ok1" path="res://resources/runes/common/rune_fire.tres" id="6_jkv2x"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
 [ext_resource type="Resource" uid="uid://xtdyw6q0mvfr" path="res://resources/runes/uncommon/rune_meteor.tres" id="10_pm3ni"]
-[ext_resource type="Resource" uid="uid://ddrpf7ipqa6ho" path="res://resources/runes/common/rune_darkness.tres" id="11_0ld40"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
-[ext_resource type="Resource" uid="uid://dis2x0g1cs6x3" path="res://resources/runes/uncommon/rune_golem.tres" id="14_pm3ni"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_golem.tres" id="14_pm3ni"]
 [ext_resource type="Resource" uid="uid://ckse0lfiw6q1d" path="res://resources/runes/uncommon/rune_phoenix.tres" id="14_yc10j"]
-[ext_resource type="Resource" uid="uid://dixlohqkt4vcl" path="res://resources/runes/uncommon/rune_sacred.tres" id="15_jscy8"]
-[ext_resource type="Resource" uid="uid://drfb4f02n7xg7" path="res://resources/runes/uncommon/rune_time.tres" id="15_y6deb"]
-[ext_resource type="Resource" uid="uid://c4ubr7pti7rf5" path="res://resources/runes/uncommon/rune_djinn.tres" id="16_2wyq8"]
+[ext_resource type="Resource" uid="uid://b5fb5gnvq8lye" path="res://resources/runes/common/rune_rock.tres" id="15_pm3ni"]
+[ext_resource type="Resource" uid="uid://2s5sow7ix6xs" path="res://resources/runes/common/rune_crystal.tres" id="16_2wyq8"]
 [ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
 [ext_resource type="Resource" uid="uid://b165vm8geww4y" path="res://resources/runes/uncommon/rune_empathy.tres" id="16_pm3ni"]
+[ext_resource type="Resource" path="res://resources/runes/rare/rune_nature.tres" id="16_y6deb"]
+[ext_resource type="Resource" uid="uid://brjc7l604yw8u" path="res://resources/runes/legendary/rune_world.tres" id="17_og1vs"]
 [ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="17_vxglm"]
 [ext_resource type="Resource" uid="uid://dsagb67rf2ptx" path="res://resources/runes/uncommon/rune_nymph.tres" id="17_y6deb"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
@@ -51,7 +50,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_jkv2x"), ExtResource("16_og1vs"), ExtResource("10_pm3ni"), ExtResource("11_0ld40"), ExtResource("14_yc10j"), ExtResource("15_jscy8"), ExtResource("16_pm3ni"), ExtResource("17_y6deb"), ExtResource("14_pm3ni"), ExtResource("15_y6deb"), ExtResource("16_2wyq8"), ExtResource("17_vxglm")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("16_og1vs"), ExtResource("10_pm3ni"), ExtResource("14_yc10j"), ExtResource("16_pm3ni"), ExtResource("17_y6deb"), ExtResource("14_pm3ni"), ExtResource("17_vxglm"), ExtResource("16_y6deb"), ExtResource("17_og1vs"), ExtResource("15_pm3ni"), ExtResource("16_2wyq8")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]

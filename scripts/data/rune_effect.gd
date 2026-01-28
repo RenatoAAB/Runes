@@ -34,6 +34,7 @@ func execute(source_rune: RuneInstance, context: BattleContext, source_slot: Gri
 ## Returns a plain text description of this effect.
 func get_description() -> String:
 	var desc = ""
+	var trigger_prefix = _get_trigger_prefix(trigger)
 	if payload and payload.has_method("get_description"):
 		desc += payload.get_description()
 	
@@ -50,6 +51,8 @@ func get_description() -> String:
 			else:
 				desc += " on " + target_desc
 
+	if trigger_prefix != "":
+		desc = (trigger_prefix + " " + desc).strip_edges()
 	if condition and condition.has_method("get_description"):
 		var connector = "when" if trigger == GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED else "if"
 		desc += " " + connector + " " + condition.get_description()
@@ -61,6 +64,7 @@ func get_description() -> String:
 ## can_evaluate_condition: whether we can evaluate the condition (false if in inventory)
 func get_description_colored(effect_index: int, is_condition_met: bool = true, can_evaluate_condition: bool = true) -> String:
 	var parts: Array[String] = []
+	var trigger_prefix = _get_trigger_prefix(trigger)
 	
 	# 1. Payload description (plain text)
 	var payload_desc = ""
@@ -87,6 +91,8 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 	parts.append(main_desc)
 	
 	# 4. Condition description (colored based on whether it's met)
+	if trigger_prefix != "":
+		parts.append(trigger_prefix)
 	if condition and condition.has_method("get_description"):
 		var cond_desc = condition.get_description()
 		if cond_desc != "" and cond_desc != "Always":
@@ -95,6 +101,24 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 			parts.append(connector + " " + cond_colored)
 	
 	return " ".join(parts)
+
+
+func _get_trigger_prefix(effect_trigger: GameEnums.EffectTrigger) -> String:
+	match effect_trigger:
+		GameEnums.EffectTrigger.ON_DESTROY:
+			return "When destroyed,".strip_edges()
+		GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED:
+			return "When an adjacent rune is activated,".strip_edges()
+		GameEnums.EffectTrigger.ON_CREATED:
+			return "When created,".strip_edges()
+		GameEnums.EffectTrigger.ON_ROUND_END:
+			return "At end of round,".strip_edges()
+		GameEnums.EffectTrigger.ON_ROUND_START:
+			return "At start of round,".strip_edges()
+		GameEnums.EffectTrigger.ON_ACTIVATED:
+			return "When this rune activates,".strip_edges()
+		_:
+			return ""
 
 
 ## Returns all keywords from this effect (aggregated from condition, target, and payload).

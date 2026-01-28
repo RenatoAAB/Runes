@@ -233,6 +233,9 @@ func _update_display() -> void:
 func _wrap_text(text: String, max_chars: int = 90) -> String:
 	if text.is_empty() or max_chars <= 10:
 		return text
+
+	# Normalize spacing around [img] tags so wrapping doesn't split them
+	text = _normalize_img_spacing(text)
 	var result: Array[String] = []
 	for raw_line in text.split("\n"):
 		var line = raw_line.strip_edges(false, false)
@@ -257,6 +260,42 @@ func _wrap_text(text: String, max_chars: int = 90) -> String:
 	if text.ends_with("\n"):
 		result.append("")
 	return "\n".join(result)
+
+
+func _normalize_img_spacing(text: String) -> String:
+	if text.is_empty():
+		return text
+	var s := text
+	var start := 0
+	while true:
+		var open_idx := s.find("[img", start)
+		if open_idx == -1:
+			break
+		# Ensure there's a space before the opening tag
+		if open_idx > 0:
+			var prev_ch := s.substr(open_idx - 1, 1)
+			if prev_ch != " " and prev_ch != "\n" and prev_ch != "\t":
+				s = s.substr(0, open_idx) + " " + s.substr(open_idx, s.length() - open_idx)
+				open_idx += 1
+		# Find end of opening tag
+		var open_end := s.find("]", open_idx)
+		if open_end == -1:
+			start = open_idx + 4
+			continue
+		# Find closing tag
+		var close_idx := s.find("[/img]", open_end)
+		var close_end := 0
+		if close_idx == -1:
+			close_end = open_end + 1
+		else:
+			close_end = close_idx + 6
+		# Ensure there's a space after the closing tag (or after the opening tag if no close)
+		if close_end < s.length():
+			var next_ch := s.substr(close_end, 1)
+			if next_ch != " " and next_ch != "\n" and next_ch != "\t":
+				s = s.substr(0, close_end) + " " + s.substr(close_end, s.length() - close_end)
+		start = close_end + 1
+	return s
 
 
 func _visible_length(text: String) -> int:
