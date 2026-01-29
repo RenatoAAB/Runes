@@ -60,12 +60,6 @@ func get_slot_type_at(index: int) -> SlotData:
 
 ## Get display info
 func get_display_info() -> Dictionary:
-	var modifier_names: Array[String] = []
-	if data.slot_modifiers:
-		for mod in data.slot_modifiers:
-			if mod and mod is SlotModifierData:
-				modifier_names.append(mod.display_name)
-	
 	return {
 		"name": data.display_name,
 		"description": data.description,
@@ -74,7 +68,7 @@ func get_display_info() -> Dictionary:
 		"rarity": data.rarity,
 		"rotation": current_rotation,
 		"is_placed": is_placed,
-		"modifiers": modifier_names
+		"modifiers": []
 	}
 
 

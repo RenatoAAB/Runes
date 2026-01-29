@@ -159,6 +159,15 @@ func _on_mouse_entered() -> void:
 	# Show slot name if not default
 	if slot_info.get("name", "Empty Slot") != "Empty Slot":
 		text += "[b]%s[/b]\n" % slot_info["name"]
+
+	# Show slot modifier effect if applied
+	if current_slot_data.slot:
+		var modifier_data = current_slot_data.slot.get_applied_modifier_data()
+		if modifier_data:
+			var effect_text = modifier_data.description
+			if effect_text.is_empty():
+				effect_text = modifier_data.get_effect_text()
+			text += "[color=silver]%s[/color]\n" % effect_text
 	
 	# Show multiplier if not 1.0
 	var mult = slot_info.get("multiplier", 1.0)

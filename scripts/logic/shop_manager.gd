@@ -120,9 +120,9 @@ func _load_modifier_pool() -> void:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
-			if file_name.ends_with(".tres"):
+			if file_name.ends_with(".tres") and file_name.begins_with("slot_"):
 				var modifier_data = load(modifier_dir + file_name) as SlotModifierData
-				if modifier_data:
+				if modifier_data and modifier_data.id.begins_with("slot_"):
 					_modifier_pool.append(modifier_data)
 			file_name = dir.get_next()
 		dir.list_dir_end()

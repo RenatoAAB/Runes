@@ -91,8 +91,9 @@ func generate_piece_of_size(size: int) -> SlotPieceData:
 	piece.shape = typed_shape
 	piece.rarity = _determine_rarity(size)
 	
-	# Assign slot types
-	piece.slot_types = _generate_slot_types(size)
+	# Slot pieces should not carry modifiers or special slot types
+	piece.slot_types = []
+	piece.slot_modifiers = []
 	
 	# Generate description
 	piece.description = _generate_description(piece)
@@ -106,10 +107,9 @@ func generate_reward_piece(min_size: int = 2, guaranteed_special: bool = true) -
 	
 	var piece = generate_piece_of_size(size)
 	
-	# Ensure at least one special slot
-	if guaranteed_special and not available_slot_types.is_empty():
-		var special_index = rng.randi() % piece.slot_types.size()
-		piece.slot_types[special_index] = available_slot_types[rng.randi() % available_slot_types.size()]
+	# Slot pieces should not carry modifiers or special slot types
+	piece.slot_types = []
+	piece.slot_modifiers = []
 	
 	# Upgrade rarity
 	piece.rarity = mini(piece.rarity + 1, GameEnums.Rarity.LEGENDARY) as GameEnums.Rarity
@@ -212,14 +212,6 @@ func _generate_piece_name(size: int) -> String:
 func _generate_description(piece: SlotPieceData) -> String:
 	var parts: Array[String] = []
 	parts.append("A piece with %d slot(s)." % piece.get_slot_count())
-	
-	var special_count = 0
-	for slot_type in piece.slot_types:
-		if slot_type != null:
-			special_count += 1
-	
-	if special_count > 0:
-		parts.append("Contains %d special slot(s)." % special_count)
 	
 	return " ".join(parts)
 

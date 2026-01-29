@@ -23,6 +23,9 @@ var slot_modifier_id: String = ""
 ## Current slot type id (for save/load)
 var slot_type_id: String = ""
 
+## Cached modifier data reference
+var _cached_modifier_data: SlotModifierData = null
+
 ## What type of content this slot holds
 var content_type: SlotContentType = SlotContentType.RUNE
 
@@ -299,6 +302,7 @@ func apply_modifier(modifier: SlotModifierData) -> bool:
 		if data and data.slot_effects.is_empty() and data.id.begins_with("slot_"):
 			data.slot_effects = SlotEffectFactory.build(data.id)
 		slot_modifier_id = modifier.id
+		_cached_modifier_data = modifier
 		slot_type_id = data.id if data else ""
 		upgrade_level = clamp(upgrade_level, 0, data.max_upgrade_level if data else 0)
 		set_meta("applied_modifiers", { modifier.id: 1 })
@@ -350,6 +354,20 @@ func apply_modifier(modifier: SlotModifierData) -> bool:
 	
 	print("Applied modifier '%s' (stack %d)" % [modifier.display_name, current_stacks + 1])
 	return true
+
+
+## Get the applied slot modifier data (if any)
+func get_applied_modifier_data() -> SlotModifierData:
+	if _cached_modifier_data:
+		return _cached_modifier_data
+	if slot_modifier_id.is_empty():
+		return null
+	var path = "res://resources/slot_modifiers/%s.tres" % slot_modifier_id
+	if ResourceLoader.exists(path):
+		var data_resource = load(path) as SlotModifierData
+		_cached_modifier_data = data_resource
+		return data_resource
+	return null
 
 
 ## Apply a state permanently (for state-type modifiers)

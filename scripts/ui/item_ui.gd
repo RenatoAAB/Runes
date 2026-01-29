@@ -152,15 +152,7 @@ func _update_visuals() -> void:
 		
 		ItemType.PIECE:
 			var piece = item_data as SlotPieceData
-			# Color based on first modifier if present
-			if piece.slot_modifiers.size() > 0 and piece.slot_modifiers[0]:
-				var mod = piece.slot_modifiers[0] as SlotModifierData
-				if mod:
-					color = SlotPieceUI.get_color_for_modifier_type(mod.modifier_type)
-				else:
-					color = Color.GRAY.lightened(0.2)
-			else:
-				color = Color.GRAY.lightened(0.2)
+			color = Color(0.4, 0.4, 0.4)
 			label_text = piece.display_name.substr(0, 2) if piece.display_name else "P"
 			icon = piece.icon
 		
