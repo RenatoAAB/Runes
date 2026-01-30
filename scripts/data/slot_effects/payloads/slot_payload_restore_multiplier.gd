@@ -8,14 +8,10 @@ extends SlotEffectPayload
 func execute(context: BattleContext, slot: GridSlot) -> void:
 	if not context or not slot or slot.is_empty():
 		return
-	var key = _get_key(slot)
-	if not context.has_meta(key):
+	if not context.grid or not context.grid.slot_processor:
 		return
-	var previous = context.get_meta(key, null)
-	context.set_meta(key, null)
+	var previous = context.grid.slot_processor.get_slot_data(slot, meta_key_prefix, null)
+	context.grid.slot_processor.clear_slot_data(slot, meta_key_prefix)
 	if previous == null:
 		return
 	slot.rune.stat_modifiers["score_multiplier"] = previous
-
-func _get_key(slot: GridSlot) -> String:
-	return "%s_%s" % [meta_key_prefix, str(slot.grid_position)]

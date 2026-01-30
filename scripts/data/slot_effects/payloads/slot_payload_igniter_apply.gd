@@ -11,10 +11,8 @@ func execute(context: BattleContext, slot: GridSlot) -> void:
 		return
 	var current_mult = slot.rune.stat_modifiers.get("score_multiplier", 1.0)
 	slot.rune.stat_modifiers["score_multiplier"] = current_mult * 3.0
-	context.set_meta(_get_key(slot), current_mult)
-
-func _get_key(slot: GridSlot) -> String:
-	return "igniter_mult_%s" % str(slot.grid_position)
+	if context.grid and context.grid.slot_processor:
+		context.grid.slot_processor.set_slot_data(slot, "igniter_mult", current_mult)
 
 func get_description() -> String:
 	return "If Fire rune, score x3"

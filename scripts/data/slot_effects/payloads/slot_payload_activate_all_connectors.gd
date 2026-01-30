@@ -6,9 +6,11 @@ extends SlotEffectPayload
 func execute(context: BattleContext, slot: GridSlot) -> void:
 	if not context or not context.grid or not slot:
 		return
-	if context.get_meta("connector_chain_active", false):
+	if not context.grid.slot_processor:
 		return
-	context.set_meta("connector_chain_active", true)
+	if context.grid.slot_processor.get_global_data("connector_chain_active", false):
+		return
+	context.grid.slot_processor.set_global_data("connector_chain_active", true)
 	for other_slot in context.grid.grid:
 		if not other_slot or other_slot == slot:
 			continue
@@ -27,7 +29,7 @@ func execute(context: BattleContext, slot: GridSlot) -> void:
 		other_slot.on_rune_activation(context)
 		if should_preserve:
 			other_rune.current_activations = activations_before
-	context.set_meta("connector_chain_active", false)
+	context.grid.slot_processor.set_global_data("connector_chain_active", false)
 
 func get_description() -> String:
 	return "Activates all other connector runes"

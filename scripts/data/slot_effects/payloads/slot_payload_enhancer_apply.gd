@@ -6,11 +6,10 @@ extends SlotEffectPayload
 func execute(context: BattleContext, slot: GridSlot) -> void:
 	if not context or not slot or not slot.rune:
 		return
-	var key = _get_key(slot)
-	if not context.has_meta(key):
+	if not context.grid or not context.grid.slot_processor:
 		return
-	var snapshot: Dictionary = context.get_meta(key, {})
-	context.set_meta(key, null)
+	var snapshot: Dictionary = context.grid.slot_processor.get_slot_data(slot, "enhancer_snapshot", {})
+	context.grid.slot_processor.clear_slot_data(slot, "enhancer_snapshot")
 	if snapshot.is_empty():
 		return
 	_apply_delta(snapshot.get("permanent_buffs", {}), slot.rune.permanent_buffs)
@@ -24,9 +23,6 @@ func _apply_delta(before: Dictionary, after: Dictionary) -> void:
 		var delta = after_value - before_value
 		if delta != 0:
 			after[key] = after_value + delta
-
-func _get_key(slot: GridSlot) -> String:
-	return "enhancer_snapshot_%s" % str(slot.grid_position)
 
 func get_description() -> String:
 	return "Doubles buffs gained while activating in this slot"

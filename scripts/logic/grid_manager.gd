@@ -13,9 +13,13 @@ var grid: Array[GridSlot] = []
 signal slot_changed(coord: Vector2i)
 
 const ResidueProcessor = preload("res://scripts/logic/residue_processor.gd")
+const SlotProcessor = preload("res://scripts/logic/slot_processor.gd")
 
 ## Centralized residue processing
 var residue_processor: ResidueProcessor = ResidueProcessor.new()
+
+## Centralized slot effect processing
+var slot_processor: SlotProcessor = SlotProcessor.new()
 
 ## Reference to EventBus (set in _ready)
 var event_bus: Node = null

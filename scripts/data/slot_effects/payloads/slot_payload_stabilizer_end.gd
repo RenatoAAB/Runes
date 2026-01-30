@@ -6,8 +6,10 @@ extends SlotEffectPayload
 func execute(context: BattleContext, slot: GridSlot) -> void:
 	if not context:
 		return
-	context.set_meta("stabilizer_active", false)
-	context.set_meta("stabilizer_used", false)
+	if not context.grid or not context.grid.slot_processor or not slot:
+		return
+	context.grid.slot_processor.clear_slot_data(slot, "stabilizer_active")
+	context.grid.slot_processor.clear_slot_data(slot, "stabilizer_used")
 
 func get_description() -> String:
 	return "Clears stabilizer override"

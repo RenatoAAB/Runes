@@ -28,10 +28,8 @@ func execute(context: BattleContext, slot: GridSlot) -> void:
 		return
 	var current_mult = current_rune.stat_modifiers.get("score_multiplier", 1.0)
 	current_rune.stat_modifiers["score_multiplier"] = current_mult * 3.0
-	context.set_meta(_get_key(slot), current_mult)
-
-func _get_key(slot: GridSlot) -> String:
-	return "resonator_mult_%s" % str(slot.grid_position)
+	if context.grid and context.grid.slot_processor:
+		context.grid.slot_processor.set_slot_data(slot, "resonator_mult", current_mult)
 
 func get_description() -> String:
 	return "If adjacent runes share elements, score x3"
