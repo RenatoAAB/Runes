@@ -12,7 +12,7 @@ extends Resource
 
 @export_group("Stats")
 @export var base_max_activations: int = 1
-@export var is_indestructible: bool = true ## If false, the rune can be destroyed
+@export var is_indestructible: bool = false ## If false, the rune can be destroyed
 
 @export_group("Visuals")
 ## Array of Textures corresponding to Tier 1, 2, and 3 visuals.

@@ -24,9 +24,11 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 		if slot.is_empty():
 			continue
 		var target_rune: RuneInstance = slot.rune
+		var mult = _get_enhancer_multiplier(slot)
+		var final_bonus = total_transferred * mult
 		var current_bonus: int = target_rune.stat_modifiers.get("activation_bonus", 0)
-		target_rune.stat_modifiers["activation_bonus"] = current_bonus + total_transferred
-		print("%s granted %d activation bonus to %s" % [source_rune.data.rune_name, total_transferred, target_rune.data.rune_name])
+		target_rune.stat_modifiers["activation_bonus"] = current_bonus + final_bonus
+		print("%s granted %d activation bonus to %s" % [source_rune.data.rune_name, final_bonus, target_rune.data.rune_name])
 		break
 
 

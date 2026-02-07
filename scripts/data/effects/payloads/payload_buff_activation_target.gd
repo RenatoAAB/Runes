@@ -15,16 +15,18 @@ func execute(targets: Array[GridSlot], source_rune: RuneInstance, context: Battl
 			continue
 		
 		var target_rune = slot.rune
+		var mult = _get_enhancer_multiplier(slot)
+		var final_bonus = activation_bonus * mult
 		
 		if is_permanent:
 			var current = target_rune.permanent_buffs.get("activation_bonus", 0)
-			target_rune.permanent_buffs["activation_bonus"] = current + activation_bonus
+			target_rune.permanent_buffs["activation_bonus"] = current + final_bonus
 		else:
 			var current = target_rune.stat_modifiers.get("activation_bonus", 0)
-			target_rune.stat_modifiers["activation_bonus"] = current + activation_bonus
+			target_rune.stat_modifiers["activation_bonus"] = current + final_bonus
 		
 		buffed_count += 1
-		print("Buffed %s with +%d activations" % [target_rune.data.rune_name, activation_bonus])
+		print("Buffed %s with +%d activations" % [target_rune.data.rune_name, final_bonus])
 	
 	if buffed_count > 0:
 		print("%s: Buffed %d runes with +%d activations each" % [source_rune.data.rune_name, buffed_count, activation_bonus])

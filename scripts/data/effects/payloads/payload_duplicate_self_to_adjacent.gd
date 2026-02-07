@@ -20,6 +20,7 @@ func execute(_targets: Array[GridSlot], source_rune: RuneInstance, context: Batt
 		var clone = RuneInstance.new(source_rune.data)
 		for key in source_rune.permanent_buffs.keys():
 			clone.permanent_buffs[key] = source_rune.permanent_buffs[key]
+		clone.permanent_elements = source_rune.permanent_elements.duplicate()
 		slot.set_rune(clone)
 		if context.grid:
 			context.grid.slot_changed.emit(slot.grid_position)

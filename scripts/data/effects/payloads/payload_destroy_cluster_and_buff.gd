@@ -24,9 +24,11 @@ func execute(_targets: Array[GridSlot], source_rune: RuneInstance, context: Batt
 		if destroyed.has(slot):
 			continue
 		var target_rune: RuneInstance = slot.rune
+		var mult = _get_enhancer_multiplier(slot)
+		var final_bonus = activation_bonus * mult
 		var current_bonus: int = target_rune.permanent_buffs.get("activation_bonus", 0)
-		target_rune.permanent_buffs["activation_bonus"] = current_bonus + activation_bonus
-		print("%s gained +%d permanent activation(s) from %s" % [target_rune.data.rune_name, activation_bonus, source_rune.data.rune_name])
+		target_rune.permanent_buffs["activation_bonus"] = current_bonus + final_bonus
+		print("%s gained +%d permanent activation(s) from %s" % [target_rune.data.rune_name, final_bonus, source_rune.data.rune_name])
 
 
 func _destroy_slot(slot: GridSlot, context: BattleContext) -> void:

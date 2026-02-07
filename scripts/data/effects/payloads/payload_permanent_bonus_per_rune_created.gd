@@ -17,7 +17,9 @@ func execute(_targets: Array[GridSlot], source_rune: RuneInstance, context: Batt
 		apply_score(total_score, source_rune, context, true)
 	var total_activation = activation_per_rune * created
 	if total_activation != 0:
-		source_rune.permanent_buffs["activation_bonus"] = source_rune.permanent_buffs.get("activation_bonus", 0) + total_activation
+		var mult = _get_enhancer_multiplier(context.current_slot if context else null)
+		var final_bonus = total_activation * mult
+		source_rune.permanent_buffs["activation_bonus"] = source_rune.permanent_buffs.get("activation_bonus", 0) + final_bonus
 
 
 func get_description() -> String:

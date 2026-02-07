@@ -15,7 +15,7 @@ func execute(targets: Array[GridSlot], _source_rune: RuneInstance, _context: Bat
 			continue
 		if not _matches_element_filter(slot):
 			continue
-		apply_score_to_rune(slot.rune, _context, amount, true)
+		apply_score_to_rune(slot.rune, _context, amount, true, slot)
 
 
 func _matches_element_filter(slot: GridSlot) -> bool:

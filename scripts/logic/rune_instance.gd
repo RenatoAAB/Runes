@@ -10,6 +10,7 @@ var data: RuneData
 var current_activations: int = 0
 var temporary_buffs: Dictionary = {} 
 var permanent_buffs: Dictionary = {} # Persists across rounds
+var permanent_elements: Array[GameEnums.Element] = [] # Persists across rounds
 
 # Modifiers for the current round/activation
 var stat_modifiers: Dictionary = {
@@ -51,6 +52,7 @@ func reset_state() -> void:
 	# Re-apply permanent buffs if any logic requires it here
 	# (For now permanent buffs might just be direct value modifications, 
 	# but if we want to track them separately, we do it here)
+	# Permanent elements persist across rounds
 
 ## Checks if the rune has activations remaining.
 func can_activate() -> bool:
@@ -69,7 +71,27 @@ func get_max_activations() -> int:
 
 ## Returns effective elements for this rune (with residue overrides)
 func get_elements() -> Array[GameEnums.Element]:
-	return _element_override if _has_element_override else data.elements
+	if _has_element_override:
+		return _element_override
+	return get_base_elements()
+
+
+## Returns elements without residue override (base + permanent elements)
+func get_base_elements() -> Array[GameEnums.Element]:
+	var elems: Array[GameEnums.Element] = data.elements.duplicate()
+	for elem in permanent_elements:
+		if elem not in elems:
+			elems.append(elem)
+	return elems
+
+
+## Adds a permanent element if it isn't already present
+func add_permanent_element(element: GameEnums.Element) -> bool:
+	var elems = get_base_elements()
+	if element in elems:
+		return false
+	permanent_elements.append(element)
+	return true
 
 
 func set_element_override(elements: Array[GameEnums.Element]) -> void:

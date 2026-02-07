@@ -140,9 +140,14 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 	
 	var can_activate = rune.can_activate()
 	var forced_activation = false
-	if not can_activate and slot.slot and slot.slot.data and slot.slot.data.id == "slot_overclocker":
-		forced_activation = true
-		can_activate = true
+	if not can_activate:
+		if grid_manager and grid_manager.slot_processor:
+			forced_activation = grid_manager.slot_processor.should_force_activation(slot, rune)
+			if forced_activation:
+				can_activate = true
+		elif slot.slot and slot.slot.data and slot.slot.data.id == "slot_overclocker":
+			forced_activation = true
+			can_activate = true
 
 	if can_activate:
 		# Set context before activation so slot multiplier can be applied
@@ -191,8 +196,13 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		if grid_manager and grid_manager.residue_processor:
 			grid_manager.residue_processor.after_activation(slot, rune, residue_snapshot)
 		# Overclocker: 50% chance to break if forced activation
-		if forced_activation and randf() < 0.5:
-			if not slot.protects_fragile() and not rune.data.is_indestructible:
+		if forced_activation:
+			var should_destroy = false
+			if grid_manager and grid_manager.slot_processor:
+				should_destroy = grid_manager.slot_processor.should_destroy_overclocked_rune(slot, rune, forced_activation)
+			elif randf() < 0.5 and not slot.protects_fragile() and not rune.data.is_indestructible:
+				should_destroy = true
+			if should_destroy:
 				_destroy_rune(slot, rune)
 		
 		# Emit the slot read event with all details

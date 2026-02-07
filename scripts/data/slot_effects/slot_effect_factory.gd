@@ -24,7 +24,6 @@ static func build(slot_id: String) -> Array[SlotEffect]:
 	match slot_id:
 		"slot_transmuter":
 			effects.append(_make(SlotEffect.SlotEffectTrigger.BEFORE_RUNE_READ, SlotPayloadTransmuterSet.new()))
-			effects.append(_make(SlotEffect.SlotEffectTrigger.AFTER_RUNE_READ, SlotPayloadClearElementOverride.new()))
 		"slot_enhancer":
 			effects.append(_make(SlotEffect.SlotEffectTrigger.BEFORE_RUNE_READ, SlotPayloadEnhancerSnapshot.new()))
 			effects.append(_make(SlotEffect.SlotEffectTrigger.AFTER_RUNE_READ, SlotPayloadEnhancerApply.new()))

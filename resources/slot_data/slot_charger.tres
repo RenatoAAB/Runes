@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="SlotData" load_steps=3 format=3 uid="uid://c5vx8d3pmhk8q"]
 
-[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://2j0met611cqu" path="res://scripts/data/slot_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://drc80ul23mamk" path="res://scripts/data/slot_effects/slot_effect.gd" id="2_5l0so"]
 
 [resource]
 script = ExtResource("1")
 id = "slot_charger"
 slot_name = "Charger"
-rarity = 0
-description = "A runa aqui em cima tem +1 ativação."
+description = "A runa posicionada aqui tem +1 ativação."

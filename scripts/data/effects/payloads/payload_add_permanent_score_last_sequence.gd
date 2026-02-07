@@ -17,7 +17,7 @@ func execute(targets: Array[GridSlot], _source_rune: RuneInstance, context: Batt
 		var rune_elements = GameEnums.normalize_elements(slot.rune.get_elements())
 		for elem in common_elements:
 			if elem in rune_elements:
-				apply_score_to_rune(slot.rune, context, amount, true)
+				apply_score_to_rune(slot.rune, context, amount, true, slot)
 				break
 
 

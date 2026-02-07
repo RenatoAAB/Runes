@@ -272,7 +272,8 @@ func on_rune_destroyed(slot: GridSlot, rune: RuneInstance) -> void:
 		runes_to_resurrect.append({
 			"rune_data": rune.data,
 			"slot_position": slot.grid_position,
-			"permanent_buffs": rune.permanent_buffs.duplicate()
+			"permanent_buffs": rune.permanent_buffs.duplicate(),
+			"permanent_elements": rune.permanent_elements.duplicate()
 		})
 
 
@@ -289,7 +290,8 @@ func mark_for_resurrection(rune: RuneInstance, slot: GridSlot, bonus_permanent_s
 	runes_to_resurrect.append({
 		"rune_data": rune.data,
 		"slot_position": slot.grid_position,
-		"permanent_buffs": buffs
+		"permanent_buffs": buffs,
+		"permanent_elements": rune.permanent_elements.duplicate()
 	})
 
 
@@ -301,6 +303,8 @@ func process_resurrections() -> void:
 			var new_rune = RuneInstance.new(entry.rune_data)
 			for key in entry.permanent_buffs:
 				new_rune.permanent_buffs[key] = entry.permanent_buffs[key]
+			if entry.has("permanent_elements"):
+				new_rune.permanent_elements = entry.permanent_elements.duplicate()
 			slot.set_rune(new_rune)
 			grid.slot_changed.emit(slot.grid_position)
 			print("Resurrected %s at %s with buffs" % [entry.rune_data.rune_name, str(entry.slot_position)])

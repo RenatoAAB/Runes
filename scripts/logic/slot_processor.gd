@@ -54,3 +54,27 @@ func get_global_data(key: String, default_value: Variant = null) -> Variant:
 
 func clear_global_data(key: String) -> void:
 	_global_data.erase(key)
+
+
+func is_overclocker(slot: GridSlot) -> bool:
+	return slot and slot.slot and slot.slot.data and slot.slot.data.id == "slot_overclocker"
+
+
+func should_force_activation(slot: GridSlot, rune: RuneInstance) -> bool:
+	if not slot or not rune:
+		return false
+	if not is_overclocker(slot):
+		return false
+	return not rune.can_activate()
+
+
+func should_destroy_overclocked_rune(slot: GridSlot, rune: RuneInstance, forced_activation: bool) -> bool:
+	if not forced_activation:
+		return false
+	if not slot or not rune:
+		return false
+	if not is_overclocker(slot):
+		return false
+	if slot.protects_fragile() or rune.data.is_indestructible:
+		return false
+	return randf() < 0.5

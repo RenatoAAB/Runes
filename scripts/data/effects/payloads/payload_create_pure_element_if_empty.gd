@@ -21,7 +21,9 @@ func execute(targets: Array[GridSlot], _source_rune: RuneInstance, context: Batt
 			continue
 		var instance = RuneInstance.new(rune_data)
 		if activation_bonus != 0:
-			instance.permanent_buffs["activation_bonus"] = instance.permanent_buffs.get("activation_bonus", 0) + activation_bonus
+			var mult = _get_enhancer_multiplier(slot)
+			var final_bonus = activation_bonus * mult
+			instance.permanent_buffs["activation_bonus"] = instance.permanent_buffs.get("activation_bonus", 0) + final_bonus
 		slot.set_rune(instance)
 		if context.grid:
 			context.grid.slot_changed.emit(slot.grid_position)
