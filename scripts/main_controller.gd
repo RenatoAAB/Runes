@@ -930,6 +930,23 @@ func _update_other_inventory_display() -> void:
 			slot_ui.clear_display()
 
 
+## Add initial extra inventory items (called by GameManager)
+func add_initial_extra_items(relics: Array[RelicData], modifiers: Array[SlotModifierData], pieces: Array[SlotPieceData]) -> void:
+	if not _extra_inventory:
+		push_warning("MainController.add_initial_extra_items: _extra_inventory is null")
+		return
+	
+	for relic_data in relics:
+		var instance = RelicInstance.new(relic_data)
+		_extra_inventory.add_relic(instance)
+	
+	for modifier in modifiers:
+		_extra_inventory.add_modifier(modifier)
+	
+	for piece_data in pieces:
+		var instance = SlotPieceInstance.new(piece_data)
+		_extra_inventory.add_slot_piece(instance)
+
 ## Handle item returned to other_inventory (e.g., relic dragged from relic slot)
 func _on_extra_item_returned(item_type: String, item_data: Variant, item_instance: Variant, _target_slot_ui: SlotUI) -> void:
 	if item_type == "relic" and item_instance is RelicInstance:

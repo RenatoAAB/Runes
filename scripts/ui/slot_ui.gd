@@ -168,6 +168,9 @@ func _on_mouse_entered() -> void:
 			if effect_text.is_empty():
 				effect_text = modifier_data.get_effect_text()
 			text += "[color=silver]%s[/color]\n" % effect_text
+			if (modifier_data.id == "slot_accumulator"):
+				var perma_buff = current_slot_data.slot.get_meta("accumulator_score_bonus", 0)
+				text += "[color=yellow]Current Accumulated Buff: +%.1f[/color]\n" % perma_buff
 	
 	# Show multiplier if not 1.0
 	var mult = slot_info.get("multiplier", 1.0)

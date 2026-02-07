@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="SlotData" load_steps=3 format=3 uid="uid://c2vegr2ygd13g"]
 
-[ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://2j0met611cqu" path="res://scripts/data/slot_data.gd" id="1"]
+[ext_resource type="Script" uid="uid://drc80ul23mamk" path="res://scripts/data/slot_effects/slot_effect.gd" id="2_ysd6p"]
 
 [resource]
 script = ExtResource("1")
 id = "slot_accumulator"
 slot_name = "Accumulator"
-rarity = 0
 description = "Esse slot recebe uma cópia do buff de score permanente que uma runa em cima dele recebeu e o armazena permanentemente. Qualquer runa em cima dele recebe esse adicional ao ser ativada."

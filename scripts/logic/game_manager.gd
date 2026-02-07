@@ -43,6 +43,10 @@ var is_initial_setup: bool = true
 
 # Runes that start in the player's inventory
 @export var initial_runes: Array[RuneData]
+# Items that start in the player's extra inventory
+@export var initial_relics: Array[RelicData]
+@export var initial_modifiers: Array[SlotModifierData]
+@export var initial_slot_pieces: Array[SlotPieceData]
 # Runes available for rewards/shop (loaded dynamically)
 var available_runes: Array[RuneData]
 @export var rune_drop_rates: RuneDropRates
@@ -83,6 +87,7 @@ func _ready() -> void:
 func _wait_for_initialization() -> void:
 	# Try to find MainController
 	var main_controller = get_tree().get_first_node_in_group("main_controller")
+	
 	if main_controller:
 		_main_controller = main_controller
 		# Check if it has initialization_complete signal
@@ -294,12 +299,15 @@ func _calculate_target_score(level: int) -> int:
 func _setup_initial_inventory() -> void:
 	# Clear inventory
 	inventory_manager.clear_all()
+	_main_controller = get_tree().get_first_node_in_group("main_controller")
+	if _main_controller and _main_controller.has_method("add_initial_extra_items"):
+		_main_controller.add_initial_extra_items(initial_relics, initial_modifiers, initial_slot_pieces)
 	
 	# Add initial runes to inventory
 	for rune_data in initial_runes:
 		var instance = RuneInstance.new(rune_data)
 		inventory_manager.add_rune(instance)
-	
+
 	# Give starting money
 	_grant_starting_money()
 	
