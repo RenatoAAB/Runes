@@ -79,7 +79,8 @@ func show_item_tooltip(item_ui: ItemUI) -> void:
 	match item_ui.item_type:
 		ItemUI.ItemType.RELIC:
 			var relic_data = item_ui.item_data as RelicData
-			text = _build_relic_tooltip(relic_data)
+			var relic_instance = item_ui.item_instance as RelicInstance
+			text = _build_relic_tooltip(relic_data, relic_instance)
 		
 		ItemUI.ItemType.MODIFIER:
 			var modifier_data = item_ui.item_data as SlotModifierData
@@ -98,7 +99,7 @@ func hide_item_tooltip() -> void:
 	_update_display()
 
 
-func _build_relic_tooltip(data: RelicData) -> String:
+func _build_relic_tooltip(data: RelicData, relic_instance: RelicInstance = null) -> String:
 	if not data:
 		return ""
 	
@@ -108,9 +109,14 @@ func _build_relic_tooltip(data: RelicData) -> String:
 	var rarity_color = _get_rarity_color_name(data.rarity)
 	text += " [color=%s](%s)[/color]\n" % [rarity_color, _get_rarity_name(data.rarity)]
 	
-	# Description
-	if data.description and not data.description.is_empty():
-		text += "[color=silver]%s[/color]" % data.description
+	# Description (full)
+	var full_desc = data.get_full_description()
+	if full_desc and not full_desc.is_empty():
+		text += "[color=silver]%s[/color]" % full_desc
+
+	# Last calculated multiplier (if instance exists)
+	if relic_instance and relic_instance.last_calculated_multiplier != 1.0:
+		text += "\n[color=yellow]Último: ×%.2f[/color]" % relic_instance.last_calculated_multiplier
 	
 	return text
 

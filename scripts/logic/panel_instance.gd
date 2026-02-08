@@ -287,6 +287,10 @@ func calculate_final_score() -> float:
 ## Reset panel state for new battle
 func reset_for_battle() -> void:
 	current_score = 0
+	relic_multiplier = 1.0
+	for relic in attached_relics:
+		if relic.has_method("reset_for_battle"):
+			relic.reset_for_battle()
 	if battle_context:
 		battle_context.current_score = 0
 

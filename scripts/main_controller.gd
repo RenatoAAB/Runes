@@ -95,6 +95,12 @@ func _ready() -> void:
 			reader.step_completed.connect(_on_reader_step_done)
 		if not reader.score_updated.is_connected(_on_score_updated):
 			reader.score_updated.connect(_on_score_updated)
+		if not reader.relic_step_started.is_connected(_on_relic_step_started):
+			reader.relic_step_started.connect(_on_relic_step_started)
+		if not reader.relic_step_completed.is_connected(_on_relic_step_completed):
+			reader.relic_step_completed.connect(_on_relic_step_completed)
+		if not reader.relic_processing_finished.is_connected(_on_relic_processing_finished):
+			reader.relic_processing_finished.connect(_on_relic_processing_finished)
 		
 	if game_manager:
 		game_manager.level_started.connect(_on_level_started)
@@ -222,6 +228,12 @@ func _bind_panel_nodes(panel: PanelInstance) -> void:
 			reader.step_completed.connect(_on_reader_step_done)
 		if not reader.score_updated.is_connected(_on_score_updated):
 			reader.score_updated.connect(_on_score_updated)
+		if not reader.relic_step_started.is_connected(_on_relic_step_started):
+			reader.relic_step_started.connect(_on_relic_step_started)
+		if not reader.relic_step_completed.is_connected(_on_relic_step_completed):
+			reader.relic_step_completed.connect(_on_relic_step_completed)
+		if not reader.relic_processing_finished.is_connected(_on_relic_processing_finished):
+			reader.relic_processing_finished.connect(_on_relic_processing_finished)
 	
 	_bound_grid_manager = grid_manager
 	_bound_reader = reader
@@ -237,6 +249,12 @@ func _disconnect_panel_nodes() -> void:
 			_bound_reader.step_completed.disconnect(_on_reader_step_done)
 		if _bound_reader.score_updated.is_connected(_on_score_updated):
 			_bound_reader.score_updated.disconnect(_on_score_updated)
+		if _bound_reader.relic_step_started.is_connected(_on_relic_step_started):
+			_bound_reader.relic_step_started.disconnect(_on_relic_step_started)
+		if _bound_reader.relic_step_completed.is_connected(_on_relic_step_completed):
+			_bound_reader.relic_step_completed.disconnect(_on_relic_step_completed)
+		if _bound_reader.relic_processing_finished.is_connected(_on_relic_processing_finished):
+			_bound_reader.relic_processing_finished.disconnect(_on_relic_processing_finished)
 	_bound_grid_manager = null
 	_bound_reader = null
 
@@ -648,6 +666,31 @@ func _on_reader_step_done(coord: Vector2i) -> void:
 func _on_score_updated(new_total: int) -> void:
 	if score_label:
 		score_label.text = "Score: %d" % new_total
+
+
+## --- Relic visual highlight callbacks ---
+
+func _on_relic_step_started(relic_index: int, _relic: RelicInstance) -> void:
+	if relic_index >= 0 and relic_index < _relic_slot_uis.size():
+		var slot_ui = _relic_slot_uis[relic_index]
+		if slot_ui.highlight_rect:
+			slot_ui.highlight_rect.color = Color(1.0, 0.85, 0.0, 0.55)  # Gold highlight
+
+func _on_relic_step_completed(relic_index: int, _relic: RelicInstance, multiplier: float) -> void:
+	if relic_index >= 0 and relic_index < _relic_slot_uis.size():
+		var slot_ui = _relic_slot_uis[relic_index]
+		if slot_ui.highlight_rect:
+			# Brief green/red flash based on multiplier, then clear
+			var flash_color = Color(0.3, 1.0, 0.3, 0.5) if multiplier > 1.0 else Color(0.5, 0.5, 0.5, 0.2)
+			slot_ui.highlight_rect.color = flash_color
+			var tween = slot_ui.create_tween()
+			tween.tween_property(slot_ui.highlight_rect, "color", Color.TRANSPARENT, 0.3)
+
+func _on_relic_processing_finished(_combined_multiplier: float) -> void:
+	# Ensure all highlights are cleared
+	for slot_ui in _relic_slot_uis:
+		if slot_ui.highlight_rect:
+			slot_ui.highlight_rect.color = Color.TRANSPARENT
 
 
 func _on_economy_changed(_event) -> void:

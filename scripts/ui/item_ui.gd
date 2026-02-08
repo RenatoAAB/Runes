@@ -26,6 +26,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_STOP
 	
 	_setup_visuals()
+	_connect_event_bus()
 	
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
@@ -171,6 +172,48 @@ func _update_visuals() -> void:
 			_label.text = label_text
 	
 	texture = icon
+
+
+func _connect_event_bus() -> void:
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus and event_bus.has_signal("relic_activated"):
+		if not event_bus.relic_activated.is_connected(_on_relic_activated):
+			event_bus.relic_activated.connect(_on_relic_activated)
+
+
+func _on_relic_activated(event: RelicActivatedEvent) -> void:
+	if item_type != ItemType.RELIC or not item_data:
+		return
+	if StringName(item_data.id) != event.relic_id:
+		return
+	_flash_relic(event.multiplier_value)
+
+
+func _flash_relic(multiplier: float) -> void:
+	if not _background:
+		return
+	var highlight = Color(1.0, 0.9, 0.4, 0.9)
+	var base = _background.color
+	var tween = create_tween()
+	tween.tween_property(_background, "color", highlight, 0.12)
+	tween.tween_property(_background, "color", base, 0.25)
+
+	# Show multiplier value as floating text
+	if _label:
+		var old_text = _label.text
+		var old_modulate = _label.modulate
+		_label.text = "×%.2f" % multiplier
+		_label.modulate = Color(1, 1, 1, 1)
+		_label.show()
+		var text_tween = create_tween()
+		text_tween.tween_interval(0.3)
+		text_tween.tween_property(_label, "modulate", Color(1, 1, 1, 0.0), 0.5)
+		text_tween.finished.connect(func():
+			_label.modulate = old_modulate
+			_label.text = old_text
+			if texture:
+				_label.text = ""  # restore hidden state if icon is present
+		)
 
 
 ## Get display name for tooltip

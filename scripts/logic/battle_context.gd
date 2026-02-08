@@ -263,12 +263,16 @@ func analyze_planning_movements(planning_events: Array[PlanningEvent], grid_mana
 ## Update element cycle count based on the last 5 activations.
 ## A cycle is counted when the last 5 activations are all single-element
 ## and contain all 5 distinct base elements with no repeats.
+## Uses a non-overlapping window: only checks every 5th activation after
+## the last counted cycle to avoid double-counting.
 func _update_element_cycles() -> void:
-	if activation_history.size() < 5:
+	var window_start := element_cycles_completed * 5
+	var window_end := window_start + 5
+	if activation_history.size() < window_end:
 		return
-	var last_five = activation_history.slice(activation_history.size() - 5, activation_history.size())
+	var window = activation_history.slice(window_start, window_end)
 	var seen: Dictionary = {}
-	for entry in last_five:
+	for entry in window:
 		var elements: Array = entry.get("elements", [])
 		if elements.size() != 1:
 			return
@@ -278,6 +282,8 @@ func _update_element_cycles() -> void:
 		seen[elem] = true
 	if seen.size() == GameEnums.BASE_ELEMENTS.size():
 		element_cycles_completed += 1
+		# Recursively check next window in case multiple cycles completed
+		_update_element_cycles()
 
 
 ## Returns the elements of the last activated rune, or an empty array if none

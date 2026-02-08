@@ -5,13 +5,19 @@ extends Node
 ## Iterates through the grid sequentially and triggers runes.
 ## Emits events through EventBus for unified processing and recording.
 
+const _RelicActivatedEvent = preload("res://scripts/core/events/relic_activated_event.gd")
+
 signal step_started(coord: Vector2i)
 signal step_completed(coord: Vector2i)
 signal sequence_finished(total_score: int)
 signal score_updated(new_total: int)
+signal relic_step_started(relic_index: int, relic: RelicInstance)
+signal relic_step_completed(relic_index: int, relic: RelicInstance, multiplier: float)
+signal relic_processing_finished(combined_multiplier: float)
 
 @export var grid_manager: GridManager
 @export var step_delay: float = 0.5
+@export var relic_step_delay: float = 0.4
 
 var is_running: bool = false
 var current_index: int = 0
@@ -316,31 +322,26 @@ func _finish_sequence() -> void:
 
 	var raw_score := total_score
 
-	# Process relics after the grid has finished
+	# Process relics after the grid has finished — one-by-one with visual delay
 	var relic_multiplier := 1.0
 	if panel_instance and panel_instance.attached_relics.size() > 0:
-		var processor := RelicProcessor.new()
 		var stats := BattleRoundStatistics.build_from(battle_context, grid_manager)
-		relic_multiplier = processor.process_relics(panel_instance.attached_relics, stats)
-		# Emit relic activation events for UI/stats
-		if event_bus and event_bus.has_method("emit"):
-			for i in range(panel_instance.attached_relics.size()):
-				var relic = panel_instance.attached_relics[i] as RelicInstance
-				if relic == null or not relic.has_calculator():
-					continue
-				var relic_event = RelicActivatedEvent.new()
-				relic_event.phase = GameEnums.GamePhase.BATTLE
-				relic_event.panel_index = panel_instance.panel_index
-				relic_event.relic_id = StringName(relic.data.id)
-				relic_event.multiplier_value = relic.last_calculated_multiplier
-				relic_event.relic_order_index = i
-				event_bus.emit(relic_event)
+		relic_multiplier = await _process_relics_sequentially(panel_instance.attached_relics, stats)
 
-	# Apply relic multiplier to total score
-	if relic_multiplier != 1.0:
-		total_score = int(total_score * relic_multiplier)
+	# Store relic multiplier on panel (calculate_final_score applies it once)
+	if panel_instance:
+		panel_instance.relic_multiplier = relic_multiplier
+		panel_instance.current_score = raw_score
 
-	# Clear temporary buffs/states now that the round is over so tooltips don't show stale bonuses
+	# Compute the final score (raw * panel_multiplier which includes relic_multiplier)
+	var final_score := raw_score
+	if panel_instance:
+		final_score = int(panel_instance.calculate_final_score())
+	total_score = final_score
+
+	# Update score label so the UI shows the final multiplied score
+	score_updated.emit(total_score)
+
 	# Emit panel complete event
 	if event_bus and event_bus.has_method("emit"):
 		var panel_event = PanelCompleteEvent.new()
@@ -353,7 +354,6 @@ func _finish_sequence() -> void:
 	
 	# Notify EventBus that battle ended
 	if event_bus and event_bus.has_method("end_battle"):
-		# Get target score from game manager
 		var game_manager = get_tree().get_first_node_in_group("game_manager")
 		var target = 0
 		if game_manager:
@@ -371,6 +371,44 @@ func _finish_sequence() -> void:
 		if battle_context.score_event.is_connected(_on_score_event):
 			battle_context.score_event.disconnect(_on_score_event)
 		battle_context = null
+
+
+## Process relics one-by-one with visual delay between each.
+## Emits relic_step_started / relic_step_completed so the UI can highlight slots.
+## Returns the combined multiplier.
+func _process_relics_sequentially(relics: Array, stats: BattleRoundStatistics) -> float:
+	var combined: float = 1.0
+
+	for i in range(relics.size()):
+		var relic = relics[i] as RelicInstance
+		if relic == null or not relic.is_active or not relic.has_calculator():
+			continue
+
+		# Signal: highlight this relic slot
+		relic_step_started.emit(i, relic)
+
+		# Calculate multiplier (updates relic.last_calculated_multiplier internally)
+		var mult := relic.calculate_multiplier(stats)
+		combined *= mult
+
+		# Emit EventBus event for stats / item_ui flash
+		if event_bus and event_bus.has_method("emit"):
+			var relic_event = _RelicActivatedEvent.new()
+			relic_event.phase = GameEnums.GamePhase.BATTLE
+			relic_event.panel_index = panel_instance.panel_index if panel_instance else 0
+			relic_event.relic_id = StringName(relic.data.id)
+			relic_event.multiplier_value = mult
+			relic_event.relic_order_index = i
+			event_bus.emit(relic_event)
+
+		# Wait for visual feedback
+		await get_tree().create_timer(relic_step_delay).timeout
+
+		# Signal: clear highlight
+		relic_step_completed.emit(i, relic, mult)
+
+	relic_processing_finished.emit(combined)
+	return combined
 
 
 func stop_sequence() -> void:

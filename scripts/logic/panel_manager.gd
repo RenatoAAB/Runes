@@ -237,11 +237,9 @@ func _start_current_panel_battle() -> void:
 
 ## Handle panel battle completion
 func _on_panel_sequence_finished(score: int, panel_index: int) -> void:
-	var panel = panels[panel_index]
-	var final_panel_score = int(panel.calculate_final_score())
-	
-	panel_scores.append(final_panel_score)
-	panel_battle_completed.emit(panel_index, final_panel_score)
+	# score already includes raw score × panel multiplier × relic multiplier (computed by Reader)
+	panel_scores.append(score)
+	panel_battle_completed.emit(panel_index, score)
 	
 	# Move to next unlocked panel
 	battle_panel_index += 1

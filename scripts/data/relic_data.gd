@@ -38,7 +38,7 @@ func has_calculator() -> bool:
 
 ## Full rich-text description for tooltips
 func get_full_description() -> String:
-	var text = "[color=gray]Post-Panel Multiplier[/color]\n"
+	var text = "[color=gray]Multiplicador Pós-Painel[/color]\n"
 	text += description
 	if has_calculator():
 		var calc_desc = calculator.get_description()
