@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/relic_effects/calculators/relic_calc_per_residue_slot.gd" id="2"]
+
+[sub_resource type="Resource" script_class="RelicCalcPerResidueSlot" id="1"]
+script = ExtResource("2")
+per_residue_multiplier = 1.1
+
+[resource]
+script = ExtResource("1")
+id = "relic_clown"
+display_name = "O Palhaço"
+description = "×1.1 para cada slot com resíduo mágico ao final do round."
+rarity = 2
+calculator = SubResource("1")
+max_per_panel = 1
+incompatible_relic_ids = []

@@ -1,0 +1,19 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/relic_effects/calculators/relic_calc_element_activations.gd" id="2"]
+
+[sub_resource type="Resource" script_class="RelicCalcElementActivations" id="1"]
+script = ExtResource("2")
+element = 0
+percent_per_activation = 0.01
+
+[resource]
+script = ExtResource("1")
+id = "relic_inferno"
+display_name = "O Inferno"
+description = "×(1 + Y×0.01) onde Y é a quantidade de ativações de runas de Fogo."
+rarity = 2
+calculator = SubResource("1")
+max_per_panel = 1
+incompatible_relic_ids = []

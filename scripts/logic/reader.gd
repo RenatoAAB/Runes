@@ -19,6 +19,9 @@ var total_score: int = 0
 var battle_context: BattleContext
 var traversal_order: Array[Vector2i] = []
 
+## Owning panel instance (optional, for relic processing)
+var panel_instance: PanelInstance = null
+
 ## Reference to EventBus autoload (set in _ready or via export)
 var event_bus: Node = null
 
@@ -42,6 +45,11 @@ func start_sequence() -> void:
 	battle_context.reader_jump_request.connect(_on_reader_jump_request)
 	# Share EventBus reference with context for destroy/create notifications
 	battle_context.event_bus = event_bus
+	# Analyze planning phase movements for relic stats
+	if event_bus:
+		var planning_events = event_bus.get("current_planning_events")
+		if planning_events is Array:
+			battle_context.analyze_planning_movements(planning_events, grid_manager)
 
 	# Share references with EventBus so non-ON_READ triggers work
 	if event_bus and event_bus.has_method("set_battle_references"):
@@ -295,6 +303,8 @@ func _on_reader_jump_request(target_index: int) -> void:
 		return
 	# _process_next_step increments current_index at the end, so offset by -1
 	var clamped = clamp(target_index, 0, traversal_order.size() - 1)
+	if battle_context:
+		battle_context.record_reader_jump(clamped)
 	current_index = clamped - 1
 
 
@@ -304,14 +314,40 @@ func _finish_sequence() -> void:
 	# Execute slot round-end effects after the last step
 	_execute_round_end_slot_effects()
 
+	var raw_score := total_score
+
+	# Process relics after the grid has finished
+	var relic_multiplier := 1.0
+	if panel_instance and panel_instance.attached_relics.size() > 0:
+		var processor := RelicProcessor.new()
+		var stats := BattleRoundStatistics.build_from(battle_context, grid_manager)
+		relic_multiplier = processor.process_relics(panel_instance.attached_relics, stats)
+		# Emit relic activation events for UI/stats
+		if event_bus and event_bus.has_method("emit"):
+			for i in range(panel_instance.attached_relics.size()):
+				var relic = panel_instance.attached_relics[i] as RelicInstance
+				if relic == null or not relic.has_calculator():
+					continue
+				var relic_event = RelicActivatedEvent.new()
+				relic_event.phase = GameEnums.GamePhase.BATTLE
+				relic_event.panel_index = panel_instance.panel_index
+				relic_event.relic_id = StringName(relic.data.id)
+				relic_event.multiplier_value = relic.last_calculated_multiplier
+				relic_event.relic_order_index = i
+				event_bus.emit(relic_event)
+
+	# Apply relic multiplier to total score
+	if relic_multiplier != 1.0:
+		total_score = int(total_score * relic_multiplier)
+
 	# Clear temporary buffs/states now that the round is over so tooltips don't show stale bonuses
 	# Emit panel complete event
 	if event_bus and event_bus.has_method("emit"):
 		var panel_event = PanelCompleteEvent.new()
 		panel_event.phase = GameEnums.GamePhase.BATTLE
-		panel_event.panel_index = 0
-		panel_event.panel_multiplier = 1.0  # TODO: Get from panel data
-		panel_event.raw_score = total_score
+		panel_event.panel_index = panel_instance.panel_index if panel_instance else 0
+		panel_event.panel_multiplier = relic_multiplier
+		panel_event.raw_score = raw_score
 		panel_event.final_score = total_score
 		event_bus.emit(panel_event)
 	

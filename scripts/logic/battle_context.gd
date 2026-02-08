@@ -53,6 +53,16 @@ var visited_slots: Array[int] = []
 ## Runes marked for resurrection at end of round (e.g., Phoenix)
 var runes_to_resurrect: Array[Dictionary] = []  # [{rune_data, slot_position, permanent_buffs}]
 
+## Number of complete cycles of 5 distinct elements (O Dançarino)
+var element_cycles_completed: int = 0
+
+## Planning phase movement tracking
+var runes_moved_this_round: int = 0
+var runes_not_moved_count: int = 0
+
+## Number of infinite loops detected by reader jumps
+var infinite_loops_detected: int = 0
+
 
 func _init(p_grid: GridManager):
 	grid = p_grid
@@ -94,6 +104,10 @@ func reset_round_state() -> void:
 	unique_runes_activated.clear()
 	visited_slots.clear()
 	runes_to_resurrect.clear()
+	element_cycles_completed = 0
+	runes_moved_this_round = 0
+	runes_not_moved_count = 0
+	infinite_loops_detected = 0
 	set_meta("total_activations", 0)
 
 
@@ -178,6 +192,7 @@ func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 		"rune_instance": rune
 	}
 	activation_history.append(entry)
+	_update_element_cycles()
 	
 	# Track unique runes
 	var rune_id = rune.data.id
@@ -190,6 +205,79 @@ func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 	var slot_index = current_step_index if current_step_index >= 0 else slot.grid_position.y * GridManager.GRID_SIZE + slot.grid_position.x
 	if slot_index not in visited_slots:
 		visited_slots.append(slot_index)
+
+
+## Record a reader jump. If it goes to a visited slot, count as an infinite loop.
+func record_reader_jump(target_index: int) -> void:
+	if target_index in visited_slots:
+		infinite_loops_detected += 1
+
+
+## Analyze planning events to compute how many runes were moved.
+## This should be called once at battle start.
+func analyze_planning_movements(planning_events: Array[PlanningEvent], grid_manager: GridManager) -> void:
+	var moved_coords: Dictionary = {}
+	for event in planning_events:
+		if event == null:
+			continue
+		match event.action_type:
+			PlanningEvent.ActionType.MOVE_RUNE:
+				if event.source_location is Vector2i:
+					moved_coords[event.source_location] = true
+				if event.destination_location is Vector2i:
+					moved_coords[event.destination_location] = true
+			PlanningEvent.ActionType.SWAP_RUNES:
+				if event.source_location is Vector2i:
+					moved_coords[event.source_location] = true
+				if event.destination_location is Vector2i:
+					moved_coords[event.destination_location] = true
+				if event.swap_source is Vector2i:
+					moved_coords[event.swap_source] = true
+			PlanningEvent.ActionType.ROTATE_RUNES:
+				if event.source_location is Vector2i:
+					moved_coords[event.source_location] = true
+				if event.destination_location is Vector2i:
+					moved_coords[event.destination_location] = true
+			PlanningEvent.ActionType.PLACE_RUNE:
+				if event.destination_location is Vector2i:
+					moved_coords[event.destination_location] = true
+			PlanningEvent.ActionType.REMOVE_RUNE:
+				if event.source_location is Vector2i:
+					moved_coords[event.source_location] = true
+			_:
+				pass
+
+	var total_runes := 0
+	var moved_runes := 0
+	for slot in grid_manager.grid:
+		if slot.is_empty():
+			continue
+		total_runes += 1
+		if moved_coords.has(slot.grid_position):
+			moved_runes += 1
+
+	runes_moved_this_round = moved_runes
+	runes_not_moved_count = max(total_runes - moved_runes, 0)
+
+
+## Update element cycle count based on the last 5 activations.
+## A cycle is counted when the last 5 activations are all single-element
+## and contain all 5 distinct base elements with no repeats.
+func _update_element_cycles() -> void:
+	if activation_history.size() < 5:
+		return
+	var last_five = activation_history.slice(activation_history.size() - 5, activation_history.size())
+	var seen: Dictionary = {}
+	for entry in last_five:
+		var elements: Array = entry.get("elements", [])
+		if elements.size() != 1:
+			return
+		var elem = elements[0]
+		if seen.has(elem):
+			return
+		seen[elem] = true
+	if seen.size() == GameEnums.BASE_ELEMENTS.size():
+		element_cycles_completed += 1
 
 
 ## Returns the elements of the last activated rune, or an empty array if none

@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/relic_effects/calculators/relic_calc_per_slot_type.gd" id="2"]
+
+[sub_resource type="Resource" script_class="RelicCalcPerSlotType" id="1"]
+script = ExtResource("2")
+per_type_multiplier = 1.1
+
+[resource]
+script = ExtResource("1")
+id = "relic_engineer"
+display_name = "O Engenheiro"
+description = "×1.1 para cada tipo de slot diferente no painel."
+rarity = 2
+calculator = SubResource("1")
+max_per_panel = 1
+incompatible_relic_ids = []

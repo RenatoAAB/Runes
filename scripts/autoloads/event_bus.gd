@@ -20,6 +20,9 @@ signal panel_completed(event: PanelCompleteEvent)
 ## Emitted when a planning action occurs
 signal planning_action(event: PlanningEvent)
 
+## Emitted when a relic is processed post-panel
+signal relic_activated(event: RelicActivatedEvent)
+
 ## Emitted when an economy transaction occurs
 signal economy_transaction(event: EconomyEvent)
 
@@ -145,6 +148,8 @@ func emit(event: GameEvent) -> void:
 		_handle_slot_read(event as SlotReadEvent)
 	elif event is PanelCompleteEvent:
 		_handle_panel_complete(event as PanelCompleteEvent)
+	elif event is RelicActivatedEvent:
+		_handle_relic_activated(event as RelicActivatedEvent)
 	elif event is PlanningEvent:
 		_handle_planning_action(event as PlanningEvent)
 	elif event is EconomyEvent:
@@ -196,6 +201,14 @@ func _handle_panel_complete(event: PanelCompleteEvent) -> void:
 	# Emit specific signal
 	panel_completed.emit(event)
 	
+	# Debug output
+	if OS.is_debug_build():
+		print(event.get_summary())
+
+
+func _handle_relic_activated(event: RelicActivatedEvent) -> void:
+	relic_activated.emit(event)
+
 	# Debug output
 	if OS.is_debug_build():
 		print(event.get_summary())

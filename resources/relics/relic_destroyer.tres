@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="RelicData" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/data/relic_data.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/data/relic_effects/calculators/relic_calc_per_destroyed.gd" id="2"]
+
+[sub_resource type="Resource" script_class="RelicCalcPerDestroyed" id="1"]
+script = ExtResource("2")
+per_destroyed_multiplier = 1.2
+
+[resource]
+script = ExtResource("1")
+id = "relic_destroyer"
+display_name = "O Destruidor"
+description = "×1.2 para cada runa destruída nesta rodada."
+rarity = 2
+calculator = SubResource("1")
+max_per_panel = 1
+incompatible_relic_ids = []

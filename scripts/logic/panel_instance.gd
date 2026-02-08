@@ -102,6 +102,7 @@ func setup_grid_and_reader(parent_node: Node, p_step_delay: float = -1.0) -> voi
 	reader = Reader.new()
 	reader.name = "Reader_Panel%d" % panel_index
 	reader.grid_manager = grid_manager
+	reader.panel_instance = self
 	if p_step_delay >= 0.0:
 		reader.step_delay = p_step_delay
 	parent_node.add_child(reader)
@@ -257,12 +258,11 @@ func detach_relic(relic) -> bool:  # relic: RelicInstance
 	return true
 
 
-## Recalculate the combined multiplier from all attached relics
+## Recalculate the combined multiplier from all attached relics.
+## In the new system the actual multiplier is computed post-battle by RelicProcessor;
+## this just resets the cached value when relics are added/removed.
 func _recalculate_relic_multiplier() -> void:
 	relic_multiplier = 1.0
-	for relic in attached_relics:
-		if relic.has_method("get_multiplier_bonus"):
-			relic_multiplier += relic.get_multiplier_bonus()
 
 
 ## Get available relic slots
