@@ -213,6 +213,16 @@ func record_reader_jump(target_index: int) -> void:
 		infinite_loops_detected += 1
 
 
+## Record an infinite loop detected by the InfiniteLoopDetector.
+## Called by Reader when a cyclic pattern is confirmed and broken.
+func record_infinite_loop(loop_data: Dictionary) -> void:
+	infinite_loops_detected += 1
+	var cycle_length: int = loop_data.get("cycle_length", 0)
+	print("[BattleContext] Infinite loop #%d recorded: %d runes in cycle" % [
+		infinite_loops_detected, cycle_length
+	])
+
+
 ## Analyze planning events to compute how many runes were moved.
 ## This should be called once at battle start.
 func analyze_planning_movements(planning_events: Array[PlanningEvent], grid_manager: GridManager) -> void:

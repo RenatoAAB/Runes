@@ -49,6 +49,9 @@ signal round_started()
 ## Emitted at round end (before cleanup)
 signal round_ending()
 
+## Emitted when an infinite loop is detected and broken
+signal infinite_loop_detected(event: InfiniteLoopEvent)
+
 # =============================================================================
 # STATE - Current battle/round tracking
 # =============================================================================
@@ -154,6 +157,8 @@ func emit(event: GameEvent) -> void:
 		_handle_planning_action(event as PlanningEvent)
 	elif event is EconomyEvent:
 		_handle_economy_transaction(event as EconomyEvent)
+	elif event is InfiniteLoopEvent:
+		_handle_infinite_loop(event as InfiniteLoopEvent)
 
 
 ## Convenience: emit a slot read event
@@ -228,6 +233,14 @@ func _handle_economy_transaction(event: EconomyEvent) -> void:
 	current_money = event.balance_after
 	
 	economy_transaction.emit(event)
+	
+	# Debug output
+	if OS.is_debug_build():
+		print(event.get_summary())
+
+
+func _handle_infinite_loop(event: InfiniteLoopEvent) -> void:
+	infinite_loop_detected.emit(event)
 	
 	# Debug output
 	if OS.is_debug_build():

@@ -6,6 +6,7 @@ extends Node
 ## Emits events through EventBus for unified processing and recording.
 
 const _RelicActivatedEvent = preload("res://scripts/core/events/relic_activated_event.gd")
+const _InfiniteLoopEvent = preload("res://scripts/core/events/infinite_loop_event.gd")
 
 signal step_started(coord: Vector2i)
 signal step_completed(coord: Vector2i)
@@ -31,6 +32,9 @@ var panel_instance: PanelInstance = null
 ## Reference to EventBus autoload (set in _ready or via export)
 var event_bus: Node = null
 
+## Infinite loop detector instance
+var loop_detector: InfiniteLoopDetector = null
+
 func _ready() -> void:
 	# Try to get EventBus autoload
 	if has_node("/root/EventBus"):
@@ -51,6 +55,10 @@ func start_sequence() -> void:
 	battle_context.reader_jump_request.connect(_on_reader_jump_request)
 	# Share EventBus reference with context for destroy/create notifications
 	battle_context.event_bus = event_bus
+	
+	# Initialize infinite loop detector
+	loop_detector = InfiniteLoopDetector.new()
+	print("[Reader] InfiniteLoopDetector initialized")
 	# Analyze planning phase movements for relic stats
 	if event_bus:
 		var planning_events = event_bus.get("current_planning_events")
@@ -227,6 +235,15 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 			battle_context.record_activation(rune, slot)
 			if event_bus and event_bus.has_method("notify_rune_activated"):
 				event_bus.notify_rune_activated(slot, rune)
+			
+			# Feed the loop detector and check for infinite loops
+			if loop_detector:
+				var remaining: int = rune.get_max_activations() - rune.current_activations
+				var rune_id: StringName = rune.data.id if rune.data.id else StringName(rune.data.rune_name)
+				loop_detector.record_activation(rune_id, coord, remaining)
+				var loop_result := loop_detector.check_for_loop()
+				if not loop_result.is_empty():
+					_handle_infinite_loop(loop_result)
 
 
 func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, score_before: int, activations_before: int, activations_spent: int) -> void:
@@ -426,6 +443,68 @@ func _destroy_rune(slot: GridSlot, rune: RuneInstance) -> void:
 	slot.remove_rune()
 	if grid_manager:
 		grid_manager.slot_changed.emit(slot.grid_position)
+
+
+## Handles an infinite loop detected by the loop detector.
+## Destroys (or disables) the runes in the cycle and emits an InfiniteLoopEvent.
+func _handle_infinite_loop(loop_data: Dictionary) -> void:
+	var cycle_slots: Array = loop_data.get("cycle_slots", [])
+	var cycle_runes: Array = loop_data.get("cycle_runes", [])
+	var cycle_length: int = loop_data.get("cycle_length", 0)
+	var repetitions: int = loop_data.get("repetitions", 0)
+	
+	print("[Reader] HANDLING INFINITE LOOP: destroying %d runes" % cycle_slots.size())
+	
+	var runes_destroyed: Array[Dictionary] = []
+	var runes_disabled: Array[Dictionary] = []
+	
+	# Use a set to avoid processing duplicate slots
+	var processed_slots: Dictionary = {}
+	
+	for i in range(cycle_slots.size()):
+		var slot_pos: Vector2i = cycle_slots[i]
+		var rune_id: StringName = cycle_runes[i]
+		
+		# Skip if already processed (same slot can appear multiple times in cycle)
+		if processed_slots.has(slot_pos):
+			continue
+		processed_slots[slot_pos] = true
+		
+		var slot: GridSlot = grid_manager.get_slot(slot_pos) if grid_manager else null
+		if not slot or slot.is_empty():
+			continue
+		
+		var rune: RuneInstance = slot.rune
+		var entry := {"rune_id": rune_id, "slot_position": slot_pos}
+		
+		# Check if rune is indestructible
+		if rune.data.is_indestructible:
+			# Disable instead of destroy
+			rune.is_disabled = true
+			runes_disabled.append(entry)
+			print("[Reader] Disabled indestructible rune %s at %s" % [rune_id, str(slot_pos)])
+		else:
+			# Destroy the rune
+			print("[Reader] Destroying rune %s at %s" % [rune_id, str(slot_pos)])
+			_destroy_rune(slot, rune)
+			runes_destroyed.append(entry)
+	
+	# Update battle context
+	if battle_context:
+		battle_context.record_infinite_loop(loop_data)
+	
+	# Emit InfiniteLoopEvent
+	if event_bus and event_bus.has_method("emit"):
+		var loop_event = _InfiniteLoopEvent.new()
+		loop_event.phase = GameEnums.GamePhase.BATTLE
+		loop_event.loop_cycle_length = cycle_length
+		loop_event.loop_repetitions_detected = repetitions
+		loop_event.runes_destroyed = runes_destroyed
+		loop_event.runes_disabled = runes_disabled
+		loop_event.total_loops_this_round = battle_context.infinite_loops_detected if battle_context else 1
+		event_bus.emit(loop_event)
+	
+	print("[Reader] Infinite loop resolved. Continuing from index %d" % (current_index + 1))
 
 
 func _execute_round_start_slot_effects() -> void:
