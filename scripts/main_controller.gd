@@ -701,7 +701,7 @@ func _update_money_display() -> void:
 	if money_label:
 		var stats = get_node_or_null("/root/Stats")
 		var money = stats.get_money() if stats else 0
-		money_label.text = "$%d" % money
+		money_label.text = "%d Mana" % money
 
 
 func _on_level_started(level: int, target: int) -> void:

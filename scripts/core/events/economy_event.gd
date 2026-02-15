@@ -76,6 +76,18 @@ static func create_round_bonus(round_number: int, bonus: int, balance_before: in
 	return event
 
 
+## Factory for interest on saved mana
+static func create_interest(interest_amount: int, balance_before: int) -> EconomyEvent:
+	var event = EconomyEvent.new()
+	event.transaction_type = TransactionType.INTEREST
+	event.source = &"interest"
+	event.amount = interest_amount
+	event.balance_before = balance_before
+	event.balance_after = balance_before + interest_amount
+	event.description = "Interest: %d mana (saved %d)" % [interest_amount, balance_before]
+	return event
+
+
 func to_dict() -> Dictionary:
 	var base = super.to_dict()
 	base.merge({
@@ -90,7 +102,7 @@ func to_dict() -> Dictionary:
 
 
 func get_summary() -> String:
-	var sign = "+" if amount >= 0 else ""
-	return "[Economy] %s%d$ (%s) | Balance: %d → %d" % [
-		sign, amount, TransactionType.keys()[transaction_type], balance_before, balance_after
+	var sign_str = "+" if amount >= 0 else ""
+	return "[Economy] %s%d mana (%s) | Balance: %d → %d" % [
+		sign_str, amount, TransactionType.keys()[transaction_type], balance_before, balance_after
 	]

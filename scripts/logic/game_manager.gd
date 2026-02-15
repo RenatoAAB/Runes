@@ -136,8 +136,8 @@ func _load_all_runes() -> void:
 			dir.list_dir_begin()
 			var file_name = dir.get_next()
 			while file_name != "":
-				if file_name.ends_with(".tres"):
-					var rune_path = folder_path + file_name
+				if file_name.ends_with(".tres") or file_name.ends_with(".tres.remap"):
+					var rune_path = folder_path + file_name.replace(".remap", "")
 					var rune_data = load(rune_path) as RuneData
 					if rune_data:
 						available_runes.append(rune_data)
@@ -245,9 +245,12 @@ func _on_result_continue(was_victory: bool) -> void:
 
 
 func _handle_win() -> void:
-	print("Victory!")
+	print("[Economy] Victory!")
 	
-	# Grant money reward for winning
+	# Grant interest BEFORE victory bonus (per spec)
+	_grant_interest()
+	
+	# Grant fixed victory mana
 	_grant_victory_money()
 	
 	# Refresh shop after victory
@@ -258,10 +261,8 @@ func _handle_win() -> void:
 
 
 func _grant_victory_money() -> void:
-	# Base reward + bonus per level (level 1 gives 5, level 2 gives 6, etc.)
-	var base_reward = 4
-	var level_bonus = current_level
-	var total_reward = base_reward + level_bonus
+	# Fixed victory bonus (spec: 5 mana per win)
+	var total_reward = ShopConfig.VICTORY_MANA
 	
 	# Emit economy event
 	var event_bus = get_node_or_null("/root/EventBus")
@@ -271,7 +272,31 @@ func _grant_victory_money() -> void:
 		var event = EconomyEvent.create_round_bonus(current_level, total_reward, balance)
 		event_bus.emit(event)
 	
-	print("Granted $%d for winning level %d" % [total_reward, current_level])
+	print("[Economy] Victory bonus: %d mana (level %d)" % [total_reward, current_level])
+
+
+func _grant_interest() -> void:
+	## Juros: 1 mana por cada 5 guardados, máximo 5
+	var stats = get_node_or_null("/root/Stats")
+	var current_mana = stats.get_money() if stats else 0
+	var interest = mini(current_mana / 5, ShopConfig.MAX_INTEREST)
+	
+	if interest <= 0:
+		print("[Economy] Interest: 0 mana (balance %d)" % current_mana)
+		return
+	
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		var event = EconomyEvent.new()
+		event.transaction_type = EconomyEvent.TransactionType.INTEREST
+		event.source = &"interest_level_%d" % current_level
+		event.amount = interest
+		event.balance_before = current_mana
+		event.balance_after = current_mana + interest
+		event.description = "Interest: %d mana (saved %d)" % [interest, current_mana]
+		event_bus.emit(event)
+	
+	print("[Economy] Interest: %d mana (balance %d \u2192 %d)" % [interest, current_mana, current_mana + interest])
 
 
 func _refresh_shop_after_victory() -> void:
@@ -319,7 +344,7 @@ func _setup_initial_inventory() -> void:
 
 
 func _grant_starting_money() -> void:
-	var starting_money = 10
+	var starting_money = ShopConfig.STARTING_MANA
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
 		var event = EconomyEvent.new()
@@ -328,9 +353,9 @@ func _grant_starting_money() -> void:
 		event.amount = starting_money
 		event.balance_before = 0
 		event.balance_after = starting_money
-		event.description = "Starting bonus"
+		event.description = "Starting mana"
 		event_bus.emit(event)
-	print("Granted $%d starting money" % starting_money)
+	print("[Economy] Starting mana: %d" % starting_money)
 
 
 func _trigger_rune_selection() -> void:

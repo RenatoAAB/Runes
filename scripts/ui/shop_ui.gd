@@ -23,13 +23,11 @@ var shop_manager: ShopManager
 @onready var purchasable_runes_container: GridContainer = $PurchasableRunes
 @onready var purchasable_slots_container: GridContainer = get_node_or_null("PurchasableSlots")  # For pieces & modifiers
 @onready var purchasable_relics_container: GridContainer = get_node_or_null("PurchasableRelics")
-@onready var reroll_button: Button = $Reroll
 @onready var sell_area: SellArea = get_node_or_null("SellArea")
 
-# GetOneOfThree section (free pick)
-@onready var get_one_of_three: Control = $GetOneOfThree
-@onready var available_runes_container: GridContainer = $GetOneOfThree/AvailableRunes
-@onready var buy_rune_pack_button: Button = $GetOneOfThree/BuyRunePack
+# Pergaminho (scroll) button — repurposed from old GetOneOfThree section
+@onready var pergaminho_section: Control = $Pergaminho
+@onready var pergaminho_button: Button = $Pergaminho/BuyRunePack
 
 # Upgrade section
 @onready var upgrade_section: Control = $Upgrade
@@ -52,11 +50,9 @@ func _connect_signals() -> void:
 	if enter_panel_button and not enter_panel_button.pressed.is_connected(_on_enter_panel_pressed):
 		enter_panel_button.pressed.connect(_on_enter_panel_pressed)
 	
-	if buy_rune_pack_button and not buy_rune_pack_button.pressed.is_connected(_on_buy_rune_pack_pressed):
-		buy_rune_pack_button.pressed.connect(_on_buy_rune_pack_pressed)
-	
-	if reroll_button and not reroll_button.pressed.is_connected(_on_reroll_pressed):
-		reroll_button.pressed.connect(_on_reroll_pressed)
+	# Pergaminho (scroll) button
+	if pergaminho_button and not pergaminho_button.pressed.is_connected(_on_reroll_pressed):
+		pergaminho_button.pressed.connect(_on_reroll_pressed)
 	
 	# Connect to economy updates
 	var event_bus = get_node_or_null("/root/EventBus")
@@ -78,7 +74,6 @@ func _connect_shop_manager_signals() -> void:
 
 
 func _setup_ui() -> void:
-	_update_free_pick_section()
 	_update_reroll_button()
 	_setup_sell_area()
 
@@ -88,6 +83,9 @@ func initialize(manager: ShopManager, player_level: int = 1, refresh_now: bool =
 	_connect_shop_manager_signals()
 	if refresh_now:
 		shop_manager.refresh_shop(player_level)
+	else:
+		# Sync UI with existing shop data (items already generated)
+		_on_shop_updated()
 
 
 func _on_shop_updated() -> void:
@@ -95,7 +93,7 @@ func _on_shop_updated() -> void:
 	_refresh_slots_shop()  # Combined pieces & modifiers
 	_refresh_relic_shop()
 	_refresh_upgrade_slots()
-	_update_free_pick_section()
+	_update_reroll_button()
 
 
 # --- Purchasable Runes Section ---
@@ -129,7 +127,7 @@ func _refresh_rune_shop() -> void:
 func _get_rune_price_text(rune_data: RuneData) -> String:
 	if shop_manager and shop_manager.has_free_pick():
 		return "FREE!"
-	return "$%d" % ShopConfig.get_rune_buy_price(rune_data.rarity)
+	return "%d Mana" % ShopConfig.get_rune_buy_price(rune_data.rarity)
 
 
 func _connect_slot_buy_signal(slot_ui: SlotUI, index: int, item_type: String) -> void:
@@ -237,28 +235,7 @@ func _refresh_relic_shop() -> void:
 			slot_ui.set_shop_item("", null)
 
 
-# --- Free Pick Section (GetOneOfThree) ---
-
-func _update_free_pick_section() -> void:
-	if not get_one_of_three:
-		return
-	
-	var has_free_picks = shop_manager and shop_manager.has_free_pick()
-	
-	# Show/hide the available runes for free pick
-	if available_runes_container:
-		available_runes_container.visible = has_free_picks
-	
-	# Update buy pack button text
-	if buy_rune_pack_button:
-		if has_free_picks:
-			buy_rune_pack_button.text = "Pick One!"
-		else:
-			buy_rune_pack_button.text = "Random\n$%d" % ShopConfig.RUNE_PACK_COST
-
-
 func _on_free_pick_changed(_count: int) -> void:
-	_update_free_pick_section()
 	_refresh_rune_shop()
 
 
@@ -346,13 +323,13 @@ func _update_upgrade_cost_label() -> void:
 		return
 	
 	if shop_manager and shop_manager.can_upgrade():
-		upgrade_cost_label.text = "Click to upgrade! ($%d)" % ShopConfig.UPGRADE_COST
+		upgrade_cost_label.text = "Clique para aprimorar! (%d Mana)" % ShopConfig.UPGRADE_COST
 		upgrade_cost_label.add_theme_color_override("font_color", Color.GREEN)
 	elif _upgrade_rune_1 and _upgrade_rune_2:
 		upgrade_cost_label.text = "Runas diferentes!"
 		upgrade_cost_label.add_theme_color_override("font_color", Color.RED)
 	else:
-		upgrade_cost_label.text = "Arraste 2 runas iguais ($%d)" % ShopConfig.UPGRADE_COST
+		upgrade_cost_label.text = "Arraste 2 runas iguais (%d Mana)" % ShopConfig.UPGRADE_COST
 		upgrade_cost_label.add_theme_color_override("font_color", Color.GRAY)
 
 
@@ -415,103 +392,22 @@ func _on_buy_relic_pressed(index: int) -> void:
 		_refresh_relic_shop()
 
 
-func _on_buy_rune_pack_pressed() -> void:
-	# Trigger Rune Pack interaction - shows 3 random runes, player picks 1
-	if not shop_manager:
-		return
-	
-	if shop_manager.has_free_pick():
-		# Already have free picks, just show the runes
-		_show_rune_pack_selection()
-	else:
-		# Costs money to buy a rune pack
-		if shop_manager.buy_rune_pack():
-			_show_rune_pack_selection()
-
-
-func _show_rune_pack_selection() -> void:
-	# Show the GetOneOfThree panel with 3 random runes
-	if not available_runes_container or not shop_manager:
-		return
-	
-	# Hide the Random button while selection is active
-	if buy_rune_pack_button:
-		buy_rune_pack_button.visible = false
-	
-	# Generate 3 random runes for selection
-	var pack_runes = shop_manager.generate_rune_pack()
-	
-	var slots = available_runes_container.get_children()
-	for i in range(slots.size()):
-		var slot_ui = slots[i] as SlotUI
-		if not slot_ui:
-			continue
-		
-		if i < pack_runes.size():
-			var rune_data = pack_runes[i]
-			var display_rune = RuneInstance.new(rune_data)
-			slot_ui.set_rune(display_rune)
-			slot_ui.set_shop_mode(true, "FREE!")
-			
-			# Connect click to pick this rune
-			_connect_rune_pack_selection(slot_ui, i)
-		else:
-			slot_ui.set_rune(null)
-			slot_ui.set_shop_mode(false)
-	
-	# Show the selection area
-	if available_runes_container:
-		available_runes_container.visible = true
-
-
-func _connect_rune_pack_selection(slot_ui: SlotUI, index: int) -> void:
-	# Disconnect any existing connection
-	if slot_ui.gui_input.is_connected(_on_rune_pack_slot_clicked):
-		slot_ui.gui_input.disconnect(_on_rune_pack_slot_clicked)
-	
-	slot_ui.gui_input.connect(_on_rune_pack_slot_clicked.bind(index))
-
-
-func _on_rune_pack_slot_clicked(event: InputEvent, index: int) -> void:
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
-		_pick_from_rune_pack(index)
-
-
-func _pick_from_rune_pack(index: int) -> void:
-	if not shop_manager:
-		return
-	
-	var rune = shop_manager.pick_from_rune_pack(index)
-	if rune:
-		rune_purchased.emit(rune)
-		_hide_rune_pack_selection()
-		_update_free_pick_section()
-
-
-func _hide_rune_pack_selection() -> void:
-	if available_runes_container:
-		available_runes_container.visible = false
-	
-	# Show the Random button again
-	if buy_rune_pack_button:
-		buy_rune_pack_button.visible = true
-
-
 func _on_reroll_pressed() -> void:
-	# Reroll just the purchasable runes (not the rune pack)
+	# Buy a scroll (pergaminho) — only rerolls runes
 	if not shop_manager:
 		return
 	
-	var game_manager = get_node_or_null("/root/Main/Managers/GameManager")
-	var level = game_manager.current_level if game_manager else 1
-	
-	if shop_manager.reroll_shop(level):
+	if shop_manager.buy_scroll():
 		_update_reroll_button()
 
 
 func _update_reroll_button() -> void:
-	if reroll_button:
-		reroll_button.text = "Reroll\n$%d" % ShopConfig.REROLL_COST
+	if not pergaminho_button or not shop_manager:
+		return
+	
+	var cost = shop_manager.get_current_scroll_cost()
+	pergaminho_button.text = "Pergaminho\n%d Mana" % cost
+	pergaminho_button.disabled = _get_money() < cost
 
 
 # --- Sell Area ---
@@ -520,20 +416,49 @@ func _setup_sell_area() -> void:
 	if not sell_area:
 		return
 	
-	# Connect sell area signal (SellArea script handles the drop logic)
+	# Connect sell area signals for all item types
 	if sell_area.has_signal("rune_sold"):
 		if not sell_area.rune_sold.is_connected(_on_sell_area_rune_sold):
 			sell_area.rune_sold.connect(_on_sell_area_rune_sold)
+	if sell_area.has_signal("piece_sold"):
+		if not sell_area.piece_sold.is_connected(_on_sell_area_piece_sold):
+			sell_area.piece_sold.connect(_on_sell_area_piece_sold)
+	if sell_area.has_signal("modifier_sold"):
+		if not sell_area.modifier_sold.is_connected(_on_sell_area_modifier_sold):
+			sell_area.modifier_sold.connect(_on_sell_area_modifier_sold)
+	if sell_area.has_signal("relic_sold"):
+		if not sell_area.relic_sold.is_connected(_on_sell_area_relic_sold):
+			sell_area.relic_sold.connect(_on_sell_area_relic_sold)
 
 
 func _on_sell_area_rune_sold(rune: RuneInstance, price: int) -> void:
 	rune_sold.emit(rune)
-	print("Sold rune for $%d" % price)
-	
+	print("[Sell] Sold rune for %d mana" % price)
+	_refresh_after_sell()
+
+
+func _on_sell_area_piece_sold(piece: SlotPieceInstance, price: int) -> void:
+	piece_sold.emit(piece)
+	print("[Sell] Sold piece for %d mana" % price)
+	_refresh_after_sell()
+
+
+func _on_sell_area_modifier_sold(_modifier: SlotModifierData, price: int) -> void:
+	print("[Sell] Sold modifier for %d mana" % price)
+	_refresh_after_sell()
+
+
+func _on_sell_area_relic_sold(_relic: RelicInstance, price: int) -> void:
+	print("[Sell] Sold relic for %d mana" % price)
+	_refresh_after_sell()
+
+
+func _refresh_after_sell() -> void:
 	# Refresh inventory display
 	var main_controller = get_node_or_null("/root/Main/MainController")
 	if main_controller and main_controller.has_method("_on_inventory_updated"):
 		main_controller._on_inventory_updated()
+	_update_reroll_button()
 
 
 # --- Navigation ---
@@ -550,12 +475,12 @@ func _on_transaction_completed(success: bool, message: String) -> void:
 
 
 func _on_insufficient_funds(cost: int, balance: int) -> void:
-	print("[Shop] Insufficient funds: need $%d, have $%d" % [cost, balance])
+	print("[Shop] Insufficient mana: need %d, have %d" % [cost, balance])
 	# TODO: Flash money display red
 
 
 func _on_economy_changed(_event) -> void:
-	_update_free_pick_section()
+	_update_reroll_button()
 
 
 # --- Helpers ---

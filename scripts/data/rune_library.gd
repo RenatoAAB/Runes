@@ -26,8 +26,8 @@ static func get_all_runes() -> Array[RuneData]:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
-			if file_name.ends_with(".tres"):
-				var rune_path = folder_path + file_name
+			if file_name.ends_with(".tres") or file_name.ends_with(".tres.remap"):
+				var rune_path = folder_path + file_name.replace(".remap", "")
 				var rune_data: RuneData = load(rune_path)
 				if rune_data:
 					result.append(rune_data)

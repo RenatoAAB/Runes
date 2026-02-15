@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=13 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -7,9 +7,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="7_a8y0u"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" uid="uid://bpgga3tetlmun" path="res://resources/runes/common/rune_water.tres" id="8_jkv2x"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
@@ -42,7 +40,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("16_og1vs"), ExtResource("7_a8y0u"), ExtResource("8_jkv2x"), ExtResource("8_jkv2x")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("16_og1vs")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]
@@ -333,32 +331,14 @@ layout_mode = 2
 [node name="Slot3" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="GetOneOfThree" type="Control" parent="UI/ShopUI"]
+[node name="Pergaminho" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0
 offset_left = -276.0
 offset_top = -4.0
 offset_right = -236.0
 offset_bottom = 36.0
 
-[node name="AvailableRunes" type="GridContainer" parent="UI/ShopUI/GetOneOfThree"]
-visible = false
-layout_mode = 0
-offset_left = 310.0
-offset_top = 42.0
-offset_right = 500.0
-offset_bottom = 96.0
-columns = 4
-
-[node name="Slot" parent="UI/ShopUI/GetOneOfThree/AvailableRunes" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="Slot2" parent="UI/ShopUI/GetOneOfThree/AvailableRunes" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="Slot3" parent="UI/ShopUI/GetOneOfThree/AvailableRunes" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="BuyRunePack" type="Button" parent="UI/ShopUI/GetOneOfThree"]
+[node name="BuyRunePack" type="Button" parent="UI/ShopUI/Pergaminho"]
 layout_mode = 0
 offset_left = 335.0
 offset_top = 31.0
@@ -377,9 +357,6 @@ columns = 4
 [node name="Slot" parent="UI/ShopUI/PurchasableRelics" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="Slot2" parent="UI/ShopUI/PurchasableRelics" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
 [node name="PurchasableSlots" type="GridContainer" parent="UI/ShopUI"]
 layout_mode = 0
 offset_left = 30.0
@@ -393,58 +370,6 @@ layout_mode = 2
 
 [node name="Slot2" parent="UI/ShopUI/PurchasableSlots" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
-
-[node name="Slot3" parent="UI/ShopUI/PurchasableSlots" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="Upgrade" type="Control" parent="UI/ShopUI"]
-anchors_preset = 0
-offset_left = -26.0
-offset_top = 102.0
-offset_right = 14.0
-offset_bottom = 142.0
-
-[node name="RunesToUpgrade" type="GridContainer" parent="UI/ShopUI/Upgrade"]
-layout_mode = 0
-offset_left = 189.0
-offset_top = 92.0
-offset_right = 305.0
-offset_bottom = 128.0
-columns = 4
-
-[node name="Slot" parent="UI/ShopUI/Upgrade/RunesToUpgrade" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="Slot2" parent="UI/ShopUI/Upgrade/RunesToUpgrade" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="UpgradedRunePreview" type="GridContainer" parent="UI/ShopUI/Upgrade"]
-layout_mode = 0
-offset_left = 287.0
-offset_top = 92.0
-offset_right = 363.0
-offset_bottom = 128.0
-columns = 4
-
-[node name="Slot" parent="UI/ShopUI/Upgrade/UpgradedRunePreview" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/ShopUI/Upgrade"]
-layout_mode = 0
-offset_left = 238.0
-offset_top = 133.0
-offset_right = 278.0
-offset_bottom = 156.0
-text = "Cost"
-
-[node name="Reroll" type="Button" parent="UI/ShopUI"]
-layout_mode = 0
-offset_left = 152.0
-offset_top = 134.0
-offset_right = 232.0
-offset_bottom = 188.0
-text = "Reroll
-$2"
 
 [node name="SellArea" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0

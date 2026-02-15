@@ -5,65 +5,53 @@ extends RefCounted
 
 # --- Rune Prices by Rarity ---
 const RUNE_BUY_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 3,
-	GameEnums.Rarity.UNCOMMON: 5,
-	GameEnums.Rarity.RARE: 8,
-	GameEnums.Rarity.EPIC: 12,
-	GameEnums.Rarity.LEGENDARY: 20,
+	GameEnums.Rarity.COMMON: 2,
+	GameEnums.Rarity.UNCOMMON: 3,
+	GameEnums.Rarity.RARE: 5,
+	GameEnums.Rarity.EPIC: 8,
+	GameEnums.Rarity.LEGENDARY: 12,
 }
 
 const RUNE_SELL_PRICES: Dictionary = {
 	GameEnums.Rarity.COMMON: 1,
-	GameEnums.Rarity.UNCOMMON: 2,
-	GameEnums.Rarity.RARE: 3,
-	GameEnums.Rarity.EPIC: 5,
-	GameEnums.Rarity.LEGENDARY: 8,
+	GameEnums.Rarity.UNCOMMON: 1,
+	GameEnums.Rarity.RARE: 2,
+	GameEnums.Rarity.EPIC: 4,
+	GameEnums.Rarity.LEGENDARY: 6,
 }
 
-# --- Slot Piece Prices (uses rarity from the piece data, fallback here) ---
-# Temporarily all under 10 for testing
+# --- Slot Piece Prices (spec defines 3 rarities: Common, Uncommon, Rare) ---
 const PIECE_BUY_PRICES: Dictionary = {
 	GameEnums.Rarity.COMMON: 3,
 	GameEnums.Rarity.UNCOMMON: 4,
 	GameEnums.Rarity.RARE: 5,
-	GameEnums.Rarity.EPIC: 6,
-	GameEnums.Rarity.LEGENDARY: 8,
 }
 
 const PIECE_SELL_PRICES: Dictionary = {
 	GameEnums.Rarity.COMMON: 1,
 	GameEnums.Rarity.UNCOMMON: 1,
 	GameEnums.Rarity.RARE: 2,
-	GameEnums.Rarity.EPIC: 2,
-	GameEnums.Rarity.LEGENDARY: 3,
 }
 
-# --- Slot Modifier Prices (uses rarity from modifier data, fallback here) ---
-# Temporarily all under 10 for testing
+# --- Slot Modifier Prices (spec defines 3 rarities: Common, Uncommon, Rare) ---
 const MODIFIER_BUY_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 2,
-	GameEnums.Rarity.UNCOMMON: 3,
-	GameEnums.Rarity.RARE: 4,
-	GameEnums.Rarity.EPIC: 5,
-	GameEnums.Rarity.LEGENDARY: 7,
+	GameEnums.Rarity.COMMON: 3,
+	GameEnums.Rarity.UNCOMMON: 4,
+	GameEnums.Rarity.RARE: 5,
 }
 
 const MODIFIER_SELL_PRICES: Dictionary = {
 	GameEnums.Rarity.COMMON: 1,
 	GameEnums.Rarity.UNCOMMON: 1,
 	GameEnums.Rarity.RARE: 1,
-	GameEnums.Rarity.EPIC: 2,
-	GameEnums.Rarity.LEGENDARY: 3,
 }
 
-# --- Relic Prices ---
-# Temporarily all under 10 for testing
+# --- Relic Prices (spec defines 4 rarities: Common, Uncommon, Rare, Epic) ---
 const RELIC_BUY_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 4,
-	GameEnums.Rarity.UNCOMMON: 5,
-	GameEnums.Rarity.RARE: 6,
-	GameEnums.Rarity.EPIC: 7,
-	GameEnums.Rarity.LEGENDARY: 9,
+	GameEnums.Rarity.COMMON: 5,
+	GameEnums.Rarity.UNCOMMON: 6,
+	GameEnums.Rarity.RARE: 7,
+	GameEnums.Rarity.EPIC: 8,
 }
 
 const RELIC_SELL_PRICES: Dictionary = {
@@ -71,21 +59,24 @@ const RELIC_SELL_PRICES: Dictionary = {
 	GameEnums.Rarity.UNCOMMON: 2,
 	GameEnums.Rarity.RARE: 2,
 	GameEnums.Rarity.EPIC: 3,
-	GameEnums.Rarity.LEGENDARY: 4,
 }
 
+# --- Economy Constants ---
+const STARTING_MANA: int = 5          # Mana inicial do jogador
+const VICTORY_MANA: int = 5           # Mana fixo por vitória
+const INTEREST_PER_5: int = 1         # Juros: 1 mana por cada 5 guardados
+const MAX_INTEREST: int = 5           # Teto de juros por rodada
+const BASE_SCROLL_COST: int = 1       # Custo base do pergaminho (reroll de runas)
+
 # --- Other Costs ---
-const REROLL_COST: int = 2
-const RUNE_PACK_COST: int = 3  # Cost to open a rune pack (pick 1 of 3)
 const UPGRADE_COST: int = 5  # Cost to upgrade 2 runes into 1
 const PANEL_UNLOCK_COST: int = 25
-const RELIC_BASE_COST: int = 15  # Legacy, use RELIC_BUY_PRICES instead
 
 # --- Shop Inventory Sizes ---
-const RUNE_SHOP_SIZE: int = 3  # How many runes to show in shop
-const PIECE_SHOP_SIZE: int = 2  # How many slot pieces to show
-const MODIFIER_SHOP_SIZE: int = 2  # How many modifiers to show
-const RELIC_SHOP_SIZE: int = 2  # How many relics to show
+const RUNE_SHOP_SIZE: int = 3   # Pergaminhos revelam 3 runas
+const PIECE_SHOP_SIZE: int = 1  # 1 peça de slot
+const MODIFIER_SHOP_SIZE: int = 1  # 1 modificador
+const RELIC_SHOP_SIZE: int = 1  # 1 relíquia
 const MIN_PIECES_IN_SHOP: int = 1  # Minimum pieces that must be available
 
 # --- Helper Functions ---

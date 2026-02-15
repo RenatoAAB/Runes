@@ -2,7 +2,7 @@ class_name ShopManager
 extends Node
 
 ## Manages all shop transactions and inventory.
-## Handles buying, selling, upgrading, and rerolling.
+## Handles buying, selling, upgrading, and scroll rerolls.
 ## Sells: Runes, Slot Pieces, Slot Modifiers, Relics
 
 signal shop_updated  # Emitted when shop inventory changes
@@ -30,6 +30,9 @@ var _upgrade_slot_2: RuneInstance = null
 # --- Free Picks & Level Tracking ---
 var free_rune_picks: int = 0  # Number of free rune picks available
 var current_level: int = 1
+
+# --- Scroll (Pergaminho) State ---
+var _scroll_count: int = 0  # Scrolls purchased this round (resets each round)
 
 # --- Seed Control ---
 var _rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -87,8 +90,8 @@ func _load_rune_pool() -> void:
 			dir.list_dir_begin()
 			var file_name = dir.get_next()
 			while file_name != "":
-				if file_name.ends_with(".tres"):
-					var rune_path = folder_path + file_name
+				if file_name.ends_with(".tres") or file_name.ends_with(".tres.remap"):
+					var rune_path = folder_path + file_name.replace(".remap", "")
 					var rune_data = load(rune_path) as RuneData
 					if rune_data and rune_data.tier == GameEnums.Tier.TIER_1:
 						_rune_pool.append(rune_data)
@@ -104,8 +107,8 @@ func _load_piece_pool() -> void:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
-			if file_name.ends_with(".tres"):
-				var piece_data = load(piece_dir + file_name) as SlotPieceData
+			if file_name.ends_with(".tres") or file_name.ends_with(".tres.remap"):
+				var piece_data = load(piece_dir + file_name.replace(".remap", "")) as SlotPieceData
 				if piece_data:
 					_piece_pool.append(piece_data)
 			file_name = dir.get_next()
@@ -120,8 +123,9 @@ func _load_modifier_pool() -> void:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
-			if file_name.ends_with(".tres") and file_name.begins_with("slot_"):
-				var modifier_data = load(modifier_dir + file_name) as SlotModifierData
+			var clean_name = file_name.replace(".remap", "")
+			if clean_name.ends_with(".tres") and clean_name.begins_with("slot_"):
+				var modifier_data = load(modifier_dir + clean_name) as SlotModifierData
 				if modifier_data and modifier_data.id.begins_with("slot_"):
 					_modifier_pool.append(modifier_data)
 			file_name = dir.get_next()
@@ -136,22 +140,37 @@ func _load_relic_pool() -> void:
 		dir.list_dir_begin()
 		var file_name = dir.get_next()
 		while file_name != "":
-			if file_name.ends_with(".tres"):
-				var relic_data = load(relic_dir + file_name) as RelicData
+			if file_name.ends_with(".tres") or file_name.ends_with(".tres.remap"):
+				var relic_data = load(relic_dir + file_name.replace(".remap", "")) as RelicData
 				if relic_data:
 					_relic_pool.append(relic_data)
 			file_name = dir.get_next()
 		dir.list_dir_end()
 
 
-## Initialize shop with fresh inventory
+## Initialize shop with fresh inventory (called at start of each round)
 func refresh_shop(player_level: int = 1) -> void:
 	current_level = player_level
+	reset_scroll_count()
 	_generate_rune_inventory(player_level)
 	_generate_piece_inventory(player_level)
 	_generate_modifier_inventory(player_level)
 	_generate_relic_inventory(player_level)
+	print("[Shop] Refreshed: %d runes, %d pieces, %d modifiers, %d relics" % [
+		available_runes.size(), available_pieces.size(),
+		available_modifiers.size(), available_relics.size()
+	])
 	shop_updated.emit()
+
+
+## Get the current scroll (pergaminho) cost: base + number already purchased
+func get_current_scroll_cost() -> int:
+	return ShopConfig.BASE_SCROLL_COST + _scroll_count
+
+
+## Reset scroll counter (called at start of each round)
+func reset_scroll_count() -> void:
+	_scroll_count = 0
 
 
 ## Grant a free rune pick (used at start or as reward)
@@ -185,18 +204,30 @@ func generate_rune_pack() -> Array[RuneData]:
 	return _rune_pack_options
 
 
-## Buy a rune pack (costs money, enables picking one rune)
-func buy_rune_pack() -> bool:
-	var cost = ShopConfig.RUNE_PACK_COST if "RUNE_PACK_COST" in ShopConfig else ShopConfig.REROLL_COST
+## Buy a scroll (pergaminho) — escalating cost, only refreshes runes
+func buy_scroll() -> bool:
+	var cost = get_current_scroll_cost()
 	
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money for rune pack")
+		transaction_completed.emit(false, "Not enough mana for scroll")
 		return false
 	
-	_spend_money(cost, "rune_pack")
-	transaction_completed.emit(true, "Rune pack opened for $%d" % cost)
+	_spend_money(cost, "scroll_%d" % (_scroll_count + 1))
+	_scroll_count += 1
+	
+	# Only regenerate runes, not pieces/modifiers/relics
+	_generate_rune_inventory(current_level)
+	
+	print("[Shop] Scroll #%d purchased for %d mana" % [_scroll_count, cost])
+	transaction_completed.emit(true, "Scroll #%d — %d mana" % [_scroll_count, cost])
+	shop_updated.emit()
 	return true
+
+
+## Buy a rune pack (uses scroll cost system)
+func buy_rune_pack() -> bool:
+	return buy_scroll()
 
 
 ## Pick one rune from the current rune pack
@@ -370,7 +401,7 @@ func buy_rune(index: int) -> RuneInstance:
 	
 	if not is_free and not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money")
+		transaction_completed.emit(false, "Not enough mana")
 		return null
 	
 	# Deduct money or free pick
@@ -386,7 +417,7 @@ func buy_rune(index: int) -> RuneInstance:
 	# Create instance
 	var rune_instance = RuneInstance.new(rune_data)
 	
-	var message = "Took %s (FREE!)" % rune_data.rune_name if is_free else "Bought %s for $%d" % [rune_data.rune_name, cost]
+	var message = "Took %s (FREE!)" % rune_data.rune_name if is_free else "Bought %s for %d mana" % [rune_data.rune_name, cost]
 	transaction_completed.emit(true, message)
 	shop_updated.emit()
 	
@@ -404,7 +435,7 @@ func buy_piece(index: int) -> SlotPieceInstance:
 	
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money")
+		transaction_completed.emit(false, "Not enough mana")
 		return null
 	
 	# Deduct money
@@ -416,7 +447,7 @@ func buy_piece(index: int) -> SlotPieceInstance:
 	# Create instance
 	var piece_instance = SlotPieceInstance.new(piece_data)
 	
-	transaction_completed.emit(true, "Bought %s for $%d" % [piece_data.display_name, cost])
+	transaction_completed.emit(true, "Bought %s for %d mana" % [piece_data.display_name, cost])
 	shop_updated.emit()
 	
 	return piece_instance
@@ -433,7 +464,7 @@ func buy_modifier(index: int) -> SlotModifierData:
 	
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money")
+		transaction_completed.emit(false, "Not enough mana")
 		return null
 	
 	# Deduct money
@@ -442,7 +473,7 @@ func buy_modifier(index: int) -> SlotModifierData:
 	# Remove from shop
 	available_modifiers.remove_at(index)
 	
-	transaction_completed.emit(true, "Bought %s for $%d" % [modifier_data.display_name, cost])
+	transaction_completed.emit(true, "Bought %s for %d mana" % [modifier_data.display_name, cost])
 	shop_updated.emit()
 	
 	# Return the data directly (modifiers are applied, not instantiated)
@@ -460,7 +491,7 @@ func buy_relic(index: int) -> RelicInstance:
 	
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money")
+		transaction_completed.emit(false, "Not enough mana")
 		return null
 	
 	_spend_money(cost, "shop_relic_%s" % relic_data.id)
@@ -471,7 +502,7 @@ func buy_relic(index: int) -> RelicInstance:
 	# Create instance
 	var relic_instance = RelicInstance.new(relic_data)
 	
-	transaction_completed.emit(true, "Bought %s for $%d" % [relic_data.display_name, cost])
+	transaction_completed.emit(true, "Bought %s for %d mana" % [relic_data.display_name, cost])
 	shop_updated.emit()
 	
 	return relic_instance
@@ -488,7 +519,7 @@ func sell_rune(rune: RuneInstance) -> int:
 	var price = ShopConfig.get_rune_sell_price(rune.data.rarity, rune.data.tier)
 	_add_money(price, "sell_rune_%s" % rune.data.id)
 	
-	transaction_completed.emit(true, "Sold %s for $%d" % [rune.data.rune_name, price])
+	transaction_completed.emit(true, "Sold %s for %d mana" % [rune.data.rune_name, price])
 	return price
 
 
@@ -501,7 +532,7 @@ func sell_piece(piece: SlotPieceInstance) -> int:
 	var price = ShopConfig.get_piece_sell_price(piece.data)
 	_add_money(price, "sell_piece_%s" % piece.data.id)
 	
-	transaction_completed.emit(true, "Sold %s for $%d" % [piece.data.display_name, price])
+	transaction_completed.emit(true, "Sold %s for %d mana" % [piece.data.display_name, price])
 	return price
 
 
@@ -514,7 +545,7 @@ func sell_modifier(modifier: SlotModifierData) -> int:
 	var price = ShopConfig.get_modifier_sell_price(modifier)
 	_add_money(price, "sell_modifier_%s" % modifier.id)
 	
-	transaction_completed.emit(true, "Sold %s for $%d" % [modifier.display_name, price])
+	transaction_completed.emit(true, "Sold %s for %d mana" % [modifier.display_name, price])
 	return price
 
 
@@ -527,7 +558,7 @@ func sell_relic(relic: RelicInstance) -> int:
 	var price = ShopConfig.get_relic_sell_price(relic.data)
 	_add_money(price, "sell_relic_%s" % relic.data.id)
 	
-	transaction_completed.emit(true, "Sold %s for $%d" % [relic.data.display_name, price])
+	transaction_completed.emit(true, "Sold %s for %d mana" % [relic.data.display_name, price])
 	return price
 
 
@@ -577,7 +608,7 @@ func perform_upgrade() -> RuneInstance:
 	var cost = ShopConfig.UPGRADE_COST
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money to upgrade")
+		transaction_completed.emit(false, "Not enough mana to upgrade")
 		return null
 	
 	# Charge the upgrade cost
@@ -597,7 +628,7 @@ func perform_upgrade() -> RuneInstance:
 	_upgrade_slot_1 = null
 	_upgrade_slot_2 = null
 	
-	transaction_completed.emit(true, "Upgraded 2x %s into %s for $%d!" % [consumed_name, upgraded_data.rune_name, cost])
+	transaction_completed.emit(true, "Upgraded 2x %s into %s for %d mana!" % [consumed_name, upgraded_data.rune_name, cost])
 	
 	return upgraded_rune
 
@@ -607,22 +638,12 @@ func _check_upgrade_compatibility() -> void:
 	pass
 
 
-# --- Reroll ---
+# --- Scroll (replaces legacy Reroll) ---
 
-## Reroll the shop inventory
+## Buy a scroll to reroll rune inventory only (legacy compat wrapper)
 func reroll_shop(player_level: int = 1) -> bool:
-	var cost = ShopConfig.REROLL_COST
-	
-	if not _can_afford(cost):
-		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Not enough money to reroll")
-		return false
-	
-	_spend_money(cost, "shop_reroll")
-	refresh_shop(player_level)
-	
-	transaction_completed.emit(true, "Shop rerolled for $%d" % cost)
-	return true
+	current_level = player_level
+	return buy_scroll()
 
 
 # --- Panel Unlock (Placeholder) ---
@@ -685,19 +706,23 @@ func _add_money(amount: int, source: String) -> void:
 
 func get_rune_price_display(rune_data: RuneData) -> String:
 	var price = ShopConfig.get_rune_buy_price(rune_data.rarity)
-	return "$%d" % price
+	return "%d Mana" % price
 
 
 func get_piece_price_display(piece_data: SlotPieceData) -> String:
 	var price = ShopConfig.get_piece_buy_price(piece_data)
-	return "$%d" % price
+	return "%d Mana" % price
 
 
 func get_modifier_price_display(modifier_data: SlotModifierData) -> String:
 	var price = ShopConfig.get_modifier_buy_price(modifier_data)
-	return "$%d" % price
+	return "%d Mana" % price
 
 
 func get_relic_price_display(relic_data: RelicData) -> String:
 	var price = ShopConfig.get_relic_buy_price(relic_data)
-	return "$%d" % price
+	return "%d Mana" % price
+
+
+func get_scroll_price_display() -> String:
+	return "Pergaminho\n%d Mana" % get_current_scroll_cost()
