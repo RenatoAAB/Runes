@@ -38,7 +38,7 @@ var _shop_manager: ShopManager = null
 # Panel system
 var _panel_manager: PanelManager = null
 var _extra_inventory: ExtraInventoryManager = null
-var _relic_slot_uis: Array[RelicSlotUI] = []
+var _relic_slot_uis: Array[SlotUI] = []
 var _current_panel_index: int = 0
 var _bound_grid_manager: GridManager = null
 var _bound_reader: Reader = null
@@ -272,25 +272,26 @@ func _disconnect_panel_nodes() -> void:
 	_bound_reader = null
 
 
-## Generate relic slots UI (3 slots per panel)
+## Configure relic slots from scene children (SlotUI instances)
 func _generate_relic_slots() -> void:
 	if not relic_slots_container:
 		return
-	
-	# Clear existing
-	for child in relic_slots_container.get_children():
-		child.queue_free()
 	_relic_slot_uis.clear()
 	
-	# Create 3 relic slots
-	for i in range(3):
-		var relic_slot = RelicSlotUI.new()
-		relic_slot.slot_index = i
-		relic_slot.panel_index = _current_panel_index
-		relic_slot.relic_dropped.connect(_on_relic_dropped)
-		relic_slot.relic_clicked.connect(_on_relic_clicked)
-		relic_slots_container.add_child(relic_slot)
-		_relic_slot_uis.append(relic_slot)
+	var idx := 0
+	for child in relic_slots_container.get_children():
+		var slot_ui = child as SlotUI
+		if not slot_ui:
+			continue
+		slot_ui.is_relic_slot = true
+		slot_ui.relic_slot_index = idx
+		slot_ui.relic_panel_index = _current_panel_index
+		if not slot_ui.relic_slot_dropped.is_connected(_on_relic_dropped):
+			slot_ui.relic_slot_dropped.connect(_on_relic_dropped)
+		if not slot_ui.relic_slot_clicked.is_connected(_on_relic_clicked):
+			slot_ui.relic_slot_clicked.connect(_on_relic_clicked)
+		_relic_slot_uis.append(slot_ui)
+		idx += 1
 	
 	_update_relic_slots_display()
 
@@ -306,13 +307,16 @@ func _update_relic_slots_display() -> void:
 	
 	for i in range(_relic_slot_uis.size()):
 		var slot_ui = _relic_slot_uis[i]
-		slot_ui.panel_index = _current_panel_index
+		slot_ui.relic_panel_index = _current_panel_index
 		
 		# Set relic if panel has one at this index
 		if i < panel.attached_relics.size():
-			slot_ui.set_relic(panel.attached_relics[i])
+			var r = panel.attached_relics[i]
+			slot_ui._relic_instance = r
+			slot_ui.set_extra_item("relic", r.data, r)
 		else:
-			slot_ui.set_relic(null)
+			slot_ui._relic_instance = null
+			slot_ui.clear_display()
 
 
 ## Handle panel navigation
@@ -387,21 +391,21 @@ func _update_panel_navigation() -> void:
 
 
 ## Handle relic dropped on a slot
-func _on_relic_dropped(relic: RelicInstance, target_slot_ui: RelicSlotUI, source_slot_ui: RelicSlotUI) -> void:
+func _on_relic_dropped(relic: RelicInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI) -> void:
 	if not _panel_manager or not _extra_inventory:
 		return
 	
-	var target_panel = _panel_manager.get_panel(target_slot_ui.panel_index)
+	var target_panel = _panel_manager.get_panel(target_slot_ui.relic_panel_index)
 	if not target_panel:
 		return
 	
 	# If relic comes from another relic slot, detach from that panel first
-	if source_slot_ui:
-		var source_panel = _panel_manager.get_panel(source_slot_ui.panel_index)
+	if source_slot_ui and source_slot_ui.is_relic_slot:
+		var source_panel = _panel_manager.get_panel(source_slot_ui.relic_panel_index)
 		if source_panel:
 			source_panel.detach_relic(relic)
 		relic.detach_from_panel()
-		source_slot_ui.clear_relic()
+		source_slot_ui._relic_instance = null
 	elif relic.is_attached():
 		# Relic is attached to a panel but dragged from somewhere else
 		var source_panel = _panel_manager.get_panel(relic.attached_panel_index)
@@ -414,8 +418,8 @@ func _on_relic_dropped(relic: RelicInstance, target_slot_ui: RelicSlotUI, source
 	
 	# Try to attach relic to target panel
 	if target_panel.attach_relic(relic):
-		relic.attach_to_panel(target_slot_ui.panel_index)
-		target_slot_ui.set_relic(relic)
+		relic.attach_to_panel(target_slot_ui.relic_panel_index)
+		target_slot_ui._relic_instance = relic
 	
 	_update_relic_slots_display()
 	_update_other_inventory_display()
@@ -712,24 +716,21 @@ func _on_score_updated(new_total: int) -> void:
 func _on_relic_step_started(relic_index: int, _relic: RelicInstance) -> void:
 	if relic_index >= 0 and relic_index < _relic_slot_uis.size():
 		var slot_ui = _relic_slot_uis[relic_index]
-		if slot_ui.highlight_rect:
-			slot_ui.highlight_rect.color = Color(1.0, 0.85, 0.0, 0.55)  # Gold highlight
+		slot_ui.set_buff_highlight(Color(1.0, 0.85, 0.0, 0.55))  # Gold highlight
 
 func _on_relic_step_completed(relic_index: int, _relic: RelicInstance, multiplier: float) -> void:
 	if relic_index >= 0 and relic_index < _relic_slot_uis.size():
 		var slot_ui = _relic_slot_uis[relic_index]
-		if slot_ui.highlight_rect:
-			# Brief green/red flash based on multiplier, then clear
-			var flash_color = Color(0.3, 1.0, 0.3, 0.5) if multiplier > 1.0 else Color(0.5, 0.5, 0.5, 0.2)
-			slot_ui.highlight_rect.color = flash_color
-			var tween = slot_ui.create_tween()
-			tween.tween_property(slot_ui.highlight_rect, "color", Color.TRANSPARENT, 0.3)
+		# Brief green/red flash based on multiplier, then clear
+		var flash_color = Color(0.3, 1.0, 0.3, 0.5) if multiplier > 1.0 else Color(0.5, 0.5, 0.5, 0.2)
+		slot_ui.set_buff_highlight(flash_color)
+		var tween = slot_ui.create_tween()
+		tween.tween_property(slot_ui.buff_rect, "color", Color.TRANSPARENT, 0.3)
 
 func _on_relic_processing_finished(_combined_multiplier: float) -> void:
 	# Ensure all highlights are cleared
 	for slot_ui in _relic_slot_uis:
-		if slot_ui.highlight_rect:
-			slot_ui.highlight_rect.color = Color.TRANSPARENT
+		slot_ui.set_buff_highlight(Color.TRANSPARENT)
 
 
 func _on_economy_changed(_event) -> void:

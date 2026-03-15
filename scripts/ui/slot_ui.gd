@@ -14,6 +14,8 @@ signal slot_type_dropped(source_slot: SlotInstance, target_slot_ui: SlotUI, sour
 signal extra_item_dropped(item_type: String, item_data: Variant, item_instance: Variant, target_slot_ui: SlotUI)
 signal modifier_dropped(modifier: SlotModifierData, target_slot_ui: SlotUI)
 signal piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI)
+signal relic_slot_dropped(relic: RelicInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
+signal relic_slot_clicked(relic: RelicInstance)
 
 # If part of the grid, this will be set.
 var grid_coord: Vector2i = Vector2i(-1, -1)
@@ -23,6 +25,11 @@ var inventory_index: int = -1
 var is_slot_type_ui: bool = false
 # Whether this slot is unlocked (can hold runes) or locked (empty space for pieces)
 var is_unlocked: bool = true
+# Whether this slot acts as a relic container
+var is_relic_slot: bool = false
+var relic_slot_index: int = 0
+var relic_panel_index: int = 0
+var _relic_instance: RelicInstance = null
 
 var rune_ui: RuneUI
 var item_ui: ItemUI  # For extra inventory items
@@ -262,7 +269,54 @@ func _on_mouse_exited() -> void:
 		tooltip_manager.hide_tooltip()
 
 
+## Handle click on relic slots to remove the relic
+func _gui_input(event: InputEvent) -> void:
+	if not is_relic_slot or not _relic_instance:
+		return
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		relic_slot_clicked.emit(_relic_instance)
+
+
+## Handle dragging relics out of relic slots
+func _get_drag_data(_at_position: Vector2) -> Variant:
+	if not is_relic_slot or not _relic_instance:
+		return null
+
+	# Check phase
+	var game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager:
+		if game_manager.current_phase == GameEnums.GamePhase.BATTLE or game_manager.current_phase == GameEnums.GamePhase.RESOLUTION:
+			return null
+
+	# Create preview
+	var preview = TextureRect.new()
+	if _relic_instance.data and _relic_instance.data.icon:
+		preview.texture = _relic_instance.data.icon
+	preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+	preview.custom_minimum_size = Vector2(48, 48)
+	preview.size = Vector2(48, 48)
+	preview.modulate = Color(1, 1, 1, 0.7)
+
+	var control = Control.new()
+	control.add_child(preview)
+	preview.position = -0.5 * preview.size
+	set_drag_preview(control)
+
+	return {
+		"source_ui": self,
+		"source_type": "relic_slot",
+		"relic_instance": _relic_instance,
+		"item_type": "relic",
+		"item_instance": _relic_instance,
+		"panel_index": relic_panel_index,
+		"slot_index": relic_slot_index
+	}
+
+
 func set_rune(rune: RuneInstance) -> void:
+	# If this is a relic slot, ignore rune set calls
+	if is_relic_slot:
+		return
 	# Clear existing UI
 	if rune_ui:
 		rune_ui.queue_free()
@@ -281,6 +335,16 @@ func set_rune(rune: RuneInstance) -> void:
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:
+		return false
+	
+	# Relic slots accept relic data only
+	if is_relic_slot:
+		if _relic_instance != null:
+			return false  # Already has a relic
+		if data.has("relic_instance") and data.relic_instance != null:
+			return true
+		if data.get("item_type") == "relic" and data.has("item_instance"):
+			return true
 		return false
 	
 	# Can drop rune instances only on UNLOCKED slots
@@ -310,8 +374,21 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	var source_ui = data.get("source_ui")
 	var source_slot_ui = null
-	if source_ui and source_ui.get_parent() is SlotUI:
+	if source_ui is SlotUI:
+		source_slot_ui = source_ui
+	elif source_ui and source_ui.get_parent() is SlotUI:
 		source_slot_ui = source_ui.get_parent()
+	
+	# Handle relic drop onto a relic slot
+	if is_relic_slot:
+		var dropped_relic: RelicInstance = null
+		if data.has("relic_instance"):
+			dropped_relic = data.relic_instance as RelicInstance
+		elif data.get("item_type") == "relic" and data.has("item_instance"):
+			dropped_relic = data.item_instance as RelicInstance
+		if dropped_relic:
+			relic_slot_dropped.emit(dropped_relic, self, source_slot_ui)
+		return
 	
 	# Handle relic drop from relic slot back to inventory
 	if data.get("source_type") == "relic_slot" and data.has("relic_instance"):
