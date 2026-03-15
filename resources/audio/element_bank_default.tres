@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="ElementSoundBank" load_steps=2 format=3 uid="uid://d3os3p4pc4jw4"]
+
+[ext_resource type="Script" uid="uid://cb3oyc08fy2hj" path="res://scripts/audio/element_sound_bank.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+pitch_scaling_enabled = false
+use_generated_notes = true

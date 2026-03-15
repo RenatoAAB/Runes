@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="SFXBank" load_steps=2 format=3 uid="uid://bmrs5avi2owo2"]
+
+[ext_resource type="Script" uid="uid://x6yt11kmbvxw" path="res://scripts/audio/sfx_bank.gd" id="1"]
+
+[resource]
+script = ExtResource("1")

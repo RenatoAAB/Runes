@@ -105,6 +105,10 @@ func setup_grid_and_reader(parent_node: Node, p_step_delay: float = -1.0) -> voi
 	reader.panel_instance = self
 	if p_step_delay >= 0.0:
 		reader.step_delay = p_step_delay
+	# Assign shared ReadingPaceConfig so dynamic speed curve is active
+	var pace_res = load("res://resources/audio/reading_pace_default.tres")
+	if pace_res:
+		reader.reading_pace = pace_res
 	parent_node.add_child(reader)
 
 

@@ -546,17 +546,21 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 	# Determine source and destination
 	print("Rune Dropped. Source: %s, Target: %s" % [source_slot_ui, target_slot_ui])
 
+	var success := false
+
 	# Case 1: Drop on Grid
 	if target_slot_ui.grid_coord != Vector2i(-1, -1):
 		if inventory_manager.has_rune(rune):
 			# Move from Inventory -> Grid (keep RuneInstance to preserve permanent buffs)
 			if grid_manager.place_rune_instance(rune, target_slot_ui.grid_coord):
 				inventory_manager.remove_rune(rune)
+				success = true
 		else:
 			# Move from Grid -> Grid (Swap/Move)
 			var source_coord = _find_rune_coord(rune)
 			if source_coord != Vector2i(-1, -1):
 				grid_manager.move_rune(source_coord, target_slot_ui.grid_coord)
+				success = true
 
 	# Case 2: Drop on Inventory (Unequip)
 	elif target_slot_ui.inventory_index != -1:
@@ -568,6 +572,12 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 			slot.remove_rune()
 			grid_manager.slot_changed.emit(source_coord)
 			inventory_manager.add_rune(rune)
+			success = true
+
+	# Notify EventBus for SFX
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		event_bus.drag_ended.emit(success)
 
 
 ## Handle modifier dropped on a grid slot

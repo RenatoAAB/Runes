@@ -21,3 +21,8 @@ extends Resource
 @export_group("Behavior")
 ## List of modular effects this rune possesses.
 @export var effects: Array[RuneEffect]
+
+@export_group("Audio")
+## Optional custom sound that overrides the elemental chord in Symphony mode.
+## When null, the rune plays the default chord based on its elements.
+@export var custom_sound: AudioStream

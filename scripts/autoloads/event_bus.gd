@@ -52,6 +52,12 @@ signal round_ending()
 ## Emitted when an infinite loop is detected and broken
 signal infinite_loop_detected(event: InfiniteLoopEvent)
 
+## Emitted when a drag operation starts (for SFX)
+signal drag_started()
+
+## Emitted when a drag operation ends (for SFX)
+signal drag_ended(success: bool)
+
 # =============================================================================
 # STATE - Current battle/round tracking
 # =============================================================================

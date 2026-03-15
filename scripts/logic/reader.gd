@@ -20,11 +20,17 @@ signal relic_processing_finished(combined_multiplier: float)
 @export var step_delay: float = 0.5
 @export var relic_step_delay: float = 0.4
 
+## Shared pacing resource — controls speed curve for steps and sound note duration.
+## If null, falls back to the static step_delay value.
+@export var reading_pace: ReadingPaceConfig
+
 var is_running: bool = false
 var current_index: int = 0
 var total_score: int = 0
 var battle_context: BattleContext
 var traversal_order: Array[Vector2i] = []
+## Tracks how many activations have been processed this sequence (for speed curve)
+var _activation_count: int = 0
 
 ## Owning panel instance (optional, for relic processing)
 var panel_instance: PanelInstance = null
@@ -34,6 +40,14 @@ var event_bus: Node = null
 
 ## Infinite loop detector instance
 var loop_detector: InfiniteLoopDetector = null
+
+## Returns the step delay for the current activation count.
+## Delegates to ReadingPaceConfig if available; falls back to static step_delay.
+func _get_dynamic_step_delay() -> float:
+	if reading_pace:
+		return reading_pace.get_delay(_activation_count)
+	return step_delay
+
 
 func _ready() -> void:
 	# Try to get EventBus autoload
@@ -48,6 +62,7 @@ func start_sequence() -> void:
 	is_running = true
 	current_index = 0
 	total_score = 0
+	_activation_count = 0
 	
 	# Initialize BattleContext
 	battle_context = BattleContext.new(grid_manager)
@@ -138,8 +153,9 @@ func _process_next_step() -> void:
 		# Emit event for empty slot
 		_emit_empty_slot_event(coord, score_before)
 	
-	# Wait for visual feedback
-	await get_tree().create_timer(step_delay).timeout
+	# Wait for visual feedback (dynamic speed based on activation count)
+	var current_delay = _get_dynamic_step_delay()
+	await get_tree().create_timer(current_delay).timeout
 	
 	step_completed.emit(coord)
 	current_index += 1
@@ -233,6 +249,7 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		# Track this activation for sequence-dependent effects (e.g., last element)
 		if battle_context and activations_spent > 0:
 			battle_context.record_activation(rune, slot)
+			_activation_count += 1
 			if event_bus and event_bus.has_method("notify_rune_activated"):
 				event_bus.notify_rune_activated(slot, rune)
 			
