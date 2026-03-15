@@ -423,7 +423,13 @@ func confirm_upgrade(rune_instance: RuneInstance) -> void:
 	_finish_level_transition()
 
 func _finish_level_transition() -> void:
+	var old_level = current_level
 	current_level += 1
+	var new_target = _calculate_target_score(current_level)
+	# Emit round_advanced for juice effects before start_level updates UI
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus and event_bus.has_signal("round_advanced"):
+		event_bus.round_advanced.emit(old_level, current_level, new_target)
 	start_level()
 
 

@@ -58,6 +58,9 @@ signal drag_started()
 ## Emitted when a drag operation ends (for SFX)
 signal drag_ended(success: bool)
 
+## Emitted when the player advances to a new round/level
+signal round_advanced(old_level: int, new_level: int, new_target: int)
+
 # =============================================================================
 # STATE - Current battle/round tracking
 # =============================================================================

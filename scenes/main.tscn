@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=18 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
+[ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jbj1t"]
 animations = [{
@@ -27,7 +28,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "inventory_manager", "grid_container", "inventory_container", "relic_slots_container", "score_label", "level_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "inventory_manager", "grid_container", "inventory_container", "relic_slots_container", "score_label", "level_label", "target_value_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
 inventory_manager = NodePath("Managers/InventoryManager")
@@ -35,7 +36,8 @@ grid_container = NodePath("UI/GameUI/GridContainer")
 inventory_container = NodePath("UI/GameUI/Inventory/InventoryContainer")
 relic_slots_container = NodePath("UI/GameUI/RelicContainer")
 score_label = NodePath("UI/GameUI/ScoreLabel")
-level_label = NodePath("UI/GameUI/LevelLabel")
+level_label = NodePath("UI/GameUI/CrystalInfo/LevelLabel")
+target_value_label = NodePath("UI/GameUI/CrystalInfo/TargetValue")
 money_label = NodePath("UI/GameUI/MoneyLabel")
 panel_label = NodePath("UI/GameUI/PanelLabel")
 enter_shop_button = NodePath("UI/GameUI/EnterShopButton")
@@ -69,15 +71,15 @@ offset_right = 40.0
 offset_bottom = 40.0
 
 [node name="Background" type="AnimatedSprite2D" parent="UI/GameUI"]
-position = Vector2(319, 180)
+position = Vector2(320, 180)
 sprite_frames = SubResource("SpriteFrames_jbj1t")
 
 [node name="GridContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 205.0
-offset_top = 72.0
-offset_right = 401.0
-offset_bottom = 268.0
+offset_left = 207.0
+offset_top = 73.0
+offset_right = 403.0
+offset_bottom = 269.0
 columns = 5
 
 [node name="Slot1" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
@@ -193,10 +195,10 @@ layout_mode = 2
 
 [node name="RelicContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 206.0
-offset_top = 292.0
-offset_right = 362.0
-offset_bottom = 372.0
+offset_left = 244.0
+offset_top = 296.0
+offset_right = 400.0
+offset_bottom = 376.0
 columns = 3
 
 [node name="Slot" parent="UI/GameUI/RelicContainer" instance=ExtResource("5_ya4ey")]
@@ -241,6 +243,40 @@ offset_right = 422.0
 offset_bottom = 185.0
 text = ">"
 
+[node name="CrystalInfo" type="Control" parent="UI/GameUI"]
+anchors_preset = 0
+offset_left = 5.0
+offset_right = 45.0
+offset_bottom = 40.0
+
+[node name="LevelLabel" type="Label" parent="UI/GameUI/CrystalInfo"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 93.0
+offset_right = 94.0
+offset_bottom = 142.0
+text = "Level 1"
+label_settings = ExtResource("19_dlbl")
+
+[node name="TargetLabel" type="Label" parent="UI/GameUI/CrystalInfo"]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 119.0
+offset_right = 94.0
+offset_bottom = 168.0
+text = "Target"
+label_settings = ExtResource("19_dlbl")
+
+[node name="TargetValue" type="Label" parent="UI/GameUI/CrystalInfo"]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 140.0
+offset_right = 88.0
+offset_bottom = 189.0
+text = "1000"
+label_settings = ExtResource("19_dlbl")
+horizontal_alignment = 1
+
 [node name="ScoreLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
 offset_left = 217.0
@@ -248,15 +284,7 @@ offset_top = 18.0
 offset_right = 265.0
 offset_bottom = 67.0
 text = "Score:"
-
-[node name="LevelLabel" type="Label" parent="UI/GameUI"]
-layout_mode = 0
-offset_left = 40.0
-offset_top = 92.0
-offset_right = 88.0
-offset_bottom = 141.0
-text = "Level
-"
+label_settings = ExtResource("19_dlbl")
 
 [node name="MoneyLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
@@ -265,6 +293,7 @@ offset_top = 325.0
 offset_right = 132.0
 offset_bottom = 348.0
 text = "$0"
+label_settings = ExtResource("19_dlbl")
 
 [node name="PanelLabel" type="Label" parent="UI/GameUI"]
 layout_mode = 0
@@ -273,6 +302,7 @@ offset_top = 45.0
 offset_right = 354.0
 offset_bottom = 68.0
 text = "Panel 1/1"
+label_settings = ExtResource("19_dlbl")
 
 [node name="ShopUI" type="Control" parent="UI"]
 visible = false

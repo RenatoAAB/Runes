@@ -22,6 +22,7 @@ var reader: Reader = null
 @export var relic_slots_container: Control # Container for 3 relic slots per panel
 @export var score_label: Label
 @export var level_label: Label
+@export var target_value_label: Label
 @export var money_label: Label
 @export var panel_label: Label  # Shows current panel (e.g., "Panel 1/3")
 @export var enter_shop_button: Button
@@ -145,9 +146,22 @@ func _ready() -> void:
 		game_manager.set_panel_manager(_panel_manager)
 		print("[MainController] PanelManager reference passed to GameManager")
 	
+	# Register UI references with JuiceManager
+	_register_juice_manager()
+	
 	print("[MainController] Initialization complete!")
 	# Signal that initialization is complete - GameManager waits for this
 	initialization_complete.emit()
+
+
+## Register UI node references with the JuiceManager autoload
+func _register_juice_manager() -> void:
+	var juice = get_node_or_null("/root/JuiceManager")
+	if not juice:
+		return
+	juice.register_score_label(score_label)
+	juice.register_level_labels(level_label, target_value_label)
+	juice.register_grid_ui_slots(grid_ui_slots)
 
 
 ## Refresh shop inventory (called after victory or manual reroll)
@@ -470,6 +484,11 @@ func _generate_grid_ui() -> void:
 
 	_refresh_grid_ui_from_logic()
 
+	# Update JuiceManager with new grid references
+	var juice = get_node_or_null("/root/JuiceManager")
+	if juice:
+		juice.register_grid_ui_slots(grid_ui_slots)
+
 
 func _refresh_grid_ui_from_logic() -> void:
 	if not _panel_manager:
@@ -560,7 +579,7 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 				success = true
 
 	# Case 2: Drop on Inventory (Unequip)
-	elif target_slot_ui.inventory_index != -1:
+	elif target_slot_ui.grid_coord == Vector2i(-1, -1):
 		# Move Grid -> Inventory
 		var source_coord = _find_rune_coord(rune)
 		if source_coord != Vector2i(-1, -1):
@@ -575,6 +594,14 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
 		event_bus.drag_ended.emit(success)
+
+	# Juice: drop impact or return settle
+	var juice = get_node_or_null("/root/JuiceManager")
+	if juice:
+		if success and target_slot_ui.grid_coord != Vector2i(-1, -1):
+			juice.notify_rune_dropped_on_slot(target_slot_ui)
+		elif not success or target_slot_ui.grid_coord == Vector2i(-1, -1):
+			juice.notify_rune_returned_to_inventory(target_slot_ui)
 
 
 ## Handle modifier dropped on a grid slot
@@ -672,7 +699,12 @@ func _on_reader_step_done(coord: Vector2i) -> void:
 
 func _on_score_updated(new_total: int) -> void:
 	if score_label:
-		score_label.text = "Score: %d" % new_total
+		# Let JuiceManager handle the text update via counting animation
+		var juice = get_node_or_null("/root/JuiceManager")
+		if juice:
+			juice.notify_score_updated(new_total)
+		else:
+			score_label.text = "Score: %d" % new_total
 
 
 ## --- Relic visual highlight callbacks ---
@@ -713,7 +745,9 @@ func _update_money_display() -> void:
 
 func _on_level_started(level: int, target: int) -> void:
 	if level_label:
-		level_label.text = "Level: %d (Target: %d)" % [level, target]
+		level_label.text = "Level %d" % level
+	if target_value_label:
+		target_value_label.text = "%d" % target
 
 
 func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:

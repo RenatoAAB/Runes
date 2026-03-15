@@ -40,7 +40,6 @@ var rarity_border: ColorRect
 var plus_label: Label
 var name_label: Label  # Fallback label showing relic name abbreviation
 var highlight_rect: ColorRect
-var type_indicator: Label  # Shows "R" for relic slot
 
 var _is_hovered: bool = false
 var _is_dragging: bool = false
@@ -68,29 +67,6 @@ func _initialize_slot_instance() -> void:
 
 
 func _setup_ui() -> void:
-	# Background
-	var style = StyleBoxFlat.new()
-	style.bg_color = empty_color
-	style.corner_radius_top_left = 8
-	style.corner_radius_top_right = 8
-	style.corner_radius_bottom_left = 8
-	style.corner_radius_bottom_right = 8
-	style.border_width_left = 2
-	style.border_width_top = 2
-	style.border_width_right = 2
-	style.border_width_bottom = 2
-	style.border_color = Color(0.5, 0.3, 0.6, 0.5)  # Purple tint for relic slots
-	add_theme_stylebox_override("panel", style)
-	
-	# Type indicator (small "R" in corner)
-	type_indicator = Label.new()
-	type_indicator.text = "R"
-	type_indicator.add_theme_font_size_override("font_size", 10)
-	type_indicator.add_theme_color_override("font_color", Color(0.7, 0.5, 0.8, 0.6))
-	type_indicator.position = Vector2(4, 2)
-	type_indicator.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(type_indicator)
-	
 	# Rarity border
 	rarity_border = ColorRect.new()
 	rarity_border.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -181,24 +157,12 @@ func _update_visuals() -> void:
 			name_label.visible = true
 		
 		# Update background
-		var style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-		if style:
-			style.bg_color = filled_color
-			add_theme_stylebox_override("panel", style)
-		
-		# Show rarity border
 		rarity_border.color = _get_rarity_color(current_relic.data.rarity)
 	else:
 		# Show empty slot
 		plus_label.visible = true
 		icon_rect.visible = false
 		name_label.visible = false
-		
-		var style = get_theme_stylebox("panel").duplicate() as StyleBoxFlat
-		if style:
-			style.bg_color = empty_color
-			add_theme_stylebox_override("panel", style)
-		
 		rarity_border.color = Color.TRANSPARENT
 
 
