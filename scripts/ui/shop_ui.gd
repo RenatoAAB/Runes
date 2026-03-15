@@ -356,6 +356,12 @@ func _on_buy_rune_pressed(index: int) -> void:
 	if not shop_manager:
 		return
 	
+	# Check if inventory is full
+	var main_ctrl = get_tree().get_first_node_in_group("main_controller")
+	if main_ctrl and main_ctrl.is_inventory_full():
+		shop_manager.transaction_completed.emit(false, "Inventory full!")
+		return
+	
 	var rune = shop_manager.buy_rune(index)
 	if rune:
 		rune_purchased.emit(rune)
@@ -364,6 +370,11 @@ func _on_buy_rune_pressed(index: int) -> void:
 
 func _on_buy_piece_pressed(index: int) -> void:
 	if not shop_manager:
+		return
+	
+	var main_ctrl = get_tree().get_first_node_in_group("main_controller")
+	if main_ctrl and main_ctrl.is_inventory_full():
+		shop_manager.transaction_completed.emit(false, "Inventory full!")
 		return
 	
 	var piece = shop_manager.buy_piece(index)
@@ -376,6 +387,11 @@ func _on_buy_modifier_pressed(index: int) -> void:
 	if not shop_manager:
 		return
 	
+	var main_ctrl = get_tree().get_first_node_in_group("main_controller")
+	if main_ctrl and main_ctrl.is_inventory_full():
+		shop_manager.transaction_completed.emit(false, "Inventory full!")
+		return
+	
 	var modifier = shop_manager.buy_modifier(index)
 	if modifier:
 		modifier_purchased.emit(modifier)
@@ -384,6 +400,11 @@ func _on_buy_modifier_pressed(index: int) -> void:
 
 func _on_buy_relic_pressed(index: int) -> void:
 	if not shop_manager:
+		return
+	
+	var main_ctrl = get_tree().get_first_node_in_group("main_controller")
+	if main_ctrl and main_ctrl.is_inventory_full():
+		shop_manager.transaction_completed.emit(false, "Inventory full!")
 		return
 	
 	var relic = shop_manager.buy_relic(index)

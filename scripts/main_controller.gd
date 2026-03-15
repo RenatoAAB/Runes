@@ -18,8 +18,7 @@ var reader: Reader = null
 
 @export_group("UI Containers")
 @export var grid_container: Control # GridContainer
-@export var inventory_container: Control # HBoxContainer or GridContainer
-@export var other_inventory_container: Control # For relics, etc.
+@export var inventory_container: Control # Single container for runes + extra items
 @export var relic_slots_container: Control # Container for 3 relic slots per panel
 @export var score_label: Label
 @export var level_label: Label
@@ -490,20 +489,22 @@ func _refresh_grid_ui_from_logic() -> void:
 			slot_ui.set_rune(null)
 
 func _generate_inventory_ui() -> void:
-	for child in inventory_container.get_children():
-		child.queue_free()
 	inventory_ui_slots.clear()
 	
-	# Create fixed number of inventory slots
-	for i in range(inventory_manager.max_slots):
-		var slot_ui = _create_slot_ui()
-		inventory_container.add_child(slot_ui)
-		# Apply default tooltip settings if available
+	# Use the existing slots from the scene
+	for slot_node in inventory_container.get_children():
+		var slot_ui = slot_node as SlotUI
+		if not slot_ui:
+			continue
+		
 		if default_tooltip_label_settings:
 			slot_ui.tooltip_label_settings = default_tooltip_label_settings
 		
-		slot_ui.inventory_index = i
-		slot_ui.rune_dropped.connect(_on_rune_dropped)
+		# Connect signals
+		if not slot_ui.rune_dropped.is_connected(_on_rune_dropped):
+			slot_ui.rune_dropped.connect(_on_rune_dropped)
+		if not slot_ui.extra_item_dropped.is_connected(_on_extra_item_returned):
+			slot_ui.extra_item_dropped.connect(_on_extra_item_returned)
 		
 		inventory_ui_slots.append(slot_ui)
 
@@ -528,11 +529,7 @@ func _create_slot_ui() -> SlotUI:
 # --- Signal Handlers ---
 
 func _on_inventory_updated() -> void:
-	# Refresh all inventory slots
-	for i in range(inventory_ui_slots.size()):
-		var slot_ui = inventory_ui_slots[i]
-		var rune = inventory_manager.get_rune_at(i)
-		slot_ui.set_rune(rune)
+	_update_other_inventory_display()
 
 func _on_grid_slot_changed(coord: Vector2i) -> void:
 	if grid_ui_slots.has(coord):
@@ -789,11 +786,9 @@ func _show_shop() -> void:
 	if relic_slots_container:
 		relic_slots_container.visible = false
 	
-	# Keep inventory containers visible
+	# Keep inventory container visible
 	if inventory_container:
 		inventory_container.visible = true
-	if other_inventory_container:
-		other_inventory_container.visible = true
 	
 	# Keep money label visible
 	if money_label:
@@ -857,11 +852,9 @@ func _hide_shop() -> void:
 	if relic_slots_container:
 		relic_slots_container.visible = true
 	
-	# Keep inventory containers visible (they're always visible)
+	# Keep inventory container visible (always visible)
 	if inventory_container:
 		inventory_container.visible = true
-	if other_inventory_container:
-		other_inventory_container.visible = true
 	
 	# Keep money label visible
 	if money_label:
@@ -941,45 +934,61 @@ func _remove_stats_display() -> void:
 		_stats_display = null
 
 
+## Check if the shared inventory is full (runes + extra items >= available UI slots)
+func is_inventory_full() -> bool:
+	var total_items: int = inventory_manager.get_rune_count()
+	if _extra_inventory:
+		total_items += _extra_inventory.relics.size()
+		total_items += _extra_inventory.modifiers.size()
+		total_items += _extra_inventory.slot_pieces.size()
+	return total_items >= inventory_ui_slots.size()
+
+
 # --- Extra Inventory (Pieces, Modifiers, Relics) Display ---
 
 func _on_extra_inventory_updated() -> void:
 	_update_other_inventory_display()
 
 
-## Update OtherInventoryContainer to show items from ExtraInventory
+## Update InventoryContainer to show runes and extra items from both inventories
 func _update_other_inventory_display() -> void:
-	if not other_inventory_container or not _extra_inventory:
+	if inventory_ui_slots.is_empty():
 		return
 	
-	var slots = other_inventory_container.get_children()
+	# Collect rune items from InventoryManager
+	var all_items: Array = []  # {type: "rune"/"relic"/"modifier"/"piece", ...}
 	
-	# Collect all extra items
-	var items: Array = []  # {type: "relic"/"modifier"/"piece", data: ..., instance: ...}
+	for i in range(inventory_manager.max_slots):
+		var rune = inventory_manager.get_rune_at(i)
+		if rune:
+			all_items.append({"type": "rune", "instance": rune, "inventory_index": i})
 	
-	for relic in _extra_inventory.relics:
-		items.append({"type": "relic", "instance": relic, "data": relic.data})
-	
-	for modifier in _extra_inventory.modifiers:
-		items.append({"type": "modifier", "instance": null, "data": modifier})
-	
-	for piece in _extra_inventory.slot_pieces:
-		items.append({"type": "piece", "instance": piece, "data": piece.data})
-	
-	# Display items in slots using ItemUI
-	for i in range(slots.size()):
-		var slot_ui = slots[i] as SlotUI
-		if not slot_ui:
-			continue
+	# Collect extra items from ExtraInventory
+	if _extra_inventory:
+		for relic in _extra_inventory.relics:
+			all_items.append({"type": "relic", "instance": relic, "data": relic.data})
 		
-		# Connect signal for relic drop from relic slot back to inventory (only once)
-		if not slot_ui.extra_item_dropped.is_connected(_on_extra_item_returned):
-			slot_ui.extra_item_dropped.connect(_on_extra_item_returned)
+		for modifier in _extra_inventory.modifiers:
+			all_items.append({"type": "modifier", "instance": null, "data": modifier})
 		
-		if i < items.size():
-			var item = items[i]
-			slot_ui.set_extra_item(item.type, item.data, item.instance)
+		for piece in _extra_inventory.slot_pieces:
+			all_items.append({"type": "piece", "instance": piece, "data": piece.data})
+	
+	# Display items in inventory slots
+	for i in range(inventory_ui_slots.size()):
+		var slot_ui = inventory_ui_slots[i]
+		
+		if i < all_items.size():
+			var item = all_items[i]
+			if item.type == "rune":
+				slot_ui.inventory_index = item.inventory_index
+				slot_ui.set_rune(item.instance)
+			else:
+				slot_ui.inventory_index = -1
+				slot_ui.set_extra_item(item.type, item.data, item.instance)
 		else:
+			slot_ui.inventory_index = -1
+			slot_ui.set_rune(null)
 			slot_ui.clear_display()
 
 
