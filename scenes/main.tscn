@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=16 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -7,9 +7,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="7_a8y0u"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" uid="uid://bpgga3tetlmun" path="res://resources/runes/common/rune_water.tres" id="8_jkv2x"]
 [ext_resource type="Texture2D" uid="uid://dbxqkcl5ugwy3" path="res://sprites/scenes/painel-runico-v7.png" id="11_jkv2x"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
@@ -55,7 +53,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("16_og1vs"), ExtResource("7_a8y0u"), ExtResource("7_a8y0u"), ExtResource("7_a8y0u"), ExtResource("8_jkv2x"), ExtResource("8_jkv2x"), ExtResource("8_jkv2x"), ExtResource("8_jkv2x")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("16_og1vs")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]

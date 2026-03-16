@@ -302,6 +302,11 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	preview.position = -0.5 * preview.size
 	set_drag_preview(control)
 
+	# Start breathing animation on the preview
+	var juice = get_node_or_null("/root/JuiceManager")
+	if juice:
+		juice.start_breathing_on_preview(preview)
+
 	return {
 		"source_ui": self,
 		"source_type": "relic_slot",

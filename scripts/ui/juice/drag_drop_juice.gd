@@ -5,71 +5,50 @@ extends Node
 
 var _config: JuiceConfig
 var _breathing_tween: Tween = null
+var _breathing_target: Control = null
 
 
 func setup(config: JuiceConfig) -> void:
 	_config = config
 
 
-## Called when a drag operation starts. Finds the drag preview and applies breathing.
-func on_drag_started() -> void:
-	if not _config:
+## Start breathing animation on a drag preview node.
+func start_breathing(preview: Control) -> void:
+	if not _config or not preview:
 		return
-	# The breathing is applied lazily in _process when the preview is available
-	set_process(true)
-	_breathing_tween = null
+	_stop_breathing()
+	_breathing_target = preview
+	preview.pivot_offset = preview.size / 2.0
+	_breathing_tween = preview.create_tween()
+	_breathing_tween.set_loops()
+	var s = _config.drag_breathing_scale
+	var half_dur = _config.drag_breathing_duration * 0.5
+	_breathing_tween.tween_property(
+		preview, "scale",
+		Vector2(s, s),
+		half_dur
+	).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
+	_breathing_tween.tween_property(
+		preview, "scale",
+		Vector2.ONE,
+		half_dur
+	).set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
 
 
 ## Called when a drag operation ends.
 func on_drag_ended(success: bool) -> void:
-	set_process(false)
 	_stop_breathing()
-
-	if not _config:
-		return
-
-	if success:
-		_play_drop_impact()
-	else:
-		_play_return_settle()
 
 
 func _ready() -> void:
-	set_process(false)
-
-
-func _process(_delta: float) -> void:
-	# Try to find the drag preview and apply breathing if we haven't yet
-	if _breathing_tween and _breathing_tween.is_valid():
-		return  # Already breathing
-
-	var viewport = get_viewport()
-	if not viewport:
-		return
-
-	# Godot's drag preview is set via set_drag_preview, which is a child of the viewport's drag preview control
-	# We can't directly access it, but we can find RuneUI nodes that are being dragged
-	# Instead, we'll skip breathing on the preview (it's transient) and focus on drop effects
-	# The breathing effect is best applied by the RuneUI._get_drag_data itself
-	set_process(false)
+	pass
 
 
 func _stop_breathing() -> void:
 	if _breathing_tween and _breathing_tween.is_valid():
 		_breathing_tween.kill()
 	_breathing_tween = null
-
-
-## Play impact animation on the SlotUI that just received the rune
-func _play_drop_impact() -> void:
-	# Find the slot that was just dropped on - we get notified via EventBus
-	# The actual slot target is handled by on_rune_placed_in_slot
-	pass
-
-
-## Play gentle settle on inventory slots when rune is returned
-func _play_return_settle() -> void:
-	pass
+	_breathing_target = null
 
 
 ## Called by JuiceManager when a rune is placed in a grid slot (drop impact)

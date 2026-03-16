@@ -57,9 +57,7 @@ func _connect_event_bus() -> void:
 		push_warning("[JuiceManager] EventBus not found — some juice effects disabled")
 		return
 
-	# Drag & Drop
-	if event_bus.has_signal("drag_started"):
-		event_bus.drag_started.connect(_on_drag_started)
+	# Drag & Drop (only need drag_ended for cleanup)
 	if event_bus.has_signal("drag_ended"):
 		event_bus.drag_ended.connect(_on_drag_ended)
 
@@ -120,14 +118,15 @@ func notify_score_updated(new_total: int) -> void:
 		_score_juice.on_score_updated(new_total)
 
 
+## Called by RuneUI._get_drag_data to start breathing on the drag preview
+func start_breathing_on_preview(preview: Control) -> void:
+	if _drag_drop_juice:
+		_drag_drop_juice.start_breathing(preview)
+
+
 # =============================================================================
 # SIGNAL HANDLERS
 # =============================================================================
-
-func _on_drag_started() -> void:
-	if _drag_drop_juice:
-		_drag_drop_juice.on_drag_started()
-
 
 func _on_drag_ended(success: bool) -> void:
 	if _drag_drop_juice:

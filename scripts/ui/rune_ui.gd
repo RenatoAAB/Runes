@@ -138,6 +138,11 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 	preview.position = -0.5 * size
 	set_drag_preview(control)
 	
+	# Start breathing animation on the preview
+	var juice = get_node_or_null("/root/JuiceManager")
+	if juice:
+		juice.start_breathing_on_preview(preview)
+	
 	# Return data dictionary
 	return {
 		"source_ui": self,
