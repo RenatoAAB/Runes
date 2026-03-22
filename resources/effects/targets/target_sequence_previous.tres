@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="TargetSequence" load_steps=2 format=3 uid="uid://bgcou78o80wx6"]
-
-[ext_resource type="Script" uid="uid://bvced2a3hxdkj" path="res://scripts/data/effects/targets/target_sequence.gd" id="1_seq"]
-
-[resource]
-script = ExtResource("1_seq")
-direction = 0

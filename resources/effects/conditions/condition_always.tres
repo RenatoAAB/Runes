@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="ConditionAlways" load_steps=2 format=3 uid="uid://g3tyvvr22v14"]
-
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="1_njw1l"]
-
-[resource]
-script = ExtResource("1_njw1l")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"

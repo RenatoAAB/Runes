@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="TargetSelf" load_steps=2 format=3 uid="uid://16yatdx658me"]
-
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="1_6wyns"]
-
-[resource]
-script = ExtResource("1_6wyns")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"

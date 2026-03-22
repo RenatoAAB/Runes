@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="PayloadAddPermanentScoreLastSequence" load_steps=2 format=3 uid="uid://bmhtsu1q7g5qx"]
-
-[ext_resource type="Script" uid="uid://6ngf2i6xrdlq" path="res://scripts/data/effects/payloads/payload_add_permanent_score_last_sequence.gd" id="1_payload"]
-
-[resource]
-script = ExtResource("1_payload")
-amount = 10

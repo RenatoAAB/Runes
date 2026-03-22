@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="ConditionLastNSameElement" load_steps=2 format=3 uid="uid://c457yhufia0cy"]
-
-[ext_resource type="Script" uid="uid://n5j2wtgkw3nn" path="res://scripts/data/effects/conditions/condition_last_n_same_element.gd" id="1_cond"]
-
-[resource]
-script = ExtResource("1_cond")
-activation_count = 5
