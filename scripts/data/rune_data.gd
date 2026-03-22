@@ -20,7 +20,9 @@ extends Resource
 
 @export_group("Behavior")
 ## List of modular effects this rune possesses.
-@export var effects: Array[RuneEffect]
+@export var effects: Array[GameEffect] = []
+## Optional manual tooltip text. When set, replaces auto-generated effect descriptions.
+@export_multiline var description_override: String = ""
 
 @export_group("Audio")
 ## Optional custom sound that overrides the elemental chord in Symphony mode.

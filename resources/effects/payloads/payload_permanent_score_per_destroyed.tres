@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="PayloadAddPermanentScorePerDestroyed" load_steps=2 format=3 uid="uid://h4bp36d88o5f"]
-
-[ext_resource type="Script" uid="uid://dnwch1tselomr" path="res://scripts/data/effects/payloads/payload_add_permanent_score_per_destroyed.gd" id="1_payload"]
-
-[resource]
-script = ExtResource("1_payload")
-amount_per_rune = 30

@@ -134,4 +134,5 @@ func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
 			# ON_READ executes during the rune's own activation; other triggers are handled by EventBus
 			if effect.trigger != GameEnums.EffectTrigger.ON_READ:
 				continue
-			effect.execute(self, context, my_slot)
+			var ctx = EffectContext.new(self, my_slot, context)
+			effect.execute(ctx)

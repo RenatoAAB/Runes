@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="TargetAdjacent" load_steps=2 format=3 uid="uid://dor0piyxrw5d8"]
-
-[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="1_dlgbt"]
-
-[resource]
-script = ExtResource("1_dlgbt")
-metadata/_custom_type_script = "uid://dcsjurfbgmtve"

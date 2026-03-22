@@ -1,31 +1,16 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=10 format=3 uid="uid://ku8l814wlnyq"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://ku8l814wlnyq"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="2_cond_always"]
-[ext_resource type="Resource" path="res://resources/effects/conditions/condition_water_adjacent.tres" id="2_cond_water"]
-[ext_resource type="Resource" uid="uid://dor0piyxrw5d8" path="res://resources/effects/targets/target_adjacent.tres" id="3_target_adjacent"]
-[ext_resource type="Resource" uid="uid://bgelfn0dgvex1" path="res://resources/effects/payloads/payload_trigger_next.tres" id="4_payload_trigger"]
-[ext_resource type="Texture2D" uid="uid://du3ing3fp8a4l" path="res://sprites/icons/runes/Icon12.png" id="7_npaa6"]
-
-[sub_resource type="Resource" id="EffectBase"]
-script = ExtResource("1_effect")
-condition = ExtResource("2_cond_always")
-target = ExtResource("3_target_adjacent")
-payload = ExtResource("4_payload_trigger")
-
-[sub_resource type="Resource" id="EffectWater"]
-script = ExtResource("1_effect")
-condition = ExtResource("2_cond_water")
-target = ExtResource("3_target_adjacent")
-payload = ExtResource("4_payload_trigger")
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_trigger_adjacent.tres" id="2_e1"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_trigger_adjacent_if_water.tres" id="3_e2"]
+[ext_resource type="Texture2D" uid="uid://du3ing3fp8a4l" path="res://sprites/icons/runes/Icon12.png" id="4_tex"]
 
 [resource]
 script = ExtResource("1_data")
 id = "lightning"
 rune_name = "Raio"
-description = "Ativa runas adjacentes 1 vez; se adjacente a Água, repete."
+description = "Ativa runas adjacentes 1 vez; se adjacente a Agua, repete."
 rarity = 1
 elements = Array[int]([0, 3])
-textures = Array[Texture2D]([ExtResource("7_npaa6")])
-effects = Array[ExtResource("1_effect")]([SubResource("EffectBase"), SubResource("EffectWater")])
+textures = Array[Texture2D]([ExtResource("4_tex")])
+effects = [ExtResource("2_e1"), ExtResource("3_e2")]

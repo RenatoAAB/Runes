@@ -1,6 +1,0 @@
-[gd_resource type="Resource" script_class="ConditionPreviousEffectSucceeded" load_steps=2 format=3 uid="uid://dplgqj7xshw8d"]
-
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_previous_effect_succeeded.gd" id="1_bcdef"]
-
-[resource]
-script = ExtResource("1_bcdef")

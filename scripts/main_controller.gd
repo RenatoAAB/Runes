@@ -113,6 +113,7 @@ func _ready() -> void:
 	if grid_highlighter:
 		grid_highlighter.request_multi_effect_highlight.connect(_on_request_multi_effect_highlight)
 		grid_highlighter.request_condition_highlight.connect(_on_request_condition_highlight)
+		grid_highlighter.request_value_source_highlight.connect(_on_request_value_source_highlight)
 	
 	# Connect Enter Shop button from GameUI
 	if enter_shop_button and not enter_shop_button.pressed.is_connected(_on_enter_shop_pressed):
@@ -448,6 +449,11 @@ func _on_request_multi_effect_highlight(coord: Vector2i, effect_indices: Array) 
 func _on_request_condition_highlight(coord: Vector2i, has_condition: bool) -> void:
 	if grid_ui_slots.has(coord):
 		grid_ui_slots[coord].set_condition_highlight(has_condition)
+
+## Handles value source highlight requests from GridHighlighter.
+func _on_request_value_source_highlight(coord: Vector2i, effect_indices: Array) -> void:
+	if grid_ui_slots.has(coord):
+		grid_ui_slots[coord].set_value_source_highlight(effect_indices)
 
 # --- UI Generation ---
 

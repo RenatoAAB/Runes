@@ -1,47 +1,16 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=15 format=3 uid="uid://c45euh0d5cuc1"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://c45euh0d5cuc1"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="2_effect"]
-[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="3_cond_always"]
-[ext_resource type="Resource" uid="uid://16yatdx658me" path="res://resources/effects/targets/target_self.tres" id="4_target_self"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="5_bcdi7"]
-[ext_resource type="Resource" uid="uid://dkwnthnmmqlll" path="res://resources/effects/payloads/payload_permanent_score_from_history.tres" id="5_payload_history"]
-[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="6_jv7qb"]
-[ext_resource type="Texture2D" uid="uid://dcxf7yfnk5rub" path="res://sprites/icons/runes/Icon39.png" id="6_rsi3p"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="7_tbtid"]
-
-[sub_resource type="Resource" id="EffectMachine"]
-script = ExtResource("2_effect")
-condition = ExtResource("3_cond_always")
-target = ExtResource("4_target_self")
-payload = ExtResource("5_payload_history")
-
-[sub_resource type="Resource" id="Resource_853ui"]
-script = ExtResource("5_bcdi7")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
-
-[sub_resource type="Resource" id="Resource_6nmcv"]
-script = ExtResource("6_jv7qb")
-score_amount = 1
-metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
-
-[sub_resource type="Resource" id="Resource_unnws"]
-script = ExtResource("7_tbtid")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
-
-[sub_resource type="Resource" id="Resource_o5m6k"]
-script = ExtResource("2_effect")
-condition = SubResource("Resource_853ui")
-target = SubResource("Resource_unnws")
-payload = SubResource("Resource_6nmcv")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_permanent_score_from_history.tres" id="2_e1"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_1.tres" id="3_e2"]
+[ext_resource type="Texture2D" uid="uid://dcxf7yfnk5rub" path="res://sprites/icons/runes/Icon39.png" id="4_tex"]
 
 [resource]
 script = ExtResource("1_data")
 id = "machine"
-rune_name = "Máquina"
-description = "+1 ponto permanente por ativação anterior nesta rodada e -1 permanente por runa única já ativada."
+rune_name = "Maquina"
+description = "+1 ponto permanente por ativacao anterior nesta rodada e -1 permanente por runa unica ja ativada."
 rarity = 3
 elements = Array[int]([0, 1, 2, 3])
-textures = Array[Texture2D]([ExtResource("6_rsi3p")])
-effects = Array[ExtResource("2_effect")]([SubResource("EffectMachine"), SubResource("Resource_o5m6k")])
+textures = Array[Texture2D]([ExtResource("4_tex")])
+effects = [ExtResource("2_e1"), ExtResource("3_e2")]

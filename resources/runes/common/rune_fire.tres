@@ -1,37 +1,15 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=12 format=3 uid="uid://c6gjg03cc4ok1"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://c6gjg03cc4ok1"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_desgx"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_n8tac"]
-[ext_resource type="Resource" uid="uid://ddf4kna80wr76" path="res://resources/effects/effect_score_20_if_last_fire.tres" id="3_effect2"]
-[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_prj2q"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_33xod"]
-[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="7_4uy6w"]
-
-[sub_resource type="Resource" id="Resource_sqnvf"]
-script = ExtResource("2_n8tac")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
-
-[sub_resource type="Resource" id="Resource_lfdug"]
-script = ExtResource("3_prj2q")
-metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
-
-[sub_resource type="Resource" id="Resource_dlbrf"]
-script = ExtResource("4_33xod")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
-
-[sub_resource type="Resource" id="Resource_8gjti"]
-script = ExtResource("1_desgx")
-condition = SubResource("Resource_sqnvf")
-target = SubResource("Resource_dlbrf")
-payload = SubResource("Resource_lfdug")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_20_if_last_fire.tres" id="3_e2"]
+[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="4_tex"]
 
 [resource]
 script = ExtResource("1_data")
 id = "fire"
 rune_name = "Labareda"
-description = "+10 ponto. +20 pontos se a última runa ativada foi de Fogo."
+description = "+10 ponto. +20 pontos se a ultima runa ativada foi de Fogo."
 elements = Array[int]([0])
-textures = Array[Texture2D]([ExtResource("7_4uy6w")])
-effects = Array[ExtResource("1_desgx")]([SubResource("Resource_8gjti"), ExtResource("3_effect2")])
+textures = Array[Texture2D]([ExtResource("4_tex")])
+effects = [ExtResource("2_e1"), ExtResource("3_e2")]

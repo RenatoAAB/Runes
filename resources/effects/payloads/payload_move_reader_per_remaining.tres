@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="PayloadMoveReaderDynamic" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_move_reader_dynamic.gd" id="1_move"]
-
-[resource]
-script = ExtResource("1_move")
-mode = 2
-steps = 1

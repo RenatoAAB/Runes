@@ -22,6 +22,9 @@ const EFFECT_PALETTE = [
 const CONDITION_UI = Color(0.3, 0.9, 0.45)
 const CONDITION_GRID = Color(0.3, 0.9, 0.45, 0.3)
 
+# Value Source colors (used for value_source slot highlighting — dashed border)
+const VALUE_SOURCE_BORDER_ALPHA = 0.5
+
 # Condition state colors (for tooltip text)
 const CONDITION_MET = Color(0.3, 0.9, 0.45)      # Green - condition is satisfied
 const CONDITION_NOT_MET = Color(0.9, 0.35, 0.35)  # Red - condition not satisfied
@@ -67,3 +70,10 @@ static func colorize_text(text: String, effect_index: int) -> String:
 ## Wraps text in BBCode color tags using condition color.
 static func colorize_condition(text: String, is_met: bool, can_evaluate: bool = true) -> String:
 	return "[color=#%s]%s[/color]" % [get_condition_hex(is_met, can_evaluate), text]
+
+
+## Returns the value source border color for an effect at the given index.
+## Uses the same hue as the effect but with VALUE_SOURCE_BORDER_ALPHA opacity.
+static func get_value_source_color(index: int) -> Color:
+	var base = EFFECT_PALETTE[index % EFFECT_PALETTE.size()]["ui"]
+	return Color(base.r, base.g, base.b, VALUE_SOURCE_BORDER_ALPHA)

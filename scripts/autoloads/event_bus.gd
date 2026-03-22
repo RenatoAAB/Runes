@@ -377,7 +377,8 @@ func _process_trigger_effects(rune: RuneInstance, slot: GridSlot, trigger_type: 
 	
 	for effect in rune.data.effects:
 		if effect.trigger == trigger_type:
-			effect.execute(rune, battle_context, slot)
+			var ctx = EffectContext.new(rune, slot, battle_context)
+			effect.execute(ctx)
 
 
 ## Process ON_ADJACENT_ACTIVATED effects when a rune activates
@@ -393,8 +394,8 @@ func _process_adjacent_activation_effects(activated_slot: GridSlot, activated_ru
 		var neighbor_rune = neighbor_slot.rune
 		for effect in neighbor_rune.data.effects:
 			if effect.trigger == GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED:
-				# Check if condition involves the activated rune's element
-				effect.execute(neighbor_rune, battle_context, neighbor_slot)
+				var ctx = EffectContext.new(neighbor_rune, neighbor_slot, battle_context)
+				effect.execute(ctx)
 
 
 ## Process ON_ROUND_END effects for all runes on the grid
@@ -411,7 +412,8 @@ func _process_round_end_effects() -> void:
 		var rune = slot.rune
 		for effect in rune.data.effects:
 			if effect.trigger == GameEnums.EffectTrigger.ON_ROUND_END:
-				effect.execute(rune, battle_context, slot)
+				var ctx = EffectContext.new(rune, slot, battle_context)
+				effect.execute(ctx)
 	
 	# Process resurrections
 	battle_context.process_resurrections()
@@ -431,4 +433,5 @@ func process_round_start_effects() -> void:
 		var rune = slot.rune
 		for effect in rune.data.effects:
 			if effect.trigger == GameEnums.EffectTrigger.ON_ROUND_START:
-				effect.execute(rune, battle_context, slot)
+				var ctx = EffectContext.new(rune, slot, battle_context)
+				effect.execute(ctx)

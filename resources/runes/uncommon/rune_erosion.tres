@@ -1,48 +1,17 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=16 format=3 uid="uid://bbtjk5hmdjtik"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=6 format=3 uid="uid://bbtjk5hmdjtik"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Resource" uid="uid://g3tyvvr22v14" path="res://resources/effects/conditions/condition_always.tres" id="2_cond"]
-[ext_resource type="Resource" path="res://resources/effects/targets/target_next.tres" id="3_target_next"]
-[ext_resource type="Resource" uid="uid://16yatdx658me" path="res://resources/effects/targets/target_self.tres" id="4_target_self"]
-[ext_resource type="Script" uid="uid://bb5vxeqwdvew" path="res://scripts/data/effects/conditions/condition_previous_effect_succeeded.gd" id="5_1r4qg"]
-[ext_resource type="Resource" path="res://resources/effects/payloads/payload_destroy_adjacent.tres" id="5_payload_destroy"]
-[ext_resource type="Resource" path="res://resources/effects/payloads/payload_add_score_10.tres" id="6_payload_score"]
-[ext_resource type="Script" uid="uid://t1vniutnqm7e" path="res://scripts/data/effects/payloads/payload_add_permanent_score.gd" id="7_payload_perm"]
-[ext_resource type="Texture2D" uid="uid://bk2u5koeddaeq" path="res://sprites/icons/runes/Icon35.png" id="10_sjef2"]
-
-[sub_resource type="Resource" id="EffectDestroy"]
-script = ExtResource("1_effect")
-condition = ExtResource("2_cond")
-target = ExtResource("3_target_next")
-payload = ExtResource("5_payload_destroy")
-
-[sub_resource type="Resource" id="Resource_m3vdb"]
-script = ExtResource("5_1r4qg")
-metadata/_custom_type_script = "uid://bb5vxeqwdvew"
-
-[sub_resource type="Resource" id="PayloadPermanent"]
-script = ExtResource("7_payload_perm")
-amount = 30
-
-[sub_resource type="Resource" id="EffectPermanent"]
-script = ExtResource("1_effect")
-condition = SubResource("Resource_m3vdb")
-target = ExtResource("4_target_self")
-payload = SubResource("PayloadPermanent")
-
-[sub_resource type="Resource" id="EffectScore"]
-script = ExtResource("1_effect")
-condition = ExtResource("2_cond")
-target = ExtResource("4_target_self")
-payload = ExtResource("6_payload_score")
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_destroy_next.tres" id="2_e1"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_permanent_30_if_previous_effect.tres" id="3_e2"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_10.tres" id="4_e3"]
+[ext_resource type="Texture2D" uid="uid://bk2u5koeddaeq" path="res://sprites/icons/runes/Icon35.png" id="5_tex"]
 
 [resource]
 script = ExtResource("1_data")
 id = "erosion"
 rune_name = "Erosao"
-description = "Destrói a runa seguinte, ganha +30 pontos permanentes; +10 pontos."
+description = "Destroi a runa seguinte, ganha +30 pontos permanentes; +10 pontos."
 rarity = 1
 elements = Array[int]([3, 2])
-textures = Array[Texture2D]([ExtResource("10_sjef2")])
-effects = Array[ExtResource("1_effect")]([SubResource("EffectDestroy"), SubResource("EffectPermanent"), SubResource("EffectScore")])
+textures = Array[Texture2D]([ExtResource("5_tex")])
+effects = [ExtResource("2_e1"), ExtResource("3_e2"), ExtResource("4_e3")]

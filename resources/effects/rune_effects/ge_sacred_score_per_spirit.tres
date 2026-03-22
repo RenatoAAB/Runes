@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="2_sel"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_score_per_element_history.gd" id="3_act"]
+
+[sub_resource type="Resource" id="action"]
+script = ExtResource("3_act")
+element = 4
+score_per_rune = 20
+
+[resource]
+script = ExtResource("1_ge")
+trigger = 0
+selector = ExtResource("2_sel")
+action = SubResource("action")

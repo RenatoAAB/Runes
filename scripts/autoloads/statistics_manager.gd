@@ -12,6 +12,10 @@ const SAVE_PATH = "user://statistics.json"
 
 var battle: Dictionary = {}
 
+# Previous round per-rune data (snapshotted before reset)
+var _previous_round_score_by_rune: Dictionary = {}
+var _previous_round_activations_by_rune: Dictionary = {}
+
 func _reset_battle_stats() -> void:
 	battle = {
 		"started_at": Time.get_ticks_msec(),
@@ -112,6 +116,9 @@ func _notification(what: int) -> void:
 # =============================================================================
 
 func _on_battle_started(_panel_count: int) -> void:
+	# Snapshot current round data before reset
+	_previous_round_score_by_rune = battle.get("score_by_rune", {}).duplicate()
+	_previous_round_activations_by_rune = battle.get("activations_by_rune", {}).duplicate()
 	_reset_battle_stats()
 
 
@@ -281,6 +288,16 @@ func get_battle_score_for_rune(rune_id: String) -> int:
 ## Get activations for a rune in current battle
 func get_battle_activations_for_rune(rune_id: String) -> int:
 	return battle["activations_by_rune"].get(rune_id, 0)
+
+
+## Get score contributed by a rune in the previous round
+func get_previous_round_score_for_rune(rune_id: String) -> int:
+	return _previous_round_score_by_rune.get(rune_id, 0)
+
+
+## Get activations for a rune in the previous round
+func get_previous_round_activations_for_rune(rune_id: String) -> int:
+	return _previous_round_activations_by_rune.get(rune_id, 0)
 
 
 ## Get total activations for an element in current battle

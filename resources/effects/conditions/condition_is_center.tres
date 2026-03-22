@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="ConditionGridPosition" load_steps=2 format=3 uid="uid://cc8id3omxqcmt"]
-
-[ext_resource type="Script" uid="uid://cvsye27cmvyve" path="res://scripts/data/effects/conditions/condition_grid_position.gd" id="1_cond"]
-
-[resource]
-script = ExtResource("1_cond")
-position_type = 2

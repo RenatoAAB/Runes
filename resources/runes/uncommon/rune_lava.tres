@@ -1,69 +1,17 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=19 format=3 uid="uid://cinxv3ffxhab6"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=6 format=3 uid="uid://cinxv3ffxhab6"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_cond"]
-[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="3_target_adjacent"]
-[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_ttekr"]
-[ext_resource type="Script" uid="uid://cib1amkuncr6n" path="res://scripts/data/effects/payloads/payload_score_per_element.gd" id="4_payload_elem"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_xgh26"]
-[ext_resource type="Texture2D" uid="uid://yiofifoch6f2" path="res://sprites/icons/runes/Icon6.png" id="6_spgtf"]
-
-[sub_resource type="Resource" id="Resource_dcto0"]
-script = ExtResource("2_cond")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
-
-[sub_resource type="Resource" id="Resource_2xkco"]
-script = ExtResource("3_ttekr")
-metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
-
-[sub_resource type="Resource" id="Resource_bue7t"]
-script = ExtResource("4_xgh26")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
-
-[sub_resource type="Resource" id="Resource_pkldd"]
-script = ExtResource("1_effect")
-condition = SubResource("Resource_dcto0")
-target = SubResource("Resource_bue7t")
-payload = SubResource("Resource_2xkco")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
-
-[sub_resource type="Resource" id="CondAlways"]
-script = ExtResource("2_cond")
-
-[sub_resource type="Resource" id="PayloadFireEarth"]
-script = ExtResource("4_payload_elem")
-score_per_match = 5
-target_elements = Array[int]([0, 2])
-is_permanent = true
-
-[sub_resource type="Resource" id="TargetAdjacent"]
-script = ExtResource("3_target_adjacent")
-
-[sub_resource type="Resource" id="EffectFireEarth"]
-script = ExtResource("1_effect")
-condition = SubResource("CondAlways")
-target = SubResource("TargetAdjacent")
-payload = SubResource("PayloadFireEarth")
-
-[sub_resource type="Resource" id="PayloadWater"]
-script = ExtResource("4_payload_elem")
-score_per_match = -5
-target_elements = Array[int]([1])
-is_permanent = true
-
-[sub_resource type="Resource" id="EffectWater"]
-script = ExtResource("1_effect")
-condition = SubResource("CondAlways")
-target = SubResource("TargetAdjacent")
-payload = SubResource("PayloadWater")
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_permanent_5_per_fire_earth_adjacent.tres" id="3_e2"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_permanent_minus5_per_water_adjacent.tres" id="4_e3"]
+[ext_resource type="Texture2D" uid="uid://yiofifoch6f2" path="res://sprites/icons/runes/Icon6.png" id="5_tex"]
 
 [resource]
 script = ExtResource("1_data")
 id = "lava"
 rune_name = "Lava"
-description = "+5 pontos permanentes por Fogo ou Terra adjacentes; -5 permanentes por Água adjacente."
+description = "+5 pontos permanentes por Fogo ou Terra adjacentes; -5 permanentes por Agua adjacente."
 rarity = 1
 elements = Array[int]([0, 2])
-textures = Array[Texture2D]([ExtResource("6_spgtf")])
-effects = Array[ExtResource("1_effect")]([SubResource("Resource_pkldd"), SubResource("EffectFireEarth"), SubResource("EffectWater")])
+textures = Array[Texture2D]([ExtResource("5_tex")])
+effects = Array[Resource]([ExtResource("2_e1"), ExtResource("3_e2"), ExtResource("4_e3")])

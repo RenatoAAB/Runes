@@ -1,0 +1,29 @@
+# Effect System Migration Progress
+
+## Phase 8 Status (as of latest session)
+
+### Completed
+- **8.1-8.3**: Shared building blocks created (34 .tres files)
+  - 11 selectors in `resources/effects/shared/selectors/`
+  - 7 filters in `resources/effects/shared/filters/`
+  - 16 conditions in `resources/effects/shared/conditions/`
+- **8.4**: Dual support code in RuneData, RuneInstance, EventBus, Reader
+- **8.5**: 45 GameEffect .tres generated in `resources/effects/rune_effects/`
+- **8.6**: 44 rune .tres files updated to reference new GameEffect files
+- **8.7-8.9**: N/A - slot modifiers, relics, residues don't use effects array
+
+### Not migrated (remain as RuneEffect via dual support)
+- `effect_empathy_repeat_previous` - needs new ActionCopyEffects
+- `effect_multiply_self_permanent` - needs new ActionMultiplySelfScore
+- `effect_mundo_permanent_created` - needs ActionComposite
+- `effect_sacred_spirit_bonus` - needs custom spirit count
+
+### Key architectural decisions
+- `RuneData.effects` changed from `Array[RuneEffect]` to `Array[Resource]`
+- Typed arrays in .tres stripped to untyped for GameEffect compatibility
+- UIDs stripped from ext_resource lines pointing to new GameEffect files
+- Migration tools in `tools/` directory
+
+### Next phases
+- Phase 9: Integration verification (manual testing in Godot with EffectLogger)
+- Phase 10: Cleanup legacy code (delete old payloads, targets, conditions)

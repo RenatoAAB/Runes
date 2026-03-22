@@ -1,15 +1,14 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://ir0f66cvciev"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=4 format=3 uid="uid://ir0f66cvciev"]
 
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_5cp4k"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" uid="uid://c0ly66h5doetj" path="res://resources/effects/effect_score_per_earth_adjacent.tres" id="2_effect"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_per_earth_adjacent.tres" id="2_effect"]
 [ext_resource type="Texture2D" uid="uid://b3ops18n02b73" path="res://sprites/icons/runes/Icon13.png" id="4_srco0"]
 
 [resource]
 script = ExtResource("1_data")
 id = "bone"
 rune_name = "Osso"
-description = "+10 pontos por runa de Terra ou Água adjacente"
+description = "+10 pontos por runa de Terra ou Ãgua adjacente"
 elements = Array[int]([2])
 textures = Array[Texture2D]([ExtResource("4_srco0")])
-effects = Array[ExtResource("1_5cp4k")]([ExtResource("2_effect")])
+effects = [ExtResource("2_effect")]

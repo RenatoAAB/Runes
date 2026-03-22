@@ -1,0 +1,48 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="2_sel"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_composite.gd" id="3_composite"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_score.gd" id="4_score"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_buff_activation.gd" id="5_buff"]
+[ext_resource type="Script" path="res://scripts/effects/value_resolver.gd" id="6_vr"]
+[ext_resource type="Script" path="res://scripts/effects/value_per.gd" id="7_vp"]
+
+[sub_resource type="Resource" id="vp_score"]
+script = ExtResource("7_vp")
+source = 9
+per_value = 20.0
+
+[sub_resource type="Resource" id="vr_score"]
+script = ExtResource("6_vr")
+per = [SubResource("vp_score")]
+
+[sub_resource type="Resource" id="act_score"]
+script = ExtResource("4_score")
+value = SubResource("vr_score")
+is_permanent = true
+apply_mode = 0
+
+[sub_resource type="Resource" id="vp_activation"]
+script = ExtResource("7_vp")
+source = 9
+per_value = 1.0
+
+[sub_resource type="Resource" id="vr_activation"]
+script = ExtResource("6_vr")
+per = [SubResource("vp_activation")]
+
+[sub_resource type="Resource" id="act_buff"]
+script = ExtResource("5_buff")
+value = SubResource("vr_activation")
+is_permanent = true
+
+[sub_resource type="Resource" id="action"]
+script = ExtResource("3_composite")
+actions = [SubResource("act_score"), SubResource("act_buff")]
+
+[resource]
+script = ExtResource("1_ge")
+trigger = 0
+selector = ExtResource("2_sel")
+action = SubResource("action")

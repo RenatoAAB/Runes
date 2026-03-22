@@ -33,7 +33,7 @@ extends Resource
 ## Maximum number of relics that can be attached
 @export var max_relics: int = 3
 ## Passive effects that apply to all activations in this panel
-@export var passive_effects: Array[RuneEffect] = []
+@export var passive_effects: Array[GameEffect] = []
 ## Panel-wide score multiplier (base value)
 @export var base_panel_multiplier: float = 1.0
 

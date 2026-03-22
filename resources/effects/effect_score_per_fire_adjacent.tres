@@ -1,6 +1,0 @@
-[gd_resource type="Resource" script_class="RuneEffect" load_steps=2 format=3 uid="uid://dbjd780yge3i6"]
-
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_effect"]
-
-[resource]
-script = ExtResource("1_effect")

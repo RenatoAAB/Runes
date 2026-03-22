@@ -1,54 +1,9 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=17 format=3 uid="uid://2s5sow7ix6xs"]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://2s5sow7ix6xs"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Script" uid="uid://dpxjxr3dyc4i0" path="res://scripts/data/rune_effect.gd" id="1_nc3s3"]
-[ext_resource type="Script" uid="uid://bdoskjkqeggr8" path="res://scripts/data/effects/conditions/condition_always.gd" id="2_iejvg"]
-[ext_resource type="Script" uid="uid://cimuoiu8ocwh6" path="res://scripts/data/effects/payloads/payload_add_score.gd" id="3_vapwb"]
-[ext_resource type="Script" uid="uid://dr6qdvixrtvt5" path="res://scripts/data/effects/targets/target_self.gd" id="4_ra41b"]
-[ext_resource type="Script" uid="uid://cib1amkuncr6n" path="res://scripts/data/effects/payloads/payload_score_per_element.gd" id="5_dtevt"]
-[ext_resource type="Script" uid="uid://dcsjurfbgmtve" path="res://scripts/data/effects/targets/target_adjacent.gd" id="6_np6rm"]
-[ext_resource type="Texture2D" uid="uid://dvihkxsbppc8n" path="res://sprites/icons/runes/Icon15.png" id="8_egy4h"]
-
-[sub_resource type="Resource" id="Resource_jy1ij"]
-script = ExtResource("2_iejvg")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
-
-[sub_resource type="Resource" id="Resource_388hs"]
-script = ExtResource("3_vapwb")
-metadata/_custom_type_script = "uid://cimuoiu8ocwh6"
-
-[sub_resource type="Resource" id="Resource_xelna"]
-script = ExtResource("4_ra41b")
-metadata/_custom_type_script = "uid://dr6qdvixrtvt5"
-
-[sub_resource type="Resource" id="Resource_1touj"]
-script = ExtResource("1_nc3s3")
-condition = SubResource("Resource_jy1ij")
-target = SubResource("Resource_xelna")
-payload = SubResource("Resource_388hs")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
-
-[sub_resource type="Resource" id="Resource_1l8t4"]
-script = ExtResource("2_iejvg")
-metadata/_custom_type_script = "uid://bdoskjkqeggr8"
-
-[sub_resource type="Resource" id="Resource_bbl6k"]
-script = ExtResource("5_dtevt")
-score_per_match = 5
-target_elements = Array[int]([2])
-is_permanent = true
-metadata/_custom_type_script = "uid://cib1amkuncr6n"
-
-[sub_resource type="Resource" id="Resource_d7333"]
-script = ExtResource("6_np6rm")
-metadata/_custom_type_script = "uid://dcsjurfbgmtve"
-
-[sub_resource type="Resource" id="Resource_nsle8"]
-script = ExtResource("1_nc3s3")
-condition = SubResource("Resource_1l8t4")
-target = SubResource("Resource_d7333")
-payload = SubResource("Resource_bbl6k")
-metadata/_custom_type_script = "uid://dpxjxr3dyc4i0"
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_permanent_5_per_earth_adjacent.tres" id="3_e2"]
+[ext_resource type="Texture2D" uid="uid://dvihkxsbppc8n" path="res://sprites/icons/runes/Icon15.png" id="4_tex"]
 
 [resource]
 script = ExtResource("1_data")
@@ -57,5 +12,5 @@ rune_name = "Cristal"
 description = "+10 pontos
 +5 pontos permanentes por terra adjacente"
 elements = Array[int]([2])
-textures = Array[Texture2D]([ExtResource("8_egy4h")])
-effects = Array[ExtResource("1_nc3s3")]([SubResource("Resource_1touj"), SubResource("Resource_nsle8")])
+textures = Array[Texture2D]([ExtResource("4_tex")])
+effects = [ExtResource("2_e1"), ExtResource("3_e2")]

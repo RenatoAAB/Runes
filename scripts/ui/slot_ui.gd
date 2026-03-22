@@ -105,6 +105,11 @@ func set_condition_highlight(has_condition: bool) -> void:
 	if multi_effect_overlay:
 		multi_effect_overlay.set_condition_highlight(has_condition)
 
+## Sets value source highlight (dashed border in effect color).
+func set_value_source_highlight(effect_indices: Array) -> void:
+	if multi_effect_overlay:
+		multi_effect_overlay.set_value_source_indices(effect_indices)
+
 ## Legacy method for backwards compatibility - converts single color to effect index.
 ## Deprecated: use set_effect_highlight instead.
 func set_highlight(color: Color) -> void:
@@ -160,105 +165,12 @@ func _on_mouse_entered() -> void:
 	if not current_slot_data:
 		return
 	
-	var text = ""
-	var slot_info = current_slot_data.get_slot_info()
+	var text = TooltipBuilder.build_slot_tooltip(current_slot_data)
 	
-	# Show slot name if not default
-	if slot_info.get("name", "Empty Slot") != "Empty Slot":
-		text += "[b]%s[/b]\n" % slot_info["name"]
-
-	# Show slot modifier effect if applied
-	if current_slot_data.slot:
-		var modifier_data = current_slot_data.slot.get_applied_modifier_data()
-		if modifier_data:
-			var effect_text = modifier_data.description
-			if effect_text.is_empty():
-				effect_text = modifier_data.get_effect_text()
-			text += "[color=silver]%s[/color]\n" % effect_text
-			if (modifier_data.id == "slot_accumulator"):
-				var perma_buff = current_slot_data.slot.get_meta("accumulator_score_bonus", 0)
-				text += "[color=yellow]Current Accumulated Buff: +%.1f[/color]\n" % perma_buff
-	
-	# Show multiplier if not 1.0
-	var mult = slot_info.get("multiplier", 1.0)
-	if mult != 1.0:
-		var mult_color = "yellow" if mult > 1.0 else "red"
-		text += "[color=%s]x%.1f Multiplier[/color]\n" % [mult_color, mult]
-	
-	# Show upgrade level if upgraded
-	var upgrade_level = slot_info.get("upgrade_level", 0)
-	if upgrade_level > 0:
-		text += "[color=cyan]Upgrade Lv.%d[/color]\n" % upgrade_level
-	
-	# Show trigger count if > 1
-	var trigger_count = slot_info.get("trigger_count", 1)
-	if trigger_count > 1:
-		text += "[color=purple]Triggers %dx[/color]\n" % trigger_count
-	
-	# Show special properties
-	if slot_info.get("preserves_charges", false):
-		text += "[color=green]Preserves Charges[/color]\n"
-	
-	if slot_info.get("protects_fragile", false):
-		text += "[color=green]Protects Fragile[/color]\n"
-	
-	if slot_info.get("is_broken", false):
-		text += "[color=red]BROKEN (x0.5)[/color]\n"
-	
-	# Show active states
-	for state_id in current_slot_data.active_states:
-		var data = current_slot_data.active_states[state_id]
-		var state_desc = _get_state_description(state_id)
-		var duration_text = "(permanent)" if data["duration"] > 9999 else "(%d turns)" % data["duration"]
-		var state_name = state_id.capitalize().replace("_", " ")
-		text += "[color=yellow]%s[/color] %s\n" % [state_name, duration_text]
-		if state_desc != "":
-			text += "%s\n" % state_desc
-		if data.get("score_bonus", 0) != 0:
-			text += "[color=cyan]+%d Score[/color]\n" % data["score_bonus"]
-		if data.get("activation_bonus", 0) != 0:
-			text += "[color=cyan]+%d Activations[/color]\n" % data["activation_bonus"]
-		if data.get("multiplier_bonus", 0.0) != 0.0:
-			text += "[color=yellow]+%.1fx Mult[/color]\n" % data["multiplier_bonus"]
-	
-	# Only show tooltip if there's content
 	if text.strip_edges().length() > 0:
 		var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 		if tooltip_manager:
 			tooltip_manager.set_slot_tooltip(text)
-
-func _get_state_description(state_id: String) -> String:
-	match state_id:
-		"petrified":
-			return "Rune cannot be moved from this slot."
-		"descompassado":
-			return "Rune is skipped on the first reader pass each round."
-		"obscurecido":
-			return "Rune has no elements while in this slot."
-		"desestabilizado":
-			return "50% chance the rune does nothing when read."
-		"gosmento":
-			return "Rune gains -5 permanent score per activation."
-		"vitrificado":
-			return "Rune cannot receive buffs in this slot."
-		"descarregado":
-			return "Rune can only activate once per round."
-		"faminto":
-			return "Rune is destroyed at end of round."
-		"lead_residue":
-			return "Blocks gold effect. Slot is contaminated."
-		"illuminated":
-			return "Grants bonus activations to runes."
-		"burning":
-			return "Increases score from runes."
-		"wet":
-			return "Grants bonus activations."
-		"electrified":
-			return "Enables special metal synergies."
-		"prismatic":
-			return "Refracts light in all directions."
-		_:
-			return ""
 
 func _on_mouse_exited() -> void:
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")

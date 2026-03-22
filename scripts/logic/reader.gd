@@ -284,19 +284,32 @@ func _emit_slot_read_event(coord: Vector2i, slot: GridSlot, rune: RuneInstance, 
 	# Collect condition/payload results from effects
 	for i in range(rune.data.effects.size()):
 		var effect = rune.data.effects[i]
+		var ctx = EffectContext.new(rune, slot, battle_context)
 		if effect.condition:
-			var was_met = effect.condition.evaluate(rune, battle_context, slot)
+			var was_met = effect.condition.evaluate(ctx)
 			event.conditions_evaluated.append({
 				"condition_type": effect.condition.get_class(),
 				"met": was_met
 			})
-		
-		if effect.payload:
+		if effect.action:
 			event.payloads_executed.append({
-				"payload_type": effect.payload.get_class(),
+				"payload_type": effect.action.get_class(),
 				"success": rune.last_effect_success,
 				"score_delta": total_score - score_before
 			})
+		else:
+			if effect.condition:
+				var was_met = effect.condition.evaluate(rune, battle_context, slot)
+				event.conditions_evaluated.append({
+					"condition_type": effect.condition.get_class(),
+					"met": was_met
+				})
+			if effect.payload:
+				event.payloads_executed.append({
+					"payload_type": effect.payload.get_class(),
+					"success": rune.last_effect_success,
+					"score_delta": total_score - score_before
+				})
 	
 	event_bus.emit(event)
 

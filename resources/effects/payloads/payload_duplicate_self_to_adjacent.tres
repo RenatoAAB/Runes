@@ -1,6 +1,0 @@
-[gd_resource type="Resource" script_class="PayloadDuplicateSelfToAdjacent" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://scripts/data/effects/payloads/payload_duplicate_self_to_adjacent.gd" id="1_script"]
-
-[resource]
-script = ExtResource("1_script")

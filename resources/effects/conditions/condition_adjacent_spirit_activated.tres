@@ -1,7 +1,0 @@
-[gd_resource type="Resource" script_class="ConditionAdjacentActivationElement" load_steps=2 format=3 uid="uid://bes5htoa1nqcp"]
-
-[ext_resource type="Script" uid="uid://dclmtvdxgeo51" path="res://scripts/data/effects/conditions/condition_adjacent_activation_element.gd" id="1_cond"]
-
-[resource]
-script = ExtResource("1_cond")
-required_elements = Array[int]([4])

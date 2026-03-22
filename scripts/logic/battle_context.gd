@@ -119,7 +119,7 @@ func set_current_context(slot: GridSlot, rune: RuneInstance) -> void:
 
 
 ## Record an effect execution result (called after each effect)
-func record_effect_result(effect: RuneEffect, success: bool, score_delta: int, targets: Array[GridSlot]) -> void:
+func record_effect_result(effect: Resource, success: bool, score_delta: int, targets: Array[GridSlot]) -> void:
 	effects_this_activation.append({
 		"effect": effect,
 		"success": success,

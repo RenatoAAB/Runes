@@ -4,14 +4,6 @@ extends TextureRect
 ## Visual representation of a Rune.
 ## Handles the start of the Drag & Drop operation.
 
-const ELEMENT_ICON_PATHS := {
-	GameEnums.Element.FIRE: "res://sprites/icons/elements/fire-element-icon.png",
-	GameEnums.Element.WATER: "res://sprites/icons/elements/water-element-icon.png",
-	GameEnums.Element.EARTH: "res://sprites/icons/elements/earth-element-icon.png",
-	GameEnums.Element.AIR: "res://sprites/icons/elements/air-element-icon.png",
-	GameEnums.Element.SPIRIT: "res://sprites/icons/elements/spirit-element-icon.png",
-}
-
 var rune_instance: RuneInstance
 var disabled_material: ShaderMaterial
 
@@ -38,7 +30,6 @@ func _process(_delta: float) -> void:
 			material = disabled_material
 
 func _on_mouse_entered() -> void:
-	# Find TooltipManager and GridHighlighter in the tree.
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
 	
@@ -47,27 +38,11 @@ func _on_mouse_entered() -> void:
 	if parent and "inventory_index" in parent and parent.inventory_index != -1:
 		is_in_inventory = true
 	
-	# Check if parent has shop price info
 	var shop_price_text = ""
 	if parent and parent.has_method("get_shop_price_text"):
 		shop_price_text = parent.get_shop_price_text()
 	
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
-		# Base elements are now stored directly on the rune
-		var base_elements = GameEnums.normalize_elements(rune_instance.get_elements())
-		var elements_str = _build_element_icons_text(base_elements)
-		
-		var activations = rune_instance.get_max_activations()
-		var activation_text = _format_activation_text(activations)
-		
-		# Build header with price in top-right if in shop mode
-		var header = "[b]%s[/b]" % rune_instance.data.rune_name
-		if shop_price_text != "":
-			header = "[b]%s[/b]  [color=gold][b]%s[/b][/color]" % [rune_instance.data.rune_name, shop_price_text]
-		
-		var info = "%s\n%s | %s\nTier: %d" % [header, elements_str, activation_text, rune_instance.data.tier]
-		
-		# Context for evaluation
 		var context: BattleContext = null
 		var slot: GridSlot = null
 		var can_evaluate = not is_in_inventory
@@ -77,24 +52,15 @@ func _on_mouse_entered() -> void:
 			if parent and "grid_coord" in parent:
 				slot = highlighter.grid_manager.get_slot(parent.grid_coord)
 		
-		# Add effects description using the new colored description system
-		for i in range(rune_instance.data.effects.size()):
-			var effect = rune_instance.data.effects[i]
-			
-			# Get color marker for this effect (●)
-			var color_marker = EffectColors.get_color_marker(i)
-			
-			# Evaluate condition if possible
-			var is_condition_met = true
-			if can_evaluate and context and slot and effect.condition:
-				is_condition_met = effect.condition.evaluate(rune_instance, context, slot)
-			
-			# Get the colored description with permanent adjustments surfaced inline
-			var effect_desc = _get_effect_description_with_permanents(effect, i, is_condition_met, can_evaluate)
-			
-			info += "\n%s %s" % [color_marker, effect_desc]
-			
+		var ctx = EffectContext.new(rune_instance, slot, context)
+		ctx.can_evaluate = can_evaluate
+		var info = TooltipBuilder.build_rune_tooltip(rune_instance, ctx, can_evaluate, shop_price_text)
 		tooltip_manager.set_rune_tooltip(info, is_in_inventory)
+		
+		# Secondary tooltip: previous round stats
+		var stats_text = TooltipBuilder.build_rune_stats_tooltip(rune_instance)
+		if tooltip_manager.has_method("set_stats_tooltip"):
+			tooltip_manager.set_stats_tooltip(stats_text)
 	
 	if highlighter and highlighter.has_method("highlight_rune_effects"):
 		if not is_in_inventory:
@@ -148,85 +114,3 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 		"source_ui": self,
 		"rune_instance": rune_instance
 	}
-
-
-func _format_activation_text(activations: int) -> String:
-	var perm_bonus = 0
-	if rune_instance:
-		perm_bonus = rune_instance.permanent_buffs.get("activation_bonus", 0)
-
-	if perm_bonus != 0:
-		return "Activations: [color=yellow]%d[/color]" % activations
-	return "Activations: %d" % activations
-
-
-func _build_element_icons_text(base_elements: Array[GameEnums.Element]) -> String:
-	if base_elements.is_empty():
-		return "None"
-
-	var parts: Array[String] = []
-	for element in base_elements:
-		var icon_path: String = ELEMENT_ICON_PATHS.get(element, "")
-		if icon_path != "":
-			parts.append("[img=9x9]%s[/img]" % icon_path)
-		else:
-			# Fallback to text if an icon is missing
-			parts.append(GameEnums.Element.keys()[element])
-
-	return " ".join(parts)
-
-
-func _get_effect_description_with_permanents(effect: RuneEffect, effect_index: int, is_condition_met: bool, can_evaluate_condition: bool) -> String:
-	var desc = effect.get_description_colored(effect_index, is_condition_met, can_evaluate_condition)
-	if not rune_instance or not effect or not effect.payload:
-		return desc
-
-	var payload = effect.payload
-	if payload is PayloadAddScore:
-		return _apply_score_modifiers_to_desc(desc, payload.score_amount, true)
-	if payload is PayloadScorePerEmpty:
-		if payload.is_permanent:
-			return desc
-		return _apply_score_modifiers_to_desc(desc, payload.score_per_empty, true)
-	if payload is PayloadScorePerElement:
-		if payload.is_permanent:
-			return desc
-		return _apply_score_modifiers_to_desc(desc, payload.score_per_match, true)
-	if payload is PayloadScorePerRemainingActivations:
-		if payload.is_permanent:
-			return desc
-		return _apply_score_modifiers_to_desc(desc, payload.score_per_activation, true)
-	return desc
-
-
-func _apply_score_modifiers_to_desc(desc: String, base_amount: int, replace_number: bool) -> String:
-	if not rune_instance:
-		return desc
-
-	var perm_bonus = rune_instance.permanent_buffs.get("score_bonus", 0)
-	var perm_mult = rune_instance.permanent_buffs.get("score_multiplier", 1.0)
-	if perm_bonus == 0 and perm_mult == 1.0:
-		return desc
-
-	var final_amount = rune_instance.get_modified_score(base_amount)
-	var updated_desc = desc
-	if replace_number:
-		updated_desc = _replace_first_number_with_value(desc, base_amount, "[color=yellow]%d[/color]" % final_amount)
-
-	var hints: Array[String] = []
-	#if perm_bonus != 0:
-	#	hints.append("perm %+d" % perm_bonus)
-	#if perm_mult != 1.0:
-	#	hints.append("mult x%.1f" % perm_mult)
-	#if hints.size() > 0:
-	#	updated_desc += " [color=yellow](%s)[/color]" % ", ".join(hints)
-
-	return updated_desc
-
-
-func _replace_first_number_with_value(text: String, original_value: int, replacement: String) -> String:
-	var original_str = str(original_value)
-	var idx = text.find(original_str)
-	if idx == -1:
-		return text
-	return text.substr(0, idx) + replacement + text.substr(idx + original_str.length())

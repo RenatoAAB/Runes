@@ -1,9 +1,0 @@
-[gd_resource type="Resource" script_class="ConditionNeighborCount" load_steps=2 format=3]
-
-[ext_resource type="Script" path="res://scripts/data/effects/conditions/condition_neighbor_count.gd" id="1_cond"]
-
-[resource]
-script = ExtResource("1_cond")
-min_neighbors = 0
-max_neighbors = 0
-include_diagonals = false
