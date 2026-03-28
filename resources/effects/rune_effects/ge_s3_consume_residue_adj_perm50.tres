@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_consume_residue.gd" id="2_ac"]
+[ext_resource type="Script" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent.tres" id="4_sel"]
+
+[sub_resource type="Resource" id="vr"]
+script = ExtResource("3_vr")
+base = 50.0
+
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_ac")
+residue_id = "mana_residue"
+max_consume = -1
+score_per_consumed = SubResource("vr")
+
+[resource]
+script = ExtResource("1_ge")
+selector = ExtResource("4_sel")
+action = SubResource("act")

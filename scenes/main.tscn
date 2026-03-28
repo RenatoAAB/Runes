@@ -7,14 +7,14 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" uid="uid://cinxv3ffxhab6" path="res://resources/runes/uncommon/rune_lava.tres" id="7_muem4"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_vento.tres" id="6_muem4"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_queimadura.tres" id="7_dp3eg"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" uid="uid://b6folj8yfdd3e" path="res://resources/runes/common/rune_air.tres" id="8_dp3eg"]
-[ext_resource type="Resource" uid="uid://bpgga3tetlmun" path="res://resources/runes/common/rune_water.tres" id="9_0ld40"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_gota.tres" id="8_0ld40"]
+[ext_resource type="Resource" uid="uid://gxb5p3wa7pre" path="res://resources/runes/common/rune_explosao.tres" id="9_gqmmt"]
 [ext_resource type="Texture2D" uid="uid://dbxqkcl5ugwy3" path="res://sprites/scenes/painel-runico-v7.png" id="11_jkv2x"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
-[ext_resource type="Resource" uid="uid://b68ko7mf7bcei" path="res://resources/runes/uncommon/rune_obsidian.tres" id="16_og1vs"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
 
@@ -56,7 +56,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 base_target_score = 30
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("16_og1vs"), ExtResource("7_muem4"), ExtResource("8_dp3eg"), ExtResource("9_0ld40")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_muem4"), ExtResource("7_dp3eg"), ExtResource("8_0ld40"), ExtResource("9_gqmmt")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]

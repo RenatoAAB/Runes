@@ -64,7 +64,7 @@ static func get_modifier_auto_description(data: SlotModifierData) -> String:
 static func get_state_description(state_id: String) -> String:
 	match state_id:
 		"petrified":
-			return "Runa não pode ser movida deste slot."
+			return "A runa desse slot não pode ser movida."
 		"descompassado":
 			return "Runa é pulada na primeira passagem do leitor a cada rodada."
 		"obscurecido":
@@ -93,6 +93,37 @@ static func get_state_description(state_id: String) -> String:
 			return "Refrata luz em todas as direções."
 		_:
 			return ""
+
+
+## Returns residue display info: { "name": String, "description": String, "color": String }
+static func get_residue_info(residue_id: String) -> Dictionary:
+	match residue_id:
+		"mana_residue":
+			return {
+				"name": "Mana",
+				"description": "Ao ser lido, desaparece e dá 1 de mana.",
+				"color": "#66AAFF"
+			}
+		"mana_anomaly":
+			return {
+				"name": "Anomalia de Mana",
+				"description": "Ao ser lido, desaparece.\nSe lido sozinho, -2 de mana.\nCom uma runa, destrói a runa após ativação.",
+				"color": "#9933CC"
+			}
+		"petrified":
+			return {
+				"name": "Petrificado",
+				"description": "A runa desse slot não pode ser movida.",
+				"color": "#888888"
+			}
+		"faminto":
+			return {
+				"name": "Faminto",
+				"description": "Runa é destruída no final da rodada.",
+				"color": "#CC3333"
+			}
+		_:
+			return {}
 
 
 # --- Slot Tooltip Labels ---

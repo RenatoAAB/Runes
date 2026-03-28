@@ -6,6 +6,7 @@ extends EffectAction
 @export var residue_id: String = ""
 @export var duration: int = -1  ## -1 = permanent
 @export var score_bonus: int = 0
+@export var max_targets: int = 0  ## 0 = no limit, >0 = random pick up to N
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
@@ -13,11 +14,19 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 	if not ctx or residue_id.is_empty():
 		return
 
-	for slot in targets:
+	var actual_targets := targets
+	if max_targets > 0 and actual_targets.size() > max_targets:
+		var shuffled := actual_targets.duplicate()
+		shuffled.shuffle()
+		actual_targets = shuffled.slice(0, max_targets)
+
+	for slot in actual_targets:
 		if not slot or slot.is_void():
 			continue
 		if slot.slot and slot.slot.has_method("apply_residue"):
 			slot.slot.apply_residue(residue_id, duration, score_bonus)
+			if ctx.battle and ctx.battle.grid:
+				ctx.battle.grid.slot_changed.emit(slot.grid_position)
 
 
 func get_description() -> String:

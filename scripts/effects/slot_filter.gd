@@ -9,7 +9,9 @@ enum SlotState {
 	EMPTY,
 	OCCUPIED,
 	PETRIFIED,
-	HAS_RESIDUE
+	HAS_RESIDUE,
+	HAS_MANA_RESIDUE,
+	HAS_MANA_ANOMALY,
 }
 
 @export var required_elements: Array[GameEnums.Element] = []
@@ -17,6 +19,8 @@ enum SlotState {
 @export var slot_state: SlotState = SlotState.ANY
 @export var require_activations_remaining: bool = false
 @export var is_indestructible_filter: int = -1  ## -1 = don't care, 0 = must be destructible, 1 = must be indestructible
+## Filter by specific residue ID (empty = don't filter by residue ID)
+@export var required_residue_id: String = ""
 
 
 func matches(slot: GridSlot, _context: BattleContext = null) -> bool:
@@ -36,6 +40,17 @@ func matches(slot: GridSlot, _context: BattleContext = null) -> bool:
 		SlotState.HAS_RESIDUE:
 			if not slot.slot or not slot.slot.has_residue():
 				return false
+		SlotState.HAS_MANA_RESIDUE:
+			if not slot.slot or not slot.slot.has_specific_residue("mana_residue"):
+				return false
+		SlotState.HAS_MANA_ANOMALY:
+			if not slot.slot or not slot.slot.has_specific_residue("mana_anomaly"):
+				return false
+
+	# Check specific residue ID filter
+	if not required_residue_id.is_empty():
+		if not slot.slot or not slot.slot.has_specific_residue(required_residue_id):
+			return false
 
 	if slot.is_empty():
 		# For empty slots, only element/rune filters fail
@@ -89,6 +104,13 @@ func get_description() -> String:
 			parts.append("petrified")
 		SlotState.HAS_RESIDUE:
 			parts.append("with residue")
+		SlotState.HAS_MANA_RESIDUE:
+			parts.append("with mana residue")
+		SlotState.HAS_MANA_ANOMALY:
+			parts.append("with mana anomaly")
+
+	if not required_residue_id.is_empty():
+		parts.append("with %s" % required_residue_id)
 
 	if not required_elements.is_empty():
 		parts.append(ElementIcons.join(required_elements))

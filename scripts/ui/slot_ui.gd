@@ -35,6 +35,7 @@ var rune_ui: RuneUI
 var item_ui: ItemUI  # For extra inventory items
 var multi_effect_overlay: MultiEffectOverlay
 var buff_rect: ColorRect
+var residue_visual: ResidueVisual
 var slot_type_label: Label  # Shows multiplier badge
 
 var current_slot_data: GridSlot
@@ -52,14 +53,20 @@ func _ready() -> void:
 	buff_rect.color = Color(0, 0, 0, 0)
 	add_child(buff_rect)
 
+	# Create residue visual overlay (shader effects for mana residue/anomaly)
+	residue_visual = ResidueVisual.new()
+	residue_visual.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(residue_visual)
+
 	# Create multi-effect overlay (preview/interaction) - replaces old highlight_rect
 	multi_effect_overlay = MultiEffectOverlay.new()
 	multi_effect_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(multi_effect_overlay)
 	
-	# Ensure order: Background -> Buff -> MultiEffectOverlay -> Rune
+	# Ensure order: Background -> Buff -> MultiEffectOverlay (Rune added later) -> ResidueVisual on top
 	move_child(buff_rect, 0)
 	move_child(multi_effect_overlay, 1)
+	move_child(residue_visual, -1)  # Always last = on top of everything
 	
 	mouse_entered.connect(self._on_mouse_entered)
 	mouse_exited.connect(self._on_mouse_exited)
@@ -132,7 +139,15 @@ func update_slot_info(slot: GridSlot) -> void:
 	current_slot_data = slot
 	if not slot:
 		set_buff_highlight(Color(0, 0, 0, 0))
+		if residue_visual:
+			residue_visual.clear()
 		return
+	
+	# Update residue visual overlay
+	if residue_visual and slot.slot:
+		residue_visual.update_residues(slot.slot.get_residue_ids())
+	elif residue_visual:
+		residue_visual.clear()
 	
 	# Update visual based on slot properties
 	var highlight_color = Color(0, 0, 0, 0)
@@ -249,6 +264,9 @@ func set_rune(rune: RuneInstance) -> void:
 		rune_ui.custom_minimum_size = Vector2(32, 32)
 		add_child(rune_ui)
 		rune_ui.setup(rune)
+		# Keep residue visual on top of the rune
+		if residue_visual:
+			move_child(residue_visual, -1)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:

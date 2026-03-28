@@ -53,6 +53,11 @@ const PRISMATIC := &"PRISMATIC"          # Multi-element
 const CURSED := &"CURSED"                # Negative persistent effect
 const DISABLED := &"DISABLED"            # Cannot activate
 const CHARGED := &"CHARGED"              # Has extra activations
+const MANA_RESIDUE := &"MANA_RESIDUE"    # Mana residue on slot
+const MANA_ANOMALY := &"MANA_ANOMALY"    # Mana anomaly on slot
+const SIMULTANEOUS := &"SIMULTANEOUS"    # Activates simultaneously
+const CONSECUTIVE := &"CONSECUTIVE"      # Activated consecutively
+const FREE_ACTIVATION := &"FREE_ACTIVATION" # Next activation is free
 const DECAYING := &"DECAYING"            # Loses value over time
 
 # --- Special Keywords ---
@@ -388,6 +393,46 @@ const DATABASE: Dictionary = {
 		"color": Color(0.4, 0.3, 0.2),  # Brown
 		"category": Category.STATE,
 		"icon": "decaying"
+	},
+	&"MANA_RESIDUE": {
+		"name": "Resíduo de Mana",
+		"description": "Leitor recolhe mana ao passar.",
+		"example": "+1 mana ao ler este slot",
+		"color": Color(0.3, 0.6, 1.0),  # Mana Blue
+		"category": Category.STATE,
+		"icon": "mana_residue"
+	},
+	&"MANA_ANOMALY": {
+		"name": "Anomalia de Mana",
+		"description": "Destrói a runa ou penaliza mana.",
+		"example": "Runa destruida ou -2 mana",
+		"color": Color(0.6, 0.1, 0.6),  # Dark Magenta
+		"category": Category.STATE,
+		"icon": "mana_anomaly"
+	},
+	&"SIMULTANEOUS": {
+		"name": "Simultâneo",
+		"description": "Ativa junto com outra runa.",
+		"example": "Ativa vizinhos simultaneamente",
+		"color": Color(0.9, 0.7, 0.2),  # Amber
+		"category": Category.SPECIAL,
+		"icon": "simultaneous"
+	},
+	&"CONSECUTIVE": {
+		"name": "Consecutivo",
+		"description": "Depende de ativações consecutivas.",
+		"example": "Se ativada 2x seguidas: bônus",
+		"color": Color(1.0, 0.5, 0.3),  # Warm Orange
+		"category": Category.CONDITION,
+		"icon": "consecutive"
+	},
+	&"FREE_ACTIVATION": {
+		"name": "Ativação Livre",
+		"description": "Próxima ativação não gasta carga.",
+		"example": "Sem custo de ativação",
+		"color": Color(0.5, 1.0, 0.5),  # Light Green
+		"category": Category.STATE,
+		"icon": "free_activation"
 	},
 	
 	# === SPECIAL ===

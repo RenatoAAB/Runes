@@ -1,0 +1,13 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://eoos7p3v6dgi"]
+
+[ext_resource type="Shader" uid="uid://kx73smd5gtxs" path="res://resources/shaders/mana_residue.gdshader" id="1"]
+
+[resource]
+shader = ExtResource("1")
+shader_parameter/base_color = Color(0.4, 0.7, 1, 0.55)
+shader_parameter/core_color = Color(0.6, 0.85, 1, 0.7)
+shader_parameter/pulse_speed = 1.5
+shader_parameter/flame_speed = 2.0
+shader_parameter/flame_intensity = 1.0
+shader_parameter/radius = 0.38
+shader_parameter/softness = 0.10000000405148

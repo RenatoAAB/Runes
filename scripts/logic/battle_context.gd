@@ -63,6 +63,22 @@ var runes_not_moved_count: int = 0
 ## Number of infinite loops detected by reader jumps
 var infinite_loops_detected: int = 0
 
+## Mana tracking for mana residue / mana anomaly
+var current_mana: int = 0
+
+## Simultaneous activation tracking
+var _simultaneous_batch_active: bool = false
+var _simultaneous_batch_id: int = 0
+
+## Per-element activation count this round: { Element -> int }
+var element_activation_counts: Dictionary = {}
+
+## Per-rune movement tracking: { rune_instance_id -> times_moved }
+var rune_move_counts: Dictionary = {}
+
+## Tracks which RID was the last activated rune's instance, for consecutive detection
+var _last_activated_rune_instance: RuneInstance = null
+
 
 func _init(p_grid: GridManager):
 	grid = p_grid
@@ -108,6 +124,12 @@ func reset_round_state() -> void:
 	runes_moved_this_round = 0
 	runes_not_moved_count = 0
 	infinite_loops_detected = 0
+	current_mana = 0
+	_simultaneous_batch_active = false
+	_simultaneous_batch_id = 0
+	element_activation_counts.clear()
+	rune_move_counts.clear()
+	_last_activated_rune_instance = null
 	set_meta("total_activations", 0)
 
 
@@ -189,10 +211,13 @@ func record_activation(rune: RuneInstance, slot: GridSlot) -> void:
 		"elements": GameEnums.normalize_elements(rune.get_elements()),
 		"rune_id": rune.data.id,
 		"slot_position": slot.grid_position,
-		"rune_instance": rune
+		"rune_instance": rune,
+		"simultaneous_batch_id": get_simultaneous_batch_id()
 	}
 	activation_history.append(entry)
 	_update_element_cycles()
+	_track_element_activations(rune)
+	_last_activated_rune_instance = rune
 	
 	# Track unique runes
 	var rune_id = rune.data.id
@@ -468,3 +493,114 @@ func get_money() -> int:
 		if stats_node and stats_node.has_method("get_money"):
 			return stats_node.get_money()
 	return 0
+
+
+# --- Mana Methods ---
+
+## Add mana from mana residue pickup
+func add_mana(amount: int) -> void:
+	current_mana += amount
+
+## Remove mana (from anomaly). Returns actual amount removed.
+func remove_mana(amount: int) -> int:
+	var removed = mini(current_mana, amount)
+	current_mana -= amount
+	return removed
+
+
+# --- Simultaneous Activation Tracking ---
+
+## Start a simultaneous activation batch
+func begin_simultaneous_batch() -> void:
+	_simultaneous_batch_id += 1
+	_simultaneous_batch_active = true
+
+## End simultaneous activation batch
+func end_simultaneous_batch() -> void:
+	_simultaneous_batch_active = false
+
+## Check if currently in a simultaneous batch
+func is_simultaneous_active() -> bool:
+	return _simultaneous_batch_active
+
+## Get the current simultaneous batch ID
+func get_simultaneous_batch_id() -> int:
+	return _simultaneous_batch_id if _simultaneous_batch_active else -1
+
+
+# --- Element Activation Tracking ---
+
+## Record per-element activation counts (called from record_activation)
+func _track_element_activations(rune: RuneInstance) -> void:
+	for elem in rune.get_elements():
+		element_activation_counts[elem] = element_activation_counts.get(elem, 0) + 1
+
+## Get the number of activations for a specific element this round
+func get_element_activation_count(element: GameEnums.Element) -> int:
+	return element_activation_counts.get(element, 0)
+
+## Get total activations for any of the given elements this round
+func get_elements_activation_count(elements: Array[GameEnums.Element]) -> int:
+	var total = 0
+	for elem in elements:
+		total += element_activation_counts.get(elem, 0)
+	return total
+
+
+# --- Consecutive Activation Tracking ---
+
+## Check if the last activated rune instance is the same as the given one
+func was_consecutive_activation(rune: RuneInstance) -> bool:
+	return _last_activated_rune_instance == rune
+
+## Get the rune instance that was activated just before the current one (in reader order)
+func get_previous_activated_rune() -> RuneInstance:
+	if activation_history.size() < 2:
+		return null
+	return activation_history[-2].get("rune_instance")
+
+
+# --- Rune Movement Tracking ---
+
+## Record that a specific rune was moved (call during planning phase analysis)
+func record_rune_moved(rune: RuneInstance) -> void:
+	var rid = rune.get_instance_id() if rune else 0
+	rune_move_counts[rid] = rune_move_counts.get(rid, 0) + 1
+
+## Get how many times a specific rune was moved this round
+func get_rune_move_count(rune: RuneInstance) -> int:
+	var rid = rune.get_instance_id() if rune else 0
+	return rune_move_counts.get(rid, 0)
+
+
+# --- Residue Queries ---
+
+## Count slots with a specific residue type in the panel
+func count_panel_residue(residue_id: String) -> int:
+	if not grid:
+		return 0
+	var count = 0
+	for slot in grid.grid:
+		if slot.is_void():
+			continue
+		if slot.slot and slot.slot.has_specific_residue(residue_id):
+			count += 1
+	return count
+
+## Find the nearest slot with a specific residue relative to reader position
+func find_nearest_residue_slot(residue_id: String, from_step_index: int, search_backwards: bool = true) -> int:
+	if reader_path.is_empty() or not grid:
+		return -1
+	if search_backwards:
+		for i in range(from_step_index - 1, -1, -1):
+			var coord = get_reader_coord(i)
+			var slot = grid.get_slot(coord)
+			if slot and slot.slot and slot.slot.has_specific_residue(residue_id):
+				return i
+	else:
+		for i in range(from_step_index + 1, reader_path.size()):
+			var coord = get_reader_coord(i)
+			var slot = grid.get_slot(coord)
+			if slot and slot.slot and slot.slot.has_specific_residue(residue_id):
+				return i
+	return -1

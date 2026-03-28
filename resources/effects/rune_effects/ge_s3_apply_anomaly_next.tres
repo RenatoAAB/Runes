@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_apply_residue.gd" id="2_ar"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_sequence_next.tres" id="3_sel"]
+
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_ar")
+residue_id = "mana_anomaly"
+
+[resource]
+script = ExtResource("1_ge")
+selector = ExtResource("3_sel")
+action = SubResource("act")

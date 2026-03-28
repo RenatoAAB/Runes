@@ -147,6 +147,13 @@ func _process_next_step() -> void:
 	
 	var score_before = total_score
 	
+	# Process residues on reader visit (mana/anomaly) for ALL slots
+	var visit_result: ResidueProcessor.ReaderVisitResult = null
+	if grid_manager and grid_manager.residue_processor and battle_context:
+		visit_result = grid_manager.residue_processor.on_reader_visit(slot, battle_context)
+		if visit_result and not visit_result.residues_consumed.is_empty():
+			grid_manager.slot_changed.emit(coord)
+	
 	if slot and not slot.is_empty():
 		_activate_rune(slot, coord, score_before)
 	else:

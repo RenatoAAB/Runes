@@ -2,6 +2,14 @@ class_name ResidueProcessor
 extends RefCounted
 
 ## Centralized processing for rune residues (slot states).
+## Handles both legacy states (descompassado, etc.) and new residue system
+## (mana_residue, mana_anomaly, petrified, faminto).
+
+## Result of processing a reader visit on a slot
+class ReaderVisitResult:
+	var mana_delta: int = 0
+	var should_destroy_rune: bool = false
+	var residues_consumed: Array[String] = []
 
 func should_skip_read(slot: GridSlot) -> bool:
 	# Descompassado: skip first read each round
@@ -48,9 +56,38 @@ func after_activation(slot: GridSlot, rune: RuneInstance, snapshot: Dictionary) 
 		rune.clear_max_activations_override()
 
 
+## Process the reader visiting a slot (runs for ALL slots, including empty).
+## Returns a ReaderVisitResult describing what happened.
+func on_reader_visit(slot: GridSlot, context: BattleContext) -> ReaderVisitResult:
+	var result = ReaderVisitResult.new()
+	if not slot or not slot.slot:
+		return result
+	
+	# Mana Residue: reader picks it up for +1 mana
+	if slot.slot.has_specific_residue("mana_residue"):
+		slot.slot.clear_residue("mana_residue")
+		result.mana_delta += 1
+		result.residues_consumed.append("mana_residue")
+		context.add_money(1)
+	
+	# Mana Anomaly: reader picks it up, player loses 2 mana
+	if slot.slot.has_specific_residue("mana_anomaly"):
+		slot.slot.clear_residue("mana_anomaly")
+		result.mana_delta -= 2
+		result.residues_consumed.append("mana_anomaly")
+		context.remove_money(2)
+	
+	return result
+
+
 func handle_round_end_for_slot(slot: GridSlot, grid_manager: GridManager) -> void:
 	# Faminto: destroy rune at end of round
 	if slot.has_state("faminto") and slot.rune:
+		slot.remove_rune()
+		if grid_manager:
+			grid_manager.slot_changed.emit(slot.grid_position)
+	# Also check residue-based faminto
+	if slot.slot and slot.slot.has_specific_residue("faminto") and slot.rune:
 		slot.remove_rune()
 		if grid_manager:
 			grid_manager.slot_changed.emit(slot.grid_position)

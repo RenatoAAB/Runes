@@ -380,6 +380,64 @@ func apply_state(state_id: String, duration: int, score_bonus: int = 0,
 		add_state(state_id, duration, score_bonus, activation_bonus, multiplier_bonus)
 
 
+# --- Residue Management ---
+# Residues are special states tagged with the "residue:" prefix for identification.
+# Known residue types: petrified, mana_residue, mana_anomaly, faminto
+
+const RESIDUE_PREFIX := "residue:"
+
+## Apply a runic residue to this slot
+func apply_residue(residue_id: String, duration: int = -1, score_bonus: int = 0) -> void:
+	var state_id = RESIDUE_PREFIX + residue_id
+	var dur = 999999 if duration < 0 else duration
+	add_state(state_id, dur, score_bonus)
+
+## Check if this slot has any residue
+func has_residue() -> bool:
+	for state_id in active_states:
+		if (state_id as String).begins_with(RESIDUE_PREFIX):
+			return true
+	return false
+
+## Check if this slot has a specific residue
+func has_specific_residue(residue_id: String) -> bool:
+	return has_state(RESIDUE_PREFIX + residue_id)
+
+## Get all active residue IDs (without prefix)
+func get_residue_ids() -> Array[String]:
+	var ids: Array[String] = []
+	for state_id in active_states:
+		var sid := state_id as String
+		if sid.begins_with(RESIDUE_PREFIX):
+			ids.append(sid.substr(RESIDUE_PREFIX.length()))
+	return ids
+
+## Remove a specific residue
+func clear_residue(residue_id: String) -> bool:
+	var state_id = RESIDUE_PREFIX + residue_id
+	if has_state(state_id):
+		remove_state(state_id)
+		return true
+	return false
+
+## Remove all residues
+func clear_residues() -> void:
+	var to_remove: Array[String] = []
+	for state_id in active_states:
+		if (state_id as String).begins_with(RESIDUE_PREFIX):
+			to_remove.append(state_id)
+	for state_id in to_remove:
+		active_states.erase(state_id)
+
+## Petrify this slot (rune cannot be moved)
+func petrify() -> void:
+	apply_residue("petrified")
+
+## Check if this slot is petrified
+func is_petrified() -> bool:
+	return has_specific_residue("petrified") or has_state("petrified")
+
+
 # --- Relic Slot Support ---
 
 ## Set this slot to hold a relic

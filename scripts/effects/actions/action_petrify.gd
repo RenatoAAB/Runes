@@ -2,6 +2,7 @@ class_name ActionPetrify
 extends EffectAction
 
 ## Petrifies target slots (rune can't move but still activates).
+## Uses the residue system for consistent state management.
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 	EffectLogger.log_action(ctx, self, targets)
@@ -11,7 +12,7 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 	for slot in targets:
 		if not slot or slot.is_void():
 			continue
-		if slot.slot and slot.slot.has_method("petrify"):
+		if slot.slot:
 			slot.slot.petrify()
 
 

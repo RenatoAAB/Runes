@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ConditionComposite" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/conditions/condition_composite.gd" id="1"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_adj_mana_residue.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_adj_mana_anomaly.tres" id="3"]
+
+[resource]
+script = ExtResource("1")
+mode = 0
+conditions = [ExtResource("2"), ExtResource("3")]

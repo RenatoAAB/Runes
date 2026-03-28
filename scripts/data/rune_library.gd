@@ -47,3 +47,13 @@ static func get_pure_runes_for_element(element: GameEnums.Element) -> Array[Rune
 			filtered.append(rune_data)
 	_cache_pure_by_element[element] = filtered
 	return filtered
+
+
+## Returns all runes that contain a specific element (not necessarily pure).
+static func get_runes_for_element(element: GameEnums.Element) -> Array[RuneData]:
+	var all = get_all_runes()
+	var filtered: Array[RuneData] = []
+	for rune_data in all:
+		if GameEnums.has_element(rune_data.elements, element):
+			filtered.append(rune_data)
+	return filtered

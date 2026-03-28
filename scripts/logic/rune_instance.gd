@@ -28,6 +28,12 @@ var _has_element_override: bool = false
 ## Optional override for max activations (used by residues like Descarregado)
 var _max_activations_override: int = -1
 
+## If true, the next activation will not consume an activation charge
+var next_activation_free: bool = false
+
+## The simultaneous batch ID this rune was last activated in (-1 if not simultaneous)
+var last_simultaneous_batch_id: int = -1
+
 func _init(p_data: RuneData):
 	data = p_data
 	reset_state()
@@ -41,6 +47,8 @@ func reset_state() -> void:
 	_has_element_override = false
 	_element_override = []
 	_max_activations_override = -1
+	next_activation_free = false
+	last_simultaneous_batch_id = -1
 	
 	# Reset modifiers to default
 	stat_modifiers = {
@@ -124,7 +132,15 @@ func get_modified_score(base_score: int) -> int:
 func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
 	last_effect_success = false
 	if can_activate():
-		current_activations += 1
+		# Free activation: don't consume a charge
+		if next_activation_free:
+			next_activation_free = false
+		else:
+			current_activations += 1
+		
+		# Track simultaneous batch
+		if context.is_simultaneous_active():
+			last_simultaneous_batch_id = context.get_simultaneous_batch_id()
 		
 		# Track total activations for Memory rune and Rhythm conditions
 		var total = context.get_meta("total_activations", 0)

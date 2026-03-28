@@ -112,8 +112,20 @@ static func build_slot_tooltip(slot: GridSlot) -> String:
 	if slot_info.get("is_broken", false):
 		text += "[color=red]%s[/color]\n" % TooltipTexts.LABEL_BROKEN
 
-	# Active states
+	# Residues (states with "residue:" prefix) — shown with dedicated formatting
+	if slot.slot:
+		var residue_ids = slot.slot.get_residue_ids()
+		for rid in residue_ids:
+			var info = TooltipTexts.get_residue_info(rid)
+			if not info.is_empty():
+				var rcolor = info.get("color", "#FFCC00")
+				text += "[color=%s][b]Resíduo: %s[/b][/color]\n" % [rcolor, info["name"]]
+				text += "[color=silver]%s[/color]\n" % info["description"]
+
+	# Active states (skip residue states already handled above)
 	for state_id in slot.active_states:
+		if (state_id as String).begins_with(SlotInstance.RESIDUE_PREFIX):
+			continue
 		var data = slot.active_states[state_id]
 		var state_desc = TooltipTexts.get_state_description(state_id)
 		var duration_text = TooltipTexts.LABEL_PERMANENT if data["duration"] > 9999 else TooltipTexts.LABEL_DURATION % data["duration"]

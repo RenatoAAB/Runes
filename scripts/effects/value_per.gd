@@ -20,6 +20,11 @@ enum CountSource {
 	ELEMENT_CYCLES,         ## Complete element cycles this round
 	DISTINCT_ELEMENTS_ADJ,  ## Count of distinct elements in adjacent slots
 	RUNES_NOT_MOVED,        ## Runes that were NOT moved during planning
+	ROUND_ELEMENT_ACTIVATIONS, ## Activations of specific element(s) this round (uses filter.required_elements)
+	SELF_TIMES_MOVED,       ## How many times source rune was moved this round
+	PANEL_RESIDUE_COUNT,    ## Count of slots with specific residue (uses filter.required_residue_id)
+	COLUMN,                 ## Count slots in same column matching filter
+	ROW,                    ## Count slots in same row matching filter
 }
 
 enum AggregateMode {
@@ -66,6 +71,16 @@ func count(ctx: EffectContext, targets: Array[GridSlot] = []) -> int:
 			return _count_distinct_elements_adjacent(ctx)
 		CountSource.RUNES_NOT_MOVED:
 			return ctx.battle.runes_not_moved_count if ctx.battle else 0
+		CountSource.ROUND_ELEMENT_ACTIVATIONS:
+			return _count_element_activations(ctx)
+		CountSource.SELF_TIMES_MOVED:
+			return ctx.battle.get_rune_move_count(ctx.source_rune) if ctx.battle and ctx.source_rune else 0
+		CountSource.PANEL_RESIDUE_COUNT:
+			return _count_panel_residue(ctx)
+		CountSource.COLUMN:
+			return _count_column(ctx)
+		CountSource.ROW:
+			return _count_row(ctx)
 	return 0
 
 
@@ -120,6 +135,18 @@ func _get_source_description() -> String:
 			return "distinct element adjacent"
 		CountSource.RUNES_NOT_MOVED:
 			return "rune not moved"
+		CountSource.ROUND_ELEMENT_ACTIVATIONS:
+			var elem_desc = filter.get_description() if filter else ""
+			return "%s activation this round" % elem_desc if elem_desc else "element activation this round"
+		CountSource.SELF_TIMES_MOVED:
+			return "time this rune was moved"
+		CountSource.PANEL_RESIDUE_COUNT:
+			var rid = filter.required_residue_id if filter else ""
+			return "%s in panel" % rid if rid else "residue in panel"
+		CountSource.COLUMN:
+			return "rune in column"
+		CountSource.ROW:
+			return "rune in row"
 	return "unknown"
 
 
@@ -225,3 +252,54 @@ func _matches_filter(slot: GridSlot, ctx: EffectContext) -> bool:
 		# No filter = match occupied slots by default (most common use case)
 		return not slot.is_empty()
 	return filter.matches(slot, ctx.battle)
+
+
+func _count_element_activations(ctx: EffectContext) -> int:
+	if not ctx.battle:
+		return 0
+	if filter and not filter.required_elements.is_empty():
+		return ctx.battle.get_elements_activation_count(filter.required_elements)
+	# No element filter: return total activations
+	return ctx.battle.get_total_activations_this_round()
+
+
+func _count_panel_residue(ctx: EffectContext) -> int:
+	if not ctx.battle:
+		return 0
+	var residue_id = filter.required_residue_id if filter else ""
+	if residue_id.is_empty():
+		# Count all slots with any residue
+		var count_val = 0
+		for slot in ctx.battle.grid.grid:
+			if slot.is_void():
+				continue
+			if slot.slot and slot.slot.has_residue():
+				count_val += 1
+		return count_val
+	return ctx.battle.count_panel_residue(residue_id)
+
+
+func _count_column(ctx: EffectContext) -> int:
+	if not ctx.source_slot or not ctx.battle or not ctx.battle.grid:
+		return 0
+	var col = ctx.battle.grid.get_column(ctx.source_slot.grid_position.x)
+	var count_val = 0
+	for slot in col:
+		if slot == ctx.source_slot:
+			continue
+		if _matches_filter(slot, ctx):
+			count_val += 1
+	return count_val
+
+
+func _count_row(ctx: EffectContext) -> int:
+	if not ctx.source_slot or not ctx.battle or not ctx.battle.grid:
+		return 0
+	var row = ctx.battle.grid.get_row(ctx.source_slot.grid_position.y)
+	var count_val = 0
+	for slot in row:
+		if slot == ctx.source_slot:
+			continue
+		if _matches_filter(slot, ctx):
+			count_val += 1
+	return count_val

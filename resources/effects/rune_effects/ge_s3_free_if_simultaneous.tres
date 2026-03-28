@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_free_activation.gd" id="2_af"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="3_sel"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_simultaneous.tres" id="4_cond"]
+
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_af")
+
+[resource]
+script = ExtResource("1_ge")
+condition = ExtResource("4_cond")
+selector = ExtResource("3_sel")
+action = SubResource("act")

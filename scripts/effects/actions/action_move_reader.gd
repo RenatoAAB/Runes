@@ -9,11 +9,14 @@ enum MoveMode {
 	TO_PREVIOUS_ELEMENT,    ## Jump to last rune of specific element
 	TO_RANDOM_VISITED,      ## Jump to random previously visited slot
 	TO_START,               ## Jump to first slot
+	FORWARD_STEPS,          ## Advance by resolved value steps
+	TO_NEAREST_RESIDUE,     ## Jump to nearest slot with specific residue (search backwards)
 }
 
 @export var mode: MoveMode = MoveMode.REWIND_STEPS
 @export var value: ValueResolver
 @export var target_element: GameEnums.Element = GameEnums.Element.FIRE
+@export var target_residue_id: String = "mana_residue"  ## For TO_NEAREST_RESIDUE mode
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
@@ -32,12 +35,17 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		MoveMode.REWIND_STEPS:
 			var steps = value.resolve_int(ctx, targets) if value else 1
 			target_idx = max(0, current_idx - steps)
+		MoveMode.FORWARD_STEPS:
+			var steps = value.resolve_int(ctx, targets) if value else 1
+			target_idx = min(path_length - 1, current_idx + steps)
 		MoveMode.TO_PREVIOUS_ELEMENT:
 			target_idx = _find_previous_element(ctx, current_idx)
 		MoveMode.TO_RANDOM_VISITED:
 			target_idx = ctx.battle.get_random_visited_slot()
 		MoveMode.TO_START:
 			target_idx = 0
+		MoveMode.TO_NEAREST_RESIDUE:
+			target_idx = ctx.battle.find_nearest_residue_slot(target_residue_id, current_idx, true)
 
 	if target_idx >= 0 and target_idx < path_length:
 		ctx.battle.request_reader_jump(target_idx)
@@ -59,12 +67,17 @@ func get_description() -> String:
 		MoveMode.REWIND_STEPS:
 			var val_desc = value.get_description() if value else "1"
 			return "Reader rewinds %s step(s)" % val_desc
+		MoveMode.FORWARD_STEPS:
+			var val_desc = value.get_description() if value else "1"
+			return "Reader advances %s step(s)" % val_desc
 		MoveMode.TO_PREVIOUS_ELEMENT:
 			return "Reader jumps to previous %s rune" % ElementIcons.get_bbcode(target_element)
 		MoveMode.TO_RANDOM_VISITED:
 			return "Reader jumps to random visited slot"
 		MoveMode.TO_START:
 			return "Reader jumps to start"
+		MoveMode.TO_NEAREST_RESIDUE:
+			return "Reader jumps to nearest %s" % target_residue_id
 	return "Reader moves"
 
 

@@ -258,9 +258,16 @@ func _apply_label_settings_to(target_label: RichTextLabel) -> void:
 		
 	if label_settings.font:
 		target_label.add_theme_font_override("normal_font", label_settings.font)
+		target_label.add_theme_font_override("bold_font", label_settings.font)
+		target_label.add_theme_font_override("italics_font", label_settings.font)
+		target_label.add_theme_font_override("bold_italics_font", label_settings.font)
 	
 	if label_settings.font_size > 0:
-		target_label.add_theme_font_size_override("normal_font_size", label_settings.font_size)
+		var base_size = label_settings.font_size
+		target_label.add_theme_font_size_override("normal_font_size", base_size)
+		target_label.add_theme_font_size_override("bold_font_size", base_size)
+		target_label.add_theme_font_size_override("italics_font_size", base_size)
+		target_label.add_theme_font_size_override("bold_italics_font_size", base_size)
 		
 	if label_settings.font_color != Color(1, 1, 1, 1):
 		target_label.add_theme_color_override("default_color", label_settings.font_color)

@@ -1,0 +1,52 @@
+class_name ActionConsumeResidue
+extends EffectAction
+
+## Consumes a specific residue from target slots.
+## Sets source_rune.last_effect_success to indicate if any residue was consumed.
+## Used by Spirit runes: Ordem, Caos, Entropia, Mudança, Golem, Empatia, Djinn.
+
+@export var residue_id: String = "mana_residue"
+@export var max_consume: int = -1  ## -1 = consume all matching, >0 = limit
+
+## Optional: score per consumed residue
+@export var score_per_consumed: ValueResolver
+
+
+func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
+	EffectLogger.log_action(ctx, self, targets)
+	if not ctx or residue_id.is_empty():
+		return
+
+	var consumed_count = 0
+	for slot in targets:
+		if max_consume > 0 and consumed_count >= max_consume:
+			break
+		if not slot or slot.is_void():
+			continue
+		if slot.slot and slot.slot.has_specific_residue(residue_id):
+			slot.slot.clear_residue(residue_id)
+			consumed_count += 1
+			if ctx.battle and ctx.battle.grid:
+				ctx.battle.grid.slot_changed.emit(slot.grid_position)
+
+	if ctx.source_rune:
+		ctx.source_rune.last_effect_success = consumed_count > 0
+
+	# Optional: score per consumed
+	if score_per_consumed and consumed_count > 0 and ctx.battle:
+		var base_amount = score_per_consumed.resolve_int(ctx, targets)
+		var total = base_amount * consumed_count
+		ctx.battle.add_score(total, ctx.source_rune)
+
+
+func get_description() -> String:
+	var desc = "Consume %s from targets" % residue_id
+	if max_consume > 0:
+		desc = "Consume up to %d %s" % [max_consume, residue_id]
+	if score_per_consumed:
+		desc += ", %s per consumed" % score_per_consumed.get_description()
+	return desc
+
+
+func get_keywords() -> Array[StringName]:
+	return [Keywords.ABSORB]

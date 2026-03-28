@@ -150,12 +150,12 @@ func move_rune(from_coord: Vector2i, to_coord: Vector2i) -> bool:
 		return false
 	
 	# Check if source slot is petrified (cannot move rune out)
-	if from_slot.has_state("petrified"):
+	if from_slot.has_state("petrified") or (from_slot.slot and from_slot.slot.is_petrified()):
 		print("Cannot move rune: slot is petrified")
 		return false
 	
 	# Check if target slot is petrified and has a rune (cannot swap)
-	if to_slot.has_state("petrified") and not to_slot.is_empty():
+	if (to_slot.has_state("petrified") or (to_slot.slot and to_slot.slot.is_petrified())) and not to_slot.is_empty():
 		print("Cannot swap: target slot is petrified")
 		return false
 		
@@ -202,7 +202,7 @@ func rotate_runes(slots: Array[GridSlot], clockwise: bool) -> void:
 	
 	# Check if any slot is petrified - cannot rotate
 	for slot in slots:
-		if slot.has_state("petrified"):
+		if slot.has_state("petrified") or (slot.slot and slot.slot.is_petrified()):
 			print("Cannot rotate: slot at %s is petrified" % str(slot.grid_position))
 			return
 	

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" path="res://scripts/effects/actions/action_consume_residue.gd" id="2_ac"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent.tres" id="3_sel"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_adj_mana_anomaly.tres" id="4_cond"]
+
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_ac")
+residue_id = "mana_anomaly"
+max_consume = 1
+
+[resource]
+script = ExtResource("1_ge")
+condition = ExtResource("4_cond")
+selector = ExtResource("3_sel")
+action = SubResource("act")
