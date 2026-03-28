@@ -339,9 +339,6 @@ func _setup_initial_inventory() -> void:
 	# Give starting money
 	_grant_starting_money()
 	
-	# Grant first free rune pick
-	free_pick_granted.emit(1)
-	
 	# Start the first level (shop is available during planning)
 	start_level()
 

@@ -55,7 +55,6 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("inventory_manager")]
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
-base_target_score = 100
 initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_muem4"), ExtResource("7_dp3eg"), ExtResource("8_0ld40"), ExtResource("9_gqmmt")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
@@ -291,8 +290,9 @@ label_settings = ExtResource("19_dlbl")
 layout_mode = 0
 offset_left = 72.0
 offset_top = 325.0
-offset_right = 132.0
+offset_right = 122.0
 offset_bottom = 348.0
+mouse_filter = 0
 text = "$0"
 label_settings = ExtResource("19_dlbl")
 
@@ -315,12 +315,11 @@ script = ExtResource("11_shop")
 
 [node name="EnterPanel" type="Button" parent="UI/ShopUI"]
 layout_mode = 0
-offset_left = 234.0
-offset_top = 117.0
-offset_right = 304.0
-offset_bottom = 171.0
-text = "Manage
- Runes"
+offset_left = 14.0
+offset_top = 314.0
+offset_right = 64.0
+offset_bottom = 349.0
+text = "Back"
 
 [node name="PurchasableRunes" type="GridContainer" parent="UI/ShopUI"]
 layout_mode = 0
@@ -381,10 +380,10 @@ layout_mode = 2
 
 [node name="SellArea" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0
-offset_left = 175.0
-offset_top = 30.0
-offset_right = 295.0
-offset_bottom = 80.0
+offset_left = 470.0
+offset_top = 167.0
+offset_right = 590.0
+offset_bottom = 217.0
 script = ExtResource("12_sell")
 
 [node name="Panel" type="Panel" parent="UI/ShopUI/SellArea"]

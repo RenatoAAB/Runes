@@ -793,6 +793,28 @@ func _update_money_display() -> void:
 		var stats = get_node_or_null("/root/Stats")
 		var money = stats.get_money() if stats else 0
 		money_label.text = "%d Mana" % money
+		money_label.mouse_filter = Control.MOUSE_FILTER_STOP
+		# Connect hover signals once for tooltip
+		if not money_label.mouse_entered.is_connected(_on_money_hover):
+			money_label.mouse_entered.connect(_on_money_hover)
+			money_label.mouse_exited.connect(_on_money_hover_end)
+
+
+func _on_money_hover() -> void:
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if not tooltip_manager:
+		return
+	var stats = get_node_or_null("/root/Stats")
+	var money = stats.get_money() if stats else 0
+	var interest = mini(money / 5, ShopConfig.MAX_INTEREST)
+	var text = "[color=yellow]+ %d[/color] de geração espontânea" % interest
+	tooltip_manager.show_tooltip(text)
+
+
+func _on_money_hover_end() -> void:
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if tooltip_manager:
+		tooltip_manager.hide_tooltip()
 
 
 func _on_level_started(level: int, target: int) -> void:

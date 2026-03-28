@@ -380,33 +380,10 @@ var _shop_item_data: Variant = null  # SlotPieceData, SlotModifierData, RelicDat
 func get_shop_price_text() -> String:
 	return _shop_price_text if _shop_mode else ""
 
-## Enable/disable shop mode for this slot (shows price label)
+## Enable/disable shop mode for this slot (price shown only in tooltip)
 func set_shop_mode(enabled: bool, price_text: String = "") -> void:
 	_shop_mode = enabled
 	_shop_price_text = price_text
-	
-	if enabled:
-		if not _price_label:
-			_price_label = Label.new()
-			_price_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-			_price_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-			_price_label.set_anchors_preset(Control.PRESET_FULL_RECT)
-			_price_label.add_theme_font_size_override("font_size", 10)
-			add_child(_price_label)
-		
-		_price_label.text = price_text
-		_price_label.visible = true
-		
-		# Color based on price text
-		if price_text == "FREE!":
-			_price_label.add_theme_color_override("font_color", Color.LIME)
-		elif price_text.begins_with("$"):
-			_price_label.add_theme_color_override("font_color", Color.GOLD)
-		else:
-			_price_label.add_theme_color_override("font_color", Color.GRAY)
-	else:
-		if _price_label:
-			_price_label.visible = false
 
 
 ## Set shop item data for tooltip display
