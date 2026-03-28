@@ -32,9 +32,10 @@ var grid_manager: GridManager:
 
 @export var inventory_manager: InventoryManager
 
-# Curve settings
-@export var base_target_score: int = 50
-@export var score_growth_per_level: float = 1.5
+# Curve settings — Target(n) = base × (g0 + s×(n-1))^(n-1)
+@export var base_target_score: int = 100
+@export var score_growth_initial: float = 1.5
+@export var score_growth_acceleration: float = 0.05
 
 var current_level: int = 1
 var current_target_score: int = 0
@@ -318,8 +319,10 @@ func _handle_loss() -> void:
 	start_game()
 
 func _calculate_target_score(level: int) -> int:
-	# Simple exponential curve
-	return int(base_target_score * pow(score_growth_per_level, level - 1))
+	# Accelerating exponential: growth itself grows each round
+	var n := level - 1
+	var effective_growth := score_growth_initial + score_growth_acceleration * n
+	return int(base_target_score * pow(effective_growth, n))
 
 func _setup_initial_inventory() -> void:
 	# Clear inventory

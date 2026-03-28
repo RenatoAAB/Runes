@@ -95,6 +95,7 @@ func clear_rune_tooltip() -> void:
 	_rune_text = ""
 	_stats_text = ""
 	_update_display()
+	_update_stats_display()
 
 func clear_slot_tooltip() -> void:
 	_slot_text = ""

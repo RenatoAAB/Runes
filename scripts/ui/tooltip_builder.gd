@@ -240,8 +240,9 @@ static func build_rune_stats_tooltip(rune: RuneInstance) -> String:
 	var prev_activations: int = stats.get_previous_round_activations_for_rune(rune_id)
 	if prev_score == 0 and prev_activations == 0:
 		return ""
-	var text = "[color=gray]Rodada anterior:[/color]"
-	text += "\n[color=cyan]%d[/color] pts | %d ativ." % [prev_score, prev_activations]
+	var text = "[b][color=gray]Última rodada[/color][/b]"
+	text += "\n[color=cyan]+%d[/color] pts" % prev_score
+	text += "\n[color=yellow]★%d[/color] ativações" % prev_activations
 	return text
 
 

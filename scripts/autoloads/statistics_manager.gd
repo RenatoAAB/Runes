@@ -116,9 +116,6 @@ func _notification(what: int) -> void:
 # =============================================================================
 
 func _on_battle_started(_panel_count: int) -> void:
-	# Snapshot current round data before reset
-	_previous_round_score_by_rune = battle.get("score_by_rune", {}).duplicate()
-	_previous_round_activations_by_rune = battle.get("activations_by_rune", {}).duplicate()
 	_reset_battle_stats()
 
 
@@ -126,6 +123,10 @@ func _on_battle_ended(total_score: int, target_score: int, victory: bool) -> voi
 	battle["ended_at"] = Time.get_ticks_msec()
 	battle["duration_msec"] = battle["ended_at"] - battle["started_at"]
 	battle["total_score"] = total_score
+	
+	# Snapshot per-rune data for secondary tooltip (available during PLANNING)
+	_previous_round_score_by_rune = battle.get("score_by_rune", {}).duplicate()
+	_previous_round_activations_by_rune = battle.get("activations_by_rune", {}).duplicate()
 	
 	# Update run stats
 	run["rounds_played"] += 1

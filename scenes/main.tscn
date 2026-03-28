@@ -55,7 +55,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("inventory_manager")]
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
-base_target_score = 30
+base_target_score = 100
 initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_muem4"), ExtResource("7_dp3eg"), ExtResource("8_0ld40"), ExtResource("9_gqmmt")])
 rune_drop_rates = ExtResource("18_pm3ni")
 

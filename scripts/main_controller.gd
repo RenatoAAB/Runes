@@ -805,16 +805,13 @@ func _on_level_started(level: int, target: int) -> void:
 func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:
 	match new_phase:
 		GameEnums.GamePhase.BATTLE:
-			# Create stats display for battle
-			_create_stats_display()
 			# Hide shop during battle
 			_hide_shop()
 			# Hide enter shop button during battle
 			if enter_shop_button:
 				enter_shop_button.visible = false
 		GameEnums.GamePhase.RESOLUTION:
-			# Remove stats display after battle
-			_remove_stats_display()
+			pass  # BattleResultScreen handles end-of-round display
 		GameEnums.GamePhase.PLANNING:
 			# Hide shop view when planning starts (player can reopen it)
 			_hide_shop()
