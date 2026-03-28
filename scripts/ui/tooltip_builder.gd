@@ -145,17 +145,28 @@ static func build_slot_tooltip(slot: GridSlot) -> String:
 
 # --- Relic Tooltip ---
 
-static func build_relic_tooltip(data: RelicData, relic_instance: RelicInstance = null) -> String:
+static func build_relic_tooltip(data: RelicData, relic_instance: RelicInstance = null, shop_price_text: String = "") -> String:
 	if not data:
 		return ""
 
-	var text = "[b]%s[/b]" % data.display_name
+	var header = "[b]%s[/b]" % data.display_name
+	if not shop_price_text.is_empty():
+		header += "  [color=gold][b]%s[/b][/color]" % shop_price_text
 	var rarity_color = TooltipTexts.get_rarity_color_name(data.rarity)
-	text += " [color=%s](%s)[/color]\n" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+	header += " [color=%s](%s)[/color]" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
 
-	var full_desc = data.get_full_description()
-	if full_desc and not full_desc.is_empty():
-		text += "[color=silver]%s[/color]" % full_desc
+	var text = header
+	text += "\n[color=gray]Multiplicador Pós-Painel[/color]"
+
+	# Show calculator description (precise with values) or fallback to data.description
+	if data.has_calculator():
+		var calc_desc = data.calculator.get_description()
+		if not calc_desc.is_empty():
+			text += "\n[color=silver]%s[/color]" % calc_desc
+		elif not data.description.is_empty():
+			text += "\n[color=silver]%s[/color]" % data.description
+	elif not data.description.is_empty():
+		text += "\n[color=silver]%s[/color]" % data.description
 
 	if relic_instance and relic_instance.last_calculated_multiplier != 1.0:
 		text += "\n[color=yellow]Último: ×%.2f[/color]" % relic_instance.last_calculated_multiplier
@@ -165,45 +176,50 @@ static func build_relic_tooltip(data: RelicData, relic_instance: RelicInstance =
 
 # --- Modifier Tooltip ---
 
-static func build_modifier_tooltip(data: SlotModifierData) -> String:
+static func build_modifier_tooltip(data: SlotModifierData, shop_price_text: String = "") -> String:
 	if not data:
 		return ""
 
-	var text = "[b]%s[/b]" % data.display_name
+	var header = "[b]%s[/b]" % data.display_name
+	if not shop_price_text.is_empty():
+		header += "  [color=gold][b]%s[/b][/color]" % shop_price_text
 	var rarity_color = TooltipTexts.get_rarity_color_name(data.rarity)
-	text += " [color=%s](%s)[/color]\n" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+	header += " [color=%s](%s)[/color]" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+
+	var text = header
 
 	var type_name = TooltipTexts.get_modifier_type_name(data.modifier_type)
-	text += "[color=cyan]%s[/color]\n" % type_name
+	text += "\n[color=cyan]%s[/color]" % type_name
 
 	# Slot type override
 	if data.slot_data_override:
-		text += "[color=orange]Tipo de Slot:[/color] %s\n" % data.slot_data_override.slot_name
-		var slot_desc = data.slot_data_override.get_full_description()
-		if slot_desc and not slot_desc.is_empty():
-			text += "[color=gray]%s[/color]\n" % slot_desc
+		text += "\n[color=orange]Tipo de Slot:[/color] %s" % data.slot_data_override.slot_name
 
 	if data.description and not data.description.is_empty():
-		text += "[color=silver]%s[/color]" % data.description
+		text += "\n[color=silver]%s[/color]" % data.description
 	else:
-		text += "[color=silver]%s[/color]" % TooltipTexts.get_modifier_auto_description(data)
+		text += "\n[color=silver]%s[/color]" % TooltipTexts.get_modifier_auto_description(data)
 
 	return text
 
 
 # --- Piece Tooltip ---
 
-static func build_piece_tooltip(data: SlotPieceData) -> String:
+static func build_piece_tooltip(data: SlotPieceData, shop_price_text: String = "") -> String:
 	if not data:
 		return ""
 
-	var text = "[b]%s[/b]" % data.display_name
+	var header = "[b]%s[/b]" % data.display_name
+	if not shop_price_text.is_empty():
+		header += "  [color=gold][b]%s[/b][/color]" % shop_price_text
 	var rarity_color = TooltipTexts.get_rarity_color_name(data.rarity)
-	text += " [color=%s](%s)[/color]\n" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
-	text += "[color=yellow]%s[/color]\n" % (TooltipTexts.LABEL_SLOTS % data.get_slot_count())
+	header += " [color=%s](%s)[/color]" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+
+	var text = header
+	text += "\n[color=yellow]%s[/color]" % (TooltipTexts.LABEL_SLOTS % data.get_slot_count())
 
 	if data.description and not data.description.is_empty():
-		text += "[color=silver]%s[/color]" % data.description
+		text += "\n[color=silver]%s[/color]" % data.description
 
 	return text
 

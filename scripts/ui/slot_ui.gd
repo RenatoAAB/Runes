@@ -46,6 +46,8 @@ var _current_effect_indices: Array = []
 @export var tooltip_label_settings: LabelSettings
 
 func _ready() -> void:
+	clip_contents = true
+	
 	# Create buff overlay (persistent state)
 	buff_rect = ColorRect.new()
 	buff_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -73,6 +75,13 @@ func _ready() -> void:
 	
 	# Apply initial visual based on unlock state
 	_update_locked_visual()
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		var mc = get_tree().get_first_node_in_group("main_controller")
+		if mc and mc.has_method("clear_piece_drag_preview"):
+			mc.clear_piece_drag_preview()
 
 
 ## Set whether this slot is unlocked (can hold runes) or locked (empty expansion space)
@@ -301,6 +310,15 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	
 	# Can drop PIECES on LOCKED grid slots (to expand the panel)
 	if data.has("piece_data") and grid_coord != Vector2i(-1, -1):
+		# Request drag preview highlighting on the grid
+		var mc = get_tree().get_first_node_in_group("main_controller")
+		if not is_unlocked:
+			if mc and mc.has_method("show_piece_drag_preview"):
+				mc.show_piece_drag_preview(data["piece_data"], grid_coord)
+		else:
+			# Hovering unlocked slot with a piece — clear any previous preview
+			if mc and mc.has_method("clear_piece_drag_preview"):
+				mc.clear_piece_drag_preview()
 		return not is_unlocked
 	
 	return false
@@ -397,7 +415,7 @@ func set_shop_item(item_type: String, item_data: Variant) -> void:
 	_shop_item_data = item_data
 
 
-## Show tooltip for shop item
+## Show tooltip for shop item — delegates to centralized TooltipBuilder
 func _show_shop_item_tooltip() -> void:
 	if not _shop_item_data:
 		return
@@ -406,73 +424,25 @@ func _show_shop_item_tooltip() -> void:
 	if not tooltip_manager:
 		return
 	
+	var price = _shop_price_text
 	var text = ""
 	
 	match _shop_item_type:
 		"piece":
 			var piece = _shop_item_data as SlotPieceData
 			if piece:
-				text = "[b]%s[/b]\n" % piece.display_name
-				text += "[color=yellow]%d slots[/color]\n" % piece.get_slot_count()
-				if piece.description and not piece.description.is_empty():
-					text += "[color=silver]%s[/color]\n" % piece.description
-				text += "[color=gold]%s[/color]" % _shop_price_text
-		
+				text = TooltipBuilder.build_piece_tooltip(piece, price)
 		"modifier":
 			var modifier = _shop_item_data as SlotModifierData
 			if modifier:
-				text = "[b]%s[/b]\n" % modifier.display_name
-				text += "[color=cyan]%s[/color]\n" % _get_modifier_type_name(modifier.modifier_type)
-				if modifier.slot_data_override:
-					text += "[color=orange]Tipo de Slot:[/color] %s\n" % modifier.slot_data_override.slot_name
-					var slot_desc = modifier.slot_data_override.get_full_description()
-					if slot_desc and not slot_desc.is_empty():
-						text += "[color=gray]%s[/color]\n" % slot_desc
-				if modifier.description and not modifier.description.is_empty():
-					text += "[color=silver]%s[/color]\n" % modifier.description
-				else:
-					text += "[color=silver]%s[/color]\n" % _get_modifier_auto_description(modifier)
-				text += "[color=gold]%s[/color]" % _shop_price_text
-		
+				text = TooltipBuilder.build_modifier_tooltip(modifier, price)
 		"relic":
 			var relic = _shop_item_data as RelicData
 			if relic:
-				text = "[b]%s[/b]\n" % relic.display_name
-				if relic.description and not relic.description.is_empty():
-					text += "[color=silver]%s[/color]\n" % relic.description
-				text += "[color=gold]%s[/color]" % _shop_price_text
+				text = TooltipBuilder.build_relic_tooltip(relic, null, price)
 	
 	if text != "":
 		tooltip_manager.show_tooltip(text, false)
-
-
-func _get_modifier_type_name(type: SlotModifierData.ModifierType) -> String:
-	match type:
-		SlotModifierData.ModifierType.MULTIPLIER: return "Multiplier"
-		SlotModifierData.ModifierType.TRIGGER: return "Trigger"
-		SlotModifierData.ModifierType.ECONOMY: return "Economy"
-		SlotModifierData.ModifierType.PRESERVATION: return "Preservation"
-		SlotModifierData.ModifierType.PROTECTION: return "Protection"
-		SlotModifierData.ModifierType.STATE: return "State"
-		_: return "Unknown"
-
-
-func _get_modifier_auto_description(data: SlotModifierData) -> String:
-	match data.modifier_type:
-		SlotModifierData.ModifierType.MULTIPLIER:
-			return "Adds +%.1fx multiplier to this slot." % data.value
-		SlotModifierData.ModifierType.TRIGGER:
-			return "Slot triggers %d extra time(s)." % int(data.value)
-		SlotModifierData.ModifierType.ECONOMY:
-			return "Generates $%d per activation." % int(data.value)
-		SlotModifierData.ModifierType.PRESERVATION:
-			return "Runes in this slot don't consume charges."
-		SlotModifierData.ModifierType.PROTECTION:
-			return "Protects fragile runes from breaking."
-		SlotModifierData.ModifierType.STATE:
-			return "Applies a special state to the slot."
-		_:
-			return ""
 
 
 ## Display a slot type (SlotData) instead of a rune
@@ -585,8 +555,6 @@ func set_extra_item(item_type: String, data: Variant, instance: Variant = null) 
 	if not item_ui:
 		item_ui = ItemUI.new()
 		item_ui.set_anchors_preset(Control.PRESET_FULL_RECT)
-		item_ui.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		item_ui.size_flags_vertical = Control.SIZE_EXPAND_FILL
 		add_child(item_ui)
 	
 	# Set the item based on type

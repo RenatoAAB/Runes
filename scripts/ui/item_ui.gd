@@ -10,17 +10,19 @@ signal item_drag_started(item_ui: ItemUI)
 
 enum ItemType { NONE, RELIC, MODIFIER, PIECE }
 
+const SlotPiecePreviewGridScript = preload("res://scripts/ui/slot_piece_preview_grid.gd")
+
 var item_type: ItemType = ItemType.NONE
 var item_data: Variant = null  # RelicData, SlotModifierData, or SlotPieceData
 var item_instance: Variant = null  # RelicInstance, null for modifiers, SlotPieceInstance
 
 var _background: ColorRect
 var _label: Label
+var _piece_preview_grid: Control = null
 var _is_dragging: bool = false
 
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(48, 48)
 	expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	mouse_filter = Control.MOUSE_FILTER_STOP
@@ -127,6 +129,9 @@ func clear() -> void:
 		_background.color = Color(0.2, 0.2, 0.2, 0.5)
 	if _label:
 		_label.text = ""
+	if _piece_preview_grid:
+		_piece_preview_grid.call("clear")
+		_piece_preview_grid.get_parent().visible = false
 
 
 func _update_visuals() -> void:
@@ -152,10 +157,10 @@ func _update_visuals() -> void:
 			icon = modifier.icon
 		
 		ItemType.PIECE:
-			var piece = item_data as SlotPieceData
-			color = Color(0.4, 0.4, 0.4)
-			label_text = piece.display_name.substr(0, 2) if piece.display_name else "P"
-			icon = piece.icon
+			var _piece = item_data as SlotPieceData
+			color = Color(0.2, 0.2, 0.25)
+			label_text = ""
+			icon = null  # Use preview grid instead
 		
 		_:
 			color = Color.GRAY
@@ -172,6 +177,31 @@ func _update_visuals() -> void:
 			_label.text = label_text
 	
 	texture = icon
+	
+	# Handle piece preview grid
+	if item_type == ItemType.PIECE:
+		if not _piece_preview_grid:
+			# Wrap in CenterContainer to properly center the grid
+			var center = CenterContainer.new()
+			center.set_anchors_preset(Control.PRESET_FULL_RECT)
+			center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			add_child(center)
+			var grid = SlotPiecePreviewGridScript.new()
+			grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			center.add_child(grid)
+			_piece_preview_grid = grid
+		var piece_data = item_data as SlotPieceData
+		# Use actual size when available, fallback to parent's min size or 36x36
+		var available := size if size.x > 0 and size.y > 0 else Vector2(36, 36)
+		var fit_area := available - Vector2(8, 8)
+		if item_instance:
+			_piece_preview_grid.call("setup_auto_fit_instance", item_instance as SlotPieceInstance, fit_area, 2)
+		else:
+			_piece_preview_grid.call("setup_auto_fit", piece_data, fit_area, 2)
+		_piece_preview_grid.get_parent().visible = true
+	else:
+		if _piece_preview_grid:
+			_piece_preview_grid.get_parent().visible = false
 
 
 func _connect_event_bus() -> void:

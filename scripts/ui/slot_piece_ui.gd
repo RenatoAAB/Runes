@@ -27,6 +27,7 @@ var slot_index: int = -1
 
 var _cells_container: Control
 var _cells: Array[ColorRect] = []
+var _preview_grid: SlotPiecePreviewGrid = null
 var _is_hovered: bool = false
 
 
@@ -42,21 +43,24 @@ func _setup_ui() -> void:
 	# Background style
 	var style = StyleBoxFlat.new()
 	style.bg_color = Color(0.15, 0.15, 0.2, 0.9)
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
-	style.border_width_left = 1
-	style.border_width_top = 1
-	style.border_width_right = 1
-	style.border_width_bottom = 1
+	style.set_corner_radius_all(4)
+	style.set_border_width_all(1)
 	style.border_color = Color(0.4, 0.4, 0.5, 1.0)
+	style.content_margin_left = 6
+	style.content_margin_right = 6
+	style.content_margin_top = 6
+	style.content_margin_bottom = 6
 	add_theme_stylebox_override("panel", style)
 	
-	# Container for cells
-	_cells_container = Control.new()
-	_cells_container.set_anchors_preset(Control.PRESET_CENTER)
-	add_child(_cells_container)
+	# Center container for the preview grid
+	var center = CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(center)
+	
+	_preview_grid = SlotPiecePreviewGrid.new()
+	_preview_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(_preview_grid)
 
 
 ## Set the piece to display
@@ -72,74 +76,16 @@ func clear_piece() -> void:
 
 
 func _update_visuals() -> void:
-	# Clear existing cells
-	for cell in _cells:
-		cell.queue_free()
-	_cells.clear()
+	if not _preview_grid:
+		return
 	
 	if not piece or not piece.data:
+		_preview_grid.clear()
 		return
 	
-	# Calculate bounding box
-	var shape = piece.get_shape()
-	if shape.is_empty():
-		return
-	
-	var min_pos = Vector2i(999, 999)
-	var max_pos = Vector2i(-999, -999)
-	for pos in shape:
-		min_pos.x = mini(min_pos.x, pos.x)
-		min_pos.y = mini(min_pos.y, pos.y)
-		max_pos.x = maxi(max_pos.x, pos.x)
-		max_pos.y = maxi(max_pos.y, pos.y)
-	
-	var shape_size = max_pos - min_pos + Vector2i.ONE
-	var total_width = shape_size.x * (CELL_SIZE + CELL_GAP) - CELL_GAP
-	var total_height = shape_size.y * (CELL_SIZE + CELL_GAP) - CELL_GAP
-	
-	# Update minimum size based on piece shape
-	custom_minimum_size = Vector2(
-		maxf(48, total_width + 16),
-		maxf(48, total_height + 16)
-	)
-	
-	# Center the cells container
-	_cells_container.position = Vector2(
-		(custom_minimum_size.x - total_width) / 2,
-		(custom_minimum_size.y - total_height) / 2
-	)
-	
-	# Create visual cells
-	var slot_types = piece.data.slot_types
-	var modifiers = piece.data.slot_modifiers
-	
-	for i in range(shape.size()):
-		var pos = shape[i] - min_pos
-		
-		var cell = ColorRect.new()
-		cell.size = Vector2(CELL_SIZE, CELL_SIZE)
-		cell.position = Vector2(
-			pos.x * (CELL_SIZE + CELL_GAP),
-			pos.y * (CELL_SIZE + CELL_GAP)
-		)
-		
-		# Determine cell color based on modifier
-		var modifier_type = "default"
-		if i < modifiers.size() and modifiers[i]:
-			modifier_type = _get_modifier_type(modifiers[i])
-		
-		cell.color = MODIFIER_COLORS.get(modifier_type, MODIFIER_COLORS.default)
-		
-		# Add border effect
-		var border = ReferenceRect.new()
-		border.size = cell.size
-		border.border_color = cell.color.darkened(0.3)
-		border.border_width = 1.5
-		border.editor_only = false
-		cell.add_child(border)
-		
-		_cells_container.add_child(cell)
-		_cells.append(cell)
+	# Auto-fit to fill the available area (min_size minus padding)
+	var fit_area := custom_minimum_size - Vector2(16, 16)
+	_preview_grid.setup_auto_fit_instance(piece, fit_area, 2)
 
 
 ## Get modifier type string for color lookup

@@ -180,6 +180,9 @@ func _refresh_pieces() -> void:
 func _create_relic_item(relic: RelicInstance) -> Control:
 	var item = PanelContainer.new()
 	item.custom_minimum_size = item_size
+	item.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	item.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	item.clip_contents = true
 	
 	var style = StyleBoxFlat.new()
 	style.bg_color = _get_rarity_color(relic.data.rarity)
@@ -192,8 +195,9 @@ func _create_relic_item(relic: RelicInstance) -> Control:
 	if relic.data.icon:
 		var icon = TextureRect.new()
 		icon.texture = relic.data.icon
-		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.set_anchors_preset(Control.PRESET_FULL_RECT)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		item.add_child(icon)
 	else:
@@ -213,6 +217,9 @@ func _create_relic_item(relic: RelicInstance) -> Control:
 func _create_modifier_item(modifier: SlotModifierData) -> Control:
 	var item = PanelContainer.new()
 	item.custom_minimum_size = item_size
+	item.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	item.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	item.clip_contents = true
 	
 	var style = StyleBoxFlat.new()
 	style.bg_color = _get_rarity_color(modifier.rarity)
@@ -225,8 +232,9 @@ func _create_modifier_item(modifier: SlotModifierData) -> Control:
 	if modifier.icon:
 		var icon = TextureRect.new()
 		icon.texture = modifier.icon
-		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.set_anchors_preset(Control.PRESET_FULL_RECT)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		item.add_child(icon)
 	else:
@@ -246,32 +254,31 @@ func _create_modifier_item(modifier: SlotModifierData) -> Control:
 func _create_piece_item(piece: SlotPieceInstance) -> Control:
 	var item = PanelContainer.new()
 	item.custom_minimum_size = item_size
+	item.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	item.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	item.clip_contents = true
 	
 	var style = StyleBoxFlat.new()
 	style.bg_color = _get_rarity_color(piece.data.rarity)
-	style.corner_radius_top_left = 4
-	style.corner_radius_top_right = 4
-	style.corner_radius_bottom_left = 4
-	style.corner_radius_bottom_right = 4
+	style.set_corner_radius_all(4)
+	style.content_margin_left = 4
+	style.content_margin_right = 4
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4
 	item.add_theme_stylebox_override("panel", style)
 	
-	# Draw piece shape
-	var shape_container = Control.new()
-	shape_container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	shape_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	item.add_child(shape_container)
+	# Use SlotPiecePreviewGrid to draw the piece shape with slot-styled cells
+	var center = CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	item.add_child(center)
 	
-	var shape = piece.get_current_shape()
-	var bounds = piece.data.get_bounds()
-	var cell_size = mini(item_size.x / (bounds.size.x + 1), item_size.y / (bounds.size.y + 1))
-	
-	for pos in shape:
-		var cell = ColorRect.new()
-		cell.size = Vector2(cell_size - 2, cell_size - 2)
-		cell.position = Vector2(pos.x * cell_size + 5, pos.y * cell_size + 5)
-		cell.color = Color.WHITE
-		cell.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		shape_container.add_child(cell)
+	var preview_grid = SlotPiecePreviewGrid.new()
+	preview_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(preview_grid)
+	# Auto-fit to fill the item area (minus margins)
+	var fit_area = item_size - Vector2(12, 12)
+	preview_grid.setup_auto_fit_instance(piece, fit_area, 2)
 	
 	item.gui_input.connect(_on_piece_input.bind(piece))
 	item.mouse_entered.connect(_on_item_hover.bind(piece, "piece"))

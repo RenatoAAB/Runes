@@ -38,6 +38,7 @@ var shop_manager: ShopManager
 # --- Internal State ---
 var _upgrade_rune_1: RuneInstance = null
 var _upgrade_rune_2: RuneInstance = null
+var _piece_preview_grids: Array[SlotPiecePreviewGrid] = []  # Track for cleanup
 
 
 func _ready() -> void:
@@ -84,7 +85,6 @@ func initialize(manager: ShopManager, player_level: int = 1, refresh_now: bool =
 	if refresh_now:
 		shop_manager.refresh_shop(player_level)
 	else:
-		# Sync UI with existing shop data (items already generated)
 		_on_shop_updated()
 
 
@@ -172,6 +172,12 @@ func _refresh_slots_shop() -> void:
 		shop_items.append({"type": "modifier", "data": shop_manager.available_modifiers[i], "index": i})
 	
 	# Display items in available slots
+	# Clean up old preview grids
+	for pg in _piece_preview_grids:
+		if is_instance_valid(pg):
+			pg.queue_free()
+	_piece_preview_grids.clear()
+	
 	for i in range(slots.size()):
 		var slot_ui = slots[i] as SlotUI
 		if not slot_ui:
@@ -182,7 +188,21 @@ func _refresh_slots_shop() -> void:
 			
 			if item.type == "piece":
 				var piece_data = item.data as SlotPieceData
-				slot_ui.set_placeholder_display(piece_data.display_name.substr(0, 2), _get_piece_shape_color(piece_data))
+				# Use SlotPiecePreviewGrid for visual representation
+				slot_ui.clear_display()
+				var preview_grid = SlotPiecePreviewGrid.new()
+				preview_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				preview_grid.set_anchors_preset(Control.PRESET_CENTER)
+				slot_ui.add_child(preview_grid)
+				preview_grid.setup_auto_fit(piece_data, Vector2(28, 28), 2)
+				_piece_preview_grids.append(preview_grid)
+				# Set background color based on piece
+				var bg_style = StyleBoxFlat.new()
+				bg_style.bg_color = _get_piece_shape_color(piece_data).darkened(0.6)
+				bg_style.set_border_width_all(2)
+				bg_style.border_color = _get_piece_shape_color(piece_data).darkened(0.2)
+				bg_style.set_corner_radius_all(4)
+				slot_ui.add_theme_stylebox_override("panel", bg_style)
 				slot_ui.set_shop_mode(true, shop_manager.get_piece_price_display(piece_data))
 				slot_ui.set_shop_item("piece", piece_data)
 				_connect_slot_buy_signal(slot_ui, item.index, "piece")

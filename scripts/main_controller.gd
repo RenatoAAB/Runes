@@ -59,6 +59,11 @@ var inventory_ui_slots: Array[SlotUI] = []
 ## Reference to live stats display during battle
 var _stats_display: StatsDisplay = null
 
+## Tracks which grid coords are currently highlighted for piece drag preview
+var _piece_preview_coords: Array[Vector2i] = []
+## Tracks the last coord used for piece drag preview (to avoid redundant updates)
+var _piece_preview_last_coord: Vector2i = Vector2i(-999, -999)
+
 func _ready() -> void:
 	print("[MainController] Initialization starting...")
 	
@@ -660,6 +665,9 @@ func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
 		print("Cannot place piece: invalid position")
 		return
 	
+	# Clear the drag preview before modifying the grid
+	clear_piece_drag_preview()
+	
 	# Unlock slots from the piece
 	var unlocked_count = panel.unlock_slots_from_piece(piece, coord)
 	if unlocked_count > 0:
@@ -674,6 +682,43 @@ func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
 		print("Piece '%s' placed at %s, unlocked %d slots" % [piece.display_name, coord, unlocked_count])
 	else:
 		print("No slots were unlocked from piece")
+
+
+## Show drag preview highlighting the grid slots a piece would cover.
+## Called from SlotUI._can_drop_data during piece drag.
+func show_piece_drag_preview(piece_data: SlotPieceData, base_coord: Vector2i) -> void:
+	# Skip redundant updates for the same coord
+	if base_coord == _piece_preview_last_coord:
+		return
+	
+	clear_piece_drag_preview()
+	_piece_preview_last_coord = base_coord
+	
+	if not _panel_manager:
+		return
+	var panel := _panel_manager.get_panel(_current_panel_index)
+	if not panel:
+		return
+	
+	var is_valid := panel.can_place_piece(piece_data.shape, base_coord)
+	var color := Color(0.2, 0.8, 0.2, 0.4) if is_valid else Color(0.8, 0.2, 0.2, 0.4)
+	
+	for offset in piece_data.shape:
+		var coord := base_coord + offset
+		_piece_preview_coords.append(coord)
+		var slot_ui: SlotUI = grid_ui_slots.get(coord) as SlotUI
+		if slot_ui:
+			slot_ui.set_buff_highlight(color)
+
+
+## Clear all piece drag preview highlights from the grid.
+func clear_piece_drag_preview() -> void:
+	for coord in _piece_preview_coords:
+		var slot_ui: SlotUI = grid_ui_slots.get(coord) as SlotUI
+		if slot_ui:
+			slot_ui.set_buff_highlight(Color(0, 0, 0, 0))
+	_piece_preview_coords.clear()
+	_piece_preview_last_coord = Vector2i(-999, -999)
 
 
 # --- Legacy handlers removed - now handled by Shop ---

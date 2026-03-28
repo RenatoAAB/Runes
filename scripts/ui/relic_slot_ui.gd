@@ -198,13 +198,12 @@ func _on_mouse_exited() -> void:
 
 func _show_tooltip() -> void:
 	var current_relic = relic
-	if not current_relic:
+	if not current_relic or not current_relic.data:
 		return
 	
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager and tooltip_manager.has_method("show_tooltip"):
-		var info = current_relic.get_display_info()
-		var text = "[b]%s[/b]\n%s" % [info.name, info.description]
+		var text = TooltipBuilder.build_relic_tooltip(current_relic.data, current_relic)
 		tooltip_manager.show_tooltip(text, false)
 
 
