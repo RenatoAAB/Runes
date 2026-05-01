@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=21 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -16,6 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
+[ext_resource type="Script" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
 
@@ -30,7 +31,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "inventory_manager", "grid_container", "inventory_container", "relic_slots_container", "score_label", "level_label", "target_value_label", "money_label", "panel_label", "enter_shop_button", "battle_button", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
+[node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "inventory_manager", "grid_container", "inventory_container", "relic_slots_container", "score_label", "level_label", "target_value_label", "money_label", "panel_label", "enter_shop_button", "activator_node", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter")]
 script = ExtResource("1_eb6dy")
 game_manager = NodePath("Managers/GameManager")
 inventory_manager = NodePath("Managers/InventoryManager")
@@ -43,7 +44,7 @@ target_value_label = NodePath("UI/GameUI/CrystalInfo/TargetValue")
 money_label = NodePath("UI/GameUI/MoneyLabel")
 panel_label = NodePath("UI/GameUI/PanelLabel")
 enter_shop_button = NodePath("UI/GameUI/EnterShopButton")
-battle_button = NodePath("UI/GameUI/ativador/BattleButton")
+activator_node = NodePath("UI/GameUI/ativador")
 previous_panel_button = NodePath("UI/GameUI/PreviousPanel")
 next_panel_button = NodePath("UI/GameUI/NextPanel")
 shop_ui = NodePath("UI/ShopUI")
@@ -225,13 +226,7 @@ layout_mode = 2
 
 [node name="ativador" type="Node2D" parent="UI/GameUI"]
 position = Vector2(320, 180)
-
-[node name="BattleButton" type="Button" parent="UI/GameUI/ativador"]
-offset_left = 166.0
-offset_top = -116.0
-offset_right = 290.0
-offset_bottom = 9.0
-flat = true
+script = ExtResource("14_activ")
 
 [node name="Sprite2D" type="Sprite2D" parent="UI/GameUI/ativador"]
 texture = ExtResource("13_gqmmt")
@@ -436,4 +431,3 @@ offset_bottom = 40.0
 script = ExtResource("7_trceg")
 label_settings = ExtResource("3_dp3eg")
 
-[connection signal="pressed" from="UI/GameUI/ativador/BattleButton" to="Managers/GameManager" method="_on_battle_button_pressed"]

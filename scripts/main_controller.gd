@@ -26,7 +26,7 @@ var reader: Reader = null
 @export var money_label: Label
 @export var panel_label: Label  # Shows current panel (e.g., "Panel 1/3")
 @export var enter_shop_button: Button
-@export var battle_button: Button
+@export var activator_node: Node2D
 @export var previous_panel_button: Button
 @export var next_panel_button: Button
 
@@ -290,6 +290,7 @@ func _generate_relic_slots() -> void:
 		if not slot_ui:
 			continue
 		slot_ui.is_relic_slot = true
+		slot_ui.set_slot_context(SlotUI.SlotContext.RELIC)
 		slot_ui.relic_slot_index = idx
 		slot_ui.relic_panel_index = _current_panel_index
 		if not slot_ui.relic_slot_dropped.is_connected(_on_relic_dropped):
@@ -483,6 +484,7 @@ func _generate_grid_ui() -> void:
 			if default_tooltip_label_settings:
 				slot_ui.tooltip_label_settings = default_tooltip_label_settings
 			
+			slot_ui.set_slot_context(SlotUI.SlotContext.PANEL)
 			slot_ui.grid_coord = coord
 			
 			# Set locked/unlocked state based on panel
@@ -534,6 +536,7 @@ func _generate_inventory_ui() -> void:
 		if default_tooltip_label_settings:
 			slot_ui.tooltip_label_settings = default_tooltip_label_settings
 		
+		slot_ui.set_slot_context(SlotUI.SlotContext.INVENTORY)
 		# Connect signals
 		if not slot_ui.rune_dropped.is_connected(_on_rune_dropped):
 			slot_ui.rune_dropped.connect(_on_rune_dropped)
@@ -548,16 +551,12 @@ func _create_slot_ui() -> SlotUI:
 	else:
 		# Fallback if no scene assigned: Create programmatically
 		var slot = SlotUI.new()
-		slot.custom_minimum_size = Vector2(64, 64)
-		# Add a background style for visibility
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.2, 0.2, 0.2)
-		style.border_width_left = 2
-		style.border_width_top = 2
-		style.border_width_right = 2
-		style.border_width_bottom = 2
-		style.border_color = Color(0.5, 0.5, 0.5)
-		slot.add_theme_stylebox_override("panel", style)
+		slot.custom_minimum_size = Vector2(40, 40)
+		var sprite := Sprite2D.new()
+		sprite.name = "Sprite2D"
+		sprite.position = Vector2(20, 20)
+		sprite.texture = load("res://sprites/slots/base_slot-export.png") as Texture2D
+		slot.add_child(sprite)
 		return slot
 
 # --- Signal Handlers ---
@@ -876,8 +875,8 @@ func _show_shop() -> void:
 		score_label.visible = false
 	if level_label:
 		level_label.visible = false
-	if battle_button:
-		battle_button.visible = false
+	if activator_node:
+		activator_node.visible = false
 	if previous_panel_button:
 		previous_panel_button.visible = false
 	if next_panel_button:
@@ -941,8 +940,8 @@ func _hide_shop() -> void:
 		score_label.visible = true
 	if level_label:
 		level_label.visible = true
-	if battle_button:
-		battle_button.visible = true
+	if activator_node:
+		activator_node.visible = true
 	if previous_panel_button:
 		previous_panel_button.visible = true
 	if next_panel_button:

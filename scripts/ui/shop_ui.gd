@@ -77,6 +77,17 @@ func _connect_shop_manager_signals() -> void:
 func _setup_ui() -> void:
 	_update_reroll_button()
 	_setup_sell_area()
+	_setup_shop_slot_contexts()
+
+
+func _setup_shop_slot_contexts() -> void:
+	for container in [purchasable_runes_container, purchasable_slots_container, purchasable_relics_container]:
+		if not container:
+			continue
+		for child in container.get_children():
+			var slot_ui = child as SlotUI
+			if slot_ui:
+				slot_ui.set_slot_context(SlotUI.SlotContext.SHOP)
 
 
 func initialize(manager: ShopManager, player_level: int = 1, refresh_now: bool = true) -> void:

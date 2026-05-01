@@ -4,14 +4,15 @@
 [ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="2_mlwvr"]
 [ext_resource type="Texture2D" uid="uid://dhyvt0yma8b5x" path="res://sprites/slots/base_slot-export.png" id="3_la8rk"]
 
-[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_la8rk"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_la8rk"]
 
 [node name="Slot" type="PanelContainer"]
 custom_minimum_size = Vector2(40, 40)
 offset_right = 36.0
 offset_bottom = 36.0
-theme_override_styles/panel = SubResource("StyleBoxTexture_la8rk")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_la8rk")
 script = ExtResource("1_djgyf")
+texture_panel_empty = ExtResource("3_la8rk")
 tooltip_label_settings = ExtResource("2_mlwvr")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

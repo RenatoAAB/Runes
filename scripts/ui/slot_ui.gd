@@ -17,6 +17,24 @@ signal piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI)
 signal relic_slot_dropped(relic: RelicInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
 signal relic_slot_clicked(relic: RelicInstance)
 
+## Context type that defines which sprite this slot displays.
+enum SlotContext { PANEL, RELIC, INVENTORY, SHOP }
+
+@export_group("Slot Sprites")
+@export var texture_panel_empty: Texture2D    ## Unlocked panel slot (no modifier)
+@export var texture_panel_modified: Texture2D ## Panel slot that has a slot modifier
+@export var texture_panel_locked: Texture2D   ## Locked expansion panel slot
+@export var texture_relic: Texture2D          ## Relic container slot
+@export var texture_inventory: Texture2D      ## Inventory slot
+@export var texture_shop: Texture2D           ## Shop slot
+
+## Current visual context — call set_slot_context() to change it.
+var slot_context: SlotContext = SlotContext.PANEL
+## Reference to the Sprite2D child that shows the slot frame.
+var _slot_sprite: Sprite2D = null
+var _base_slot_texture: Texture2D = null
+var _modifier_texture_cache: Dictionary = {}
+
 # If part of the grid, this will be set.
 var grid_coord: Vector2i = Vector2i(-1, -1)
 # If part of the inventory, this might be the index.
@@ -47,7 +65,16 @@ var _current_effect_indices: Array = []
 
 func _ready() -> void:
 	clip_contents = true
-	
+
+	# Get the sprite child and clear the PanelContainer background fill
+	_slot_sprite = get_node_or_null("Sprite2D")
+	add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	if _slot_sprite and _slot_sprite.texture:
+		_base_slot_texture = _slot_sprite.texture
+	elif texture_panel_empty:
+		_base_slot_texture = texture_panel_empty
+	_prepare_context_fallback_textures()
+
 	# Create buff overlay (persistent state)
 	buff_rect = ColorRect.new()
 	buff_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -73,8 +100,8 @@ func _ready() -> void:
 	mouse_entered.connect(self._on_mouse_entered)
 	mouse_exited.connect(self._on_mouse_exited)
 	
-	# Apply initial visual based on unlock state
-	_update_locked_visual()
+	# Apply initial sprite based on slot context
+	_refresh_slot_sprite()
 
 
 func _notification(what: int) -> void:
@@ -92,21 +119,96 @@ func set_locked_state(unlocked: bool) -> void:
 
 ## Update the visual appearance based on locked/unlocked state
 func _update_locked_visual() -> void:
-	var style = StyleBoxFlat.new()
-	style.set_corner_radius_all(4)
-	
-	if is_unlocked:
-		# Unlocked slot: normal appearance, can hold runes
-		style.bg_color = Color(0.15, 0.15, 0.18)
-		style.set_border_width_all(2)
-		style.border_color = Color(0.4, 0.4, 0.5)
-	else:
-		# Locked slot: darker, dashed-like appearance indicating expansion space
-		style.bg_color = Color(0.08, 0.08, 0.1, 0.5)
-		style.set_border_width_all(1)
-		style.border_color = Color(0.25, 0.25, 0.3, 0.6)
-	
-	add_theme_stylebox_override("panel", style)
+	_refresh_slot_sprite()
+
+
+## Set the slot context to switch which sprite is displayed.
+func set_slot_context(context: SlotContext) -> void:
+	slot_context = context
+	_refresh_slot_sprite()
+
+
+## Refresh the sprite texture based on current context and unlock state.
+func _refresh_slot_sprite() -> void:
+	if not _slot_sprite:
+		return
+	_slot_sprite.self_modulate = Color.WHITE
+	match slot_context:
+		SlotContext.RELIC:
+			_slot_sprite.texture = texture_relic if texture_relic else texture_panel_empty
+		SlotContext.INVENTORY:
+			_slot_sprite.texture = texture_inventory if texture_inventory else texture_panel_empty
+		SlotContext.SHOP:
+			_slot_sprite.texture = texture_shop if texture_shop else texture_panel_empty
+		SlotContext.PANEL:
+			if not is_unlocked:
+				_slot_sprite.texture = texture_panel_locked if texture_panel_locked else texture_panel_empty
+			else:
+				_slot_sprite.texture = texture_panel_empty
+
+
+func _prepare_context_fallback_textures() -> void:
+	if not _base_slot_texture:
+		if texture_panel_empty:
+			_base_slot_texture = texture_panel_empty
+		else:
+			return
+
+	if not texture_panel_empty:
+		texture_panel_empty = _base_slot_texture
+	if not texture_panel_locked:
+		texture_panel_locked = _build_tinted_texture(_base_slot_texture, Color(0.45, 0.45, 0.5, 1.0), 0.7)
+	if not texture_inventory:
+		texture_inventory = _build_tinted_texture(_base_slot_texture, Color(0.45, 0.95, 0.7, 1.0), 1.0)
+	if not texture_relic:
+		texture_relic = _build_tinted_texture(_base_slot_texture, Color(0.95, 0.85, 0.35, 1.0), 1.0)
+	if not texture_shop:
+		texture_shop = _build_tinted_texture(_base_slot_texture, Color(0.55, 0.78, 1.0, 1.0), 1.0)
+	if not texture_panel_modified:
+		texture_panel_modified = _build_tinted_texture(_base_slot_texture, Color(1.0, 0.82, 0.45, 1.0), 1.0)
+
+
+func _build_tinted_texture(source: Texture2D, tint: Color, brightness: float = 1.0) -> Texture2D:
+	if not source:
+		return null
+	var image := source.get_image()
+	if image == null:
+		return source
+	image.convert(Image.FORMAT_RGBA8)
+	for y in range(image.get_height()):
+		for x in range(image.get_width()):
+			var pixel := image.get_pixel(x, y)
+			if pixel.a <= 0.01:
+				continue
+			var mixed := Color(
+				clampf(pixel.r * tint.r * brightness, 0.0, 1.0),
+				clampf(pixel.g * tint.g * brightness, 0.0, 1.0),
+				clampf(pixel.b * tint.b * brightness, 0.0, 1.0),
+				pixel.a
+			)
+			image.set_pixel(x, y, mixed)
+	return ImageTexture.create_from_image(image)
+
+
+func _get_modifier_texture(slot_data: SlotData, modifier_key: String = "") -> Texture2D:
+	if not slot_data:
+		return texture_panel_modified
+	if slot_data.texture:
+		return slot_data.texture
+
+	var key := modifier_key
+	if key.is_empty():
+		key = slot_data.id if not slot_data.id.is_empty() else slot_data.slot_name
+	if key.is_empty() or not _base_slot_texture:
+		return texture_panel_modified
+
+	if _modifier_texture_cache.has(key):
+		return _modifier_texture_cache[key] as Texture2D
+
+	var hue := float(abs(key.hash()) % 360) / 360.0
+	var generated := _build_tinted_texture(_base_slot_texture, Color.from_hsv(hue, 0.55, 1.0, 1.0), 1.0)
+	_modifier_texture_cache[key] = generated
+	return generated
 
 
 ## Sets effect highlighting using the new multi-effect system.
@@ -150,7 +252,27 @@ func update_slot_info(slot: GridSlot) -> void:
 		set_buff_highlight(Color(0, 0, 0, 0))
 		if residue_visual:
 			residue_visual.clear()
+		if slot_context == SlotContext.PANEL:
+			_refresh_slot_sprite()
 		return
+
+	if slot_context == SlotContext.PANEL and slot.slot:
+		var modifier_key := slot.slot.slot_modifier_id
+		if modifier_key.is_empty():
+			var applied_modifiers = slot.slot.get_meta("applied_modifiers", {})
+			if applied_modifiers is Dictionary and applied_modifiers.size() > 0:
+				modifier_key = String(applied_modifiers.keys()[0])
+
+		if not modifier_key.is_empty() or (slot.slot.data and slot.slot.data.id != "default"):
+			var modifier_texture := _get_modifier_texture(slot.slot.data, modifier_key)
+			if _slot_sprite and modifier_texture:
+				_slot_sprite.texture = modifier_texture
+				if slot.slot.data and slot.slot.data.color_tint != Color.WHITE:
+					_slot_sprite.self_modulate = slot.slot.data.color_tint
+				else:
+					_slot_sprite.self_modulate = Color.WHITE
+		else:
+			_refresh_slot_sprite()
 	
 	# Update residue visual overlay
 	if residue_visual and slot.slot:
@@ -429,13 +551,12 @@ func update_slot_data_display(slot_data: SlotData) -> void:
 		rune_ui.queue_free()
 		rune_ui = null
 	
-	# Update background color based on slot type
-	var style = StyleBoxFlat.new()
-	style.bg_color = slot_data.color_tint if slot_data.color_tint else Color(0.2, 0.2, 0.2)
-	style.set_border_width_all(2)
-	style.border_color = slot_data.color_tint.lightened(0.3) if slot_data.color_tint else Color.GRAY
-	style.set_corner_radius_all(4)
-	add_theme_stylebox_override("panel", style)
+	# Update sprite for modified slot — use SlotData's own texture when available
+	if _slot_sprite:
+		var tex = _get_modifier_texture(slot_data)
+		if tex:
+			_slot_sprite.texture = tex
+		_slot_sprite.self_modulate = slot_data.color_tint if slot_data.color_tint != Color.WHITE else Color.WHITE
 	
 	# Show multiplier badge
 	if not slot_type_label:
@@ -468,13 +589,9 @@ func set_placeholder_display(text: String, bg_color: Color = Color(0.2, 0.2, 0.2
 		rune_ui.queue_free()
 		rune_ui = null
 	
-	# Update background
-	var style = StyleBoxFlat.new()
-	style.bg_color = bg_color
-	style.set_border_width_all(2)
-	style.border_color = bg_color.lightened(0.3)
-	style.set_corner_radius_all(4)
-	add_theme_stylebox_override("panel", style)
+	# Tint the sprite to communicate the placeholder category
+	if _slot_sprite:
+		_slot_sprite.self_modulate = bg_color
 	
 	# Show placeholder text
 	if not _placeholder_label:
@@ -509,13 +626,8 @@ func clear_display() -> void:
 		item_ui.queue_free()
 		item_ui = null
 	
-	# Reset to default style
-	var style = StyleBoxFlat.new()
-	style.bg_color = Color(0.2, 0.2, 0.2)
-	style.set_border_width_all(2)
-	style.border_color = Color(0.5, 0.5, 0.5)
-	style.set_corner_radius_all(4)
-	add_theme_stylebox_override("panel", style)
+	# Reset sprite to context-appropriate texture
+	_refresh_slot_sprite()
 
 
 ## Set an extra inventory item (relic, modifier, piece) using ItemUI

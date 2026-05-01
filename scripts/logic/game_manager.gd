@@ -484,6 +484,4 @@ func _grant_reward() -> void:
 	# Deprecated or used for debug
 	pass
 
-func _on_battle_button_pressed() -> void:
-	start_battle()
 
