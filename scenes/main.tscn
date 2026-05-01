@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=20 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -8,13 +8,14 @@
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
 [ext_resource type="Resource" path="res://resources/runes/common/rune_vento.tres" id="6_muem4"]
-[ext_resource type="Resource" path="res://resources/runes/common/rune_queimadura.tres" id="7_dp3eg"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
 [ext_resource type="Resource" path="res://resources/runes/common/rune_gota.tres" id="8_0ld40"]
-[ext_resource type="Resource" uid="uid://gxb5p3wa7pre" path="res://resources/runes/common/rune_explosao.tres" id="9_gqmmt"]
-[ext_resource type="Texture2D" uid="uid://dbxqkcl5ugwy3" path="res://sprites/scenes/painel-runico-v7.png" id="11_jkv2x"]
+[ext_resource type="Resource" uid="uid://70xt70mrvq5w" path="res://resources/runes/common/rune_derretimento.tres" id="8_jbj1t"]
+[ext_resource type="Texture2D" uid="uid://cpe1u42w8fhu7" path="res://sprites/scenes/background-cristal-painel.png" id="11_dp3eg"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
+[ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
+[ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
 
@@ -22,7 +23,7 @@
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": ExtResource("11_jkv2x")
+"texture": ExtResource("11_dp3eg")
 }],
 "loop": true,
 "name": &"default",
@@ -42,7 +43,7 @@ target_value_label = NodePath("UI/GameUI/CrystalInfo/TargetValue")
 money_label = NodePath("UI/GameUI/MoneyLabel")
 panel_label = NodePath("UI/GameUI/PanelLabel")
 enter_shop_button = NodePath("UI/GameUI/EnterShopButton")
-battle_button = NodePath("UI/GameUI/BattleButton")
+battle_button = NodePath("UI/GameUI/ativador/BattleButton")
 previous_panel_button = NodePath("UI/GameUI/PreviousPanel")
 next_panel_button = NodePath("UI/GameUI/NextPanel")
 shop_ui = NodePath("UI/ShopUI")
@@ -55,7 +56,8 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 [node name="GameManager" type="Node" parent="Managers" node_paths=PackedStringArray("inventory_manager")]
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_muem4"), ExtResource("7_dp3eg"), ExtResource("8_0ld40"), ExtResource("9_gqmmt")])
+score_growth_acceleration = 0.01
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_muem4"), ExtResource("8_0ld40"), ExtResource("8_jbj1t")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]
@@ -76,10 +78,12 @@ sprite_frames = SubResource("SpriteFrames_jbj1t")
 
 [node name="GridContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 207.0
-offset_top = 73.0
-offset_right = 403.0
-offset_bottom = 269.0
+offset_left = 204.0
+offset_top = 69.0
+offset_right = 420.0
+offset_bottom = 285.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
 columns = 5
 
 [node name="Slot1" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
@@ -157,6 +161,10 @@ layout_mode = 2
 [node name="Slot25" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
+[node name="InventarioSprite" type="Sprite2D" parent="UI/GameUI"]
+position = Vector2(320, 180)
+texture = ExtResource("12_0ld40")
+
 [node name="Inventory" type="Node2D" parent="UI/GameUI"]
 position = Vector2(424.00003, 228)
 rotation = 0.18675023
@@ -167,6 +175,9 @@ skew = 0.073303826
 offset_left = 1.0
 offset_right = 157.0
 offset_bottom = 80.0
+scale = Vector2(0.95, 0.95)
+theme_override_constants/h_separation = 1
+theme_override_constants/v_separation = 1
 columns = 4
 
 [node name="Slot" parent="UI/GameUI/Inventory/InventoryContainer" instance=ExtResource("5_ya4ey")]
@@ -195,10 +206,12 @@ layout_mode = 2
 
 [node name="RelicContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
-offset_left = 244.0
-offset_top = 296.0
-offset_right = 400.0
-offset_bottom = 376.0
+offset_left = 245.0
+offset_top = 293.0
+offset_right = 401.0
+offset_bottom = 373.0
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
 columns = 3
 
 [node name="Slot" parent="UI/GameUI/RelicContainer" instance=ExtResource("5_ya4ey")]
@@ -210,13 +223,18 @@ layout_mode = 2
 [node name="Slot3" parent="UI/GameUI/RelicContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
 
-[node name="BattleButton" type="Button" parent="UI/GameUI"]
-layout_mode = 0
-offset_left = 504.0
-offset_top = 116.0
-offset_right = 563.0
-offset_bottom = 147.0
-text = "Battle!"
+[node name="ativador" type="Node2D" parent="UI/GameUI"]
+position = Vector2(320, 180)
+
+[node name="BattleButton" type="Button" parent="UI/GameUI/ativador"]
+offset_left = 166.0
+offset_top = -116.0
+offset_right = 290.0
+offset_bottom = 9.0
+flat = true
+
+[node name="Sprite2D" type="Sprite2D" parent="UI/GameUI/ativador"]
+texture = ExtResource("13_gqmmt")
 
 [node name="EnterShopButton" type="Button" parent="UI/GameUI"]
 layout_mode = 0
@@ -418,4 +436,4 @@ offset_bottom = 40.0
 script = ExtResource("7_trceg")
 label_settings = ExtResource("3_dp3eg")
 
-[connection signal="pressed" from="UI/GameUI/BattleButton" to="Managers/GameManager" method="_on_battle_button_pressed"]
+[connection signal="pressed" from="UI/GameUI/ativador/BattleButton" to="Managers/GameManager" method="_on_battle_button_pressed"]

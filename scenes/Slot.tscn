@@ -1,11 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://dh2haf4uh6kig"]
+[gd_scene load_steps=5 format=3 uid="uid://dh2haf4uh6kig"]
 
 [ext_resource type="Script" uid="uid://d3j7p6fmei4um" path="res://scripts/ui/slot_ui.gd" id="1_djgyf"]
 [ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="2_mlwvr"]
+[ext_resource type="Texture2D" uid="uid://dhyvt0yma8b5x" path="res://sprites/slots/base_slot-export.png" id="3_la8rk"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_la8rk"]
 
 [node name="Slot" type="PanelContainer"]
-custom_minimum_size = Vector2(36, 36)
+custom_minimum_size = Vector2(40, 40)
 offset_right = 36.0
 offset_bottom = 36.0
+theme_override_styles/panel = SubResource("StyleBoxTexture_la8rk")
 script = ExtResource("1_djgyf")
 tooltip_label_settings = ExtResource("2_mlwvr")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(20, 20)
+texture = ExtResource("3_la8rk")
