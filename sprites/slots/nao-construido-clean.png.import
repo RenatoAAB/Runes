@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dhyvt0yma8b5x"
-path="res://.godot/imported/base_slot-export.png-244eb655a44c7232bfffc9e2c9c90d20.ctex"
+uid="uid://0ig2vd4q6vd8"
+path="res://.godot/imported/nao-construido-clean.png-721b5c99547a13e012c1c6cf4f8dcd4a.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://sprites/slots/base_slot-export.png"
-dest_files=["res://.godot/imported/base_slot-export.png-244eb655a44c7232bfffc9e2c9c90d20.ctex"]
+source_file="res://sprites/slots/nao-construido-clean.png"
+dest_files=["res://.godot/imported/nao-construido-clean.png-721b5c99547a13e012c1c6cf4f8dcd4a.ctex"]
 
 [params]
 

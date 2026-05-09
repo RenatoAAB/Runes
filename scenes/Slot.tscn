@@ -1,8 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://dh2haf4uh6kig"]
+[gd_scene load_steps=9 format=3 uid="uid://dh2haf4uh6kig"]
 
 [ext_resource type="Script" uid="uid://d3j7p6fmei4um" path="res://scripts/ui/slot_ui.gd" id="1_djgyf"]
+[ext_resource type="Texture2D" uid="uid://bekg6o7r3crx" path="res://sprites/slots/construido.png" id="2_jsp3d"]
 [ext_resource type="LabelSettings" uid="uid://c7h3yy7bs4ftk" path="res://text/tooltip_settings.tres" id="2_mlwvr"]
-[ext_resource type="Texture2D" uid="uid://dhyvt0yma8b5x" path="res://sprites/slots/base_slot-export.png" id="3_la8rk"]
+[ext_resource type="Texture2D" uid="uid://0ig2vd4q6vd8" path="res://sprites/slots/nao-construido-clean.png" id="3_jsp3d"]
+[ext_resource type="Texture2D" uid="uid://cd24qwr3g5v4g" path="res://sprites/slots/reliquia.png" id="4_0l074"]
+[ext_resource type="Texture2D" uid="uid://cxrxp7srms0vq" path="res://sprites/slots/inventario.png" id="5_yc7uk"]
+[ext_resource type="Texture2D" uid="uid://c5qngp31ulbos" path="res://sprites/slots/shopi.png" id="6_y662c"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_la8rk"]
 
@@ -12,9 +16,14 @@ offset_right = 36.0
 offset_bottom = 36.0
 theme_override_styles/panel = SubResource("StyleBoxEmpty_la8rk")
 script = ExtResource("1_djgyf")
-texture_panel_empty = ExtResource("3_la8rk")
+texture_panel_empty = ExtResource("2_jsp3d")
+texture_panel_modified = ExtResource("2_jsp3d")
+texture_panel_locked = ExtResource("3_jsp3d")
+texture_relic = ExtResource("4_0l074")
+texture_inventory = ExtResource("5_yc7uk")
+texture_shop = ExtResource("6_y662c")
 tooltip_label_settings = ExtResource("2_mlwvr")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(20, 20)
-texture = ExtResource("3_la8rk")
+texture = ExtResource("2_jsp3d")

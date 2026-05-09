@@ -16,7 +16,7 @@
 [ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
-[ext_resource type="Script" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
+[ext_resource type="Script" uid="uid://dnp324y0uqp7w" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
 
@@ -208,9 +208,9 @@ layout_mode = 2
 [node name="RelicContainer" type="GridContainer" parent="UI/GameUI"]
 layout_mode = 0
 offset_left = 245.0
-offset_top = 293.0
+offset_top = 294.0
 offset_right = 401.0
-offset_bottom = 373.0
+offset_bottom = 374.0
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 3
@@ -430,4 +430,3 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("7_trceg")
 label_settings = ExtResource("3_dp3eg")
-
