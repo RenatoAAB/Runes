@@ -30,7 +30,8 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 
 
 func get_description() -> String:
-	var desc = "Apply %s" % residue_id
+	var residue_name = _format_residue_name(residue_id)
+	var desc = "Apply %s" % residue_name
 	if duration > 0:
 		desc += " for %d round(s)" % duration
 	return desc

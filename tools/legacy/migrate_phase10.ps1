@@ -1,3 +1,13 @@
+# LEGACY SCRIPT - PENDING VERIFICATION
+#
+# This script is archived from a historical migration phase.
+# Do not execute in normal workflows.
+#
+# Execute only after explicit verification that:
+# 1) The current repository state still requires the Phase 10 migration.
+# 2) A full backup or branch snapshot was created.
+# 3) Post-run validation criteria were defined and approved.
+#
 # Phase 10: Migration Script
 # Creates new ge_*.tres files, shared resources, and rewrites rune .tres files
 # to remove inline RuneEffect sub-resources

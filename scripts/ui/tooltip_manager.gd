@@ -4,6 +4,9 @@ extends Control
 ## Simple singleton-like manager for tooltips.
 ## In a real project, this would be an Autoload or part of the main UI canvas.
 
+const TooltipFxManaResidue = preload("res://scripts/ui/tooltip_fx_mana_residue.gd")
+const TooltipFxManaAnomaly = preload("res://scripts/ui/tooltip_fx_mana_anomaly.gd")
+
 @export var label_settings: LabelSettings
 
 @onready var label: RichTextLabel = RichTextLabel.new()
@@ -27,6 +30,7 @@ func _ready() -> void:
 	label.fit_content = true
 	label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	label.bbcode_enabled = true
+	_install_custom_effects(label)
 	
 	if label_settings:
 		_apply_label_settings()
@@ -43,6 +47,7 @@ func _ready() -> void:
 	stats_label.fit_content = true
 	stats_label.autowrap_mode = TextServer.AUTOWRAP_OFF
 	stats_label.bbcode_enabled = true
+	_install_custom_effects(stats_label)
 	if label_settings:
 		_apply_label_settings_to(stats_label)
 	stats_panel.hide()
@@ -251,6 +256,15 @@ func _visible_length(text: String) -> int:
 
 func _apply_label_settings() -> void:
 	_apply_label_settings_to(label)
+
+
+func _install_custom_effects(target_label: RichTextLabel) -> void:
+	if not target_label:
+		return
+	target_label.custom_effects = [
+		TooltipFxManaResidue.new(),
+		TooltipFxManaAnomaly.new(),
+	]
 
 
 func _apply_label_settings_to(target_label: RichTextLabel) -> void:

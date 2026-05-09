@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -7,15 +7,20 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" path="res://resources/runes/common/rune_vento.tres" id="6_muem4"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_pressao.tres" id="7_og1vs"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" path="res://resources/runes/common/rune_gota.tres" id="8_0ld40"]
-[ext_resource type="Resource" uid="uid://70xt70mrvq5w" path="res://resources/runes/common/rune_derretimento.tres" id="8_jbj1t"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_quartzo.tres" id="8_2wyq8"]
+[ext_resource type="Resource" uid="uid://cmo235go438u4" path="res://resources/runes/common/rune_queimadura.tres" id="9_vxglm"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_redemoinho.tres" id="10_2f3dj"]
 [ext_resource type="Texture2D" uid="uid://cpe1u42w8fhu7" path="res://sprites/scenes/background-cristal-painel.png" id="11_dp3eg"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_rocha.tres" id="11_yq6so"]
 [ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_tempo.tres" id="12_fv21b"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_tremor.tres" id="13_tel4y"]
+[ext_resource type="Resource" path="res://resources/runes/common/rune_chuva.tres" id="13_y6deb"]
 [ext_resource type="Script" uid="uid://dnp324y0uqp7w" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
@@ -58,7 +63,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 score_growth_acceleration = 0.01
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_muem4"), ExtResource("8_0ld40"), ExtResource("8_jbj1t")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("7_og1vs"), ExtResource("8_2wyq8"), ExtResource("9_vxglm"), ExtResource("10_2f3dj"), ExtResource("11_yq6so"), ExtResource("12_fv21b"), ExtResource("13_tel4y"), ExtResource("13_y6deb")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]

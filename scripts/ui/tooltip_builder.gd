@@ -119,7 +119,12 @@ static func build_slot_tooltip(slot: GridSlot) -> String:
 			var info = TooltipTexts.get_residue_info(rid)
 			if not info.is_empty():
 				var rcolor = info.get("color", "#FFCC00")
-				text += "[color=%s][b]Resíduo: %s[/b][/color]\n" % [rcolor, info["name"]]
+				var residue_name = str(info.get("name", ""))
+				var residue_name_bbcode = str(info.get("name_bbcode", ""))
+				if residue_name_bbcode.is_empty():
+					text += "[color=%s][b]Resíduo: %s[/b][/color]\n" % [rcolor, residue_name]
+				else:
+					text += "[b]Resíduo: %s[/b]\n" % residue_name_bbcode
 				text += "[color=silver]%s[/color]\n" % info["description"]
 
 	# Active states (skip residue states already handled above)

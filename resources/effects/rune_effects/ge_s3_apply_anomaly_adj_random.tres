@@ -1,15 +1,21 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3 uid="uid://ddnw4rq1we1c3"]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3 uid="uid://ddnw4rq1we1c3"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
 [ext_resource type="Script" uid="uid://b1eiwtpqjvi6s" path="res://scripts/effects/actions/action_apply_residue.gd" id="2_ar"]
-[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent.tres" id="3_sel"]
+[ext_resource type="Script" uid="uid://baa8t22nt7crj" path="res://scripts/effects/selectors/selector_directional.gd" id="3_atyq1"]
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_ar")
 residue_id = "mana_anomaly"
 max_targets = 1
 
+[sub_resource type="Resource" id="Resource_nib03"]
+script = ExtResource("3_atyq1")
+direction = 2
+include_if_empty = false
+metadata/_custom_type_script = "uid://baa8t22nt7crj"
+
 [resource]
 script = ExtResource("1_ge")
-selector = ExtResource("3_sel")
+selector = SubResource("Resource_nib03")
 action = SubResource("act")

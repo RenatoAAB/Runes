@@ -92,10 +92,12 @@ func _ready() -> void:
 	multi_effect_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(multi_effect_overlay)
 	
-	# Ensure order: Background -> Buff -> MultiEffectOverlay (Rune added later) -> ResidueVisual on top
-	move_child(buff_rect, 0)
-	move_child(multi_effect_overlay, 1)
-	move_child(residue_visual, -1)  # Always last = on top of everything
+	# Ensure order: Sprite background -> Buff -> Residue/Rune/Item -> MultiEffectOverlay on top.
+	if _slot_sprite:
+		move_child(_slot_sprite, 0)
+	move_child(buff_rect, 1)
+	move_child(residue_visual, -1)
+	move_child(multi_effect_overlay, -1)
 	
 	mouse_entered.connect(self._on_mouse_entered)
 	mouse_exited.connect(self._on_mouse_exited)
@@ -395,9 +397,11 @@ func set_rune(rune: RuneInstance) -> void:
 		rune_ui.custom_minimum_size = Vector2(32, 32)
 		add_child(rune_ui)
 		rune_ui.setup(rune)
-		# Keep residue visual on top of the rune
+		# Keep overlay above all visuals for clear targeting/condition feedback.
 		if residue_visual:
 			move_child(residue_visual, -1)
+		if multi_effect_overlay:
+			move_child(multi_effect_overlay, -1)
 
 func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if typeof(data) != TYPE_DICTIONARY:
@@ -645,6 +649,10 @@ func set_extra_item(item_type: String, data: Variant, instance: Variant = null) 
 		item_ui = ItemUI.new()
 		item_ui.set_anchors_preset(Control.PRESET_FULL_RECT)
 		add_child(item_ui)
+
+	# Keep overlay above item visuals too.
+	if multi_effect_overlay:
+		move_child(multi_effect_overlay, -1)
 	
 	# Set the item based on type
 	match item_type:

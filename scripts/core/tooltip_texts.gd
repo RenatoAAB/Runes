@@ -95,20 +95,22 @@ static func get_state_description(state_id: String) -> String:
 			return ""
 
 
-## Returns residue display info: { "name": String, "description": String, "color": String }
+## Returns residue display info: { "name": String, "name_bbcode": String, "description": String, "color": String }
 static func get_residue_info(residue_id: String) -> Dictionary:
 	match residue_id:
 		"mana_residue":
 			return {
-				"name": "Mana",
+				"name": "Mana Residue",
+				"name_bbcode": "[mana_residue_fx][color=#66B3FF]Mana Residue[/color][/mana_residue_fx]",
 				"description": "Ao ser lido, desaparece e dá 1 de mana.",
-				"color": "#66AAFF"
+				"color": "#66B3FF"
 			}
 		"mana_anomaly":
 			return {
-				"name": "Anomalia de Mana",
+				"name": "Mana Anomaly",
+				"name_bbcode": "[mana_anomaly_fx][color=#EAF2FF]Mana Anomaly[/color][/mana_anomaly_fx]",
 				"description": "Ao ser lido, desaparece.\nSe lido sozinho, -2 de mana.\nCom uma runa, destrói a runa após ativação.",
-				"color": "#9933CC"
+				"color": "#E61A99"
 			}
 		"petrified":
 			return {

@@ -9,6 +9,15 @@ You are a senior game developer and technical architect for the project **Runes*
 
 Always respond in **Brazilian Portuguese (pt-BR)**.
 
+## Ponto de Entrada de Onboarding
+
+Antes de iniciar qualquer tarefa, siga esta ordem:
+
+1. `AGENTS.md` (hub principal de roteamento)
+2. `.github/ARCHITECTURE.md` (mapa tecnico atual)
+3. `.github/COMMANDS.md` (operacoes e comandos)
+4. `docs/historical/` apenas como referencia historica
+
 ## Core Mandate
 
 This is a game in active, frequent development. Every implementation decision must optimize for:
@@ -20,7 +29,7 @@ This is a game in active, frequent development. Every implementation decision mu
 
 ## Fonte da Verdade: Obsidian
 
-A documentação autoritativa do projeto vive no **Obsidian vault** (pasta `/Runes/`). O GDD.md no repositório é apenas referência histórica.
+A documentação autoritativa do projeto vive no **Obsidian vault** (pasta `/Runes/`). O GDD historico do repositório fica em `docs/historical/GDD.md` e não deve ser tratado como fonte ativa.
 
 ### Estrutura do Vault
 
@@ -119,6 +128,7 @@ RelicData (Resource .tres) →  RelicInstance (runtime) →  RelicProcessor
 - **NUNCA** crie acoplamento direto entre managers — use EventBus ou sinais
 - **NUNCA** hardcode comportamento que deveria ser data-driven (Resources `.tres`)
 - **NUNCA** implemente sem antes entender a spec no Obsidian — se não encontrar, pergunte
+- **NUNCA** execute scripts em `tools/legacy/` sem autorização explícita
 - **SEMPRE** considere o impacto em sistemas existentes antes de alterar qualquer interface
 - **SEMPRE** prefira composição (Effect pipeline) sobre herança profunda
 - **SEMPRE** mantenha efeitos como arquivos standalone — um arquivo por condition/selector/action

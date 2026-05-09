@@ -1,12 +1,11 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3 uid="uid://dpn2fffa3pij8"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_swap_position.gd" id="2_asw"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://owk8s2ervgu4" path="res://scripts/effects/actions/action_swap_position.gd" id="2_asw"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_sequence_previous.tres" id="3_sel"]
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_asw")
-swap_mode = 0
 
 [resource]
 script = ExtResource("1_ge")
