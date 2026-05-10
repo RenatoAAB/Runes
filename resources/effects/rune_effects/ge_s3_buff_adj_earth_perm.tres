@@ -1,14 +1,11 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=10 format=3 uid="uid://djnqtq0ky3lvu"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_buff_activation.gd" id="2_ab"]
-[ext_resource type="Script" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Script" path="res://scripts/effects/selectors/selector_adjacent.gd" id="4_sa"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://c67dck1oondir" path="res://scripts/effects/actions/action_buff_activation.gd" id="2_ab"]
+[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="2_nb6d3"]
+[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
+[ext_resource type="Script" uid="uid://bm76de5tcn2a4" path="res://scripts/effects/selectors/selector_adjacent.gd" id="4_sa"]
 [ext_resource type="Resource" path="res://resources/effects/shared/filters/filter_earth.tres" id="5_filt"]
-
-[sub_resource type="Resource" id="sel"]
-script = ExtResource("4_sa")
-filter = ExtResource("5_filt")
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")
@@ -18,6 +15,10 @@ base = 1.0
 script = ExtResource("2_ab")
 value = SubResource("vr")
 is_permanent = true
+
+[sub_resource type="Resource" id="sel"]
+script = ExtResource("4_sa")
+filter = ExtResource("5_filt")
 
 [resource]
 script = ExtResource("1_ge")

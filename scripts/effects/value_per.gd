@@ -101,10 +101,36 @@ func get_source_slots(ctx: EffectContext) -> Array[GridSlot]:
 
 func get_description() -> String:
 	var source_desc = _get_source_description()
-	var filter_desc = filter.get_description() if filter else ""
+	# Some sources (ROUND_ELEMENT_ACTIVATIONS, PANEL_RESIDUE_COUNT) already
+	# consume the filter inside _get_source_description — don't append it again.
+	if _source_consumes_filter():
+		return source_desc
+	var filter_desc := ""
+	if filter:
+		# For sources that imply occupation, skip the "occupied" slot_state label.
+		var saved_state := filter.slot_state
+		if _source_implies_occupied() and filter.slot_state == filter.SlotState.OCCUPIED:
+			filter.slot_state = filter.SlotState.ANY
+		filter_desc = filter.get_description()
+		filter.slot_state = saved_state
 	if filter_desc != "":
 		return "%s %s" % [source_desc, filter_desc]
 	return source_desc
+
+
+func _source_consumes_filter() -> bool:
+	return source == CountSource.ROUND_ELEMENT_ACTIVATIONS or source == CountSource.PANEL_RESIDUE_COUNT
+
+
+## Returns true for sources where OCCUPIED slot_state is implicit and should be omitted from the description.
+func _source_implies_occupied() -> bool:
+	return source in [
+		CountSource.ROUND_ACTIVATIONS,
+		CountSource.ROUND_ELEMENT_ACTIVATIONS,
+		CountSource.ROUND_DESTROYED,
+		CountSource.ROUND_CREATED,
+		CountSource.UNIQUE_RUNES,
+	]
 
 
 func _get_source_description() -> String:
@@ -136,7 +162,9 @@ func _get_source_description() -> String:
 		CountSource.RUNES_NOT_MOVED:
 			return "rune not moved"
 		CountSource.ROUND_ELEMENT_ACTIVATIONS:
-			var elem_desc = filter.get_description() if filter else ""
+			var elem_desc := ""
+			if filter and not filter.required_elements.is_empty():
+				elem_desc = ElementIcons.join(filter.required_elements)
 			return "%s activation this round" % elem_desc if elem_desc else "element activation this round"
 		CountSource.SELF_TIMES_MOVED:
 			return "time this rune was moved"

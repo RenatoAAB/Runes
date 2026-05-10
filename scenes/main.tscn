@@ -7,24 +7,24 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="5_muem4"]
 [ext_resource type="PackedScene" uid="uid://dh2haf4uh6kig" path="res://scenes/Slot.tscn" id="5_ya4ey"]
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_acido.tres" id="6_y6deb"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_areia.tres" id="7_og1vs"]
+[ext_resource type="Resource" uid="uid://ciuvfvdfs31eb" path="res://resources/runes/uncommon/rune_furacao.tres" id="6_og1vs"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_gelo.tres" id="7_2wyq8"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_bolha.tres" id="8_2wyq8"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_cachoeira.tres" id="9_vxglm"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_calor.tres" id="10_2f3dj"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_incendio.tres" id="8_vxglm"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_lama.tres" id="9_2f3dj"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_lava.tres" id="10_yq6so"]
 [ext_resource type="Texture2D" uid="uid://cpe1u42w8fhu7" path="res://sprites/scenes/background-cristal-painel.png" id="11_dp3eg"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_luz.tres" id="11_fv21b"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_conveccao.tres" id="11_yq6so"]
 [ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_esmeralda.tres" id="12_fv21b"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_mudanca.tres" id="12_tel4y"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
-[ext_resource type="Resource" uid="uid://cdfwpa081ey8y" path="res://resources/runes/common/rune_tremor.tres" id="13_tel4y"]
+[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_nuvem.tres" id="13_qkpxi"]
 [ext_resource type="Script" uid="uid://dnp324y0uqp7w" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
-[ext_resource type="Script" path="res://scripts/ui/movement_link_overlay.gd" id="20_mvlnk"]
+[ext_resource type="Script" uid="uid://rxeqythqjxp2" path="res://scripts/ui/movement_link_overlay.gd" id="20_mvlnk"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jbj1t"]
 animations = [{
@@ -65,7 +65,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 score_growth_acceleration = 0.01
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_y6deb"), ExtResource("7_og1vs"), ExtResource("8_2wyq8"), ExtResource("9_vxglm"), ExtResource("10_2f3dj"), ExtResource("11_yq6so"), ExtResource("12_fv21b"), ExtResource("13_tel4y")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_og1vs"), ExtResource("7_2wyq8"), ExtResource("8_vxglm"), ExtResource("9_2f3dj"), ExtResource("10_yq6so"), ExtResource("11_fv21b"), ExtResource("12_tel4y"), ExtResource("13_qkpxi")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]
@@ -93,16 +93,6 @@ offset_bottom = 285.0
 theme_override_constants/h_separation = 0
 theme_override_constants/v_separation = 0
 columns = 5
-
-[node name="MovementLinkOverlay" type="Control" parent="UI/GameUI"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("20_mvlnk")
 
 [node name="Slot1" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
@@ -178,6 +168,16 @@ layout_mode = 2
 
 [node name="Slot25" parent="UI/GameUI/GridContainer" instance=ExtResource("5_ya4ey")]
 layout_mode = 2
+
+[node name="MovementLinkOverlay" type="Control" parent="UI/GameUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("20_mvlnk")
 
 [node name="InventarioSprite" type="Sprite2D" parent="UI/GameUI"]
 position = Vector2(320, 180)
