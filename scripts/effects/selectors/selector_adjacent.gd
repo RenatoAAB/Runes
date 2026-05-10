@@ -16,6 +16,8 @@ func select(ctx: EffectContext) -> Array[GridSlot]:
 	var result: Array[GridSlot] = []
 
 	for slot in neighbors:
+		if slot.is_void():
+			continue
 		if filter and not filter.matches(slot, ctx.battle):
 			continue
 		result.append(slot)

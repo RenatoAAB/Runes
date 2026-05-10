@@ -60,6 +60,7 @@ var current_slot_data: GridSlot
 
 # Track which effect indices are currently highlighting this slot
 var _current_effect_indices: Array = []
+var _effect_preview_role: String = ""
 
 @export var tooltip_label_settings: LabelSettings
 
@@ -230,6 +231,10 @@ func set_value_source_highlight(effect_indices: Array) -> void:
 	if multi_effect_overlay:
 		multi_effect_overlay.set_value_source_indices(effect_indices)
 
+
+func set_effect_preview_role(role_text: String) -> void:
+	_effect_preview_role = role_text.strip_edges()
+
 ## Legacy method for backwards compatibility - converts single color to effect index.
 ## Deprecated: use set_effect_highlight instead.
 func set_highlight(color: Color) -> void:
@@ -305,6 +310,11 @@ func update_slot_info(slot: GridSlot) -> void:
 	set_buff_highlight(highlight_color)
 
 func _on_mouse_entered() -> void:
+	if slot_context == SlotContext.PANEL and current_slot_data and current_slot_data.rune:
+		var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
+		if highlighter and highlighter.has_method("highlight_rune_effects"):
+			highlighter.highlight_rune_effects(current_slot_data.rune, current_slot_data)
+
 	# Handle shop item tooltip first
 	if _shop_mode and _shop_item_data:
 		_show_shop_item_tooltip()
@@ -314,6 +324,11 @@ func _on_mouse_entered() -> void:
 		return
 	
 	var text = TooltipBuilder.build_slot_tooltip(current_slot_data)
+	if slot_context == SlotContext.PANEL and not _effect_preview_role.is_empty():
+		if text.strip_edges().length() > 0:
+			text = "[color=#FFD66B][b]%s[/b][/color]\n%s" % [_effect_preview_role, text]
+		else:
+			text = "[color=#FFD66B][b]%s[/b][/color]" % _effect_preview_role
 	
 	if text.strip_edges().length() > 0:
 		var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
@@ -327,6 +342,11 @@ func _on_mouse_exited() -> void:
 		if tooltip_manager.has_method("hide_item_tooltip"):
 			tooltip_manager.hide_item_tooltip()
 		tooltip_manager.hide_tooltip()
+
+	if slot_context == SlotContext.PANEL:
+		var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
+		if highlighter and highlighter.has_method("clear_highlights"):
+			highlighter.clear_highlights()
 
 
 ## Handle click on relic slots to remove the relic

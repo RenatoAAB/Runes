@@ -27,3 +27,8 @@
 ### Next phases
 - Phase 9: Integration verification (manual testing in Godot with EffectLogger)
 - Phase 10: Cleanup legacy code (delete old payloads, targets, conditions)
+
+## Post-migration fixes
+- 2026-05-10: Added `ActionMoveRune` to support origin->target movement in GameEffect pipeline.
+- 2026-05-10: Fixed Tremor to move the previous rune to the slot below (empty-only) instead of moving the source rune.
+- 2026-05-10: Added movement preview links (origin/target highlight + arrow) and slot tooltip role labels for movement effects.

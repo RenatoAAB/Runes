@@ -9,13 +9,12 @@ script = ExtResource("2_ar")
 residue_id = "mana_anomaly"
 max_targets = 1
 
-[sub_resource type="Resource" id="Resource_nib03"]
+[sub_resource type="Resource" id="Resource_atyq1"]
 script = ExtResource("3_atyq1")
 direction = 2
-include_if_empty = false
 metadata/_custom_type_script = "uid://baa8t22nt7crj"
 
 [resource]
 script = ExtResource("1_ge")
-selector = SubResource("Resource_nib03")
+selector = SubResource("Resource_atyq1")
 action = SubResource("act")

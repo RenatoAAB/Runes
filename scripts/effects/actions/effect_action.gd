@@ -18,6 +18,12 @@ func get_description_with_context(ctx: EffectContext) -> String:
 	return get_description()
 
 
+## Returns description with keyword/target text colorized by effect index.
+## Override in actions that colorize parts of their description.
+func get_description_colored(effect_index: int) -> String:
+	return get_description()
+
+
 func get_value_source_slots(ctx: EffectContext) -> Array[GridSlot]:
 	return []
 

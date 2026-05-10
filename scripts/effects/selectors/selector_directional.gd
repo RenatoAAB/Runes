@@ -19,28 +19,7 @@ func select(ctx: EffectContext) -> Array[GridSlot]:
 	if not ctx or not ctx.source_slot or not ctx.battle or not ctx.battle.grid:
 		return []
 
-	var pos = ctx.source_slot.grid_position
-	var target_pos: Vector2i
-
-	match direction:
-		Direction.ABOVE:
-			if pos.y <= 0:
-				return []
-			target_pos = Vector2i(pos.x, pos.y - 1)
-		Direction.BELOW:
-			if pos.y >= GridManager.GRID_SIZE - 1:
-				return []
-			target_pos = Vector2i(pos.x, pos.y + 1)
-		Direction.LEFT:
-			if pos.x <= 0:
-				return []
-			target_pos = Vector2i(pos.x - 1, pos.y)
-		Direction.RIGHT:
-			if pos.x >= GridManager.GRID_SIZE - 1:
-				return []
-			target_pos = Vector2i(pos.x + 1, pos.y)
-
-	var target_slot = ctx.battle.grid.get_slot(target_pos)
+	var target_slot = _get_first_constructed_slot_in_direction(ctx.battle.grid, ctx.source_slot.grid_position)
 	if not target_slot:
 		return []
 
@@ -53,6 +32,35 @@ func select(ctx: EffectContext) -> Array[GridSlot]:
 	var result: Array[GridSlot] = [target_slot]
 	EffectLogger.log_selector(ctx, self, result)
 	return result
+
+
+func _get_first_constructed_slot_in_direction(grid: GridManager, source_pos: Vector2i) -> GridSlot:
+	var step = _get_direction_step()
+	if step == Vector2i.ZERO:
+		return null
+
+	var cursor = source_pos + step
+	while grid.is_valid_coord(cursor):
+		var slot = grid.get_slot(cursor)
+		if slot and not slot.is_void():
+			return slot
+		cursor += step
+
+	return null
+
+
+func _get_direction_step() -> Vector2i:
+	match direction:
+		Direction.ABOVE:
+			return Vector2i.UP
+		Direction.BELOW:
+			return Vector2i.DOWN
+		Direction.LEFT:
+			return Vector2i.LEFT
+		Direction.RIGHT:
+			return Vector2i.RIGHT
+		_:
+			return Vector2i.ZERO
 
 
 func get_description() -> String:

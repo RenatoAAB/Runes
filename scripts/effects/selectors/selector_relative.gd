@@ -18,6 +18,8 @@ func select(ctx: EffectContext) -> Array[GridSlot]:
 	var slot = ctx.battle.grid.get_slot(target_pos)
 	if not slot:
 		return []
+	if slot.is_void():
+		return []
 	if filter and not filter.matches(slot, ctx.battle):
 		return []
 

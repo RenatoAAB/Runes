@@ -73,7 +73,7 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 	# Action description (includes ValueResolver text + optional resolved values)
 	var action_desc = ""
 	if action:
-		action_desc = action.get_description_with_context(ctx) if ctx else action.get_description()
+		action_desc = action.get_description_with_context(ctx) if ctx else action.get_description_colored(effect_index)
 
 	# Selector description (colored)
 	var selector_desc_colored = ""

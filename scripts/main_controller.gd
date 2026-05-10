@@ -48,6 +48,7 @@ var _bound_reader: Reader = null
 @export var slot_scene: PackedScene
 
 @export var grid_highlighter: GridHighlighter
+@export var movement_link_overlay: MovementLinkOverlay
 
 # Default LabelSettings to style SlotUI tooltips
 @export var default_tooltip_label_settings: LabelSettings
@@ -119,6 +120,7 @@ func _ready() -> void:
 		grid_highlighter.request_multi_effect_highlight.connect(_on_request_multi_effect_highlight)
 		grid_highlighter.request_condition_highlight.connect(_on_request_condition_highlight)
 		grid_highlighter.request_value_source_highlight.connect(_on_request_value_source_highlight)
+		grid_highlighter.request_movement_links.connect(_on_request_movement_links)
 	
 	# Connect Enter Shop button from GameUI
 	if enter_shop_button and not enter_shop_button.pressed.is_connected(_on_enter_shop_pressed):
@@ -461,6 +463,39 @@ func _on_request_value_source_highlight(coord: Vector2i, effect_indices: Array) 
 	if grid_ui_slots.has(coord):
 		grid_ui_slots[coord].set_value_source_highlight(effect_indices)
 
+
+func _on_request_movement_links(links: Array) -> void:
+	if movement_link_overlay:
+		movement_link_overlay.set_links(links)
+	_update_slot_preview_roles(links)
+
+
+func _update_slot_preview_roles(links: Array) -> void:
+	for slot_ui in grid_ui_slots.values():
+		if slot_ui:
+			slot_ui.set_effect_preview_role("")
+
+	var source_coords: Dictionary = {}
+	var destination_coords: Dictionary = {}
+	for link in links:
+		var source_coord = link.get("source")
+		var destination_coord = link.get("destination")
+		if source_coord is Vector2i:
+			source_coords[source_coord] = true
+		if destination_coord is Vector2i:
+			destination_coords[destination_coord] = true
+
+	for coord in source_coords.keys():
+		if grid_ui_slots.has(coord):
+			var label = "Origin/Target Slot" if destination_coords.has(coord) else "Origin Slot"
+			grid_ui_slots[coord].set_effect_preview_role(label)
+
+	for coord in destination_coords.keys():
+		if source_coords.has(coord):
+			continue
+		if grid_ui_slots.has(coord):
+			grid_ui_slots[coord].set_effect_preview_role("Target Slot")
+
 # --- UI Generation ---
 
 func _generate_grid_ui() -> void:
@@ -500,6 +535,11 @@ func _generate_grid_ui() -> void:
 			grid_ui_slots[coord] = slot_ui
 
 	_refresh_grid_ui_from_logic()
+	_update_slot_preview_roles([])
+
+	if movement_link_overlay:
+		movement_link_overlay.set_slot_map(grid_ui_slots)
+		movement_link_overlay.clear_links()
 
 	# Update JuiceManager with new grid references
 	var juice = get_node_or_null("/root/JuiceManager")
