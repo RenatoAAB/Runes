@@ -28,7 +28,7 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 
 
 func get_description() -> String:
-	return "Duplicate self to an empty adjacent slot"
+	return "Duplicate self to target"
 
 
 func get_keywords() -> Array[StringName]:

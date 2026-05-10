@@ -1,23 +1,21 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=9 format=3 uid="uid://bhuv016odkxad"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_move_reader.gd" id="2_am"]
-[ext_resource type="Script" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Script" path="res://scripts/effects/value_per.gd" id="4_vp"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://grn11506sows" path="res://scripts/effects/actions/action_move_reader.gd" id="2_am"]
+[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
+[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="4_vp"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="5_sel"]
 
 [sub_resource type="Resource" id="Resource_vp001"]
 script = ExtResource("4_vp")
 source = 4
-per_value = 1.0
 
 [sub_resource type="Resource" id="Resource_vr001"]
 script = ExtResource("3_vr")
-per = [SubResource("Resource_vp001")]
+per = Array[ExtResource("4_vp")]([SubResource("Resource_vp001")])
 
 [sub_resource type="Resource" id="Resource_act01"]
 script = ExtResource("2_am")
-mode = 0
 value = SubResource("Resource_vr001")
 
 [resource]

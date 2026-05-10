@@ -100,7 +100,7 @@ func get_source_slots(ctx: EffectContext) -> Array[GridSlot]:
 
 
 func get_description() -> String:
-	var source_desc = _get_source_description()
+	var source_desc = _get_source_description(filter)
 	# Some sources (ROUND_ELEMENT_ACTIVATIONS, PANEL_RESIDUE_COUNT) already
 	# consume the filter inside _get_source_description — don't append it again.
 	if _source_consumes_filter():
@@ -110,6 +110,9 @@ func get_description() -> String:
 		# For sources that imply occupation, skip the "occupied" slot_state label.
 		var saved_state := filter.slot_state
 		if _source_implies_occupied() and filter.slot_state == filter.SlotState.OCCUPIED:
+			filter.slot_state = filter.SlotState.ANY
+		# When the source noun is already "slot" (EMPTY filter), skip adding "empty" again
+		if filter.slot_state == filter.SlotState.EMPTY:
 			filter.slot_state = filter.SlotState.ANY
 		filter_desc = filter.get_description()
 		filter.slot_state = saved_state
@@ -133,12 +136,13 @@ func _source_implies_occupied() -> bool:
 	]
 
 
-func _get_source_description() -> String:
+func _get_source_description(f: SlotFilter = null) -> String:
+	var is_empty_filter := f != null and f.slot_state == f.SlotState.EMPTY
 	match source:
 		CountSource.ADJACENT, CountSource.ADJACENT_DIAGONAL:
-			return "adjacent rune"
+			return "adjacent empty slot" if is_empty_filter else "adjacent rune"
 		CountSource.PANEL:
-			return "rune in panel"
+			return "empty slot in panel" if is_empty_filter else "rune in panel"
 		CountSource.TARGETS:
 			return "target"
 		CountSource.SELF_REMAINING:
@@ -172,9 +176,9 @@ func _get_source_description() -> String:
 			var rid = filter.required_residue_id if filter else ""
 			return "%s in panel" % rid if rid else "residue in panel"
 		CountSource.COLUMN:
-			return "rune in column"
+			return "empty slot in column" if is_empty_filter else "rune in column"
 		CountSource.ROW:
-			return "rune in row"
+			return "empty slot in row" if is_empty_filter else "rune in row"
 	return "unknown"
 
 

@@ -1,15 +1,15 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=9 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=11 format=3 uid="uid://clktpujvrn0jr"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_composite.gd" id="2_comp"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_consume_residue.gd" id="3_ac"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_create_random_rune.gd" id="4_acr"]
+[ext_resource type="Script" uid="uid://b8j65pyfol5tm" path="res://scripts/effects/actions/effect_action.gd" id="1_erh4x"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://bu4xnm45wab34" path="res://scripts/effects/actions/action_composite.gd" id="2_comp"]
+[ext_resource type="Script" uid="uid://bvdwjfrat38s5" path="res://scripts/effects/actions/action_consume_residue.gd" id="3_ac"]
+[ext_resource type="Script" uid="uid://couv71p73gidv" path="res://scripts/effects/actions/action_create_random_rune.gd" id="4_acr"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent.tres" id="5_sel"]
 [ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_adj_mana_residue.tres" id="6_cond"]
 
 [sub_resource type="Resource" id="act_consume"]
 script = ExtResource("3_ac")
-residue_id = "mana_residue"
 max_consume = 1
 
 [sub_resource type="Resource" id="act_create"]
@@ -18,7 +18,7 @@ allowed_elements = Array[int]([3])
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_comp")
-actions = [SubResource("act_consume"), SubResource("act_create")]
+actions = Array[ExtResource("1_erh4x")]([SubResource("act_consume"), SubResource("act_create")])
 
 [resource]
 script = ExtResource("1_ge")

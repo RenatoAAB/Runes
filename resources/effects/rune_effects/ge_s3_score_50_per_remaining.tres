@@ -1,9 +1,9 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=9 format=3 uid="uid://bqgc466tt1vdx"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_score.gd" id="2_as"]
-[ext_resource type="Script" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Script" path="res://scripts/effects/value_per.gd" id="4_vp"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="2_as"]
+[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
+[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="4_vp"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="5_sel"]
 
 [sub_resource type="Resource" id="vp"]
@@ -13,7 +13,7 @@ per_value = 50.0
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")
-per = [SubResource("vp")]
+per = Array[ExtResource("4_vp")]([SubResource("vp")])
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_as")

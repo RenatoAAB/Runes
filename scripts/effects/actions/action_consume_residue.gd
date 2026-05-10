@@ -40,9 +40,10 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 
 
 func get_description() -> String:
-	var desc = "Consume %s from targets" % residue_id
+	var res_name = _format_residue_name(residue_id, false)
+	var desc = "Consume %s from targets" % res_name
 	if max_consume > 0:
-		desc = "Consume up to %d %s" % [max_consume, residue_id]
+		desc = "Consume up to %d %s" % [max_consume, res_name]
 	if score_per_consumed:
 		desc += ", %s per consumed" % score_per_consumed.get_description()
 	return desc
