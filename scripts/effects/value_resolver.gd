@@ -66,6 +66,35 @@ func get_description() -> String:
 	return desc
 
 
+## Returns only the base value as a prefixed string (e.g. "+5").
+## Returns empty string if base is 0 and there are per[] entries (value comes from per).
+func get_base_str() -> String:
+	if base == 0.0 and not per.is_empty():
+		return ""
+	var prefix = "+" if base > 0 else ""
+	if base == int(base):
+		return "%s%d" % [prefix, int(base)]
+	return "%s%.1f" % [prefix, base]
+
+## Returns only the "per X" conditions joined (e.g. "+2 per adjacent Water").
+## Returns empty string when there are no per[] entries.
+func get_per_str() -> String:
+	if per.is_empty():
+		return ""
+	var parts: Array[String] = []
+	for vp in per:
+		if not vp:
+			continue
+		var prefix = "+" if vp.per_value > 0 else ""
+		var val_str: String
+		if vp.per_value == int(vp.per_value):
+			val_str = "%s%d" % [prefix, int(vp.per_value)]
+		else:
+			val_str = "%s%.1f" % [prefix, vp.per_value]
+		parts.append("%s per %s" % [val_str, vp.get_description()])
+	return " ".join(parts)
+
+
 func get_source_slots(ctx: EffectContext) -> Array[GridSlot]:
 	var result: Array[GridSlot] = []
 	for vp in per:

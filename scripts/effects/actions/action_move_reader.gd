@@ -77,7 +77,8 @@ func get_description() -> String:
 		MoveMode.TO_START:
 			return "Reader jumps to start"
 		MoveMode.TO_NEAREST_RESIDUE:
-			return "Reader jumps to nearest %s" % target_residue_id
+			var display := TooltipTexts.get_residue_info(target_residue_id).get("name", target_residue_id) as String
+			return "Reader jumps back to nearest %s" % display
 	return "Reader moves"
 
 

@@ -29,8 +29,8 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 
 
 func get_description() -> String:
-	var from_name = _format_residue_name(from_residue_id)
-	var to_name = _format_residue_name(to_residue_id)
+	var from_name = _format_residue_name(from_residue_id, false)
+	var to_name = _format_residue_name(to_residue_id, false)
 	return "Transform %s into %s" % [from_name, to_name]
 
 

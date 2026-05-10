@@ -106,7 +106,7 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 			var connector = "when" if trigger == GameEnums.EffectTrigger.ON_ADJACENT_ACTIVATED else "if"
 			parts.append(connector + " " + cond_colored)
 
-	return " ".join(parts)
+	return TooltipFormatter.format(" ".join(parts))
 
 
 func get_all_highlights(ctx: EffectContext) -> Dictionary:

@@ -50,9 +50,24 @@ func _apply(amount: int, rune: RuneInstance, ctx: EffectContext, slot: GridSlot)
 func get_description() -> String:
 	if not value:
 		return ""
-	var val_desc = value.get_description()
 	var perm_str = " permanent" if is_permanent else ""
-	return "%s%s Score" % [val_desc, perm_str]
+	var base_str = value.get_base_str()
+	var per_str = value.get_per_str()
+	var mult_str = " (×%.1f)" % value.final_multiplier if value.final_multiplier != 1.0 else ""
+	if base_str.is_empty() and not value.per.is_empty():
+		# Only per[] provides value — build each entry as "+10 permanent Score per condition"
+		var parts: Array[String] = []
+		for vp in value.per:
+			if not vp:
+				continue
+			var prefix = "+" if vp.per_value > 0 else ""
+			var val_str := "%s%d" % [prefix, int(vp.per_value)] if vp.per_value == int(vp.per_value) else "%s%.1f" % [prefix, vp.per_value]
+			parts.append("%s%s Score per %s" % [val_str, perm_str, vp.get_description()])
+		return " ".join(parts) + mult_str
+	elif per_str.is_empty():
+		return "%s%s Score%s" % [base_str, perm_str, mult_str]
+	else:
+		return "%s%s Score %s%s" % [base_str, perm_str, per_str, mult_str]
 
 
 func get_description_with_context(ctx: EffectContext) -> String:
@@ -65,7 +80,11 @@ func get_description_with_context(ctx: EffectContext) -> String:
 		if value.per.is_empty() or resolved == int(value.base):
 			return get_description()
 		var prefix = "+" if resolved > 0 else ""
-		return "%s%d%s Score" % [prefix, resolved, perm_str]
+		var per_str = value.get_per_str()
+		var desc = "%s%d%s Score" % [prefix, resolved, perm_str]
+		if not per_str.is_empty():
+			desc += " %s" % per_str
+		return desc
 	# Non-permanent: resolve and apply rune score modifiers
 	var display_value = resolved
 	if apply_mode == ApplyMode.SOURCE:

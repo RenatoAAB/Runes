@@ -3,15 +3,7 @@ extends Object
 
 ## Single point of BBCode tooltip generation for the entire game.
 ## All tooltip content is generated here, then handed to TooltipManager for rendering.
-## All tooltip content is generated here using the GameEffect system.
-
-const ELEMENT_ICON_PATHS := {
-	GameEnums.Element.FIRE: "res://sprites/icons/elements/fire-element-icon.png",
-	GameEnums.Element.WATER: "res://sprites/icons/elements/water-element-icon.png",
-	GameEnums.Element.EARTH: "res://sprites/icons/elements/earth-element-icon.png",
-	GameEnums.Element.AIR: "res://sprites/icons/elements/air-element-icon.png",
-	GameEnums.Element.SPIRIT: "res://sprites/icons/elements/spirit-element-icon.png",
-}
+## Usa TooltipFormatter para toda formatação BBCode — não adicione BBCode inline aqui.
 
 
 # --- Rune Tooltip ---
@@ -27,9 +19,9 @@ static func build_rune_tooltip(rune: RuneInstance, ctx: EffectContext, can_evalu
 	var activation_text = _format_activation_text(rune, activations)
 
 	# Header with optional shop price
-	var header = "[b]%s[/b]" % rune.data.rune_name
+	var header = TooltipFormatter.bold(rune.data.rune_name)
 	if not shop_price_text.is_empty():
-		header = "[b]%s[/b]  [color=gold][b]%s[/b][/color]" % [rune.data.rune_name, shop_price_text]
+		header = "%s  %s" % [TooltipFormatter.bold(rune.data.rune_name), TooltipFormatter.bold_color(shop_price_text, "gold")]
 
 	var info = "%s\n%s | %s\n%s" % [header, elements_str, activation_text, TooltipTexts.LABEL_TIER % rune.data.tier]
 
@@ -41,7 +33,7 @@ static func build_rune_tooltip(rune: RuneInstance, ctx: EffectContext, can_evalu
 	# Effects
 	for i in range(rune.data.effects.size()):
 		var effect = rune.data.effects[i]
-		var color_marker = EffectColors.get_color_marker(i)
+		var color_marker = TooltipFormatter.effect_marker(i)
 
 		var eval_ctx: EffectContext = null
 		var is_condition_met = true
@@ -116,16 +108,7 @@ static func build_slot_tooltip(slot: GridSlot) -> String:
 	if slot.slot:
 		var residue_ids = slot.slot.get_residue_ids()
 		for rid in residue_ids:
-			var info = TooltipTexts.get_residue_info(rid)
-			if not info.is_empty():
-				var rcolor = info.get("color", "#FFCC00")
-				var residue_name = str(info.get("name", ""))
-				var residue_name_bbcode = str(info.get("name_bbcode", ""))
-				if residue_name_bbcode.is_empty():
-					text += "[color=%s][b]Resíduo: %s[/b][/color]\n" % [rcolor, residue_name]
-				else:
-					text += "[b]Resíduo: %s[/b]\n" % residue_name_bbcode
-				text += "[color=silver]%s[/color]\n" % info["description"]
+			text += TooltipFormatter.residue_line(rid)
 
 	# Active states (skip residue states already handled above)
 	for state_id in slot.active_states:
@@ -135,15 +118,15 @@ static func build_slot_tooltip(slot: GridSlot) -> String:
 		var state_desc = TooltipTexts.get_state_description(state_id)
 		var duration_text = TooltipTexts.LABEL_PERMANENT if data["duration"] > 9999 else TooltipTexts.LABEL_DURATION % data["duration"]
 		var state_name = state_id.capitalize().replace("_", " ")
-		text += "[color=yellow]%s[/color] %s\n" % [state_name, duration_text]
+		text += "%s %s\n" % [TooltipFormatter.colorize(state_name, Color.YELLOW), duration_text]
 		if not state_desc.is_empty():
 			text += "%s\n" % state_desc
 		if data.get("score_bonus", 0) != 0:
-			text += "[color=cyan]%s[/color]\n" % (TooltipTexts.LABEL_SCORE_BONUS % data["score_bonus"])
+			text += "%s\n" % TooltipFormatter.colorize(TooltipTexts.LABEL_SCORE_BONUS % data["score_bonus"], Color.CYAN)
 		if data.get("activation_bonus", 0) != 0:
-			text += "[color=cyan]%s[/color]\n" % (TooltipTexts.LABEL_ACTIVATION_BONUS % data["activation_bonus"])
+			text += "%s\n" % TooltipFormatter.colorize(TooltipTexts.LABEL_ACTIVATION_BONUS % data["activation_bonus"], Color.CYAN)
 		if data.get("multiplier_bonus", 0.0) != 0.0:
-			text += "[color=yellow]%s[/color]\n" % (TooltipTexts.LABEL_MULTIPLIER_BONUS % data["multiplier_bonus"])
+			text += "%s\n" % TooltipFormatter.colorize(TooltipTexts.LABEL_MULTIPLIER_BONUS % data["multiplier_bonus"], Color.YELLOW)
 
 	return text
 
@@ -154,27 +137,26 @@ static func build_relic_tooltip(data: RelicData, relic_instance: RelicInstance =
 	if not data:
 		return ""
 
-	var header = "[b]%s[/b]" % data.display_name
+	var header = TooltipFormatter.bold(data.display_name)
 	if not shop_price_text.is_empty():
-		header += "  [color=gold][b]%s[/b][/color]" % shop_price_text
-	var rarity_color = TooltipTexts.get_rarity_color_name(data.rarity)
-	header += " [color=%s](%s)[/color]" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+		header += "  %s" % TooltipFormatter.bold_color(shop_price_text, "gold")
+	header += " %s" % TooltipFormatter.rarity_tag(data.rarity)
 
 	var text = header
-	text += "\n[color=gray]Multiplicador Pós-Painel[/color]"
+	text += "\n%s" % TooltipFormatter.colorize("Multiplicador Pós-Painel", Color.GRAY)
 
 	# Show calculator description (precise with values) or fallback to data.description
 	if data.has_calculator():
 		var calc_desc = data.calculator.get_description()
 		if not calc_desc.is_empty():
-			text += "\n[color=silver]%s[/color]" % calc_desc
+			text += "\n%s" % TooltipFormatter.colorize(calc_desc, Color.SILVER)
 		elif not data.description.is_empty():
-			text += "\n[color=silver]%s[/color]" % data.description
+			text += "\n%s" % TooltipFormatter.colorize(data.description, Color.SILVER)
 	elif not data.description.is_empty():
-		text += "\n[color=silver]%s[/color]" % data.description
+		text += "\n%s" % TooltipFormatter.colorize(data.description, Color.SILVER)
 
 	if relic_instance and relic_instance.last_calculated_multiplier != 1.0:
-		text += "\n[color=yellow]Último: ×%.2f[/color]" % relic_instance.last_calculated_multiplier
+		text += "\n%s" % TooltipFormatter.colorize("Último: ×%.2f" % relic_instance.last_calculated_multiplier, Color.YELLOW)
 
 	return text
 
@@ -185,25 +167,24 @@ static func build_modifier_tooltip(data: SlotModifierData, shop_price_text: Stri
 	if not data:
 		return ""
 
-	var header = "[b]%s[/b]" % data.display_name
+	var header = TooltipFormatter.bold(data.display_name)
 	if not shop_price_text.is_empty():
-		header += "  [color=gold][b]%s[/b][/color]" % shop_price_text
-	var rarity_color = TooltipTexts.get_rarity_color_name(data.rarity)
-	header += " [color=%s](%s)[/color]" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+		header += "  %s" % TooltipFormatter.bold_color(shop_price_text, "gold")
+	header += " %s" % TooltipFormatter.rarity_tag(data.rarity)
 
 	var text = header
 
 	var type_name = TooltipTexts.get_modifier_type_name(data.modifier_type)
-	text += "\n[color=cyan]%s[/color]" % type_name
+	text += "\n%s" % TooltipFormatter.colorize(type_name, Color.CYAN)
 
 	# Slot type override
 	if data.slot_data_override:
-		text += "\n[color=orange]Tipo de Slot:[/color] %s" % data.slot_data_override.slot_name
+		text += "\n%s %s" % [TooltipFormatter.colorize("Tipo de Slot:", Color.ORANGE), data.slot_data_override.slot_name]
 
 	if data.description and not data.description.is_empty():
-		text += "\n[color=silver]%s[/color]" % data.description
+		text += "\n%s" % TooltipFormatter.colorize(data.description, Color.SILVER)
 	else:
-		text += "\n[color=silver]%s[/color]" % TooltipTexts.get_modifier_auto_description(data)
+		text += "\n%s" % TooltipFormatter.colorize(TooltipTexts.get_modifier_auto_description(data), Color.SILVER)
 
 	return text
 
@@ -214,17 +195,16 @@ static func build_piece_tooltip(data: SlotPieceData, shop_price_text: String = "
 	if not data:
 		return ""
 
-	var header = "[b]%s[/b]" % data.display_name
+	var header = TooltipFormatter.bold(data.display_name)
 	if not shop_price_text.is_empty():
-		header += "  [color=gold][b]%s[/b][/color]" % shop_price_text
-	var rarity_color = TooltipTexts.get_rarity_color_name(data.rarity)
-	header += " [color=%s](%s)[/color]" % [rarity_color, TooltipTexts.get_rarity_name(data.rarity)]
+		header += "  %s" % TooltipFormatter.bold_color(shop_price_text, "gold")
+	header += " %s" % TooltipFormatter.rarity_tag(data.rarity)
 
 	var text = header
-	text += "\n[color=yellow]%s[/color]" % (TooltipTexts.LABEL_SLOTS % data.get_slot_count())
+	text += "\n%s" % TooltipFormatter.colorize(TooltipTexts.LABEL_SLOTS % data.get_slot_count(), Color.YELLOW)
 
 	if data.description and not data.description.is_empty():
-		text += "\n[color=silver]%s[/color]" % data.description
+		text += "\n%s" % TooltipFormatter.colorize(data.description, Color.SILVER)
 
 	return text
 
@@ -245,9 +225,9 @@ static func build_rune_stats_tooltip(rune: RuneInstance) -> String:
 	var prev_activations: int = stats.get_previous_round_activations_for_rune(rune_id)
 	if prev_score == 0 and prev_activations == 0:
 		return ""
-	var text = "[b][color=gray]Última rodada[/color][/b]"
-	text += "\n[color=cyan]+%d[/color] pts" % prev_score
-	text += "\n[color=yellow]★%d[/color] ativações" % prev_activations
+	var text = TooltipFormatter.bold(TooltipFormatter.colorize("Última rodada", Color.GRAY))
+	text += "\n%s pts" % TooltipFormatter.colorize("+%d" % prev_score, Color.CYAN)
+	text += "\n%s ativações" % TooltipFormatter.colorize("★%d" % prev_activations, Color.YELLOW)
 	return text
 
 
@@ -256,16 +236,7 @@ static func build_rune_stats_tooltip(rune: RuneInstance) -> String:
 static func _build_element_icons_text(base_elements: Array[GameEnums.Element]) -> String:
 	if base_elements.is_empty():
 		return "None"
-
-	var parts: Array[String] = []
-	for element in base_elements:
-		var icon_path: String = ELEMENT_ICON_PATHS.get(element, "")
-		if not icon_path.is_empty():
-			parts.append("[img=9x9]%s[/img]" % icon_path)
-		else:
-			parts.append(GameEnums.Element.keys()[element])
-
-	return " ".join(parts)
+	return TooltipFormatter.element_icons(base_elements)
 
 
 static func _format_activation_text(rune: RuneInstance, activations: int) -> String:
@@ -304,4 +275,4 @@ static func _build_buff_summary(rune: RuneInstance) -> String:
 
 	if parts.is_empty():
 		return ""
-	return "[color=yellow]⬆ " + ", ".join(parts) + "[/color]"
+	return TooltipFormatter.colorize("⬆ " + ", ".join(parts), Color.YELLOW)
