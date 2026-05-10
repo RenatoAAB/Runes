@@ -5,3 +5,4 @@
 [resource]
 script = ExtResource("1")
 required_elements = Array[int]([3])
+min_count = 2

@@ -99,7 +99,10 @@ func get_description() -> String:
 		SlotState.EMPTY:
 			parts.append("empty")
 		SlotState.OCCUPIED:
-			parts.append("occupied")
+			# "occupied" is implicit when a specific element is required — a slot
+			# with an element filter is by definition occupied, so skip the label.
+			if required_elements.is_empty():
+				parts.append("occupied")
 		SlotState.PETRIFIED:
 			parts.append("petrified")
 		SlotState.HAS_RESIDUE:

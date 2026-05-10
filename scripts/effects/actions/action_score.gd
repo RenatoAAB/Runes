@@ -73,19 +73,10 @@ func get_description() -> String:
 func get_description_with_context(ctx: EffectContext) -> String:
 	if not value or not ctx or not ctx.source_rune or not ctx.battle:
 		return get_description()
-	var perm_str = " permanent" if is_permanent else ""
-	var resolved = value.resolve_int(ctx)
 	if is_permanent:
-		# Permanent scores: only show resolved value if per[] changed it (no yellow)
-		if value.per.is_empty() or resolved == int(value.base):
-			return get_description()
-		var prefix = "+" if resolved > 0 else ""
-		var per_str = value.get_per_str()
-		var desc = "%s%d%s Score" % [prefix, resolved, perm_str]
-		if not per_str.is_empty():
-			desc += " %s" % per_str
-		return desc
-	# Non-permanent: resolve and apply rune score modifiers
+		return get_description()
+	# Non-permanent: resolve to show effect of external buffs (e.g. Enhancer slots)
+	var resolved = value.resolve_int(ctx)
 	var display_value = resolved
 	if apply_mode == ApplyMode.SOURCE:
 		display_value = ctx.source_rune.get_modified_score(resolved)
@@ -94,10 +85,6 @@ func get_description_with_context(ctx: EffectContext) -> String:
 		# External buffs modified the value — highlight in yellow
 		var prefix = "+" if display_value > 0 else ""
 		return "[color=yellow]%s%d[/color] Score" % [prefix, display_value]
-	if resolved != int(value.base):
-		# Per[] changed value but no external buff — show plain resolved value
-		var prefix = "+" if resolved > 0 else ""
-		return "%s%d Score" % [prefix, resolved]
 	return get_description()
 
 
