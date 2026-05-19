@@ -18,6 +18,7 @@ enum SlotState {
 @export var excluded_elements: Array[GameEnums.Element] = []
 @export var slot_state: SlotState = SlotState.ANY
 @export var require_activations_remaining: bool = false
+@export var require_no_activations_remaining: bool = false
 @export var is_indestructible_filter: int = -1  ## -1 = don't care, 0 = must be destructible, 1 = must be indestructible
 ## Filter by specific residue ID (empty = don't filter by residue ID)
 @export var required_residue_id: String = ""
@@ -82,6 +83,11 @@ func matches(slot: GridSlot, _context: BattleContext = null) -> bool:
 		if remaining <= 0:
 			return false
 
+	if require_no_activations_remaining:
+		var remaining = rune.get_max_activations() - rune.current_activations
+		if remaining > 0:
+			return false
+
 	if is_indestructible_filter >= 0:
 		var is_indestructible = rune.data.is_indestructible
 		if is_indestructible_filter == 0 and is_indestructible:
@@ -120,6 +126,9 @@ func get_description() -> String:
 
 	if require_activations_remaining:
 		parts.append("with charges")
+
+	if require_no_activations_remaining:
+		parts.append("with no charges")
 
 	if parts.is_empty():
 		return ""

@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3 uid="uid://drj4mhs3mwtpq"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_create_random_rune.gd" id="2_acr"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://couv71p73gidv" path="res://scripts/effects/actions/action_create_random_rune.gd" id="2_acr"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_empty_random.tres" id="3_sel"]
 [ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_previous_effect.tres" id="4_cond"]
 

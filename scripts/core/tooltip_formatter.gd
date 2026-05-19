@@ -22,8 +22,8 @@ extends Object
 # A chave é case-insensitive na busca (ver format()).
 # ---------------------------------------------------------------------------
 const TERMS: Dictionary = {
-	"Mana Residue": "[mana_residue_fx][color=#66B3FF]Mana Residue[/color][/mana_residue_fx]",
-	"Mana Anomaly":  "[mana_anomaly_fx][color=#EAF2FF]Mana Anomaly[/color][/mana_anomaly_fx]",
+	"Mana Residue": "[mana_residue_fx][color=#66B3FF]Mana\u00A0Residue[/color][/mana_residue_fx]",
+	"Mana Anomaly":  "[mana_anomaly_fx][color=#EAF2FF]Mana\u00A0Anomaly[/color][/mana_anomaly_fx]",
 }
 
 # ---------------------------------------------------------------------------

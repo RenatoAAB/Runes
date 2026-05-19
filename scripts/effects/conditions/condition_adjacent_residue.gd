@@ -33,9 +33,11 @@ func get_highlight_slots(ctx: EffectContext) -> Array[GridSlot]:
 
 
 func get_description() -> String:
+	var info := TooltipTexts.get_residue_info(residue_id)
+	var display_name: String = info.get("name", residue_id) if not info.is_empty() else residue_id
 	if min_count == 1:
-		return "adjacent to %s" % residue_id
-	return "adjacent to %d+ %s" % [min_count, residue_id]
+		return "adjacent to %s" % display_name
+	return "adjacent to %d+ %s" % [min_count, display_name]
 
 
 func get_keywords() -> Array[StringName]:

@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3 uid="uid://wruhugff7v7v"]
 
-[ext_resource type="Script" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" path="res://scripts/effects/actions/action_mark_resurrection.gd" id="2_amr"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://b25ghqvfx0e2w" path="res://scripts/effects/actions/action_mark_resurrection.gd" id="2_amr"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="3_sel"]
 
 [sub_resource type="Resource" id="act"]

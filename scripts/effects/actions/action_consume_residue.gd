@@ -10,6 +10,7 @@ extends EffectAction
 
 ## Optional: score per consumed residue
 @export var score_per_consumed: ValueResolver
+@export var is_permanent: bool = false  ## If true, score is added as permanent buff to source rune
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
@@ -36,7 +37,12 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 	if score_per_consumed and consumed_count > 0 and ctx.battle:
 		var base_amount = score_per_consumed.resolve_int(ctx, targets)
 		var total = base_amount * consumed_count
-		ctx.battle.add_score(total, ctx.source_rune)
+		if is_permanent and ctx.source_rune:
+			var current = ctx.source_rune.permanent_buffs.get("score_bonus", 0)
+			ctx.source_rune.permanent_buffs["score_bonus"] = current + total
+			EffectLogger.log_score(ctx, total, ctx.source_rune.data.id if ctx.source_rune.data else "?")
+		else:
+			ctx.battle.add_score(total, ctx.source_rune)
 
 
 func get_description() -> String:
@@ -45,7 +51,8 @@ func get_description() -> String:
 	if max_consume > 0:
 		desc = "Consume up to %d %s" % [max_consume, res_name]
 	if score_per_consumed:
-		desc += ", %s per consumed" % score_per_consumed.get_description()
+		var perm_str = " permanent" if is_permanent else ""
+		desc += ", %s%s score per consumed" % [score_per_consumed.get_description(), perm_str]
 	return desc
 
 

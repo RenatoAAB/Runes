@@ -1,12 +1,12 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3 uid="uid://d38gny7bh6f8o"]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=6 format=3 uid="uid://c8ho2wwvs3g8l"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" uid="uid://b1eiwtpqjvi6s" path="res://scripts/effects/actions/action_apply_residue.gd" id="2_ar"]
+[ext_resource type="Script" uid="uid://c7xhxhxoqoaqq" path="res://scripts/effects/actions/action_trigger_or_buff_activation.gd" id="2_at"]
 [ext_resource type="Script" uid="uid://b65w8mpfr6sk6" path="res://scripts/effects/selectors/selector_column.gd" id="3_sc"]
 
 [sub_resource type="Resource" id="act"]
-script = ExtResource("2_ar")
-residue_id = "mana_anomaly"
+script = ExtResource("2_at")
+simultaneous = true
 
 [sub_resource type="Resource" id="sel"]
 script = ExtResource("3_sc")

@@ -3,7 +3,6 @@ extends EffectAction
 
 ## Marks target runes so their next activation does not consume a charge.
 ## Used by Tempo: "A próxima ativação da runa inferior não gasta ativação"
-## Used by Eletricidade: "Se ativada simultaneamente, não gasta ativação"
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:

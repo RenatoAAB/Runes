@@ -242,14 +242,21 @@ func _visible_length(text: String) -> int:
 	var length = 0
 	var i = 0
 	while i < text.length():
-		if text.find("[img", i) == i:
-			var close_idx = text.find("[/img]", i)
-			length += 2
-			if close_idx == -1:
-				i += 4
-			else:
-				i = close_idx + 6
-			continue
+		if text[i] == "[":
+			# [img]...[/img] counts as 2 visible chars (icon width)
+			if text.find("[img", i) == i:
+				var close_idx = text.find("[/img]", i)
+				length += 2
+				if close_idx == -1:
+					i += 4
+				else:
+					i = close_idx + 6
+				continue
+			# All other BBCode tags ([color=], [b], [mana_residue_fx], etc.) are invisible markup
+			var close = text.find("]", i)
+			if close != -1:
+				i = close + 1
+				continue
 		length += 1
 		i += 1
 	return length

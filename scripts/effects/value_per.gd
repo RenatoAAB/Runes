@@ -174,7 +174,9 @@ func _get_source_description(f: SlotFilter = null) -> String:
 			return "time this rune was moved"
 		CountSource.PANEL_RESIDUE_COUNT:
 			var rid = filter.required_residue_id if filter else ""
-			return "%s in panel" % rid if rid else "residue in panel"
+			if rid.is_empty():
+				return "residue in panel"
+			return "%s in panel" % TooltipFormatter.residue_name(rid)
 		CountSource.COLUMN:
 			return "empty slot in column" if is_empty_filter else "rune in column"
 		CountSource.ROW:
