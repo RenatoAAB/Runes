@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://b1eiwtpqjvi6s" path="res://scripts/effects/actions/action_apply_residue.gd" id="2_ar"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_above.tres" id="3_sel"]
+
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_ar")
+residue_id = "mana_residue"
+
+[resource]
+script = ExtResource("1_ge")
+selector = ExtResource("3_sel")
+action = SubResource("act")

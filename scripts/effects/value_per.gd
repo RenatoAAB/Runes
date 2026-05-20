@@ -25,6 +25,7 @@ enum CountSource {
 	PANEL_RESIDUE_COUNT,    ## Count of slots with specific residue (uses filter.required_residue_id)
 	COLUMN,                 ## Count slots in same column matching filter
 	ROW,                    ## Count slots in same row matching filter
+	FORMATION_SIZE,         ## Count of earth runes in the source's Formação Rochosa (0 if not in formation)
 }
 
 enum AggregateMode {
@@ -81,6 +82,8 @@ func count(ctx: EffectContext, targets: Array[GridSlot] = []) -> int:
 			return _count_column(ctx)
 		CountSource.ROW:
 			return _count_row(ctx)
+		CountSource.FORMATION_SIZE:
+			return _count_formation(ctx)
 	return 0
 
 
@@ -95,6 +98,8 @@ func get_source_slots(ctx: EffectContext) -> Array[GridSlot]:
 			return _get_matching_neighbors(ctx, true)
 		CountSource.PANEL:
 			return _get_matching_panel(ctx)
+		CountSource.FORMATION_SIZE:
+			return _get_formation_slots(ctx)
 		_:
 			return []
 
@@ -181,6 +186,8 @@ func _get_source_description(f: SlotFilter = null) -> String:
 			return "empty slot in column" if is_empty_filter else "rune in column"
 		CountSource.ROW:
 			return "empty slot in row" if is_empty_filter else "rune in row"
+		CountSource.FORMATION_SIZE:
+			return "earth rune in Formação Rochosa"
 	return "unknown"
 
 
@@ -337,3 +344,29 @@ func _count_row(ctx: EffectContext) -> int:
 		if _matches_filter(slot, ctx):
 			count_val += 1
 	return count_val
+
+
+func _count_formation(ctx: EffectContext) -> int:
+	if not ctx.source_slot or not ctx.battle or not ctx.battle.grid:
+		return 0
+	var formation = ctx.battle.grid.get_earth_formation(ctx.source_slot.grid_position)
+	if filter:
+		var count_val = 0
+		for slot in formation:
+			if filter.matches(slot, ctx.battle):
+				count_val += 1
+		return count_val
+	return formation.size()
+
+
+func _get_formation_slots(ctx: EffectContext) -> Array[GridSlot]:
+	if not ctx.source_slot or not ctx.battle or not ctx.battle.grid:
+		return []
+	var formation = ctx.battle.grid.get_earth_formation(ctx.source_slot.grid_position)
+	if not filter:
+		return formation
+	var result: Array[GridSlot] = []
+	for slot in formation:
+		if filter.matches(slot, ctx.battle):
+			result.append(slot)
+	return result

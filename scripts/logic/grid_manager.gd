@@ -68,6 +68,42 @@ func get_neighbors(coord: Vector2i, include_diagonals: bool = false) -> Array[Gr
 			
 	return neighbors
 
+## Returns all slots that belong to the same Formação Rochosa as [coord].
+## A formation is a group of 4+ orthogonally connected earth runes.
+## Returns an empty array if the source slot has no earth rune or if the
+## connected cluster is smaller than 4.
+func get_earth_formation(coord: Vector2i) -> Array[GridSlot]:
+	var source = get_slot(coord)
+	if not source or source.is_empty():
+		return []
+	if not GameEnums.has_element(source.rune.get_elements(), GameEnums.Element.EARTH):
+		return []
+
+	var visited: Dictionary = {}
+	var queue: Array[Vector2i] = [coord]
+
+	while not queue.is_empty():
+		var current: Vector2i = queue.pop_front()
+		if current in visited:
+			continue
+		visited[current] = true
+		for neighbor in get_neighbors(current, false):
+			if neighbor.is_void() or neighbor.is_empty():
+				continue
+			if neighbor.grid_position in visited:
+				continue
+			if GameEnums.has_element(neighbor.rune.get_elements(), GameEnums.Element.EARTH):
+				queue.append(neighbor.grid_position)
+
+	if visited.size() < 4:
+		return []
+
+	var result: Array[GridSlot] = []
+	for v in visited.keys():
+		result.append(get_slot(v))
+	return result
+
+
 func get_row(y: int) -> Array[GridSlot]:
 	var row: Array[GridSlot] = []
 	if y < 0 or y >= GRID_SIZE:

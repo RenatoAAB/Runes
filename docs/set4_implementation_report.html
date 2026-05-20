@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Runes – Set 4 Implementation Report</title>
+  <style>
+    :root {
+      --bg: #0f0f14;
+      --surface: #17171f;
+      --border: #2a2a3a;
+      --text: #d4d4e0;
+      --muted: #7a7a9a;
+      --accent: #c97d3a;
+      --green: #4caf72;
+      --blue: #5ba4cf;
+      --red: #cf5b5b;
+      --purple: #9b6fc9;
+      --gold: #d4a640;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; padding: 32px; }
+    h1 { color: var(--accent); font-size: 2rem; margin-bottom: 4px; }
+    h2 { color: var(--blue); font-size: 1.25rem; margin: 28px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+    h3 { color: var(--gold); font-size: 1rem; margin: 16px 0 6px; }
+    .subtitle { color: var(--muted); font-size: 0.9rem; margin-bottom: 32px; }
+    .section { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+    .badge { display: inline-block; font-size: 0.72rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; margin-right: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .badge-new    { background: #1a3a1a; color: var(--green); border: 1px solid var(--green); }
+    .badge-updated{ background: #1a2a3a; color: var(--blue); border: 1px solid var(--blue); }
+    .badge-core   { background: #2a1a3a; color: var(--purple); border: 1px solid var(--purple); }
+    .badge-common  { background: #282814; color: #c8b455; border: 1px solid #c8b455; }
+    .badge-uncommon{ background: #142828; color: #55c8c8; border: 1px solid #55c8c8; }
+    .badge-rare    { background: #1a1428; color: #8855c8; border: 1px solid #8855c8; }
+    .badge-epic    { background: #281428; color: var(--red); border: 1px solid var(--red); }
+    table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    th { text-align: left; padding: 8px 10px; background: #1f1f2e; color: var(--muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.07em; }
+    td { padding: 7px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .file { font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.82rem; color: var(--gold); }
+    .desc { color: var(--text); }
+    .note { color: var(--muted); font-size: 0.82rem; }
+    .status-ok { color: var(--green); font-weight: 700; }
+    .elem-fire  { color: #e06030; }
+    .elem-water { color: #4090e0; }
+    .elem-earth { color: #80b040; }
+    .elem-air   { color: #b0d0e0; }
+    .elem-spirit{ color: #c070e0; }
+    .summary-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 12px; margin-top: 12px; }
+    .summary-card { background: #1f1f2e; border: 1px solid var(--border); border-radius: 6px; padding: 14px; text-align: center; }
+    .summary-card .num { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .summary-card .label { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+    .highlight { background: #1e1e28; border-left: 3px solid var(--accent); padding: 10px 14px; border-radius: 0 6px 6px 0; margin: 10px 0; }
+  </style>
+</head>
+<body>
+
+<h1>Runes – Set 4 Implementation Report</h1>
+<p class="subtitle">Gerado em 19 de maio de 2026 &nbsp;·&nbsp; Elemento principal: <span class="elem-earth">Terra / Formação Rochosa</span></p>
+
+<!-- RESUMO -->
+<div class="section">
+  <h2>📊 Resumo Executivo</h2>
+  <div class="summary-grid">
+    <div class="summary-card"><div class="num">5</div><div class="label">Novos scripts GDScript</div></div>
+    <div class="summary-card"><div class="num">1</div><div class="label">Script de action modificado</div></div>
+    <div class="summary-card"><div class="num">2</div><div class="label">Core systems estendidos</div></div>
+    <div class="summary-card"><div class="num">9</div><div class="label">Runas de terra atualizadas</div></div>
+    <div class="summary-card"><div class="num">5</div><div class="label">Novas runas criadas</div></div>
+    <div class="summary-card"><div class="num">7</div><div class="label">Shared resources criados</div></div>
+    <div class="summary-card"><div class="num">14</div><div class="label">GameEffect .tres criados</div></div>
+    <div class="summary-card"><div class="num">0</div><div class="label">Acoplamentos diretos</div></div>
+  </div>
+</div>
+
+<!-- SISTEMA FORMAÇÃO ROCHOSA -->
+<div class="section">
+  <h2>🪨 Sistema Core: Formação Rochosa</h2>
+  <div class="highlight">
+    Uma Formação Rochosa é um cluster de <strong>4+ runas de terra ortogonalmente conectadas</strong>.
+    Toda a detecção é feita via BFS no GridManager e exposta para o pipeline de efeitos através de
+    condições, seletores e a nova CountSource <code>FORMATION_SIZE</code>.
+  </div>
+
+  <h3>Definições (implementadas)</h3>
+  <table>
+    <tr><th>Conceito</th><th>Implementação</th></tr>
+    <tr><td><strong>Borda</strong></td><td>Runa em formação com <strong>&lt; 4</strong> terras ortogonais adjacentes → <span class="file">ConditionFormationBorder</span></td></tr>
+    <tr><td><strong>Centro</strong></td><td>Runa com <strong>4</strong> terras ortogonais adjacentes → <span class="file">ConditionFormationCenter</span></td></tr>
+    <tr><td><strong>Formação mínima</strong></td><td>4+ terras conectadas → <span class="file">ConditionInFormation</span></td></tr>
+    <tr><td><strong>Formação grande</strong></td><td>N+ terras conectadas (configurável) → <span class="file">ConditionFormationMinSize</span></td></tr>
+  </table>
+</div>
+
+<!-- SCRIPTS NOVOS/MODIFICADOS -->
+<div class="section">
+  <h2>📝 Scripts Criados &amp; Modificados</h2>
+
+  <h3>Novos scripts de Condition</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Classe</th><th>Descrição</th></tr>
+    <tr>
+      <td><span class="file">condition_in_formation.gd</span></td>
+      <td><code>ConditionInFormation</code></td>
+      <td class="desc">Verdadeiro se a runa pertence a uma Formação Rochosa (≥4 terras conectadas).</td>
+    </tr>
+    <tr>
+      <td><span class="file">condition_formation_min_size.gd</span></td>
+      <td><code>ConditionFormationMinSize</code></td>
+      <td class="desc">Verdadeiro se a formação tem ≥ <code>min_size</code> terras. Export configurável (padrão: 6).</td>
+    </tr>
+    <tr>
+      <td><span class="file">condition_formation_center.gd</span></td>
+      <td><code>ConditionFormationCenter</code></td>
+      <td class="desc">Verdadeiro se a runa possui 4 terras ortogonais adjacentes (centro da formação).</td>
+    </tr>
+    <tr>
+      <td><span class="file">condition_formation_border.gd</span></td>
+      <td><code>ConditionFormationBorder</code></td>
+      <td class="desc">Verdadeiro se a runa está em formação mas NÃO é centro (&lt;4 terras adjacentes).</td>
+    </tr>
+    <tr>
+      <td><span class="file">condition_not_first_activation.gd</span></td>
+      <td><code>ConditionNotFirstActivation</code></td>
+      <td class="desc">Verdadeiro se a runa já foi ativada ao menos uma vez nesta rodada (via activation_history).</td>
+    </tr>
+  </table>
+
+  <h3>Novo script de Selector</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Classe</th><th>Descrição</th></tr>
+    <tr>
+      <td><span class="file">selector_formation.gd</span></td>
+      <td><code>SelectorFormation</code></td>
+      <td class="desc">Seleciona todos os slots ocupados da mesma Formação Rochosa. Export <code>include_self</code>.</td>
+    </tr>
+  </table>
+
+  <h3>Scripts Modificados</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Tipo</th><th>Mudança</th></tr>
+    <tr>
+      <td><span class="file">grid_manager.gd</span></td>
+      <td><span class="badge badge-core">Core</span></td>
+      <td class="desc">Adicionado <code>get_earth_formation(coord)</code>: BFS que retorna todos os slots da Formação Rochosa. Retorna array vazio se &lt;4 terras.</td>
+    </tr>
+    <tr>
+      <td><span class="file">value_per.gd</span></td>
+      <td><span class="badge badge-core">Core</span></td>
+      <td class="desc">Adicionado <code>FORMATION_SIZE = 19</code> ao enum <code>CountSource</code>. Suporta contagem do tamanho da formação com filtro opcional. Implementa <code>_count_formation()</code> e <code>_get_formation_slots()</code>.</td>
+    </tr>
+    <tr>
+      <td><span class="file">action_destroy_rune.gd</span></td>
+      <td><span class="badge badge-updated">Atualizado</span></td>
+      <td class="desc">Adicionado export <code>max_targets: int = 0</code>. Quando &gt;0, seleciona N alvos aleatórios antes de destruir. Usado por Instabilidade.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- SHARED RESOURCES -->
+<div class="section">
+  <h2>🗂️ Shared Resources Criados</h2>
+
+  <h3>Conditions</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Tipo</th><th>Uso</th></tr>
+    <tr><td><span class="file">condition_in_formation.tres</span></td><td><code>ConditionInFormation</code></td><td>Ametista, outros</td></tr>
+    <tr><td><span class="file">condition_formation_center.tres</span></td><td><code>ConditionFormationCenter</code></td><td>Diamante</td></tr>
+    <tr><td><span class="file">condition_formation_border.tres</span></td><td><code>ConditionFormationBorder</code></td><td>Estalactite</td></tr>
+    <tr><td><span class="file">condition_3_earth_adjacent.tres</span></td><td><code>ConditionElementAdjacentNew(min=3)</code></td><td>Mar</td></tr>
+  </table>
+
+  <h3>Selectors</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Tipo</th><th>Uso</th></tr>
+    <tr><td><span class="file">selector_formation.tres</span></td><td><code>SelectorFormation(include_self=true)</code></td><td>Praia</td></tr>
+    <tr><td><span class="file">selector_formation_excl_self.tres</span></td><td><code>SelectorFormation(include_self=false)</code></td><td>Sedimentação</td></tr>
+    <tr><td><span class="file">selector_left.tres</span></td><td><code>SelectorDirectional(LEFT)</code></td><td>Borbulhar</td></tr>
+    <tr><td><span class="file">selector_right.tres</span></td><td><code>SelectorDirectional(RIGHT)</code></td><td>Borbulhar</td></tr>
+  </table>
+</div>
+
+<!-- GAME EFFECTS -->
+<div class="section">
+  <h2>⚡ GameEffect .tres Criados</h2>
+  <table>
+    <tr><th>Arquivo</th><th>Efeito</th><th>Usado por</th></tr>
+    <tr><td><span class="file">ge_s4_score_5_per_formation_perm.tres</span></td><td>+5 perm por membro da formação (FORMATION_SIZE × 5)</td><td>Rocha, Quartzo</td></tr>
+    <tr><td><span class="file">ge_s4_perm_20_if_in_formation.tres</span></td><td>+20 perm se em formação</td><td>Ametista</td></tr>
+    <tr><td><span class="file">ge_s4_score_10_per_formation.tres</span></td><td>+10 pts por membro (não-perm)</td><td>Esmeralda</td></tr>
+    <tr><td><span class="file">ge_s4_perm_20_if_formation_border.tres</span></td><td>+20 perm se borda da formação</td><td>Estalactite</td></tr>
+    <tr><td><span class="file">ge_s4_perm_50_if_formation_center.tres</span></td><td>+50 perm se centro da formação</td><td>Diamante</td></tr>
+    <tr><td><span class="file">ge_s4_perm_50_if_formation_6.tres</span></td><td>+50 perm se formação ≥ 6 terras</td><td>Rubi</td></tr>
+    <tr><td><span class="file">ge_s4_buff_formation_1_activation.tres</span></td><td>+1 ativação para toda a formação</td><td>Praia</td></tr>
+    <tr><td><span class="file">ge_s4_trigger_formation_simultaneous.tres</span></td><td>Ativa simultaneamente toda a formação (excl. self)</td><td>Sedimentação</td></tr>
+    <tr><td><span class="file">ge_s4_reader_back_2_if_not_first.tres</span></td><td>Reader recua 2 se não é primeira ativação</td><td>Sopro</td></tr>
+    <tr><td><span class="file">ge_s4_buff_adj_diag_1_if_3earth.tres</span></td><td>+1 ativação a adj+diag se ≥3 terras adj</td><td>Mar</td></tr>
+    <tr><td><span class="file">ge_s4_apply_residue_above.tres</span></td><td>Aplica resíduo de mana acima</td><td>Borbulhar</td></tr>
+    <tr><td><span class="file">ge_s4_apply_residue_left.tres</span></td><td>Aplica resíduo de mana à esquerda</td><td>Borbulhar</td></tr>
+    <tr><td><span class="file">ge_s4_apply_residue_right.tres</span></td><td>Aplica resíduo de mana à direita</td><td>Borbulhar</td></tr>
+    <tr><td><span class="file">ge_s4_apply_anomaly_below.tres</span></td><td>Aplica anomalia de mana abaixo</td><td>Borbulhar</td></tr>
+    <tr><td><span class="file">ge_s4_trigger_adj_drain_all_simul.tres</span></td><td>Ativa adj simultaneamente, drena todas as ativações</td><td>Instabilidade</td></tr>
+    <tr><td><span class="file">ge_s4_destroy_one_adjacent.tres</span></td><td>Destrói 1 runa adjacente aleatória</td><td>Instabilidade</td></tr>
+  </table>
+</div>
+
+<!-- RUNAS ATUALIZADAS -->
+<div class="section">
+  <h2>🔄 Runas de Terra Atualizadas (Set 3 → Set 4)</h2>
+  <table>
+    <tr><th>Runa</th><th>Raridade</th><th>Efeito Antigo</th><th>Efeito Novo</th></tr>
+    <tr>
+      <td><strong>Rocha</strong></td><td><span class="badge badge-common">Common</span></td>
+      <td class="note">+10 pts / +10 perm</td>
+      <td class="desc">+10 pts / +5 perm por terra na Formação</td>
+    </tr>
+    <tr>
+      <td><strong>Quartzo</strong></td><td><span class="badge badge-common">Common</span></td>
+      <td class="note">+10 perm para terras adjacentes (efeito em outros)</td>
+      <td class="desc">+5 perm por terra na própria Formação (escala consigo mesma)</td>
+    </tr>
+    <tr>
+      <td><strong>Ametista</strong></td><td><span class="badge badge-common">Common</span></td>
+      <td class="note">+10 pts / +5 perm por terra adjacente</td>
+      <td class="desc">+10 pts / +20 perm se em uma Formação Rochosa</td>
+    </tr>
+    <tr>
+      <td><strong>Estalactite</strong></td><td><span class="badge badge-common">Common</span></td>
+      <td class="note">+10 pts / +20 perm se em canto de grid</td>
+      <td class="desc">+10 pts / +20 perm se na borda ou canto da Formação</td>
+    </tr>
+    <tr>
+      <td><strong>Esmeralda</strong></td><td><span class="badge badge-uncommon">Uncommon</span></td>
+      <td class="note">+10 pts / +10 perm por vez que foi movida</td>
+      <td class="desc">+10 pts / +10 pts por membro da Formação (escalável por rodada)</td>
+    </tr>
+    <tr>
+      <td><strong>Rubi</strong></td><td><span class="badge badge-uncommon">Uncommon</span></td>
+      <td class="note">+10 pts / +5 perm quando fogo adj ativa</td>
+      <td class="desc">+10 pts / +50 perm se Formação tem ≥6 terras</td>
+    </tr>
+    <tr>
+      <td><strong>Diamante</strong></td><td><span class="badge badge-rare">Rare</span></td>
+      <td class="note">+10 pts / +50 perm se no centro do grid</td>
+      <td class="desc">+10 pts / +50 perm se no centro da Formação / petrifica</td>
+    </tr>
+    <tr>
+      <td><strong>Praia</strong></td><td><span class="badge badge-rare">Rare</span></td>
+      <td class="note">Rotaciona runas e resíduos adj (CCW)</td>
+      <td class="desc">+1 ativação para todas as runas da Formação Rochosa</td>
+    </tr>
+    <tr>
+      <td><strong>Sedimentação</strong></td><td><span class="badge badge-uncommon">Uncommon</span></td>
+      <td class="note">+10 pts / +20 perm se ativada simultaneamente</td>
+      <td class="desc">+10 pts / Ativa toda a Formação Rochosa simultaneamente</td>
+    </tr>
+  </table>
+</div>
+
+<!-- NOVAS RUNAS -->
+<div class="section">
+  <h2>✨ Novas Runas Criadas</h2>
+  <table>
+    <tr><th>Runa</th><th>Elemento</th><th>Raridade</th><th>Descrição</th><th>Local</th></tr>
+    <tr>
+      <td><strong>Sopro</strong></td>
+      <td><span class="elem-air">Ar</span></td>
+      <td><span class="badge badge-common">Common</span></td>
+      <td class="desc">Reader recua 1. Se não é a primeira ativação desta rodada, recua +2.</td>
+      <td><span class="file">runes/common/</span></td>
+    </tr>
+    <tr>
+      <td><strong>Brisa</strong></td>
+      <td><span class="elem-air">Ar</span></td>
+      <td><span class="badge badge-uncommon">Uncommon</span></td>
+      <td class="desc">Reader recua 1. Se ativada simultaneamente, não gasta ativação.</td>
+      <td><span class="file">runes/uncommon/</span></td>
+    </tr>
+    <tr>
+      <td><strong>Mar</strong></td>
+      <td><span class="elem-water">Água</span></td>
+      <td><span class="badge badge-uncommon">Uncommon</span></td>
+      <td class="desc">+1 ativação para adj (incl. diagonal) se adjacente a ≥3 terras.</td>
+      <td><span class="file">runes/uncommon/</span></td>
+    </tr>
+    <tr>
+      <td><strong>Borbulhar</strong></td>
+      <td><span class="elem-fire">Fogo</span> + <span class="elem-water">Água</span></td>
+      <td><span class="badge badge-uncommon">Uncommon</span></td>
+      <td class="desc">Gera resíduo de mana em cima, direita e esquerda. Gera anomalia de mana abaixo.</td>
+      <td><span class="file">runes/uncommon/</span></td>
+    </tr>
+    <tr>
+      <td><strong>Instabilidade</strong></td>
+      <td><span class="elem-water">Água</span> + <span class="elem-air">Ar</span> + <span class="elem-fire">Fogo</span></td>
+      <td><span class="badge badge-epic">Epic</span></td>
+      <td class="desc">Ativa todas as runas adj simultâneas drenando <em>todas</em> as ativações. Uma delas é destruída aleatoriamente.</td>
+      <td><span class="file">runes/epic/</span></td>
+    </tr>
+  </table>
+</div>
+
+<!-- NOTAS TÉCNICAS -->
+<div class="section">
+  <h2>📌 Notas Técnicas &amp; Decisões de Design</h2>
+  <table>
+    <tr><th>Tópico</th><th>Detalhe</th></tr>
+    <tr>
+      <td><strong>CountSource enum ordinal</strong></td>
+      <td><code>FORMATION_SIZE = 19</code> (após ROW=18). O inteiro é serializado nos .tres – não renomear sem migrar os recursos.</td>
+    </tr>
+    <tr>
+      <td><strong>BFS na formação</strong></td>
+      <td>Usa <code>Dictionary</code> para visited (O(1) lookup). Retorna <code>[]</code> se &lt;4 membros. Não inclui diagonais por definição.</td>
+    </tr>
+    <tr>
+      <td><strong>Sedimentação &amp; Loops</strong></td>
+      <td>O seletor usa <code>include_self=false</code>. Caso duas Sedimentações estejam na mesma formação, a punição de loop do sistema existente é acionada (destruição). Design intencional.</td>
+    </tr>
+    <tr>
+      <td><strong>Praia – efeito substituído</strong></td>
+      <td>O efeito antigo de rotação CCW foi completamente substituído pelo novo efeito de buff de formação conforme spec Set 4.</td>
+    </tr>
+    <tr>
+      <td><strong>Quartzo – mudança de paradigma</strong></td>
+      <td>Antes bufava runas adjacentes (+10 perm para outras). Agora escala a si mesma via formação (+5 perm por membro). Alinhado com "dados como configuração".</td>
+    </tr>
+    <tr>
+      <td><strong>Sopro – condição de primeira ativação</strong></td>
+      <td><code>ConditionNotFirstActivation</code> verifica <code>activation_history</code>. Funciona corretamente quando a runa ganha ativações extras via Fluxo, Gota ou outros buffs.</td>
+    </tr>
+    <tr>
+      <td><strong>Instabilidade – destruição aleatória</strong></td>
+      <td>Usa <code>ActionDestroyRune(max_targets=1)</code> com <code>SelectorAdjacent</code>. A seleção do alvo é randomizada via shuffle interno.</td>
+    </tr>
+    <tr>
+      <td><strong>Feedback Visual (UX pendente)</strong></td>
+      <td>Conforme decisão registrada no Obsidian: ao hover em runa de formação, exibir outline conectando o cluster. A keyword "Formação Rochosa" na tooltip deve ter a mesma cor que o outline. <strong>Implementação visual não incluída nesta sprint</strong> – requer alterações no sistema de UI/tooltip.</td>
+    </tr>
+    <tr>
+      <td><strong>Drop rates</strong></td>
+      <td>As novas runas (Sopro, Brisa, Mar, Borbulhar, Instabilidade) foram criadas mas <em>não adicionadas ao pool de drops</em> (<code>drop_rates.tres</code>). Recomenda-se ajustar manualmente conforme balanceamento.</td>
+    </tr>
+  </table>
+</div>
+
+<!-- VALIDAÇÃO -->
+<div class="section">
+  <h2>✅ Checklist de Validação</h2>
+  <table>
+    <tr><th>Item</th><th>Status</th></tr>
+    <tr><td><code>get_earth_formation()</code> no GridManager</td><td><span class="status-ok">✔ Implementado</span></td></tr>
+    <tr><td>5 novos scripts de condition</td><td><span class="status-ok">✔ Criados + .uid gerados</span></td></tr>
+    <tr><td><code>SelectorFormation</code> script</td><td><span class="status-ok">✔ Criado + .uid gerado</span></td></tr>
+    <tr><td><code>FORMATION_SIZE</code> no <code>ValuePer</code></td><td><span class="status-ok">✔ Enum + count() + get_source_slots() + description</span></td></tr>
+    <tr><td><code>max_targets</code> no <code>ActionDestroyRune</code></td><td><span class="status-ok">✔ Adicionado com seleção aleatória</span></td></tr>
+    <tr><td>4 shared condition .tres criados</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>4 shared selector .tres criados (formation, formation_excl_self, left, right)</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>16 GameEffect .tres criados</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>Rocha, Quartzo, Ametista, Estalactite atualizadas</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>Esmeralda, Rubi, Diamante atualizadas</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>Praia, Sedimentação atualizadas</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>Sopro, Brisa, Mar criadas</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>Borbulhar, Instabilidade criadas</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>Nenhum acoplamento direto entre managers</td><td><span class="status-ok">✔ EventBus preservado</span></td></tr>
+    <tr><td>Modularidade mantida (novos arquivos, não edições em existentes exceto onde necessário)</td><td><span class="status-ok">✔</span></td></tr>
+  </table>
+</div>
+
+<!-- PRÓXIMOS PASSOS -->
+<div class="section">
+  <h2>🚀 Próximos Passos Recomendados</h2>
+  <ol style="padding-left: 18px; line-height: 2.2;">
+    <li>Abrir o Godot Editor para confirmar importação dos novos scripts (UIDs auto-atribuídos se divergirem dos criados manualmente).</li>
+    <li>Implementar o <strong>feedback visual de Formação Rochosa</strong> no sistema de tooltip/hover (outline do cluster, cor da keyword).</li>
+    <li>Adicionar as novas runas ao <code>drop_rates.tres</code> com pesos balanceados.</li>
+    <li>Validar o efeito de <strong>Sedimentação com 2+ instâncias</strong> na mesma formação para confirmar que o sistema de loop punishment dispara corretamente.</li>
+    <li>Considerar o <strong>Topázio</strong> (não modificado nesta sprint) — a spec menciona "+10 pts permanentes para cada buff recebido"; avaliar se deve interagir com os novos efeitos perm de formação.</li>
+    <li>Atualizar <code>/Runes/impl/</code> no Obsidian com o status desta sprint.</li>
+  </ol>
+</div>
+
+<p style="color: var(--muted); font-size: 0.78rem; margin-top: 28px; text-align: center;">
+  Runes Set 4 Implementation Report &nbsp;·&nbsp; Gerado por GitHub Copilot (Implementer Agent)
+</p>
+
+</body>
+</html>

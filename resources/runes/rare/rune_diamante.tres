@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_perm_50_if_center.tres" id="3_e2"]
+[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_perm_50_if_formation_center.tres" id="3_e2"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_petrify_self.tres" id="4_e3"]
 [ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon8.png" id="5_tex"]
 
@@ -10,7 +10,7 @@
 script = ExtResource("1_data")
 id = "diamante"
 rune_name = "Diamante"
-description = "+10 pontos. +50 pontos permanente se esta no centro. Petrifica o slot."
+description = "+10 pontos. +50 pontos permanente se está no centro de uma Formação Rochosa. Petrifica o slot."
 rarity = 2
 elements = Array[int]([2])
 textures = Array[Texture2D]([ExtResource("5_tex")])

@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="SelectorFormation" load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://5kzzkh20hkj3a" path="res://scripts/effects/selectors/selector_formation.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+include_self = true

@@ -1,0 +1,6 @@
+[gd_resource type="Resource" script_class="ConditionFormationBorder" load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://wivgppmki2ezb" path="res://scripts/effects/conditions/condition_formation_border.gd" id="1"]
+
+[resource]
+script = ExtResource("1")

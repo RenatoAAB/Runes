@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="SelectorDirectional" load_steps=2 format=3]
+
+[ext_resource type="Script" uid="uid://baa8t22nt7crj" path="res://scripts/effects/selectors/selector_directional.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+direction = 2
+include_if_empty = true

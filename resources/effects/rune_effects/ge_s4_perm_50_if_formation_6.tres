@@ -1,31 +1,26 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=11 format=3 uid="uid://c5ldtmbycemln"]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=10 format=3 uid="uid://burl5b7harmd5"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="2_01di2"]
 [ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="2_as"]
 [ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="4_vp"]
+[ext_resource type="Script" uid="uid://diu3ngcfhexs7" path="res://scripts/effects/conditions/condition_formation_min_size.gd" id="4_cond"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="5_sel"]
-[ext_resource type="Script" uid="uid://c10fo0rpcdp0c" path="res://scripts/effects/slot_filter.gd" id="6_sf"]
-
-[sub_resource type="Resource" id="sf"]
-script = ExtResource("6_sf")
-required_residue_id = "mana_residue"
-
-[sub_resource type="Resource" id="vp"]
-script = ExtResource("4_vp")
-source = 16
-per_value = 50.0
-filter = SubResource("sf")
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")
-per = Array[ExtResource("4_vp")]([SubResource("vp")])
+base = 50.0
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_as")
 value = SubResource("vr")
+is_permanent = true
+
+[sub_resource type="Resource" id="cond"]
+script = ExtResource("4_cond")
 
 [resource]
 script = ExtResource("1_ge")
+condition = SubResource("cond")
 selector = ExtResource("5_sel")
 action = SubResource("act")

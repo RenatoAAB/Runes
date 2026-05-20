@@ -1,0 +1,22 @@
+[gd_resource type="Resource" script_class="GameEffect" load_steps=7 format=3]
+
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
+[ext_resource type="Script" uid="uid://c67dck1oondir" path="res://scripts/effects/actions/action_buff_activation.gd" id="2_ab"]
+[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent_diagonal.tres" id="4_sel"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_3_earth_adjacent.tres" id="5_cond"]
+
+[sub_resource type="Resource" id="vr"]
+script = ExtResource("3_vr")
+base = 1.0
+
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_ab")
+value = SubResource("vr")
+is_permanent = false
+
+[resource]
+script = ExtResource("1_ge")
+condition = ExtResource("5_cond")
+selector = ExtResource("4_sel")
+action = SubResource("act")
