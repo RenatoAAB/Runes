@@ -92,6 +92,9 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 		else:
 			main_desc += " on " + selector_desc_colored
 
+	# Keep base text unchanged; color only the specific domain term to match effect highlight.
+	main_desc = _colorize_formation_term(main_desc, effect_index)
+
 	parts.append(main_desc)
 
 	# Trigger prefix
@@ -107,6 +110,18 @@ func get_description_colored(effect_index: int, is_condition_met: bool = true, c
 			parts.append(connector + " " + cond_colored)
 
 	return TooltipFormatter.format(" ".join(parts))
+
+
+func _colorize_formation_term(text: String, effect_index: int) -> String:
+	if text.is_empty():
+		return text
+
+	var colored_title = EffectColors.colorize_text("Formação Rochosa", effect_index)
+	var colored_lower = EffectColors.colorize_text("formação rochosa", effect_index)
+
+	var result = text.replace("Formação Rochosa", colored_title)
+	result = result.replace("formação rochosa", colored_lower)
+	return result
 
 
 func get_all_highlights(ctx: EffectContext) -> Dictionary:
@@ -182,6 +197,8 @@ func _get_trigger_prefix() -> String:
 			return "When an adjacent rune is activated,"
 		GameEnums.EffectTrigger.ON_CREATED:
 			return "When created,"
+		GameEnums.EffectTrigger.ON_BUFF_RECEIVED:
+			return "When this rune receives a permanent buff,"
 		GameEnums.EffectTrigger.ON_ROUND_END:
 			return "At end of round,"
 		GameEnums.EffectTrigger.ON_ROUND_START:

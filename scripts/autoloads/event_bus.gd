@@ -43,6 +43,9 @@ signal rune_created(slot: GridSlot, rune: RuneInstance)
 ## Emitted when a rune is activated (after all its effects execute)
 signal rune_activated(slot: GridSlot, rune: RuneInstance)
 
+## Emitted when a permanent buff is applied to a rune
+signal buff_applied_to_rune(slot: GridSlot, rune: RuneInstance)
+
 ## Emitted at round start
 signal round_started()
 
@@ -368,6 +371,15 @@ func notify_rune_activated(slot: GridSlot, rune: RuneInstance) -> void:
 	
 	# Check for ON_ADJACENT_ACTIVATED effects on neighbors
 	_process_adjacent_activation_effects(slot, rune)
+
+
+## Notify that a permanent buff was applied to a rune
+func notify_buff_received(slot: GridSlot, rune: RuneInstance) -> void:
+	if not is_battle_active or not battle_context:
+		return
+	
+	buff_applied_to_rune.emit(slot, rune)
+	_process_trigger_effects(rune, slot, GameEnums.EffectTrigger.ON_BUFF_RECEIVED)
 
 
 ## Process effects with a specific trigger for a rune

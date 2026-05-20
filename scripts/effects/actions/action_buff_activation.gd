@@ -23,6 +23,8 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		if is_permanent:
 			var current = target_rune.permanent_buffs.get("activation_bonus", 0)
 			target_rune.permanent_buffs["activation_bonus"] = current + final_bonus
+			# Notify reactive passives (e.g. Topázio — ON_BUFF_RECEIVED)
+			EventBus.notify_buff_received(slot, target_rune)
 		else:
 			var current = target_rune.stat_modifiers.get("activation_bonus", 0)
 			target_rune.stat_modifiers["activation_bonus"] = current + final_bonus

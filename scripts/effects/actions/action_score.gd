@@ -11,6 +11,7 @@ enum ApplyMode {
 @export var value: ValueResolver
 @export var is_permanent: bool = false
 @export var apply_mode: ApplyMode = ApplyMode.SOURCE
+@export var emit_buff_received_event: bool = true
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
@@ -41,6 +42,9 @@ func _apply(amount: int, rune: RuneInstance, ctx: EffectContext, slot: GridSlot)
 		var current = rune.permanent_buffs.get("score_bonus", 0)
 		rune.permanent_buffs["score_bonus"] = current + final_amount
 		EffectLogger.log_score(ctx, final_amount, rune.data.id if rune.data else "?")
+		# Notify reactive passives (e.g. Topázio — ON_BUFF_RECEIVED)
+		if emit_buff_received_event and slot and rune:
+			EventBus.notify_buff_received(slot, rune)
 	else:
 		var final_score = rune.get_modified_score(amount)
 		ctx.battle.add_score(final_score, rune)

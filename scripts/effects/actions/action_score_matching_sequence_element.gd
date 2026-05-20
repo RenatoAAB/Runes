@@ -28,6 +28,7 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 				var current = slot.rune.permanent_buffs.get("score_bonus", 0)
 				slot.rune.permanent_buffs["score_bonus"] = current + final_amount
 				EffectLogger.log_score(ctx, final_amount, slot.rune.data.id if slot.rune.data else "?")
+				EventBus.notify_buff_received(slot, slot.rune)
 				break
 
 

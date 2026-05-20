@@ -187,7 +187,7 @@ func _get_source_description(f: SlotFilter = null) -> String:
 		CountSource.ROW:
 			return "empty slot in row" if is_empty_filter else "rune in row"
 		CountSource.FORMATION_SIZE:
-			return "earth rune in Formação Rochosa"
+			return "%s rune in Formação Rochosa" % ElementIcons.get_bbcode(GameEnums.Element.EARTH)
 	return "unknown"
 
 

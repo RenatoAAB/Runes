@@ -35,6 +35,7 @@ func execute(ctx: EffectContext, _targets: Array[GridSlot]) -> void:
 		var final_bonus = activation_bonus * mult
 		var current: int = slot.rune.permanent_buffs.get("activation_bonus", 0)
 		slot.rune.permanent_buffs["activation_bonus"] = current + final_bonus
+		EventBus.notify_buff_received(slot, slot.rune)
 
 
 func _destroy_slot(slot: GridSlot, ctx: EffectContext) -> void:

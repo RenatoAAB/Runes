@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://c67dck1oondir" path="res://scripts/effects/actions/action_buff_activation.gd" id="2_ab"]
 [ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="2_cfpmc"]
 [ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_formation.tres" id="4_sel"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_formation_excl_self.tres" id="4_sel"]
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")

@@ -67,7 +67,8 @@ enum EffectTrigger {
 	ON_ROUND_START,         # At the start of the round
 	ON_ROUND_END,           # At the end of the round
 	ON_CREATED,             # When the rune is created during the round
-	PASSIVE                 # Always active (for permanent buffs, checked contextually)
+	PASSIVE,                # Always active (for permanent buffs, checked contextually)
+	ON_BUFF_RECEIVED,       # When a permanent buff is applied to this rune
 }
 
 enum Tier {
