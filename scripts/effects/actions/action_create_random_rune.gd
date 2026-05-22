@@ -8,6 +8,7 @@ extends EffectAction
 
 @export var allowed_elements: Array[GameEnums.Element] = []
 @export var random_any: bool = false  ## Ignore element filter, pick any rune
+@export var min_rarity: GameEnums.Rarity = GameEnums.Rarity.COMMON
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
@@ -17,12 +18,14 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 
 	var candidates: Array[RuneData] = []
 	if random_any:
-		candidates = RuneLibrary.get_all_runes()
+		for rd in RuneLibrary.get_all_runes():
+			if rd and rd.rarity >= min_rarity:
+				candidates.append(rd)
 	else:
 		for elem in allowed_elements:
 			var elem_runes = RuneLibrary.get_runes_for_element(elem)
 			for rd in elem_runes:
-				if rd not in candidates:
+				if rd and rd.rarity >= min_rarity and rd not in candidates:
 					candidates.append(rd)
 
 	if candidates.is_empty():
@@ -44,11 +47,15 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 
 
 func get_description() -> String:
+	var rarity_suffix := ""
+	if min_rarity > GameEnums.Rarity.COMMON:
+		rarity_suffix = " (%s+)" % TooltipTexts.get_rarity_name(min_rarity)
+
 	if random_any:
-		return "Create a random rune in empty target"
+		return "Create a random rune%s in empty target" % rarity_suffix
 	if allowed_elements.size() == 1:
-		return "Create a random %s rune in empty target" % ElementIcons.get_bbcode(allowed_elements[0])
-	return "Create a random rune in empty target"
+		return "Create a random %s rune%s in empty target" % [ElementIcons.get_bbcode(allowed_elements[0]), rarity_suffix]
+	return "Create a random rune%s in empty target" % rarity_suffix
 
 
 func get_keywords() -> Array[StringName]:

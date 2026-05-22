@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="2_as"]
 [ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="4_sel"]
-[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_consecutive_2.tres" id="5_cond"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_not_first_activation.tres" id="5_cond"]
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")

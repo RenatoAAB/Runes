@@ -25,7 +25,7 @@ enum CountSource {
 	PANEL_RESIDUE_COUNT,    ## Count of slots with specific residue (uses filter.required_residue_id)
 	COLUMN,                 ## Count slots in same column matching filter
 	ROW,                    ## Count slots in same row matching filter
-	FORMATION_SIZE,         ## Count of earth runes in the source's Formação Rochosa (0 if not in formation)
+	FORMATION_SIZE,         ## Count of earth runes in the source's Formação Rochosa (2+ connected, 0 if not in formation)
 }
 
 enum AggregateMode {

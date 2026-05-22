@@ -15,6 +15,9 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 	if not ctx or not ctx.battle:
 		return
 
+	var activated_targets: Array[GridSlot] = []
+	ctx.battle.set_meta("last_trigger_activation_targets", activated_targets)
+
 	if simultaneous and ctx.battle:
 		ctx.battle.begin_simultaneous_batch()
 
@@ -24,18 +27,26 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		var target_rune = slot.rune
 		if drain_all_activations:
 			# Activate all remaining times
+			var activated_any := false
 			while target_rune.can_activate():
 				target_rune.on_activate(ctx.battle, slot)
 				if ctx.battle:
 					ctx.battle.record_activation(target_rune, slot)
+				activated_any = true
+			if activated_any and slot not in activated_targets:
+				activated_targets.append(slot)
 		else:
 			if target_rune.can_activate():
 				target_rune.on_activate(ctx.battle, slot)
 				if ctx.battle:
 					ctx.battle.record_activation(target_rune, slot)
+				if slot not in activated_targets:
+					activated_targets.append(slot)
 
 	if simultaneous and ctx.battle:
 		ctx.battle.end_simultaneous_batch()
+
+	ctx.battle.set_meta("last_trigger_activation_targets", activated_targets)
 
 
 func get_description() -> String:

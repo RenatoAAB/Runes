@@ -2,7 +2,7 @@ class_name ConditionInFormation
 extends NewEffectCondition
 
 ## True if the source rune is part of a Formação Rochosa
-## (a cluster of 4+ orthogonally connected earth runes).
+## (a cluster of 2+ orthogonally connected earth runes).
 
 
 func evaluate(ctx: EffectContext) -> bool:

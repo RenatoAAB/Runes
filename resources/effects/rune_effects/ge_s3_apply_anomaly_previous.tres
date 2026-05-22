@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
 [ext_resource type="Script" uid="uid://b1eiwtpqjvi6s" path="res://scripts/effects/actions/action_apply_residue.gd" id="2_ar"]
-[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_sequence_previous.tres" id="3_sel"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_above.tres" id="3_sel"]
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_ar")

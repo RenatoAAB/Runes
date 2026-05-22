@@ -8,7 +8,7 @@
 script = ExtResource("1_data")
 id = "ordem"
 rune_name = "Ordem"
-description = "Consuma residuos manicos adjacentes. Para cada consumido, +100 pontos."
+description = "+100 pontos para cada residuo manico adjacente."
 rarity = 1
 elements = Array[int]([4])
 textures = Array[Texture2D]([ExtResource("3_tex")])

@@ -8,7 +8,7 @@
 script = ExtResource("1_data")
 id = "praia"
 rune_name = "Praia"
-description = "Todas as outras runas da Formação Rochosa ganham +1 ativação."
+description = "Todas as outras runas da Formacao Rochosa ganham +1 ativacao."
 rarity = 2
 elements = Array[int]([1, 2])
 textures = Array[Texture2D]([ExtResource("3_tex")])

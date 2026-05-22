@@ -1,16 +1,15 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=4 format=3]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_apply_mana_residue_adj.tres" id="2_e1"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_debuff_adj_1.tres" id="3_e2"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon4.png" id="4_tex"]
+[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon4.png" id="3_tex"]
 
 [resource]
 script = ExtResource("1_data")
 id = "ebulicao"
 rune_name = "Ebulicao"
-description = "Gera residuo de mana nos espacos adjacentes. -1 ativacao para runas adjacentes."
+description = "Runas adjacentes ganham +1 ativacao para cada runa Fogo adjacente a esta."
 rarity = 2
 elements = Array[int]([0, 1])
-textures = Array[Texture2D]([ExtResource("4_tex")])
-effects = [ExtResource("2_e1"), ExtResource("3_e2")]
+textures = Array[Texture2D]([ExtResource("3_tex")])
+effects = [ExtResource("2_e1")]

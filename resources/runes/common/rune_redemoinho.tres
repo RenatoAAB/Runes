@@ -8,7 +8,7 @@
 script = ExtResource("1_data")
 id = "redemoinho"
 rune_name = "Redemoinho"
-description = "Ativa runas imediatamente antes e depois simultaneamente."
+description = "Ativa simultaneamente todas as runas adjacentes."
 elements = Array[int]([3])
 textures = Array[Texture2D]([ExtResource("3_tex")])
 effects = [ExtResource("2_e1")]

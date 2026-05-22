@@ -10,7 +10,7 @@
 script = ExtResource("1_data")
 id = "erupcao"
 rune_name = "Erupcao"
-description = "Destrua a runa seguinte. Crie uma anomalia no slot anterior. +400 pontos."
+description = "Destrua a runa abaixo. Crie uma anomalia no slot acima. +400 pontos."
 rarity = 2
 elements = Array[int]([0, 2])
 textures = Array[Texture2D]([ExtResource("5_tex")])

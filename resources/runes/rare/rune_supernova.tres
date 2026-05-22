@@ -10,7 +10,7 @@
 script = ExtResource("1_data")
 id = "supernova"
 rune_name = "Supernova"
-description = "+500 pontos. Petrifica o slot. Gera anomalias de mana em toda a coluna."
+description = "+600 pontos. Petrifica o slot. Gera anomalias de mana em todos os slots adjacentes."
 rarity = 2
 elements = Array[int]([0])
 textures = Array[Texture2D]([ExtResource("5_tex")])

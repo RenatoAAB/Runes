@@ -1,22 +1,13 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=8 format=3 uid="uid://c5bvl57g111rl"]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3 uid="uid://c5bvl57g111rl"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="2_3omd1"]
-[ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="2_as"]
-[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent.tres" id="4_sel"]
-
-[sub_resource type="Resource" id="vr"]
-script = ExtResource("3_vr")
-base = -10.0
+[ext_resource type="Script" uid="uid://dbxraeccjmo7w" path="res://scripts/effects/actions/action_destroy_rune.gd" id="2_ad"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="3_sel"]
 
 [sub_resource type="Resource" id="act"]
-script = ExtResource("2_as")
-value = SubResource("vr")
-is_permanent = true
-apply_mode = 1
+script = ExtResource("2_ad")
 
 [resource]
 script = ExtResource("1_ge")
-selector = ExtResource("4_sel")
+selector = ExtResource("3_sel")
 action = SubResource("act")

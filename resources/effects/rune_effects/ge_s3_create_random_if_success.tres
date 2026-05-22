@@ -8,6 +8,7 @@
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_acr")
 random_any = true
+min_rarity = 1
 
 [resource]
 script = ExtResource("1_ge")

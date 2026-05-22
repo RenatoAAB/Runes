@@ -2,7 +2,7 @@ class_name SelectorFormation
 extends EffectSelector
 
 ## Selects all occupied slots in the same Formação Rochosa as the source rune.
-## Returns empty array if source is not part of a formation (< 4 connected earth).
+## Returns empty array if source is not part of a formation (< 2 connected earth).
 ## Used by Praia (+1 activation to formation) and Sedimentação (trigger all in formation).
 
 @export var include_self: bool = true

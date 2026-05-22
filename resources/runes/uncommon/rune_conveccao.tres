@@ -8,7 +8,7 @@
 script = ExtResource("1_data")
 id = "conveccao"
 rune_name = "Conveccao"
-description = "Reader retorna +2 por fogo adjacente, -1 por agua adjacente."
+description = "Reader retorna +2 por fogo adjacente."
 rarity = 1
 elements = Array[int]([0, 3])
 textures = Array[Texture2D]([ExtResource("3_tex")])

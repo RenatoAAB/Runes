@@ -2,7 +2,7 @@ class_name ConditionFormationBorder
 extends NewEffectCondition
 
 ## True if the source rune is at the border (or corner) of a Formação Rochosa.
-## Border definition: part of a formation (4+ connected earth) but NOT at center
+## Border definition: part of a formation (2+ connected earth) but NOT at center
 ## (has fewer than 4 adjacent earth runes).
 
 

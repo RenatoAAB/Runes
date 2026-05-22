@@ -1,20 +1,30 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=8 format=3 uid="uid://cd5grr0fnmcpv"]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=10 format=3 uid="uid://cd5grr0fnmcpv"]
 
-[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="1_c7xv2"]
-[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" uid="uid://bvdwjfrat38s5" path="res://scripts/effects/actions/action_consume_residue.gd" id="2_ac"]
-[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_adjacent.tres" id="4_sel"]
+[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="1_vp"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="2_ge"]
+[ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="3_as"]
+[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="4_vr"]
+[ext_resource type="Script" uid="uid://c10fo0rpcdp0c" path="res://scripts/effects/slot_filter.gd" id="5_sf"]
+[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="6_sel"]
+
+[sub_resource type="Resource" id="flt"]
+script = ExtResource("5_sf")
+required_residue_id = "mana_residue"
+
+[sub_resource type="Resource" id="vp"]
+script = ExtResource("1_vp")
+per_value = 100.0
+filter = SubResource("flt")
 
 [sub_resource type="Resource" id="vr"]
-script = ExtResource("3_vr")
-base = 100.0
+script = ExtResource("4_vr")
+per = Array[ExtResource("1_vp")]([SubResource("vp")])
 
 [sub_resource type="Resource" id="act"]
-script = ExtResource("2_ac")
-score_per_consumed = SubResource("vr")
+script = ExtResource("3_as")
+value = SubResource("vr")
 
 [resource]
-script = ExtResource("1_ge")
-selector = ExtResource("4_sel")
+script = ExtResource("2_ge")
+selector = ExtResource("6_sel")
 action = SubResource("act")

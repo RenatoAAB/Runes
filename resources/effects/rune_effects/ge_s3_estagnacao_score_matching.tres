@@ -1,32 +1,28 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=13 format=3 uid="uid://cx6lutxqgl7lk"]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=10 format=3 uid="uid://cx6lutxqgl7lk"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
-[ext_resource type="Script" uid="uid://b8j65pyfol5tm" path="res://scripts/effects/actions/effect_action.gd" id="1_sqcf2"]
-[ext_resource type="Script" uid="uid://bu4xnm45wab34" path="res://scripts/effects/actions/action_composite.gd" id="2_comp"]
-[ext_resource type="Script" uid="uid://bvdwjfrat38s5" path="res://scripts/effects/actions/action_consume_residue.gd" id="3_consume"]
-[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="4_qe7wy"]
-[ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="4_score"]
-[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="5_vr"]
-[ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="6_sel"]
-
-[sub_resource type="Resource" id="act_consume"]
-script = ExtResource("3_consume")
-max_consume = 1
+[ext_resource type="Script" uid="uid://bndba8wkc02f4" path="res://scripts/effects/actions/action_score.gd" id="2_as"]
+[ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
+[ext_resource type="Script" path="res://scripts/effects/selectors/selector_panel.gd" id="4_sp"]
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_not_first_two_activations.tres" id="5_cond"]
+[ext_resource type="Resource" path="res://resources/effects/shared/filters/filter_earth.tres" id="6_fe"]
 
 [sub_resource type="Resource" id="vr"]
-script = ExtResource("5_vr")
+script = ExtResource("3_vr")
 base = 20.0
 
-[sub_resource type="Resource" id="act_score"]
-script = ExtResource("4_score")
+[sub_resource type="Resource" id="act"]
+script = ExtResource("2_as")
 value = SubResource("vr")
 is_permanent = true
+apply_mode = 1
 
-[sub_resource type="Resource" id="act"]
-script = ExtResource("2_comp")
-actions = Array[ExtResource("1_sqcf2")]([SubResource("act_consume"), SubResource("act_score")])
+[sub_resource type="Resource" id="sel"]
+script = ExtResource("4_sp")
+filter = ExtResource("6_fe")
 
 [resource]
 script = ExtResource("1_ge")
-selector = ExtResource("6_sel")
+condition = ExtResource("5_cond")
+selector = SubResource("sel")
 action = SubResource("act")

@@ -56,28 +56,94 @@
 <body>
 
 <h1>Runes – Set 4 Implementation Report</h1>
-<p class="subtitle">Gerado em 19 de maio de 2026 &nbsp;·&nbsp; Elemento principal: <span class="elem-earth">Terra / Formação Rochosa</span></p>
+<p class="subtitle">Atualizado em 22 de maio de 2026 &nbsp;·&nbsp; Elemento principal: <span class="elem-earth">Terra / Formação Rochosa</span></p>
 
 <!-- RESUMO -->
 <div class="section">
   <h2>📊 Resumo Executivo</h2>
   <div class="summary-grid">
-    <div class="summary-card"><div class="num">5</div><div class="label">Novos scripts GDScript</div></div>
-    <div class="summary-card"><div class="num">1</div><div class="label">Script de action modificado</div></div>
+    <div class="summary-card"><div class="num">6</div><div class="label">Novos scripts GDScript</div></div>
+    <div class="summary-card"><div class="num">2</div><div class="label">Scripts de action modificados</div></div>
     <div class="summary-card"><div class="num">2</div><div class="label">Core systems estendidos</div></div>
     <div class="summary-card"><div class="num">9</div><div class="label">Runas de terra atualizadas</div></div>
     <div class="summary-card"><div class="num">5</div><div class="label">Novas runas criadas</div></div>
-    <div class="summary-card"><div class="num">7</div><div class="label">Shared resources criados</div></div>
-    <div class="summary-card"><div class="num">14</div><div class="label">GameEffect .tres criados</div></div>
+    <div class="summary-card"><div class="num">10</div><div class="label">Shared resources criados</div></div>
+    <div class="summary-card"><div class="num">17</div><div class="label">GameEffect .tres criados</div></div>
     <div class="summary-card"><div class="num">0</div><div class="label">Acoplamentos diretos</div></div>
   </div>
+</div>
+
+<!-- ATUALIZACAO DE CONFORMIDADE -->
+<div class="section">
+  <h2>🛠️ Atualização de Conformidade (Runas R)</h2>
+  <div class="highlight">
+    Foi executada uma rodada de alinhamento com o design revisado do Set 4 para as runas marcadas com <strong>R</strong>,
+    cobrindo ajustes de gatilho, alvo, escala, efeitos permanentes e textos de descrição.
+  </div>
+
+  <h3>Infra de efeitos ajustada</h3>
+  <table>
+    <tr><th>Arquivo</th><th>Mudança</th><th>Motivo</th></tr>
+    <tr>
+      <td><span class="file">condition_not_first_activation.gd</span></td>
+      <td class="desc">Adicionado <code>min_previous_activations</code> (parametrizável).</td>
+      <td class="note">Permitir regras como "a partir da 3ª ativação" (Estagnação).</td>
+    </tr>
+    <tr>
+      <td><span class="file">action_create_random_rune.gd</span></td>
+      <td class="desc">Adicionado <code>min_rarity</code> para filtrar runas criadas.</td>
+      <td class="note">Entropia agora cria apenas runa aleatória Incomum+.</td>
+    </tr>
+    <tr>
+      <td><span class="file">condition_not_first_activation.tres</span> / <span class="file">condition_not_first_two_activations.tres</span></td>
+      <td class="desc">Novas shared conditions para ativação prévia (1+ e 2+).</td>
+      <td class="note">Reuso por Plasma, Estagnação e efeitos derivados.</td>
+    </tr>
+    <tr>
+      <td><span class="file">ge_s4_estagnacao_buff_water_if_not_first_two.tres</span></td>
+      <td class="desc">Novo GameEffect: +1 ativação para runas de Água no painel.</td>
+      <td class="note">Complementa o buff de Terra da Estagnação no mesmo gatilho.</td>
+    </tr>
+    <tr>
+      <td><span class="file">action_trigger_activation.gd</span></td>
+      <td class="desc">Passou a registrar os slots realmente ativados em <code>last_trigger_activation_targets</code>.</td>
+      <td class="note">Permitir que o 2º efeito do Raio some +50 por runa efetivamente ativada no 1º efeito.</td>
+    </tr>
+    <tr>
+      <td><span class="file">selector_previous_trigger_targets.gd</span> / <span class="file">selector_previous_trigger_targets.tres</span></td>
+      <td class="desc">Novo seletor de encadeamento para recuperar os alvos ativados pelo efeito anterior.</td>
+      <td class="note">Usado no score secundário do Raio.</td>
+    </tr>
+  </table>
+
+  <h3>Runas corrigidas nesta rodada</h3>
+  <table>
+    <tr><th>Runa</th><th>Ajuste aplicado</th></tr>
+    <tr><td><strong>Plasma</strong></td><td class="desc">Bônus de +200 mudou de "2x consecutivas" para "não ser a primeira ativação no round".</td></tr>
+    <tr><td><strong>Explosão</strong></td><td class="desc">Passou para +400 pontos e destruição da própria runa.</td></tr>
+    <tr><td><strong>Supernova</strong></td><td class="desc">Score base ajustado para +600; anomalia agora em adjacentes (não coluna).</td></tr>
+    <tr><td><strong>Cachoeira</strong></td><td class="desc">Condição alterada para 2 runas Terra adjacentes.</td></tr>
+    <tr><td><strong>Redemoinho</strong></td><td class="desc">Ativação simultânea de adjacentes (não apenas anterior/próxima).</td></tr>
+    <tr><td><strong>Furacão</strong></td><td class="desc">Adjacência passou a incluir diagonais.</td></tr>
+    <tr><td><strong>Erupção</strong></td><td class="desc">Alvos reposicionados para coluna: destrói abaixo e cria anomalia acima.</td></tr>
+    <tr><td><strong>Óleo</strong></td><td class="desc">Definida base de 2 ativações para cumprir escala do efeito.</td></tr>
+    <tr><td><strong>Ebulição</strong></td><td class="desc">Refeito para buff de ativação (não permanente) por runas Fogo adjacentes.</td></tr>
+    <tr><td><strong>Raio</strong></td><td class="desc">Segundo efeito corrigido para +50 por runa realmente ativada pelo 1º efeito (ex.: até +200 com 4 ativações).</td></tr>
+    <tr><td><strong>Convecção</strong></td><td class="desc">Removido componente negativo de Água; mantém +2 por Fogo adjacente.</td></tr>
+    <tr><td><strong>Praia</strong></td><td class="desc">Buff de formação corrigido para excluir a própria runa.</td></tr>
+    <tr><td><strong>Sedimentação</strong></td><td class="desc">Ativação simultânea da formação corrigida para excluir a própria runa.</td></tr>
+    <tr><td><strong>Queimadura</strong></td><td class="desc">Anomalia fixada no slot à esquerda.</td></tr>
+    <tr><td><strong>Ordem</strong></td><td class="desc">Mudou de consumo para pontuação por resíduos manicos adjacentes sem consumir.</td></tr>
+    <tr><td><strong>Entropia</strong></td><td class="desc">Criação aleatória restrita para raridade Incomum ou superior.</td></tr>
+    <tr><td><strong>Estagnação</strong></td><td class="desc">A partir da 3ª ativação: +20 score permanente em Terra e +1 ativação (não permanente) em Água no painel.</td></tr>
+  </table>
 </div>
 
 <!-- SISTEMA FORMAÇÃO ROCHOSA -->
 <div class="section">
   <h2>🪨 Sistema Core: Formação Rochosa</h2>
   <div class="highlight">
-    Uma Formação Rochosa é um cluster de <strong>4+ runas de terra ortogonalmente conectadas</strong>.
+    Uma Formação Rochosa é um cluster de <strong>2+ runas de terra ortogonalmente conectadas</strong>.
     Toda a detecção é feita via BFS no GridManager e exposta para o pipeline de efeitos através de
     condições, seletores e a nova CountSource <code>FORMATION_SIZE</code>.
   </div>
@@ -87,7 +153,7 @@
     <tr><th>Conceito</th><th>Implementação</th></tr>
     <tr><td><strong>Borda</strong></td><td>Runa em formação com <strong>&lt; 4</strong> terras ortogonais adjacentes → <span class="file">ConditionFormationBorder</span></td></tr>
     <tr><td><strong>Centro</strong></td><td>Runa com <strong>4</strong> terras ortogonais adjacentes → <span class="file">ConditionFormationCenter</span></td></tr>
-    <tr><td><strong>Formação mínima</strong></td><td>4+ terras conectadas → <span class="file">ConditionInFormation</span></td></tr>
+    <tr><td><strong>Formação mínima</strong></td><td>2+ terras conectadas → <span class="file">ConditionInFormation</span></td></tr>
     <tr><td><strong>Formação grande</strong></td><td>N+ terras conectadas (configurável) → <span class="file">ConditionFormationMinSize</span></td></tr>
   </table>
 </div>
@@ -102,7 +168,7 @@
     <tr>
       <td><span class="file">condition_in_formation.gd</span></td>
       <td><code>ConditionInFormation</code></td>
-      <td class="desc">Verdadeiro se a runa pertence a uma Formação Rochosa (≥4 terras conectadas).</td>
+      <td class="desc">Verdadeiro se a runa pertence a uma Formação Rochosa (≥2 terras conectadas).</td>
     </tr>
     <tr>
       <td><span class="file">condition_formation_min_size.gd</span></td>
@@ -134,6 +200,11 @@
       <td><code>SelectorFormation</code></td>
       <td class="desc">Seleciona todos os slots ocupados da mesma Formação Rochosa. Export <code>include_self</code>.</td>
     </tr>
+    <tr>
+      <td><span class="file">selector_previous_trigger_targets.gd</span></td>
+      <td><code>SelectorPreviousTriggerTargets</code></td>
+      <td class="desc">Seleciona os slots realmente ativados pelo <code>ActionTriggerActivation</code> imediatamente anterior.</td>
+    </tr>
   </table>
 
   <h3>Scripts Modificados</h3>
@@ -142,7 +213,7 @@
     <tr>
       <td><span class="file">grid_manager.gd</span></td>
       <td><span class="badge badge-core">Core</span></td>
-      <td class="desc">Adicionado <code>get_earth_formation(coord)</code>: BFS que retorna todos os slots da Formação Rochosa. Retorna array vazio se &lt;4 terras.</td>
+      <td class="desc">Adicionado <code>get_earth_formation(coord)</code>: BFS que retorna todos os slots da Formação Rochosa. Retorna array vazio se &lt;2 terras.</td>
     </tr>
     <tr>
       <td><span class="file">value_per.gd</span></td>
@@ -173,8 +244,9 @@
   <h3>Selectors</h3>
   <table>
     <tr><th>Arquivo</th><th>Tipo</th><th>Uso</th></tr>
-    <tr><td><span class="file">selector_formation.tres</span></td><td><code>SelectorFormation(include_self=true)</code></td><td>Praia</td></tr>
-    <tr><td><span class="file">selector_formation_excl_self.tres</span></td><td><code>SelectorFormation(include_self=false)</code></td><td>Sedimentação</td></tr>
+    <tr><td><span class="file">selector_formation.tres</span></td><td><code>SelectorFormation(include_self=true)</code></td><td>Mantido para compatibilidade</td></tr>
+    <tr><td><span class="file">selector_formation_excl_self.tres</span></td><td><code>SelectorFormation(include_self=false)</code></td><td>Praia, Sedimentação</td></tr>
+    <tr><td><span class="file">selector_previous_trigger_targets.tres</span></td><td><code>SelectorPreviousTriggerTargets</code></td><td>Raio</td></tr>
     <tr><td><span class="file">selector_left.tres</span></td><td><code>SelectorDirectional(LEFT)</code></td><td>Borbulhar</td></tr>
     <tr><td><span class="file">selector_right.tres</span></td><td><code>SelectorDirectional(RIGHT)</code></td><td>Borbulhar</td></tr>
   </table>
@@ -191,8 +263,8 @@
     <tr><td><span class="file">ge_s4_perm_20_if_formation_border.tres</span></td><td>+20 perm se borda da formação</td><td>Estalactite</td></tr>
     <tr><td><span class="file">ge_s4_perm_50_if_formation_center.tres</span></td><td>+50 perm se centro da formação</td><td>Diamante</td></tr>
     <tr><td><span class="file">ge_s4_perm_50_if_formation_6.tres</span></td><td>+50 perm se formação ≥ 6 terras</td><td>Rubi</td></tr>
-    <tr><td><span class="file">ge_s4_buff_formation_1_activation.tres</span></td><td>+1 ativação para toda a formação</td><td>Praia</td></tr>
-    <tr><td><span class="file">ge_s4_trigger_formation_simultaneous.tres</span></td><td>Ativa simultaneamente toda a formação (excl. self)</td><td>Sedimentação</td></tr>
+    <tr><td><span class="file">ge_s4_buff_formation_1_activation.tres</span></td><td>+1 ativação para toda a formação (exclui self)</td><td>Praia</td></tr>
+    <tr><td><span class="file">ge_s4_trigger_formation_simultaneous.tres</span></td><td>Ativa simultaneamente a formação (exclui self)</td><td>Sedimentação</td></tr>
     <tr><td><span class="file">ge_s4_reader_back_2_if_not_first.tres</span></td><td>Reader recua 2 se não é primeira ativação</td><td>Sopro</td></tr>
     <tr><td><span class="file">ge_s4_buff_adj_diag_1_if_3earth.tres</span></td><td>+1 ativação a adj+diag se ≥3 terras adj</td><td>Mar</td></tr>
     <tr><td><span class="file">ge_s4_apply_residue_above.tres</span></td><td>Aplica resíduo de mana acima</td><td>Borbulhar</td></tr>
@@ -217,12 +289,12 @@
     <tr>
       <td><strong>Quartzo</strong></td><td><span class="badge badge-common">Common</span></td>
       <td class="note">+10 perm para terras adjacentes (efeito em outros)</td>
-      <td class="desc">+5 perm por terra na própria Formação (escala consigo mesma)</td>
+      <td class="desc">+10 perm por cada runa de terra na própria Formação</td>
     </tr>
     <tr>
       <td><strong>Ametista</strong></td><td><span class="badge badge-common">Common</span></td>
       <td class="note">+10 pts / +5 perm por terra adjacente</td>
-      <td class="desc">+10 pts / +20 perm se em uma Formação Rochosa</td>
+      <td class="desc">+10 pts / +20 perm para adjacentes se em uma Formação Rochosa</td>
     </tr>
     <tr>
       <td><strong>Estalactite</strong></td><td><span class="badge badge-common">Common</span></td>
@@ -247,12 +319,12 @@
     <tr>
       <td><strong>Praia</strong></td><td><span class="badge badge-rare">Rare</span></td>
       <td class="note">Rotaciona runas e resíduos adj (CCW)</td>
-      <td class="desc">+1 ativação para todas as runas da Formação Rochosa</td>
+      <td class="desc">+1 ativação para todas as outras runas da Formação Rochosa</td>
     </tr>
     <tr>
       <td><strong>Sedimentação</strong></td><td><span class="badge badge-uncommon">Uncommon</span></td>
       <td class="note">+10 pts / +20 perm se ativada simultaneamente</td>
-      <td class="desc">+10 pts / Ativa toda a Formação Rochosa simultaneamente</td>
+      <td class="desc">+10 pts / Ativa as outras runas da Formação Rochosa simultaneamente</td>
     </tr>
   </table>
 </div>
@@ -311,11 +383,11 @@
     </tr>
     <tr>
       <td><strong>BFS na formação</strong></td>
-      <td>Usa <code>Dictionary</code> para visited (O(1) lookup). Retorna <code>[]</code> se &lt;4 membros. Não inclui diagonais por definição.</td>
+      <td>Usa <code>Dictionary</code> para visited (O(1) lookup). Retorna <code>[]</code> se &lt;2 membros. Não inclui diagonais por definição.</td>
     </tr>
     <tr>
       <td><strong>Sedimentação &amp; Loops</strong></td>
-      <td>O seletor usa <code>include_self=false</code>. Caso duas Sedimentações estejam na mesma formação, a punição de loop do sistema existente é acionada (destruição). Design intencional.</td>
+      <td>O seletor revisado usa <code>include_self=false</code>. Cenários com múltiplas Sedimentações na mesma formação continuam cobertos pelo loop punishment existente.</td>
     </tr>
     <tr>
       <td><strong>Praia – efeito substituído</strong></td>
@@ -354,9 +426,9 @@
     <tr><td><code>SelectorFormation</code> script</td><td><span class="status-ok">✔ Criado + .uid gerado</span></td></tr>
     <tr><td><code>FORMATION_SIZE</code> no <code>ValuePer</code></td><td><span class="status-ok">✔ Enum + count() + get_source_slots() + description</span></td></tr>
     <tr><td><code>max_targets</code> no <code>ActionDestroyRune</code></td><td><span class="status-ok">✔ Adicionado com seleção aleatória</span></td></tr>
-    <tr><td>4 shared condition .tres criados</td><td><span class="status-ok">✔</span></td></tr>
-    <tr><td>4 shared selector .tres criados (formation, formation_excl_self, left, right)</td><td><span class="status-ok">✔</span></td></tr>
-    <tr><td>16 GameEffect .tres criados</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>6 shared condition .tres criados (inclui not_first_activation e not_first_two_activations)</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>5 shared selector .tres criados (formation, formation_excl_self, previous_trigger_targets, left, right)</td><td><span class="status-ok">✔</span></td></tr>
+    <tr><td>17 GameEffect .tres criados (inclui estagnacao_buff_water_if_not_first_two)</td><td><span class="status-ok">✔</span></td></tr>
     <tr><td>Rocha, Quartzo, Ametista, Estalactite atualizadas</td><td><span class="status-ok">✔</span></td></tr>
     <tr><td>Esmeralda, Rubi, Diamante atualizadas</td><td><span class="status-ok">✔</span></td></tr>
     <tr><td>Praia, Sedimentação atualizadas</td><td><span class="status-ok">✔</span></td></tr>
@@ -375,7 +447,7 @@
     <li>Implementar o <strong>feedback visual de Formação Rochosa</strong> no sistema de tooltip/hover (outline do cluster, cor da keyword).</li>
     <li>Adicionar as novas runas ao <code>drop_rates.tres</code> com pesos balanceados.</li>
     <li>Validar o efeito de <strong>Sedimentação com 2+ instâncias</strong> na mesma formação para confirmar que o sistema de loop punishment dispara corretamente.</li>
-    <li>Considerar o <strong>Topázio</strong> (não modificado nesta sprint) — a spec menciona "+10 pts permanentes para cada buff recebido"; avaliar se deve interagir com os novos efeitos perm de formação.</li>
+    <li>Executar playtest direcionado nas runas R corrigidas (principalmente Explosão, Supernova, Ebulição, Raio, Entropia e Estagnação) para validar comportamento em cadeia.</li>
     <li>Atualizar <code>/Runes/impl/</code> no Obsidian com o status desta sprint.</li>
   </ol>
 </div>

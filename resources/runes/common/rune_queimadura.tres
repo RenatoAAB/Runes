@@ -10,7 +10,7 @@
 script = ExtResource("1_data")
 id = "queimadura"
 rune_name = "Queimadura"
-description = "+200 pontos. Gera uma anomalia de mana em slot adjacente."
+description = "+200 pontos. Gera 1 anomalia de mana no slot a esquerda."
 elements = Array[int]([0])
 textures = Array[Texture2D]([ExtResource("4_tex")])
 effects = Array[ExtResource("1_55gdg")]([ExtResource("2_e1"), ExtResource("3_e2")])

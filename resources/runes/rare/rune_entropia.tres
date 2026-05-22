@@ -9,7 +9,7 @@
 script = ExtResource("1_data")
 id = "entropia"
 rune_name = "Entropia"
-description = "Se adjacente a residuo manico e anomalia manica, consuma-os. Gere uma runa aleatoria."
+description = "Se adjacente a residuo manico e anomalia manica, consuma-os. Gere uma runa aleatoria incomum ou mais."
 rarity = 2
 elements = Array[int]([4])
 textures = Array[Texture2D]([ExtResource("4_tex")])

@@ -9,7 +9,7 @@
 script = ExtResource("1_data")
 id = "raio"
 rune_name = "Raio"
-description = "Ativa todas as runas adjacentes simultaneamente. Gera anomalia no slot posterior."
+description = "Ativa todas as runas adjacentes simultaneamente. +50 pontos para cada runa ativada por este efeito."
 rarity = 1
 elements = Array[int]([0, 3])
 textures = Array[Texture2D]([ExtResource("4_tex")])
