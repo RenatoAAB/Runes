@@ -63,6 +63,12 @@ var runes_not_moved_count: int = 0
 ## Number of infinite loops detected by reader jumps
 var infinite_loops_detected: int = 0
 
+## Number of successful condition evaluations this round
+var successful_conditions_count: int = 0
+
+## Number of mana anomalies created this round
+var mana_anomalies_created_count: int = 0
+
 ## Mana tracking for mana residue / mana anomaly
 var current_mana: int = 0
 
@@ -124,6 +130,8 @@ func reset_round_state() -> void:
 	runes_moved_this_round = 0
 	runes_not_moved_count = 0
 	infinite_loops_detected = 0
+	successful_conditions_count = 0
+	mana_anomalies_created_count = 0
 	current_mana = 0
 	_simultaneous_batch_active = false
 	_simultaneous_batch_id = 0
@@ -497,6 +505,19 @@ func remove_mana(amount: int) -> int:
 	var removed = mini(current_mana, amount)
 	current_mana -= amount
 	return removed
+
+
+## Record a successful condition evaluation during this round.
+func record_successful_condition() -> void:
+	successful_conditions_count += 1
+
+
+## Record created residues relevant for relic statistics.
+func record_residue_created(residue_id: String, amount: int = 1) -> void:
+	if amount <= 0:
+		return
+	if residue_id == "mana_anomaly":
+		mana_anomalies_created_count += amount
 
 
 # --- Simultaneous Activation Tracking ---

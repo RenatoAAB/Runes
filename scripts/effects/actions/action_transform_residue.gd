@@ -20,6 +20,8 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		if slot.slot and slot.slot.has_specific_residue(from_residue_id):
 			slot.slot.clear_residue(from_residue_id)
 			slot.slot.apply_residue(to_residue_id)
+			if to_residue_id == "mana_anomaly" and ctx.battle:
+				ctx.battle.record_residue_created("mana_anomaly")
 			transformed_count += 1
 			if ctx.battle and ctx.battle.grid:
 				ctx.battle.grid.slot_changed.emit(slot.grid_position)

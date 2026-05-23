@@ -5,14 +5,14 @@
 
 [sub_resource type="Resource" script_class="RelicCalcElementActivations" id="1"]
 script = ExtResource("2")
-element = 3
+element = 4
 per_activation_multiplier = 1.05
 
 [resource]
 script = ExtResource("1")
-id = "relic_sky"
-display_name = "O Céu"
-description = "×1.05 para cada ativação de ar da rodada."
+id = "relic_ether"
+display_name = "O Éter"
+description = "×1.05 para cada ativação de espírito da rodada."
 rarity = 2
 calculator = SubResource("1")
 max_per_panel = 1

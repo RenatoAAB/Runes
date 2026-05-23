@@ -6,13 +6,13 @@
 [sub_resource type="Resource" script_class="RelicCalcElementActivations" id="1"]
 script = ExtResource("2")
 element = 0
-percent_per_activation = 0.01
+per_activation_multiplier = 1.05
 
 [resource]
 script = ExtResource("1")
 id = "relic_inferno"
 display_name = "O Inferno"
-description = "×(1 + Y×0.01) onde Y é a quantidade de ativações de runas de Fogo."
+description = "×1.05 para cada ativação de fogo da rodada."
 rarity = 2
 calculator = SubResource("1")
 max_per_panel = 1

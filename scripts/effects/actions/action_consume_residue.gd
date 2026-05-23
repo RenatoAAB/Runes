@@ -30,6 +30,8 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 				continue
 			if _should_restore_condenser_mana_residue(slot, residue_id):
 				slot.slot.apply_residue(residue_id)
+				if residue_id == "mana_anomaly" and ctx.battle:
+					ctx.battle.record_residue_created("mana_anomaly")
 			consumed_count += 1
 			if ctx.battle and ctx.battle.grid:
 				ctx.battle.grid.slot_changed.emit(slot.grid_position)

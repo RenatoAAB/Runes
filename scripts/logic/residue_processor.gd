@@ -85,6 +85,8 @@ func on_reader_visit(slot: GridSlot, context: BattleContext) -> ReaderVisitResul
 			context.remove_money(2)
 		if is_condenser:
 			slot.slot.apply_residue("mana_anomaly")
+			if context:
+				context.record_residue_created("mana_anomaly")
 	
 	return result
 

@@ -25,6 +25,15 @@ var total_activations: int = 0
 ## Activations broken down by element (GameEnums.Element → int)
 var activations_by_element: Dictionary = {}
 
+## Number of runes that were activated inside simultaneous batches
+var simultaneous_runes_activated_count: int = 0
+
+## Number of successful condition evaluations this round
+var successful_conditions_count: int = 0
+
+## Number of mana anomalies created this round
+var mana_anomalies_created_count: int = 0
+
 # --- Data computed from GridManager at end of round ---
 
 ## Number of empty slots (no rune) in the panel
@@ -38,6 +47,15 @@ var distinct_slot_types: int = 0
 
 ## Sum of remaining activations across all runes in the panel
 var remaining_activations_total: int = 0
+
+## Number of runes with rarity Rare or higher currently in the panel
+var rare_plus_runes_in_panel: int = 0
+
+## Number of earth formations in the panel (cluster size >= 2)
+var earth_formations_count: int = 0
+
+## Size of the largest earth formation in the panel
+var largest_earth_formation_size: int = 0
 
 ## Lines/columns entirely filled by a single element (GameEnums.Element → int)
 var element_full_rows_cols: Dictionary = {}
@@ -72,6 +90,9 @@ static func build_from(context: BattleContext, grid: GridManager) -> BattleRound
 
 	# Activations by element
 	stats.activations_by_element = _count_activations_by_element(context.activation_history)
+	stats.simultaneous_runes_activated_count = _count_simultaneous_unique_runes(context.activation_history)
+	stats.successful_conditions_count = context.successful_conditions_count
+	stats.mana_anomalies_created_count = context.mana_anomalies_created_count
 
 	# --- From GridManager ---
 	_compute_grid_stats(stats, grid)
@@ -97,6 +118,23 @@ static func _count_activations_by_element(history: Array[Dictionary]) -> Diction
 	return counts
 
 
+static func _count_simultaneous_unique_runes(history: Array[Dictionary]) -> int:
+	var unique_runes: Dictionary = {}
+	for entry in history:
+		var batch_id: int = entry.get("simultaneous_batch_id", -1)
+		if batch_id < 0:
+			continue
+		var rune_instance: RuneInstance = entry.get("rune_instance")
+		if rune_instance:
+			unique_runes[rune_instance.get_instance_id()] = true
+			continue
+		var rune_id = entry.get("rune_id", "")
+		var slot_pos: Vector2i = entry.get("slot_position", Vector2i(-1, -1))
+		var fallback_key := "%s@%s@%d" % [str(rune_id), str(slot_pos), batch_id]
+		unique_runes[fallback_key] = true
+	return unique_runes.size()
+
+
 static func _compute_grid_stats(stats: BattleRoundStatistics, grid: GridManager) -> void:
 	var slot_type_set: Dictionary = {}  # unique slot types
 	var element_rows: Dictionary = {}   # Element → count of full rows
@@ -112,6 +150,8 @@ static func _compute_grid_stats(stats: BattleRoundStatistics, grid: GridManager)
 			if rune:
 				var remaining := rune.get_max_activations() - rune.current_activations
 				stats.remaining_activations_total += max(remaining, 0)
+				if rune.data and rune.data.rarity >= GameEnums.Rarity.RARE:
+					stats.rare_plus_runes_in_panel += 1
 
 		# Residue check — a slot "has residue" if it has any active states
 		if slot.slot and not slot.slot.active_states.is_empty():
@@ -138,6 +178,58 @@ static func _compute_grid_stats(stats: BattleRoundStatistics, grid: GridManager)
 	for elem in element_cols:
 		merged[elem] = merged.get(elem, 0) + element_cols[elem]
 	stats.element_full_rows_cols = merged
+
+	_compute_earth_formation_stats(stats, grid)
+
+
+static func _compute_earth_formation_stats(stats: BattleRoundStatistics, grid: GridManager) -> void:
+	var visited: Dictionary = {}
+	for slot in grid.grid:
+		if not _is_earth_rune_slot(slot):
+			continue
+		var coord: Vector2i = slot.grid_position
+		if visited.has(coord):
+			continue
+		var cluster_size := _flood_fill_earth_cluster(grid, coord, visited)
+		if cluster_size < 2:
+			continue
+		stats.earth_formations_count += 1
+		if cluster_size > stats.largest_earth_formation_size:
+			stats.largest_earth_formation_size = cluster_size
+
+
+static func _flood_fill_earth_cluster(grid: GridManager, start_coord: Vector2i, visited: Dictionary) -> int:
+	var cluster_size := 0
+	var queue: Array[Vector2i] = []
+	queue.append(start_coord)
+
+	while not queue.is_empty():
+		var coord: Vector2i = queue.pop_front()
+		if visited.has(coord):
+			continue
+		visited[coord] = true
+
+		var slot: GridSlot = grid.get_slot(coord)
+		if not _is_earth_rune_slot(slot):
+			continue
+
+		cluster_size += 1
+
+		for neighbor in grid.get_neighbors(coord, false):
+			if not neighbor:
+				continue
+			if visited.has(neighbor.grid_position):
+				continue
+			if _is_earth_rune_slot(neighbor):
+				queue.append(neighbor.grid_position)
+
+	return cluster_size
+
+
+static func _is_earth_rune_slot(slot: GridSlot) -> bool:
+	if not slot or slot.is_void() or slot.is_empty():
+		return false
+	return GameEnums.has_element(slot.rune.get_elements(), GameEnums.Element.EARTH)
 
 
 ## Check if an entire line (row or column) is occupied by runes sharing a single element.

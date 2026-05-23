@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reliquias Set 2 - Implementation Report</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --ok: #34d399;
+      --done: #f59e0b;
+      --new: #60a5fa;
+      --warn: #fb7185;
+      --line: #374151;
+      --accent: #93c5fd;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Segoe UI", "Noto Sans", Arial, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 0%, #1e293b 0%, #0b1220 45%),
+        linear-gradient(120deg, #0b1220 0%, #0f172a 100%);
+    }
+    .wrap {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel) 0%, #0b1220 100%);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 10px;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: var(--accent);
+    }
+    p { margin: 6px 0; }
+    .muted { color: var(--muted); }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    th {
+      color: #bfdbfe;
+      font-weight: 600;
+      background: #111827;
+      position: sticky;
+      top: 0;
+    }
+    .badge {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .ok { background: rgba(16, 185, 129, 0.2); color: var(--ok); border: 1px solid rgba(16, 185, 129, 0.45); }
+    .done { background: rgba(245, 158, 11, 0.2); color: var(--done); border: 1px solid rgba(245, 158, 11, 0.45); }
+    .new { background: rgba(96, 165, 250, 0.2); color: var(--new); border: 1px solid rgba(96, 165, 250, 0.45); }
+    .warn { background: rgba(244, 63, 94, 0.18); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.45); }
+    code {
+      color: #93c5fd;
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+    }
+    ul { margin: 8px 0 0 18px; }
+    li { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="card">
+      <h1>Reliquias Set 2 - Implementation Report</h1>
+      <p><strong>Data:</strong> 2026-05-23</p>
+      <p><strong>Fonte da verdade:</strong> Obsidian <code>Runes/design/relics_2.md</code></p>
+      <p><strong>Escopo:</strong> validar e implementar reliquias uma a uma, incluindo efeito e tooltip.</p>
+      <div class="chips">
+        <span class="chip">18 casos verificados</span>
+        <span class="chip">Efeito atualizado</span>
+        <span class="chip">Tooltip sincronizada</span>
+        <span class="chip">Catalogo limpo</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Alteracoes de Catalogo</h2>
+      <p><strong>Novas reliquias (NEW):</strong> <code>relic_collector</code>, <code>relic_conductor</code>, <code>relic_anomalous</code>, <code>relic_ether</code></p>
+      <p><strong>Removidas (fora da lista):</strong> <code>relic_balancer</code>, <code>relic_dancer</code></p>
+      <p><strong>Total final:</strong> 18 reliquias, exatamente as listadas em <code>relics_2</code>.</p>
+    </section>
+
+    <section class="card">
+      <h2>Verificacao Caso a Caso (Efeito + Tooltip)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Reliquia</th>
+            <th>Marca na Spec</th>
+            <th>Implementacao do Efeito</th>
+            <th>Alinhamento de Tooltip</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>O Colecionador</td>
+            <td><span class="badge new">NEW</span></td>
+            <td><code>relic_collector.tres</code> + <code>RelicCalcPerRarePlusRune</code>: x1.1 por runa Rara+ presente no painel (<code>rare_plus_runes_in_panel</code>).</td>
+            <td><code>get_description()</code> do calculador e descricao do resource refletem a regra da spec.</td>
+          </tr>
+          <tr>
+            <td>O Condutor</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>relic_conductor.tres</code> + <code>RelicCalcPerSimultaneousRune</code>: x1.1 por runa ativada em batch simultaneo (<code>simultaneous_runes_activated_count</code>).</td>
+            <td>Tooltip ligada ao calculador com texto da regra revisada.</td>
+          </tr>
+          <tr>
+            <td>O Engenheiro</td>
+            <td><span class="badge ok">OK</span></td>
+            <td>Sem mudanca de efeito: <code>RelicCalcPerSlotType</code> (x1.1 por tipo de slot diferente).</td>
+            <td>Tooltip mantida e coerente com a spec.</td>
+          </tr>
+          <tr>
+            <td>O Palhaco</td>
+            <td><span class="badge ok">OK</span></td>
+            <td>Sem mudanca de formula: <code>RelicCalcPerResidueSlot</code> (x1.1 por slot com residuo runico).</td>
+            <td>Texto ajustado para terminologia de residuo runico.</td>
+          </tr>
+          <tr>
+            <td>O Destruidor</td>
+            <td><span class="badge ok">OK</span></td>
+            <td>Sem mudanca: <code>RelicCalcPerDestroyed</code> (x1.2 por runa destruida na rodada).</td>
+            <td>Tooltip mantida conforme design.</td>
+          </tr>
+          <tr>
+            <td>O Criador</td>
+            <td><span class="badge ok">OK</span></td>
+            <td>Sem mudanca: <code>RelicCalcPerCreated</code> (x1.2 por runa criada na rodada).</td>
+            <td>Tooltip mantida conforme design.</td>
+          </tr>
+          <tr>
+            <td>O Alquimista</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>relic_alchemist.tres</code> migrada para <code>RelicCalcPerSuccessfulCondition</code>: x1.05 por condicao bem sucedida (<code>successful_conditions_count</code>).</td>
+            <td>Tooltip agora mostra condicoes bem sucedidas, nao mais runas unicas.</td>
+          </tr>
+          <tr>
+            <td>O Baluarte</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>relic_bulwark.tres</code> migrada para <code>RelicCalcLargestFormationThreshold</code>: x2 se maior formacao rochosa > 12.</td>
+            <td>Tooltip atualizada para o gatilho por tamanho da maior formacao.</td>
+          </tr>
+          <tr>
+            <td>O Anomalo</td>
+            <td><span class="badge new">NEW</span></td>
+            <td><code>relic_anomalous.tres</code> + <code>RelicCalcPerManaAnomalyCreated</code>: x1.1 por anomalia de mana criada (<code>mana_anomalies_created_count</code>).</td>
+            <td>Tooltip reflete criacoes na rodada.</td>
+          </tr>
+          <tr>
+            <td>O Escudeiro</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>RelicCalcRemainingActivations</code> revisado para formula multiplicativa: x1.1 por ativacao restante.</td>
+            <td>Tooltip atualizada para x1.1 por ativacao restante.</td>
+          </tr>
+          <tr>
+            <td>O Rochedo</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>RelicCalcElementActivations</code> revisado para formula multiplicativa; <code>relic_boulder.tres</code> usa Terra x1.05 por ativacao.</td>
+            <td>Tooltip sincronizada com x1.05 por ativacao de terra.</td>
+          </tr>
+          <tr>
+            <td>O Inferno</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td>Mesma revisao do calculador elemental; <code>relic_inferno.tres</code> usa Fogo x1.05 por ativacao.</td>
+            <td>Tooltip sincronizada com x1.05 por ativacao de fogo.</td>
+          </tr>
+          <tr>
+            <td>O Ceu</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td>Mesma revisao do calculador elemental; <code>relic_sky.tres</code> usa Ar x1.05 por ativacao.</td>
+            <td>Tooltip sincronizada com x1.05 por ativacao de ar.</td>
+          </tr>
+          <tr>
+            <td>O Oceano</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td>Mesma revisao do calculador elemental; <code>relic_ocean.tres</code> usa Agua x1.05 por ativacao.</td>
+            <td>Tooltip sincronizada com x1.05 por ativacao de agua.</td>
+          </tr>
+          <tr>
+            <td>O Eter</td>
+            <td><span class="badge new">NEW</span></td>
+            <td><code>relic_ether.tres</code> criada com <code>RelicCalcElementActivations</code> em Espirito e x1.05 por ativacao.</td>
+            <td>Tooltip com regra explicita de ativacao de espirito.</td>
+          </tr>
+          <tr>
+            <td>O Nada</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>relic_void.tres</code> atualizado para x1.1 por slot vazio (antes x1.05).</td>
+            <td>Tooltip sincronizada com valor novo.</td>
+          </tr>
+          <tr>
+            <td>A Crianca</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>relic_child.tres</code> migrada para <code>RelicCalcPerEarthFormation</code>: x1.1 por formacao rochosa.</td>
+            <td>Tooltip deixou de usar linha/coluna e passou para formacoes.</td>
+          </tr>
+          <tr>
+            <td>O Retorno</td>
+            <td><span class="badge ok">OK</span></td>
+            <td>Sem mudanca: <code>RelicCalcPerLoop</code> (x2 por loop infinito criado).</td>
+            <td>Tooltip mantida conforme design.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Alteracoes de Pipeline (Suporte de Dados)</h2>
+      <ul>
+        <li><code>battle_context.gd</code>: adicionados contadores de condicoes bem sucedidas e anomalias de mana criadas.</li>
+        <li><code>game_effect.gd</code>: contabiliza condicao bem sucedida quando a avaliacao real da condicao passa.</li>
+        <li><code>battle_round_statistics.gd</code>: novos campos para simultaneas, condicoes, anomalias, runas Rara+ no painel e metricas de formacao rochosa.</li>
+        <li><code>battle_round_statistics.gd</code>: deteccao de formacoes rochosas via flood fill para contar formacoes e maior tamanho.</li>
+        <li><code>action_apply_residue.gd</code>, <code>action_transform_residue.gd</code>, <code>action_consume_residue.gd</code> e <code>residue_processor.gd</code>: contabilizacao de criacao de <code>mana_anomaly</code>.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Validacao</h2>
+      <ul>
+        <li>Arquivos alterados verificados com diagnostico: sem novos erros nos scripts editados.</li>
+        <li>Catalogo final de reliquias confere com a lista da spec (18 itens).</li>
+        <li>Tooltip de reliquia valida texto por <code>data.calculator.get_description()</code> em <code>TooltipBuilder.build_relic_tooltip</code>, garantindo sincronia entre efeito e exibicao.</li>
+      </ul>
+      <p class="muted">Observacao: este relatorio cobre implementacao e alinhamento de descricao; nao inclui rodada manual de playtest in-game nesta entrega.</p>
+    </section>
+  </div>
+</body>
+</html>

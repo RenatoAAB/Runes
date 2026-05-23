@@ -24,7 +24,10 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		if not slot or slot.is_void():
 			continue
 		if slot.slot and slot.slot.has_method("apply_residue"):
+			var had_residue := slot.slot.has_specific_residue(residue_id)
 			slot.slot.apply_residue(residue_id, duration, score_bonus)
+			if residue_id == "mana_anomaly" and not had_residue and ctx.battle:
+				ctx.battle.record_residue_created("mana_anomaly")
 			if ctx.battle and ctx.battle.grid:
 				ctx.battle.grid.slot_changed.emit(slot.grid_position)
 

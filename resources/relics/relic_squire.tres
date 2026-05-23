@@ -5,13 +5,13 @@
 
 [sub_resource type="Resource" script_class="RelicCalcRemainingActivations" id="1"]
 script = ExtResource("2")
-percent_per_activation = 0.01
+per_activation_multiplier = 1.1
 
 [resource]
 script = ExtResource("1")
 id = "relic_squire"
 display_name = "O Escudeiro"
-description = "×(1 + Y×0.01) onde Y é o total de ativações restantes."
+description = "×1.1 para cada ativação restante no painel."
 rarity = 2
 calculator = SubResource("1")
 max_per_panel = 1

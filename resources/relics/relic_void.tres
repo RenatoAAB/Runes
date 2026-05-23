@@ -5,13 +5,13 @@
 
 [sub_resource type="Resource" script_class="RelicCalcPerEmptySlot" id="1"]
 script = ExtResource("2")
-per_empty_multiplier = 1.05
+per_empty_multiplier = 1.1
 
 [resource]
 script = ExtResource("1")
 id = "relic_void"
 display_name = "O Nada"
-description = "×1.05 para cada slot vazio no painel."
+description = "×1.1 para cada slot vazio no painel."
 rarity = 2
 calculator = SubResource("1")
 max_per_panel = 1
