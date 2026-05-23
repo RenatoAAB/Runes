@@ -8,7 +8,7 @@
 script = ExtResource("1_data")
 id = "quartzo"
 rune_name = "Quartzo"
-description = "+10 pontos permanentes para cada runa de terra na Formação Rochosa."
+description = "Cada runa da Formacao Rochosa ganha +10 pontos permanentes."
 elements = Array[int]([2])
 textures = Array[Texture2D]([ExtResource("3_tex")])
 effects = [ExtResource("2_e1")]

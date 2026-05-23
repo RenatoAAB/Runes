@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3 uid="uid://r0rmd6kjiu4i"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
 [ext_resource type="Script" uid="uid://ccms5ndrcao40" path="res://scripts/effects/actions/action_trigger_activation.gd" id="2_at"]

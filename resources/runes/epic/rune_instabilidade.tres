@@ -9,7 +9,7 @@
 script = ExtResource("1_data")
 id = "instabilidade"
 rune_name = "Instabilidade"
-description = "Ativa todas as runas adjacentes simultaneamente usando todas as suas ativações. Uma delas é destruída."
+description = "Ativa todas as runas adjacentes simultaneamente usando todas as suas ativacoes. Destroi 1 runa adjacente aleatoria."
 rarity = 3
 elements = Array[int]([1, 3, 0])
 textures = Array[Texture2D]([ExtResource("4_tex")])
