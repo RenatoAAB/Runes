@@ -477,7 +477,7 @@ func _destroy_rune(slot: GridSlot, rune: RuneInstance) -> void:
 			battle_context.event_bus.notify_rune_destroyed(slot, rune)
 		else:
 			battle_context.on_rune_destroyed(slot, rune)
-	slot.remove_rune()
+	slot.remove_rune(true)
 	if grid_manager:
 		grid_manager.slot_changed.emit(slot.grid_position)
 

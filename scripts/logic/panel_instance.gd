@@ -311,7 +311,7 @@ func full_reset() -> void:
 	
 	# Sync with grid if it exists
 	if grid_manager:
-		grid_manager.clear_grid()
+		grid_manager.clear_grid(true)
 		_sync_unlocked_to_grid()
 
 

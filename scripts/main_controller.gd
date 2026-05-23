@@ -884,7 +884,7 @@ func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:
 
 
 ## Called when the player loses the game - reset panels to initial 3x3 state
-func _on_game_lost() -> void:
+func _on_game_lost(_final_level: int) -> void:
 	if _panel_manager:
 		_panel_manager.full_reset_all_panels()
 		_current_panel_index = 0
@@ -1141,6 +1141,9 @@ func add_initial_extra_items(relics: Array[RelicData], modifiers: Array[SlotModi
 	if not _extra_inventory:
 		push_warning("MainController.add_initial_extra_items: _extra_inventory is null")
 		return
+
+	# Start every run from a clean extra inventory state.
+	_extra_inventory.clear_all()
 	
 	for relic_data in relics:
 		var instance = RelicInstance.new(relic_data)

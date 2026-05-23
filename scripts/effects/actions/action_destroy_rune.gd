@@ -26,7 +26,7 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 			ctx.battle.event_bus.notify_rune_destroyed(slot, rune)
 		else:
 			ctx.battle.on_rune_destroyed(slot, rune)
-		slot.remove_rune()
+		slot.remove_rune(true)
 		ctx.battle.grid.slot_changed.emit(slot.grid_position)
 
 

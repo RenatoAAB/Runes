@@ -83,11 +83,11 @@ func on_reader_visit(slot: GridSlot, context: BattleContext) -> ReaderVisitResul
 func handle_round_end_for_slot(slot: GridSlot, grid_manager: GridManager) -> void:
 	# Faminto: destroy rune at end of round
 	if slot.has_state("faminto") and slot.rune:
-		slot.remove_rune()
+		slot.remove_rune(true)
 		if grid_manager:
 			grid_manager.slot_changed.emit(slot.grid_position)
 	# Also check residue-based faminto
 	if slot.slot and slot.slot.has_specific_residue("faminto") and slot.rune:
-		slot.remove_rune()
+		slot.remove_rune(true)
 		if grid_manager:
 			grid_manager.slot_changed.emit(slot.grid_position)

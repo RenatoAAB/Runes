@@ -76,10 +76,22 @@ func set_rune(new_rune: RuneInstance) -> void:
 		_apply_slot_buffs_to_rune()
 
 
-func remove_rune() -> RuneInstance:
+func remove_rune(is_destroy: bool = false) -> RuneInstance:
 	var removed = rune
 	rune = null
+	if is_destroy and removed:
+		_consume_petrified_residue_on_destroy()
 	return removed
+
+
+func _consume_petrified_residue_on_destroy() -> void:
+	if not slot:
+		return
+	# Support both migrated residue id and legacy plain state.
+	if slot.has_specific_residue("petrified"):
+		slot.clear_residue("petrified")
+	if slot.has_state("petrified"):
+		slot.remove_state("petrified")
 
 
 func _apply_slot_buffs_to_rune() -> void:

@@ -289,9 +289,13 @@ func process_round_end() -> void:
 		slot_changed.emit(slot.grid_position)
 
 
-func clear_grid() -> void:
+func clear_grid(reset_slot_types: bool = false) -> void:
 	for slot in grid:
-		slot.clear_states()
+		if reset_slot_types:
+			# Recreate slot runtime data to remove applied modifiers and permanent metas.
+			slot.set_slot(SlotInstance.new())
+		else:
+			slot.clear_states()
 		if not slot.is_empty():
 			slot.remove_rune()
 		slot_changed.emit(slot.grid_position)
