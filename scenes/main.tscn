@@ -20,7 +20,7 @@
 [ext_resource type="Resource" uid="uid://c75o0l6r4rs0q" path="res://resources/runes/uncommon/rune_gelo.tres" id="12_2f3dj"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
-[ext_resource type="Resource" path="res://resources/runes/epic/rune_instabilidade.tres" id="13_yq6so"]
+[ext_resource type="Resource" path="res://resources/runes/epic/rune_vida.tres" id="13_og1vs"]
 [ext_resource type="Script" uid="uid://dnp324y0uqp7w" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
@@ -65,12 +65,11 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 score_growth_acceleration = 0.01
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_gqmmt"), ExtResource("7_yc10j"), ExtResource("8_jscy8"), ExtResource("9_og1vs"), ExtResource("10_2wyq8"), ExtResource("11_vxglm"), ExtResource("12_2f3dj"), ExtResource("13_yq6so")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_gqmmt"), ExtResource("7_yc10j"), ExtResource("8_jscy8"), ExtResource("9_og1vs"), ExtResource("10_2wyq8"), ExtResource("11_vxglm"), ExtResource("12_2f3dj"), ExtResource("13_og1vs")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]
 script = ExtResource("3_85g3d")
-max_slots = 12
 
 [node name="UI" type="CanvasLayer" parent="." groups=["ui_layer"]]
 

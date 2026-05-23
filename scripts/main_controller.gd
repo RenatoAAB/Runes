@@ -56,6 +56,8 @@ var _bound_reader: Reader = null
 # Map to keep track of UI instances
 var grid_ui_slots: Dictionary = {} # Vector2i -> SlotUI
 var inventory_ui_slots: Array[SlotUI] = []
+## Stable mapping for extra items in shared inventory (key -> slot index)
+var _extra_item_slot_map: Dictionary = {}
 
 ## Reference to live stats display during battle
 var _stats_display: StatsDisplay = null
@@ -64,6 +66,54 @@ var _stats_display: StatsDisplay = null
 var _piece_preview_coords: Array[Vector2i] = []
 ## Tracks the last coord used for piece drag preview (to avoid redundant updates)
 var _piece_preview_last_coord: Vector2i = Vector2i(-999, -999)
+
+
+func _slot_ui_log_label(slot_ui: SlotUI) -> String:
+	if not slot_ui:
+		return "none"
+	if slot_ui.grid_coord != Vector2i(-1, -1):
+		return "grid(%d,%d)" % [slot_ui.grid_coord.x, slot_ui.grid_coord.y]
+	var visual_index := _get_inventory_visual_slot_index(slot_ui)
+	if visual_index != -1:
+		return "inventory[%d]" % visual_index
+	if slot_ui.is_relic_slot:
+		return "relic_slot[%d]" % slot_ui.relic_slot_index
+	return "slot_ui"
+
+
+func _rune_log_label(rune: RuneInstance) -> String:
+	if not rune:
+		return "null"
+	if rune.data:
+		if not rune.data.id.is_empty():
+			return rune.data.id
+		if not rune.data.rune_name.is_empty():
+			return rune.data.rune_name
+	return "rune_inst_%d" % rune.get_instance_id()
+
+
+func _relic_log_label(relic: RelicInstance) -> String:
+	if not relic:
+		return "null"
+	if relic.data:
+		if not relic.data.id.is_empty():
+			return relic.data.id
+		if not relic.data.display_name.is_empty():
+			return relic.data.display_name
+	return "relic_inst_%d" % relic.get_instance_id()
+
+
+func _log_inventory_event(action: String, details: Dictionary) -> void:
+	var keys := details.keys()
+	keys.sort()
+	var parts: Array[String] = []
+	for key in keys:
+		parts.append("%s=%s" % [String(key), str(details[key])])
+	var details_text := ", ".join(parts)
+	if details_text.is_empty():
+		print("[InventoryLog] %s" % action)
+	else:
+		print("[InventoryLog] %s | %s" % [action, details_text])
 
 func _ready() -> void:
 	print("[MainController] Initialization starting...")
@@ -566,6 +616,7 @@ func _refresh_grid_ui_from_logic() -> void:
 
 func _generate_inventory_ui() -> void:
 	inventory_ui_slots.clear()
+	_extra_item_slot_map.clear()
 	
 	# Use the existing slots from the scene
 	for slot_node in inventory_container.get_children():
@@ -584,6 +635,111 @@ func _generate_inventory_ui() -> void:
 			slot_ui.extra_item_dropped.connect(_on_extra_item_returned)
 		
 		inventory_ui_slots.append(slot_ui)
+
+
+func _build_extra_item_entry(item_type: String, data: Variant, instance: Variant, key_counters: Dictionary) -> Dictionary:
+	var base_key := _make_extra_item_base_key(item_type, data, instance)
+	var key_index := int(key_counters.get(base_key, 0))
+	key_counters[base_key] = key_index + 1
+	return {
+		"key": "%s#%d" % [base_key, key_index],
+		"type": item_type,
+		"data": data,
+		"instance": instance
+	}
+
+
+func _make_extra_item_base_key(item_type: String, data: Variant, instance: Variant) -> String:
+	var item_id := ""
+	if instance is Object:
+		item_id = "inst:%d" % instance.get_instance_id()
+	elif data is Object:
+		item_id = "data:%d" % data.get_instance_id()
+	elif data is Dictionary and data.has("id"):
+		item_id = "dict:%s" % String(data["id"])
+	elif data != null:
+		item_id = "val:%s" % str(data)
+	else:
+		item_id = "none"
+	return "%s|%s" % [item_type, item_id]
+
+
+func _collect_extra_inventory_items() -> Array:
+	var extras: Array = []
+	if not _extra_inventory:
+		return extras
+
+	var key_counters: Dictionary = {}
+
+	for relic in _extra_inventory.relics:
+		extras.append(_build_extra_item_entry("relic", relic.data, relic, key_counters))
+
+	for modifier in _extra_inventory.modifiers:
+		extras.append(_build_extra_item_entry("modifier", modifier, null, key_counters))
+
+	for piece in _extra_inventory.slot_pieces:
+		extras.append(_build_extra_item_entry("piece", piece.data, piece, key_counters))
+
+	return extras
+
+
+func _cleanup_extra_item_slot_map(extras: Array, slot_count: int) -> void:
+	var active_keys: Dictionary = {}
+	for extra in extras:
+		active_keys[extra["key"]] = true
+
+	var keys_to_remove: Array = []
+	for key in _extra_item_slot_map.keys():
+		var slot_index := int(_extra_item_slot_map[key])
+		if not active_keys.has(key) or slot_index < 0 or slot_index >= slot_count:
+			keys_to_remove.append(key)
+
+	for key in keys_to_remove:
+		_extra_item_slot_map.erase(key)
+
+
+func _build_next_extra_item_key(item_type: String, data: Variant, instance: Variant) -> String:
+	var base_key := _make_extra_item_base_key(item_type, data, instance)
+	if base_key.is_empty():
+		return ""
+
+	var next_index := 0
+	var prefix := "%s#" % base_key
+	for extra in _collect_extra_inventory_items():
+		var key := String(extra.get("key", ""))
+		if key.begins_with(prefix):
+			var index_text := key.get_slice("#", 1)
+			if index_text.is_valid_int():
+				next_index = maxi(next_index, int(index_text) + 1)
+
+	return "%s#%d" % [base_key, next_index]
+
+
+func _reserve_extra_item_target_slot(item_type: String, data: Variant, instance: Variant, target_slot_index: int) -> String:
+	if target_slot_index < 0 or target_slot_index >= inventory_ui_slots.size():
+		return ""
+
+	var item_key := _build_next_extra_item_key(item_type, data, instance)
+	if item_key.is_empty():
+		return ""
+
+	_extra_item_slot_map[item_key] = target_slot_index
+	return item_key
+
+
+func _find_first_empty_visual_slot(occupied_slots: Array) -> int:
+	for i in range(occupied_slots.size()):
+		if not occupied_slots[i]:
+			return i
+	return -1
+
+
+func _render_extra_item_at(slot_index: int, extra: Dictionary) -> void:
+	if slot_index < 0 or slot_index >= inventory_ui_slots.size():
+		return
+	var slot_ui = inventory_ui_slots[slot_index]
+	slot_ui.inventory_index = -1
+	slot_ui.set_extra_item(extra["type"], extra["data"], extra["instance"])
 
 func _create_slot_ui() -> SlotUI:
 	if slot_scene:
@@ -613,13 +769,17 @@ func _on_grid_slot_changed(coord: Vector2i) -> void:
 
 
 func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI) -> void:
-	# Determine source and destination
-	print("Rune Dropped. Source: %s, Target: %s" % [source_slot_ui, target_slot_ui])
+	var source_label := _slot_ui_log_label(source_slot_ui)
+	var target_label := _slot_ui_log_label(target_slot_ui)
+	var rune_label := _rune_log_label(rune)
 
 	var success := false
+	var target_is_grid := target_slot_ui and target_slot_ui.grid_coord != Vector2i(-1, -1)
+	var target_inventory_index := _get_inventory_visual_slot_index(target_slot_ui)
+	var target_is_inventory := target_inventory_index != -1
 
 	# Case 1: Drop on Grid
-	if target_slot_ui.grid_coord != Vector2i(-1, -1):
+	if target_is_grid:
 		if inventory_manager.has_rune(rune):
 			# Move from Inventory -> Grid (keep RuneInstance to preserve permanent buffs)
 			if grid_manager.place_rune_instance(rune, target_slot_ui.grid_coord):
@@ -632,17 +792,80 @@ func _on_rune_dropped(rune: RuneInstance, target_slot_ui: SlotUI, source_slot_ui
 				grid_manager.move_rune(source_coord, target_slot_ui.grid_coord)
 				success = true
 
-	# Case 2: Drop on Inventory (Unequip)
-	elif target_slot_ui.grid_coord == Vector2i(-1, -1):
-		# Move Grid -> Inventory
-		var source_coord = _find_rune_coord(rune)
-		if source_coord != Vector2i(-1, -1):
-			# Remove from grid
-			var slot = grid_manager.get_slot(source_coord)
-			slot.remove_rune()
-			grid_manager.slot_changed.emit(source_coord)
-			inventory_manager.add_rune(rune)
-			success = true
+	# Case 2: Drop on Inventory (strict target slot)
+	elif target_is_inventory:
+		if not _is_inventory_drop_target_empty(target_slot_ui):
+			_log_inventory_event("rune_drop_blocked_slot_occupied", {
+				"rune": rune_label,
+				"source": source_label,
+				"target": target_label
+			})
+			success = false
+		else:
+			var source_inventory_index := _find_inventory_rune_index(rune)
+
+			# Inventory -> Inventory: move only to empty target slot (no swap)
+			if source_inventory_index != -1:
+				if source_inventory_index != target_inventory_index:
+					var moved_rune := inventory_manager.remove_rune_at(source_inventory_index)
+					if moved_rune and inventory_manager.add_rune_at(moved_rune, target_inventory_index):
+						success = true
+						_log_inventory_event("rune_move_inventory_to_inventory", {
+							"from_slot": source_inventory_index,
+							"result": "ok",
+							"rune": rune_label,
+							"source": source_label,
+							"target": target_label,
+							"to_slot": target_inventory_index
+						})
+					elif moved_rune:
+						# Roll back when destination insertion fails unexpectedly.
+						inventory_manager.add_rune_at(moved_rune, source_inventory_index)
+						_log_inventory_event("rune_move_inventory_to_inventory", {
+							"from_slot": source_inventory_index,
+							"result": "rollback",
+							"rune": rune_label,
+							"source": source_label,
+							"target": target_label,
+							"to_slot": target_inventory_index
+						})
+			else:
+				# Grid -> Inventory: reserve target slot first, remove from grid only after success.
+				var source_coord := _find_rune_coord(rune)
+				if source_coord != Vector2i(-1, -1) and inventory_manager.add_rune_at(rune, target_inventory_index):
+					var slot = grid_manager.get_slot(source_coord)
+					if slot and slot.rune == rune:
+						slot.remove_rune()
+						grid_manager.slot_changed.emit(source_coord)
+						success = true
+						_log_inventory_event("rune_move_grid_to_inventory", {
+							"from_coord": source_coord,
+							"result": "ok",
+							"rune": rune_label,
+							"source": source_label,
+							"target": target_label,
+							"to_slot": target_inventory_index
+						})
+					else:
+						# Roll back to avoid duplicate ownership if source changed unexpectedly.
+						inventory_manager.remove_rune(rune)
+						_log_inventory_event("rune_move_grid_to_inventory", {
+							"from_coord": source_coord,
+							"result": "rollback",
+							"rune": rune_label,
+							"source": source_label,
+							"target": target_label,
+							"to_slot": target_inventory_index
+						})
+				elif source_coord != Vector2i(-1, -1):
+					_log_inventory_event("rune_move_grid_to_inventory", {
+						"from_coord": source_coord,
+						"result": "add_failed",
+						"rune": rune_label,
+						"source": source_label,
+						"target": target_label,
+						"to_slot": target_inventory_index
+					})
 
 	# Notify EventBus for SFX
 	var event_bus = get_node_or_null("/root/EventBus")
@@ -778,6 +1001,38 @@ func _find_rune_coord(rune: RuneInstance) -> Vector2i:
 			if slot.rune == rune:
 				return coord
 	return Vector2i(-1, -1)
+
+
+func _find_inventory_rune_index(rune: RuneInstance) -> int:
+	if not inventory_manager:
+		return -1
+	for i in range(inventory_manager.max_slots):
+		if inventory_manager.get_rune_at(i) == rune:
+			return i
+	return -1
+
+
+func _get_inventory_visual_slot_index(target_slot_ui: SlotUI) -> int:
+	if not target_slot_ui:
+		return -1
+	return inventory_ui_slots.find(target_slot_ui)
+
+
+func _is_inventory_drop_target_empty(target_slot_ui: SlotUI) -> bool:
+	if not target_slot_ui or not inventory_manager:
+		return false
+	var target_inventory_index := _get_inventory_visual_slot_index(target_slot_ui)
+	if target_inventory_index < 0:
+		return false
+	if target_inventory_index >= inventory_manager.max_slots:
+		return false
+	if target_slot_ui.grid_coord != Vector2i(-1, -1):
+		return false
+	if target_slot_ui.inventory_index != -1:
+		return false
+	if target_slot_ui.has_extra_item():
+		return false
+	return target_slot_ui.rune_ui == null
 
 # --- Visual Feedback ---
 
@@ -1098,42 +1353,50 @@ func _on_extra_inventory_updated() -> void:
 func _update_other_inventory_display() -> void:
 	if inventory_ui_slots.is_empty():
 		return
-	
-	# Collect rune items from InventoryManager
-	var all_items: Array = []  # {type: "rune"/"relic"/"modifier"/"piece", ...}
-	
-	for i in range(inventory_manager.max_slots):
+
+	var slot_count := inventory_ui_slots.size()
+	var occupied_slots: Array = []
+	occupied_slots.resize(slot_count)
+
+	# Always start from fixed empty cells, then fill runes/extras.
+	for i in range(slot_count):
+		occupied_slots[i] = false
+		var slot_ui = inventory_ui_slots[i]
+		slot_ui.inventory_index = -1
+		slot_ui.clear_display()
+
+	# Runes always occupy their fixed index from InventoryManager.
+	var rune_slots := mini(slot_count, inventory_manager.max_slots)
+	for i in range(rune_slots):
 		var rune = inventory_manager.get_rune_at(i)
 		if rune:
-			all_items.append({"type": "rune", "instance": rune, "inventory_index": i})
-	
-	# Collect extra items from ExtraInventory
-	if _extra_inventory:
-		for relic in _extra_inventory.relics:
-			all_items.append({"type": "relic", "instance": relic, "data": relic.data})
-		
-		for modifier in _extra_inventory.modifiers:
-			all_items.append({"type": "modifier", "instance": null, "data": modifier})
-		
-		for piece in _extra_inventory.slot_pieces:
-			all_items.append({"type": "piece", "instance": piece, "data": piece.data})
-	
-	# Display items in inventory slots
-	for i in range(inventory_ui_slots.size()):
-		var slot_ui = inventory_ui_slots[i]
-		
-		if i < all_items.size():
-			var item = all_items[i]
-			if item.type == "rune":
-				slot_ui.inventory_index = item.inventory_index
-				slot_ui.set_rune(item.instance)
-			else:
-				slot_ui.inventory_index = -1
-				slot_ui.set_extra_item(item.type, item.data, item.instance)
+			var slot_ui = inventory_ui_slots[i]
+			slot_ui.inventory_index = i
+			slot_ui.set_rune(rune)
+			occupied_slots[i] = true
+
+	# Extras keep stable visual slots when possible, without compacting.
+	var extras := _collect_extra_inventory_items()
+	_cleanup_extra_item_slot_map(extras, slot_count)
+
+	var pending_extras: Array = []
+	for extra in extras:
+		var key: String = extra["key"]
+		var mapped_slot := int(_extra_item_slot_map.get(key, -1))
+		if mapped_slot >= 0 and mapped_slot < slot_count and not occupied_slots[mapped_slot]:
+			_render_extra_item_at(mapped_slot, extra)
+			occupied_slots[mapped_slot] = true
 		else:
-			slot_ui.inventory_index = -1
-			slot_ui.set_rune(null)
-			slot_ui.clear_display()
+			pending_extras.append(extra)
+
+	for extra in pending_extras:
+		var next_empty := _find_first_empty_visual_slot(occupied_slots)
+		if next_empty == -1:
+			continue
+		var key: String = extra["key"]
+		_extra_item_slot_map[key] = next_empty
+		_render_extra_item_at(next_empty, extra)
+		occupied_slots[next_empty] = true
 
 
 ## Add initial extra inventory items (called by GameManager)
@@ -1157,23 +1420,52 @@ func add_initial_extra_items(relics: Array[RelicData], modifiers: Array[SlotModi
 		_extra_inventory.add_slot_piece(instance)
 
 ## Handle item returned to other_inventory (e.g., relic dragged from relic slot)
-func _on_extra_item_returned(item_type: String, item_data: Variant, item_instance: Variant, _target_slot_ui: SlotUI) -> void:
-	if item_type == "relic" and item_instance is RelicInstance:
-		var relic = item_instance as RelicInstance
-		
-		# Remove from the panel it was attached to
-		if _panel_manager and relic.attached_panel_index >= 0:
-			var panel = _panel_manager.get_panel(relic.attached_panel_index)
-			if panel:
-				panel.detach_relic(relic)
-		
-		# Clear its panel attachment
-		relic.detach_from_panel()
-		
-		# Add back to extra inventory
-		if _extra_inventory:
-			_extra_inventory.add_relic(relic)
-		
-		# Update displays
-		_update_other_inventory_display()
-		_update_relic_slots_display()
+func _on_extra_item_returned(item_type: String, item_data: Variant, item_instance: Variant, target_slot_ui: SlotUI) -> void:
+	if item_type != "relic" or not (item_instance is RelicInstance):
+		return
+	if not target_slot_ui or not _extra_inventory:
+		return
+
+	var relic = item_instance as RelicInstance
+	var relic_label := _relic_log_label(relic)
+	var target_label := _slot_ui_log_label(target_slot_ui)
+
+	var target_slot_index := _get_inventory_visual_slot_index(target_slot_ui)
+	if target_slot_index == -1:
+		return
+
+	# Keep strict drop rules: only accept returns into an empty visual inventory slot.
+	if not _is_inventory_drop_target_empty(target_slot_ui):
+		_log_inventory_event("relic_return_blocked_slot_occupied", {
+			"relic": relic_label,
+			"target": target_label,
+			"target_slot": target_slot_index
+		})
+		return
+
+	var source_panel_index: int = int(relic.attached_panel_index)
+
+	# Remove from the panel it was attached to.
+	if _panel_manager and relic.attached_panel_index >= 0:
+		var panel = _panel_manager.get_panel(relic.attached_panel_index)
+		if panel:
+			panel.detach_relic(relic)
+
+	# Clear panel attachment and reserve the exact visual slot before adding back.
+	relic.detach_from_panel()
+	var reserved_key := _reserve_extra_item_target_slot("relic", item_data, relic, target_slot_index)
+	var add_success := _extra_inventory.add_relic(relic)
+
+	if not add_success and not reserved_key.is_empty():
+		_extra_item_slot_map.erase(reserved_key)
+
+	_log_inventory_event("relic_return_to_inventory", {
+		"from_panel": source_panel_index,
+		"relic": relic_label,
+		"result": "ok" if add_success else "failed",
+		"target": target_label,
+		"target_slot": target_slot_index
+	})
+
+	_update_other_inventory_display()
+	_update_relic_slots_display()

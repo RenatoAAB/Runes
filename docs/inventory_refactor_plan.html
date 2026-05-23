@@ -1,0 +1,437 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Runes - Plano de Refatoracao do Inventario</title>
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --panel: #fffaf2;
+      --ink: #1f2933;
+      --muted: #5f6b76;
+      --ok: #1a7f37;
+      --warn: #9a6700;
+      --danger: #b42318;
+      --accent: #0f766e;
+      --line: #d8cdbb;
+      --chip: #efe4d2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 10%, #fff8e8 0%, transparent 35%),
+        radial-gradient(circle at 85% 20%, #e8f8f5 0%, transparent 30%),
+        var(--bg);
+      line-height: 1.45;
+    }
+
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 56px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #fff3de 0%, #f4fbf9 100%);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 20px 18px;
+      box-shadow: 0 6px 20px rgba(31, 41, 51, 0.06);
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-size: 1.7rem;
+      letter-spacing: 0.2px;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--chip);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      color: #3f4b57;
+    }
+
+    section {
+      margin-top: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 16px;
+    }
+
+    h2 {
+      margin: 0 0 10px;
+      font-size: 1.2rem;
+    }
+
+    h3 {
+      margin: 16px 0 8px;
+      font-size: 1rem;
+    }
+
+    p { margin: 8px 0; }
+    ul { margin: 8px 0 8px 20px; }
+    li { margin: 4px 0; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 10px;
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      background: #fff;
+    }
+
+    .sev-high { border-left: 5px solid var(--danger); }
+    .sev-med { border-left: 5px solid var(--warn); }
+    .sev-low { border-left: 5px solid var(--accent); }
+
+    .evidence {
+      margin-top: 8px;
+      font-size: 0.86rem;
+      color: #475467;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 8px;
+      padding: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 0.92rem;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #f2eadf;
+      font-weight: 600;
+    }
+
+    .ok { color: var(--ok); font-weight: 700; }
+    .warn { color: var(--warn); font-weight: 700; }
+    .danger { color: var(--danger); font-weight: 700; }
+
+    .decision {
+      background: #fff7ed;
+      border: 1px solid #fdba74;
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .mono {
+      font-family: Consolas, "Courier New", monospace;
+      background: #f4f4f5;
+      border: 1px solid #d4d4d8;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 0.86rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Plano de Acao e Refatoracao - Bug de Inventario</h1>
+      <p class="subtitle">Projeto Runes • Data da analise: 22/05/2026 • Status: proposta para aprovacao</p>
+      <div class="chips">
+        <span class="chip">Objetivo: sem sorting no inventario</span>
+        <span class="chip">Objetivo: sem sumico de runas</span>
+        <span class="chip">Objetivo: camadas visuais corretas</span>
+      </div>
+    </header>
+
+    <section>
+      <h2>1) Resumo Executivo</h2>
+      <p>
+        O comportamento atual do inventario esta sendo dirigido por uma reconstrucao compactada de lista (runa + itens extras)
+        em vez de um modelo posicional por slot. Isso causa sensacao de sorting, troca involuntaria de posicao e pode ocultar itens.
+      </p>
+      <p>
+        Tambem foi identificado um bug de camada visual: um Slot que antes mostrava ItemUI (ex.: modifier) nao limpa esse ItemUI
+        ao receber uma runa, deixando artefato visual atras da nova sprite.
+      </p>
+      <p class="danger">Impacto atual: alto no UX e medio-alto em consistencia de estado.</p>
+    </section>
+
+    <section>
+      <h2>2) Diagnostico Tecnico (Causas Provaveis)</h2>
+      <div class="grid">
+        <article class="card sev-high">
+          <h3>Causa A - "Sorting" por compactacao em redraw</h3>
+          <p>
+            A UI monta um array temporario com todos os itens existentes e repovoa os slots visuais do indice 0 em diante.
+            Quando ha buracos, mudancas ou remocoes, os itens "sobem" de posicao.
+          </p>
+          <div class="evidence">
+            Evidencias:<br/>
+            scripts/main_controller.gd:1098, 1108, 1113, 1116, 1119, 1122, 1129, 1132
+          </div>
+        </article>
+
+        <article class="card sev-high">
+          <h3>Causa B - Perda/ocultacao por limite logico != limite visual</h3>
+          <p>
+            O InventoryManager foi configurado com 12 slots, mas o container visual possui 8 slots.
+            A renderizacao usa somente inventory_ui_slots.size(), truncando visualizacao quando passa de 8.
+          </p>
+          <div class="evidence">
+            Evidencias:<br/>
+            scenes/main.tscn:73 (max_slots = 12)<br/>
+            scenes/main.tscn:192-222 (InventoryContainer com 8 slots)<br/>
+            scripts/main_controller.gd:1122 (loop por inventory_ui_slots.size)
+          </div>
+        </article>
+
+        <article class="card sev-high">
+          <h3>Causa C - Runa pode sumir ao voltar do grid</h3>
+          <p>
+            No fluxo Grid -&gt; Inventario, a runa e removida do slot do grid antes de validar sucesso de add no inventario.
+            Se add falhar, a runa ja saiu do grid e pode se perder.
+          </p>
+          <div class="evidence">
+            Evidencias:<br/>
+            scripts/main_controller.gd:636-645<br/>
+            scripts/main_controller.gd:642 (remove), 644 (add sem checar retorno), 645 (success=true)
+          </div>
+        </article>
+
+        <article class="card sev-med">
+          <h3>Causa D - Camada visual residual de item extra</h3>
+          <p>
+            SlotUI.set_rune limpa apenas RuneUI. Quando o slot vinha de set_extra_item, o ItemUI pode continuar no node tree.
+            Resultado: artefato de modifier/piece atras da nova runa.
+          </p>
+          <div class="evidence">
+            Evidencias:<br/>
+            scripts/ui/slot_ui.gd:401 (set_rune)<br/>
+            scripts/ui/slot_ui.gd:658 (set_extra_item cria/reusa ItemUI)<br/>
+            scripts/ui/slot_ui.gd:649 (item_ui so e limpo em clear_display)
+          </div>
+        </article>
+
+        <article class="card sev-med">
+          <h3>Causa E - Drop ignora slot de destino no inventario</h3>
+          <p>
+            O destino de drop no inventario nao e respeitado para runas: usa add_rune() (primeiro slot vazio) em vez de add_rune_at().
+            Isso reforca comportamento de reordenacao involuntaria.
+          </p>
+          <div class="evidence">
+            Evidencias:<br/>
+            scripts/main_controller.gd:636-645<br/>
+            scripts/ui/slot_ui.gd:426, 441-442 (aceita drop de runa em slot)
+          </div>
+        </article>
+
+        <article class="card sev-low">
+          <h3>Causa F - Risco colateral no sell de itens extras</h3>
+          <p>
+            SellArea remove modifier/piece/relic buscando InventoryManager, mas esses itens vivem em ExtraInventoryManager.
+            Nao e foco principal desta tarefa, mas e um risco de desync.
+          </p>
+          <div class="evidence">
+            Evidencias:<br/>
+            scripts/ui/sell_area.gd (uso de /root/Main/Managers/InventoryManager para todos os tipos)
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <h2>3) Objetivo da Refatoracao</h2>
+      <ul>
+        <li>Nao compactar/sortear itens no inventario ao atualizar UI.</li>
+        <li>Comportamento posicional: item fica no slot onde foi colocado ate mover/remover explicitamente.</li>
+        <li>Nenhuma perda de runa em falhas de drop.</li>
+        <li>Camadas visuais corretas e sem residuos de ItemUI.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>4) Plano de Acao em Fases</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fase</th>
+            <th>Escopo</th>
+            <th>Mudancas propostas</th>
+            <th>Arquivos alvo</th>
+            <th>Criterio de pronto</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Fase 0<br/><span class="mono">Contencao</span></td>
+            <td>Eliminar perdas e artefatos visuais imediatos</td>
+            <td>
+              1) Validar add_rune antes de remover do grid.<br/>
+              2) Em set_rune, limpar ItemUI preexistente.<br/>
+              3) Unificar capacidade visual/logica (8 vs 12) com regra temporaria explicita.
+            </td>
+            <td>
+              scripts/main_controller.gd<br/>
+              scripts/ui/slot_ui.gd<br/>
+              scenes/main.tscn ou scripts/logic/inventory_manager.gd
+            </td>
+            <td>Sem sumico de runa; sem sprite residual atras de runa nova.</td>
+          </tr>
+          <tr>
+            <td>Fase 1<br/><span class="mono">Modelo Posicional</span></td>
+            <td>Parar compactacao e preservar posicoes</td>
+            <td>
+              Introduzir modelo de celulas fixas para o inventario compartilhado:<br/>
+              - Cada slot visual mapeia 1:1 para um estado de item (vazio/runa/relic/modifier/piece).<br/>
+              - Remocao deixa buraco (null), sem shift automatico.
+            </td>
+            <td>
+              Novo script sugerido: scripts/logic/shared_inventory_layout.gd<br/>
+              scripts/main_controller.gd
+            </td>
+            <td>Adicionar/remover item nao altera slots vizinhos automaticamente.</td>
+          </tr>
+          <tr>
+            <td>Fase 2<br/><span class="mono">Drag/Drop Posicional</span></td>
+            <td>Respeitar slot de destino</td>
+            <td>
+              Implementar operacoes explicitas por indice:<br/>
+              - mover origem -&gt; destino<br/>
+              - swap se destino ocupado<br/>
+              - negar com feedback se invalido.<br/>
+              Remover dependencia de add_rune() no drop para inventario.
+            </td>
+            <td>
+              scripts/main_controller.gd<br/>
+              scripts/ui/slot_ui.gd<br/>
+              scripts/logic/inventory_manager.gd (se necessario add API por indice)
+            </td>
+            <td>Arrastar runa/item para slot X termina no slot X.</td>
+          </tr>
+          <tr>
+            <td>Fase 3<br/><span class="mono">Integracao Shop/Sell</span></td>
+            <td>Alinhar compra, venda e limites</td>
+            <td>
+              Ajustar validacoes de lotacao para o novo modelo compartilhado.<br/>
+              Corrigir sell de itens extras para operar no ExtraInventoryManager.
+            </td>
+            <td>
+              scripts/ui/shop_ui.gd<br/>
+              scripts/ui/sell_area.gd<br/>
+              scripts/logic/extra_inventory_manager.gd
+            </td>
+            <td>Nenhum desync entre inventario visual e logico apos comprar/vender.</td>
+          </tr>
+          <tr>
+            <td>Fase 4<br/><span class="mono">Regressao e Telemetria</span></td>
+            <td>Garantir estabilidade</td>
+            <td>
+              Criar checklist de regressao de drag/drop e alternancia de painel/loja.<br/>
+              Adicionar logs de operacao de inventario (origem, destino, resultado).
+            </td>
+            <td>
+              scripts/main_controller.gd<br/>
+              scripts/ui/slot_ui.gd<br/>
+              docs/ (checklist)
+            </td>
+            <td>Todos os cenarios de regressao passam sem reorder involuntario.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5) Matriz de Testes de Regressao (Proposta)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Cenario</th>
+            <th>Esperado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>T1</td>
+            <td>Arrastar runa A do inventario para slot vazio do inventario</td>
+            <td>Runa A permanece exatamente no slot de destino; sem shift de outros itens.</td>
+          </tr>
+          <tr>
+            <td>T2</td>
+            <td>Arrastar runa do grid para inventario cheio</td>
+            <td>Operacao negada; runa continua no grid (nao some).</td>
+          </tr>
+          <tr>
+            <td>T3</td>
+            <td>Slot tinha modifier, depois recebe runa</td>
+            <td>Nenhum artefato de modifier atras da runa.</td>
+          </tr>
+          <tr>
+            <td>T4</td>
+            <td>Comprar item na loja e abrir/fechar shop varias vezes</td>
+            <td>Posicoes mantidas, sem reorder involuntario.</td>
+          </tr>
+          <tr>
+            <td>T5</td>
+            <td>Vender relic/modifier/piece no SellArea</td>
+            <td>Item removido do manager correto e UI sincronizada.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>6) Decisoes para Aprovacao (necessarias antes de executar)</h2>
+      <div class="decision">
+        <p><strong>D1.</strong> Capacidade final do inventario compartilhado: manter 8 slots visuais (atual) ou expandir para 12 para casar com InventoryManager?</p>
+        <p><strong>D2.</strong> Quando soltar em slot ocupado no inventario: prefere <em>swap</em> automatico ou bloquear e exigir slot vazio?</p>
+        <p><strong>D3.</strong> Priorizacao de rollout: deseja aplicar primeiro apenas Fase 0 (hotfix imediato) ou ja entrar direto em Fase 0 + 1 + 2?</p>
+      </div>
+      <p class="footer">
+        Observacao: este documento e um plano. Nenhuma refatoracao foi aplicada ainda; aguardando sua aprovacao.
+      </p>
+    </section>
+  </div>
+</body>
+</html>

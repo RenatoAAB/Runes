@@ -507,9 +507,13 @@ func _on_sell_area_relic_sold(_relic: RelicInstance, price: int) -> void:
 
 func _refresh_after_sell() -> void:
 	# Refresh inventory display
-	var main_controller = get_node_or_null("/root/Main/MainController")
+	var main_controller = get_tree().get_first_node_in_group("main_controller")
+	if not main_controller:
+		main_controller = get_node_or_null("/root/Main")
 	if main_controller and main_controller.has_method("_on_inventory_updated"):
 		main_controller._on_inventory_updated()
+	if main_controller and main_controller.has_method("_update_relic_slots_display"):
+		main_controller._update_relic_slots_display()
 	_update_reroll_button()
 
 

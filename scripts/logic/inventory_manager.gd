@@ -9,7 +9,7 @@ signal inventory_updated
 
 # Fixed-size array of slots - each slot is either null or a RuneInstance
 var slots: Array = []  # Array of RuneInstance or null
-@export var max_slots: int = 10
+@export var max_slots: int = 8
 
 
 func _ready() -> void:

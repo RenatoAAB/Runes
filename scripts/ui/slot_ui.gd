@@ -406,6 +406,12 @@ func set_rune(rune: RuneInstance) -> void:
 	if rune_ui:
 		rune_ui.queue_free()
 		rune_ui = null
+	if item_ui:
+		item_ui.visible = false
+		item_ui.queue_free()
+		item_ui = null
+	if _placeholder_label:
+		_placeholder_label.visible = false
 	
 	if rune:
 		# Create new RuneUI
@@ -439,12 +445,13 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	
 	# Can drop rune instances only on UNLOCKED slots
 	if data.has("rune_instance") and not data.has("source_type"):
+		if slot_context == SlotContext.INVENTORY:
+			return _is_inventory_drop_target_empty()
 		return is_unlocked
 	
 	# Can drop relics FROM relic slots back to inventory (other_inventory slots only)
 	if data.get("source_type") == "relic_slot" and data.has("relic_instance"):
-		# Only accept on inventory slots (not grid slots)
-		return grid_coord == Vector2i(-1, -1)
+		return _is_inventory_drop_target_empty()
 	
 	# Can drop slot types (for replacing slot on grid) on UNLOCKED slots
 	if data.has("slot_instance") and grid_coord != Vector2i(-1, -1):
@@ -468,6 +475,18 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 		return not is_unlocked
 	
 	return false
+
+
+func _is_inventory_drop_target_empty() -> bool:
+	if slot_context != SlotContext.INVENTORY:
+		return false
+	if grid_coord != Vector2i(-1, -1):
+		return false
+	if inventory_index != -1:
+		return false
+	if has_extra_item():
+		return false
+	return rune_ui == null
 
 
 func _drop_data(_at_position: Vector2, data: Variant) -> void:
