@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="SlotModifierData" load_steps=3 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/slot_modifier_data.gd" id="1"]
-[ext_resource type="Resource" path="res://resources/slot_data/slot_distiller.tres" id="2"]
+[ext_resource type="Resource" path="res://resources/slot_data/slot_condenser.tres" id="2"]
 
 [resource]
 script = ExtResource("1")
-id = "slot_distiller"
-display_name = "Distiller"
-description = "Este slot não pode ser afetado por resíduos rúnicos."
+id = "slot_condenser"
+display_name = "Condenser"
+description = "Resíduos mânicos lidos/consumidos aqui nunca desaparecem (ele volta imediatamente)."
 rarity = 0
 modifier_type = 5
 value = 0.0

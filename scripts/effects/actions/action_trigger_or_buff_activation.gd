@@ -23,9 +23,9 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 			continue
 		var target_rune = slot.rune
 		if target_rune.can_activate():
-			target_rune.on_activate(ctx.battle, slot)
-			if ctx.battle:
-				ctx.battle.record_activation(target_rune, slot)
+			if _activate_with_slot_pipeline(ctx, slot):
+				if ctx.battle:
+					ctx.battle.record_activation(target_rune, slot)
 		else:
 			var mult = _get_enhancer_multiplier(slot)
 			var current = target_rune.stat_modifiers.get("activation_bonus", 0)

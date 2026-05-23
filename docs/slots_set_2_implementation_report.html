@@ -1,0 +1,245 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Slots Set 2 - Implementation Report</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #111827;
+      --panel-2: #1f2937;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --ok: #34d399;
+      --done: #f59e0b;
+      --warn: #fb7185;
+      --line: #374151;
+      --accent: #60a5fa;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      font-family: "Segoe UI", "Noto Sans", Arial, sans-serif;
+      background: radial-gradient(circle at 20% 0%, #1e293b 0%, var(--bg) 45%);
+      color: var(--text);
+    }
+    .wrap {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      background: linear-gradient(180deg, var(--panel) 0%, #0b1220 100%);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      letter-spacing: 0.2px;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      color: #bfdbfe;
+    }
+    p {
+      margin: 6px 0;
+      color: var(--text);
+    }
+    .muted { color: var(--muted); }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .chip {
+      border: 1px solid var(--line);
+      background: var(--panel-2);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      padding: 10px 8px;
+      vertical-align: top;
+    }
+    th {
+      color: #bfdbfe;
+      font-weight: 600;
+      background: #111827;
+      position: sticky;
+      top: 0;
+    }
+    .badge {
+      display: inline-block;
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+    .ok { background: rgba(16, 185, 129, 0.2); color: var(--ok); border: 1px solid rgba(16, 185, 129, 0.45); }
+    .done { background: rgba(245, 158, 11, 0.2); color: var(--done); border: 1px solid rgba(245, 158, 11, 0.45); }
+    .warn { background: rgba(244, 63, 94, 0.18); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.45); }
+    code {
+      color: #93c5fd;
+      background: rgba(96, 165, 250, 0.1);
+      border: 1px solid rgba(96, 165, 250, 0.25);
+      border-radius: 4px;
+      padding: 1px 5px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 12px;
+    }
+    ul { margin: 8px 0 0 18px; }
+    li { margin: 5px 0; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="card">
+      <h1>Slots Set 2 - Implementation Report</h1>
+      <p><strong>Date:</strong> 2026-05-23</p>
+      <p><strong>Source of truth:</strong> Obsidian note <code>Runes/design/slots_set_2.md</code></p>
+      <p><strong>Scope:</strong> Verify and implement all slot modifiers one by one, sync effect behavior and tooltip text.</p>
+      <div class="chips">
+        <span class="chip">Runtime updated</span>
+        <span class="chip">Tooltips synced</span>
+        <span class="chip">Catalog cleaned</span>
+        <span class="chip">HTML report generated</span>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Catalog Changes</h2>
+      <p><strong>Removed (not in spec list):</strong> <code>slot_amplifier</code>, <code>slot_distiller</code>, <code>slot_overclocker</code></p>
+      <p><strong>Added:</strong> <code>slot_condenser</code>, <code>slot_pressurizer</code></p>
+      <p><strong>Final catalog size:</strong> 14 slot modifiers (matching <code>slots_set_2</code>).</p>
+    </section>
+
+    <section class="card">
+      <h2>Case-by-Case Verification (Effect + Tooltip)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Slot</th>
+            <th>Spec Mark</th>
+            <th>Effect Implementation</th>
+            <th>Tooltip Alignment</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Transmuter</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>slot_payload_transmuter_set.gd</code> keeps permanent element gain from previous rune.</td>
+            <td>Description kept aligned in slot modifier resource.</td>
+          </tr>
+          <tr>
+            <td>Enhancer</td>
+            <td><span class="badge ok">OK</span></td>
+            <td>Buff x2 behavior remains via enhancer multiplier path in action layer.</td>
+            <td>Description preserved and matches design text.</td>
+          </tr>
+          <tr>
+            <td>Dispenser</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>slot_payload_create_random_rune_if_empty.gd</code> on round end when slot is empty.</td>
+            <td>Description preserved and matching.</td>
+          </tr>
+          <tr>
+            <td>Conector</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>slot_payload_activate_all_connectors.gd</code> activates other connectors without recursion.</td>
+            <td>Description preserved and matching.</td>
+          </tr>
+          <tr>
+            <td>Catalyzer</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>reader.gd</code> now triggers all remaining activations in one read and spends only <code>ceil(remaining / 2)</code>.</td>
+            <td>Slot data + slot modifier descriptions updated to half-spend behavior.</td>
+          </tr>
+          <tr>
+            <td>Charger</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>slot_payload_charger.gd</code> keeps +1 activation on round start.</td>
+            <td>Description preserved and matching.</td>
+          </tr>
+          <tr>
+            <td>Resonator</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>slot_payload_resonator_apply.gd</code> changed to x3 when activation is in simultaneous batch.</td>
+            <td>Description updated to simultaneous activation condition.</td>
+          </tr>
+          <tr>
+            <td>Condenser</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>residue_processor.gd</code> re-applies consumed <code>mana_residue</code>/<code>mana_anomaly</code> immediately on this slot.</td>
+            <td>New slot data + slot modifier descriptions created and aligned.</td>
+          </tr>
+          <tr>
+            <td>Refractor</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>game_effect.gd</code> condition bypass remains active for refractor slot.</td>
+            <td>Description preserved and matching.</td>
+          </tr>
+          <tr>
+            <td>Accumulator</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>slot_payload_accumulator_apply.gd</code> + <code>slot_payload_accumulator_store.gd</code> unchanged and consistent.</td>
+            <td>Description preserved and matching.</td>
+          </tr>
+          <tr>
+            <td>Stabilizer</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>slot_payload_stabilizer_begin.gd</code> + <code>slot_payload_stabilizer_end.gd</code> now apply temporary x2 only when in earth formation; old fixed-100 path removed from <code>battle_context.gd</code>.</td>
+            <td>Description updated to rocky formation x2.</td>
+          </tr>
+          <tr>
+            <td>Igniter</td>
+            <td><span class="badge ok">OK</span></td>
+            <td><code>slot_payload_igniter_apply.gd</code> keeps FIRE x3 behavior.</td>
+            <td>Description preserved and matching.</td>
+          </tr>
+          <tr>
+            <td>Purifier</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td>Flow split across <code>residue_processor.gd</code>, <code>reader.gd</code>, <code>slot_payload_purifier_next.gd</code>, and factory wiring: anomaly consumption sets per-read flag and grants x3 score.</td>
+            <td>Description updated in slot data + slot modifier to anomaly consume + x3.</td>
+          </tr>
+          <tr>
+            <td>Pressurizer</td>
+            <td><span class="badge done">R - DONE</span></td>
+            <td><code>reader.gd</code> duplicates AIR rune effect execution (2x) while spending only one activation per base read trigger; <code>action_move_reader.gd</code> now accumulates pending jumps so duplicated rewind/forward effects stack correctly in the same step.</td>
+            <td>Descriptions aligned with 2x effect and single activation cost.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <h2>Validation</h2>
+      <ul>
+        <li>Checked diagnostics on all edited logic files: no new errors found.</li>
+        <li>Confirmed both directories now contain the same 14 slot IDs: <code>resources/slot_data</code> and <code>resources/slot_modifiers</code>.</li>
+        <li>Tooltip text source validated: slot tooltip uses modifier description, now synced with design.</li>
+        <li>Movement stacking validated in code path: duplicate <code>rewind 2</code> effects now resolve cumulatively to <code>rewind 4</code> when executed in the same step.</li>
+      </ul>
+      <p class="muted">Note: global workspace warnings unrelated to this task still exist (pre-existing warnings in other files).</p>
+    </section>
+  </div>
+</body>
+</html>

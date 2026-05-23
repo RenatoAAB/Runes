@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1")
-id = "slot_overclocker"
-slot_name = "Overclocker"
+id = "slot_pressurizer"
+slot_name = "Pressurizer"
 rarity = 0
-description = "A runa aqui pode ser ativada mesmo sem ter ativações restantes. Se esse for o caso, ela tem 50% de chance de quebrar."
+description = "Runas de ar aqui têm seu efeito ativado 2x, mas consomem apenas 1 ativação por leitura."

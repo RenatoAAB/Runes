@@ -62,6 +62,10 @@ func on_reader_visit(slot: GridSlot, context: BattleContext) -> ReaderVisitResul
 	var result = ReaderVisitResult.new()
 	if not slot or not slot.slot:
 		return result
+
+	var slot_id = slot.slot.data.id if slot.slot and slot.slot.data else ""
+	var is_condenser = slot_id == "slot_condenser"
+	var is_purifier_with_rune = slot_id == "slot_purifier" and not slot.is_empty()
 	
 	# Mana Residue: reader picks it up for +1 mana
 	if slot.slot.has_specific_residue("mana_residue"):
@@ -69,13 +73,18 @@ func on_reader_visit(slot: GridSlot, context: BattleContext) -> ReaderVisitResul
 		result.mana_delta += 1
 		result.residues_consumed.append("mana_residue")
 		context.add_money(1)
+		if is_condenser:
+			slot.slot.apply_residue("mana_residue")
 	
-	# Mana Anomaly: reader picks it up, player loses 2 mana
+	# Mana Anomaly: reader picks it up. Purifier converts it into a score bonus.
 	if slot.slot.has_specific_residue("mana_anomaly"):
 		slot.slot.clear_residue("mana_anomaly")
-		result.mana_delta -= 2
 		result.residues_consumed.append("mana_anomaly")
-		context.remove_money(2)
+		if not is_purifier_with_rune:
+			result.mana_delta -= 2
+			context.remove_money(2)
+		if is_condenser:
+			slot.slot.apply_residue("mana_anomaly")
 	
 	return result
 

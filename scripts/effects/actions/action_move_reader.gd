@@ -29,25 +29,29 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		return
 
 	var current_idx = clampi(ctx.battle.current_step_index, 0, path_length - 1)
+	var base_idx = current_idx
+	if ctx.battle.has_meta("reader_pending_jump_index"):
+		base_idx = clampi(int(ctx.battle.get_meta("reader_pending_jump_index", current_idx)), 0, path_length - 1)
 	var target_idx = -1
 
 	match mode:
 		MoveMode.REWIND_STEPS:
 			var steps = value.resolve_int(ctx, targets) if value else 1
-			target_idx = max(0, current_idx - steps)
+			target_idx = max(0, base_idx - steps)
 		MoveMode.FORWARD_STEPS:
 			var steps = value.resolve_int(ctx, targets) if value else 1
-			target_idx = min(path_length - 1, current_idx + steps)
+			target_idx = min(path_length - 1, base_idx + steps)
 		MoveMode.TO_PREVIOUS_ELEMENT:
-			target_idx = _find_previous_element(ctx, current_idx)
+			target_idx = _find_previous_element(ctx, base_idx)
 		MoveMode.TO_RANDOM_VISITED:
 			target_idx = ctx.battle.get_random_visited_slot()
 		MoveMode.TO_START:
 			target_idx = 0
 		MoveMode.TO_NEAREST_RESIDUE:
-			target_idx = ctx.battle.find_nearest_residue_slot(target_residue_id, current_idx, true)
+			target_idx = ctx.battle.find_nearest_residue_slot(target_residue_id, base_idx, true)
 
 	if target_idx >= 0 and target_idx < path_length:
+		ctx.battle.set_meta("reader_pending_jump_index", target_idx)
 		ctx.battle.request_reader_jump(target_idx)
 
 

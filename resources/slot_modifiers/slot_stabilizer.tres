@@ -7,7 +7,7 @@
 script = ExtResource("1")
 id = "slot_stabilizer"
 display_name = "Stabilizer"
-description = "O score da runa aqui é settado em 100 pela rodada."
+description = "Se a runa aqui faz parte de uma formação rochosa, ela recebe x2 no score."
 rarity = 0
 modifier_type = 5
 value = 0.0

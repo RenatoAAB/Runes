@@ -52,7 +52,11 @@ static func build(slot_id: String) -> Array[SlotEffect]:
 			effects.append(_make(SlotEffect.SlotEffectTrigger.BEFORE_RUNE_READ, SlotPayloadStabilizerBegin.new()))
 			effects.append(_make(SlotEffect.SlotEffectTrigger.AFTER_RUNE_READ, SlotPayloadStabilizerEnd.new()))
 		"slot_purifier":
-			effects.append(_make(SlotEffect.SlotEffectTrigger.AFTER_RUNE_READ, SlotPayloadPurifierNext.new()))
+			var apply_purifier = SlotPayloadPurifierNext.new()
+			effects.append(_make(SlotEffect.SlotEffectTrigger.BEFORE_RUNE_READ, apply_purifier))
+			var restore_purifier = SlotPayloadRestoreMultiplier.new()
+			restore_purifier.meta_key_prefix = "purifier_mult"
+			effects.append(_make(SlotEffect.SlotEffectTrigger.AFTER_RUNE_READ, restore_purifier))
 		_:
 			pass
 	return effects

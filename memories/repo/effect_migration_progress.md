@@ -35,3 +35,4 @@
 - 2026-05-22: Set 4 R-rune alignment pass: corrected selectors/conditions for Explosao, Supernova, Cachoeira, Redemoinho, Furacao, Erupcao, Ebulicao, Raio, Conveccao, Ordem, Entropia, Praia, Sedimentacao, Plasma, Oleo, Estagnacao.
 - 2026-05-22: Added shared conditions `condition_not_first_activation` and `condition_not_first_two_activations`; generalized `ConditionNotFirstActivation` with `min_previous_activations` export.
 - 2026-05-22: Extended `ActionCreateRandomRune` with `min_rarity` to support Entropia creating uncommon+ runes.
+- 2026-05-23: `ActionMoveReader` now uses `reader_pending_jump_index` metadata to accumulate multiple jumps in the same step (fixes Pressurizer duplicated rewind/forward not stacking).

@@ -7,7 +7,7 @@
 script = ExtResource("1")
 id = "slot_purifier"
 display_name = "Purifier"
-description = "Quando lido remove resíduos rúnicos do slot seguinte."
+description = "Se lida com uma anomalia de mana, consome-a e a runa recebe x3 no score."
 rarity = 0
 modifier_type = 5
 value = 0.0

@@ -142,6 +142,7 @@ func _process_next_step() -> void:
 	# Update context with traversal index
 	if battle_context:
 		battle_context.current_step_index = current_index
+		battle_context.set_meta("reader_pending_jump_index", current_index)
 	
 	step_started.emit(coord)
 	
@@ -153,6 +154,10 @@ func _process_next_step() -> void:
 		visit_result = grid_manager.residue_processor.on_reader_visit(slot, battle_context)
 		if visit_result and not visit_result.residues_consumed.is_empty():
 			grid_manager.slot_changed.emit(coord)
+
+	if grid_manager and grid_manager.slot_processor and slot and slot.slot and slot.slot.data and slot.slot.data.id == "slot_purifier":
+		var had_anomaly = visit_result != null and visit_result.residues_consumed.has("mana_anomaly")
+		grid_manager.slot_processor.set_slot_data(slot, "purifier_had_anomaly", had_anomaly)
 	
 	if slot and not slot.is_empty():
 		_activate_rune(slot, coord, score_before)
@@ -184,15 +189,8 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 			return
 	
 	var can_activate = rune.can_activate()
-	var forced_activation = false
 	if not can_activate:
-		if grid_manager and grid_manager.slot_processor:
-			forced_activation = grid_manager.slot_processor.should_force_activation(slot, rune)
-			if forced_activation:
-				can_activate = true
-		elif slot.slot and slot.slot.data and slot.slot.data.id == "slot_overclocker":
-			forced_activation = true
-			can_activate = true
+		return
 
 	if can_activate:
 		# Set context before activation so slot multiplier can be applied
@@ -210,17 +208,29 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 		# Check if slot preserves charges
 		var should_preserve = slot.preserves_charges()
 		
-		# Get trigger count from slot (for Repeater slots)
+		# Get trigger count from slot (for Repeater/Pressurizer/Catalyzer slots)
+		var slot_id := ""
+		if slot.slot and slot.slot.data:
+			slot_id = slot.slot.data.id
+
 		var trigger_count = slot.get_trigger_count()
-		if slot.slot and slot.slot.data and slot.slot.data.id == "slot_catalyzer":
-			trigger_count = max(rune.get_max_activations() - rune.current_activations, 1)
-		if forced_activation:
-			trigger_count = 1
+		var catalyzer_spent = -1
+		var pressurizer_double_effect = false
+		if slot_id == "slot_catalyzer":
+			var remaining = max(rune.get_max_activations() - rune.current_activations, 1)
+			trigger_count = remaining
+			catalyzer_spent = maxi(int(ceil(float(remaining) / 2.0)), 0)
+		elif slot_id == "slot_pressurizer" and GameEnums.has_element(rune.get_elements(), GameEnums.Element.AIR):
+			pressurizer_double_effect = true
+
+		var activation_cycles = trigger_count * 2 if pressurizer_double_effect else trigger_count
 		
 		# Execute the activation (potentially multiple times)
-		for i in range(trigger_count):
+		for i in range(activation_cycles):
+			var is_pressurizer_bonus = pressurizer_double_effect and (i % 2 == 1)
 			slot.on_before_rune_read(battle_context)
-			if forced_activation:
+			if is_pressurizer_bonus:
+				# Bonus execution: duplicate effects while preserving activation cost.
 				var original_activations = rune.current_activations
 				rune.current_activations = max(rune.get_max_activations() - 1, 0)
 				rune.on_activate(battle_context, slot)
@@ -232,23 +242,19 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 			# Residue: per-activation hooks
 			if grid_manager and grid_manager.residue_processor:
 				grid_manager.residue_processor.on_activation(slot, rune)
-			activations_spent += 1
+			if not is_pressurizer_bonus:
+				activations_spent += 1
 		
-		# Restore activation count if slot preserves charges
+		# Restore activation count if slot preserves charges.
 		if should_preserve:
 			rune.current_activations = activations_before
+			activations_spent = 0
+		elif catalyzer_spent >= 0:
+			rune.current_activations = min(activations_before + catalyzer_spent, rune.get_max_activations())
+			activations_spent = catalyzer_spent
 		# Residue: post-activation hooks
 		if grid_manager and grid_manager.residue_processor:
 			grid_manager.residue_processor.after_activation(slot, rune, residue_snapshot)
-		# Overclocker: 50% chance to break if forced activation
-		if forced_activation:
-			var should_destroy = false
-			if grid_manager and grid_manager.slot_processor:
-				should_destroy = grid_manager.slot_processor.should_destroy_overclocked_rune(slot, rune, forced_activation)
-			elif randf() < 0.5 and not slot.protects_fragile() and not rune.data.is_indestructible:
-				should_destroy = true
-			if should_destroy:
-				_destroy_rune(slot, rune)
 		
 		# Emit the slot read event with all details
 		_emit_slot_read_event(coord, slot, rune, score_before, activations_before, activations_spent)

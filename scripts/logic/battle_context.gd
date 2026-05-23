@@ -154,17 +154,8 @@ func add_score(amount: int, source: RuneInstance) -> void:
 	# Apply slot multiplier if there's a current slot
 	var final_amount = amount
 	if current_slot:
-		if current_slot.slot and current_slot.slot.data and current_slot.slot.data.id == "slot_stabilizer" and grid and grid.slot_processor:
-			var used = grid.slot_processor.get_slot_data(current_slot, "stabilizer_used", false)
-			var active = grid.slot_processor.get_slot_data(current_slot, "stabilizer_active", false)
-			if active and not used:
-				final_amount = 100
-				grid.slot_processor.set_slot_data(current_slot, "stabilizer_used", true)
-			else:
-				final_amount = 0
-		else:
-			var multiplier = current_slot.get_multiplier()
-			final_amount = int(amount * multiplier)
+		var multiplier = current_slot.get_multiplier()
+		final_amount = int(amount * multiplier)
 	score_event.emit(final_amount, source)
 
 

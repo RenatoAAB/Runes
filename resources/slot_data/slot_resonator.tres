@@ -7,4 +7,4 @@ script = ExtResource("1")
 id = "slot_resonator"
 slot_name = "Resonator"
 rarity = 0
-description = "Se todas as runas adjacentes têm algum elemento em comum com a runa aqui, quando lida a runa aqui terá sua pontuação x3."
+description = "Se a runa aqui for ativada simultaneamente com outra, recebe x3 no score."

@@ -25,7 +25,11 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		if not slot or slot.is_void():
 			continue
 		if slot.slot and slot.slot.has_specific_residue(residue_id):
-			slot.slot.clear_residue(residue_id)
+			var removed = slot.slot.clear_residue(residue_id)
+			if not removed:
+				continue
+			if _should_restore_condenser_mana_residue(slot, residue_id):
+				slot.slot.apply_residue(residue_id)
 			consumed_count += 1
 			if ctx.battle and ctx.battle.grid:
 				ctx.battle.grid.slot_changed.emit(slot.grid_position)
@@ -60,3 +64,11 @@ func get_description() -> String:
 
 func get_keywords() -> Array[StringName]:
 	return [Keywords.ABSORB]
+
+
+func _should_restore_condenser_mana_residue(slot: GridSlot, target_residue_id: String) -> bool:
+	if not slot or not slot.slot or not slot.slot.data:
+		return false
+	if slot.slot.data.id != "slot_condenser":
+		return false
+	return target_residue_id == "mana_residue" or target_residue_id == "mana_anomaly"

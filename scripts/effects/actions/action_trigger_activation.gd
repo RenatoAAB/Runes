@@ -28,16 +28,17 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		if drain_all_activations:
 			# Activate all remaining times
 			var activated_any := false
-			while target_rune.can_activate():
-				target_rune.on_activate(ctx.battle, slot)
+			var remaining = maxi(target_rune.get_max_activations() - target_rune.current_activations, 0)
+			for _i in range(remaining):
+				if not _activate_with_slot_pipeline(ctx, slot):
+					break
 				if ctx.battle:
 					ctx.battle.record_activation(target_rune, slot)
 				activated_any = true
 			if activated_any and slot not in activated_targets:
 				activated_targets.append(slot)
 		else:
-			if target_rune.can_activate():
-				target_rune.on_activate(ctx.battle, slot)
+			if _activate_with_slot_pipeline(ctx, slot):
 				if ctx.battle:
 					ctx.battle.record_activation(target_rune, slot)
 				if slot not in activated_targets:

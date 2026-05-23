@@ -72,3 +72,55 @@ func _to_title_case(text: String) -> String:
 		else:
 			words[i] = word.substr(0, 1).to_upper() + word.substr(1)
 	return " ".join(words)
+
+
+## Executes a full slot-based activation cycle for trigger actions.
+## Includes slot BEFORE/AFTER hooks, residue hooks, and score context switching.
+func _activate_with_slot_pipeline(ctx: EffectContext, slot: GridSlot) -> bool:
+	if not ctx or not ctx.battle or not slot or slot.is_empty():
+		return false
+	var target_rune = slot.rune
+	if not target_rune or not target_rune.can_activate():
+		return false
+
+	var battle = ctx.battle
+	var previous_slot: GridSlot = battle.current_slot
+	var previous_rune: RuneInstance = battle.current_rune
+	var activations_before = target_rune.current_activations
+	var should_preserve = slot.preserves_charges()
+	var slot_id = slot.slot.data.id if slot.slot and slot.slot.data else ""
+	var pressurizer_double_effect = slot_id == "slot_pressurizer" and GameEnums.has_element(target_rune.get_elements(), GameEnums.Element.AIR)
+	var activation_cycles = 2 if pressurizer_double_effect else 1
+
+	battle.current_slot = slot
+	battle.current_rune = target_rune
+
+	var residue_snapshot := {}
+	if battle.grid and battle.grid.residue_processor:
+		residue_snapshot = battle.grid.residue_processor.before_activation(slot, target_rune)
+
+	for i in range(activation_cycles):
+		var is_pressurizer_bonus = pressurizer_double_effect and (i == 1)
+		slot.on_before_rune_read(battle)
+		if is_pressurizer_bonus:
+			# Bonus execution: duplicate effects while preserving activation cost.
+			var original_activations = target_rune.current_activations
+			target_rune.current_activations = max(target_rune.get_max_activations() - 1, 0)
+			target_rune.on_activate(battle, slot)
+			target_rune.current_activations = original_activations
+		else:
+			target_rune.on_activate(battle, slot)
+		slot.on_rune_activation(battle)
+
+		if battle.grid and battle.grid.residue_processor:
+			battle.grid.residue_processor.on_activation(slot, target_rune)
+
+	if battle.grid and battle.grid.residue_processor:
+		battle.grid.residue_processor.after_activation(slot, target_rune, residue_snapshot)
+
+	if should_preserve:
+		target_rune.current_activations = activations_before
+
+	battle.current_slot = previous_slot
+	battle.current_rune = previous_rune
+	return true

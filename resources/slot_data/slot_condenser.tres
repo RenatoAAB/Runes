@@ -4,7 +4,7 @@
 
 [resource]
 script = ExtResource("1")
-id = "slot_distiller"
-slot_name = "Distiller"
+id = "slot_condenser"
+slot_name = "Condenser"
 rarity = 0
-description = "Este slot não pode ser afetado por resíduos rúnicos."
+description = "Resíduos mânicos lidos/consumidos aqui nunca desaparecem (ele volta imediatamente)."
