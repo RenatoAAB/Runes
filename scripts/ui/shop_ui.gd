@@ -31,6 +31,7 @@ var shop_manager: ShopManager
 @onready var spirit_bar: ColorRect = get_node_or_null("ElementDistribution/SpiritBar")
 @onready var air_bar: ColorRect = get_node_or_null("ElementDistribution/AirBar")
 @onready var fire_bar: ColorRect = get_node_or_null("ElementDistribution/FireBar")
+@onready var element_distribution_hover_area: Control = get_node_or_null("ElementDistribution/HoverArea")
 @onready var purchasable_relics_container: GridContainer = get_node_or_null("PurchasableRelics")
 @onready var sell_area: SellArea = get_node_or_null("SellArea")
 
@@ -596,6 +597,13 @@ func _on_pedestal_pressed(element_index: int) -> void:
 
 
 func _connect_element_distribution_hover() -> void:
+	if element_distribution_hover_area:
+		if not element_distribution_hover_area.mouse_entered.is_connected(_on_element_distribution_mouse_entered):
+			element_distribution_hover_area.mouse_entered.connect(_on_element_distribution_mouse_entered)
+		if not element_distribution_hover_area.mouse_exited.is_connected(_on_element_distribution_mouse_exited):
+			element_distribution_hover_area.mouse_exited.connect(_on_element_distribution_mouse_exited)
+		return
+
 	for bar in [water_bar, earth_bar, spirit_bar, air_bar, fire_bar]:
 		if not bar:
 			continue

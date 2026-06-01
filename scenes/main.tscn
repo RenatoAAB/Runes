@@ -450,6 +450,13 @@ offset_right = 340.0
 offset_bottom = 47.0
 color = Color(0.89411765, 0.23137255, 0.26666668, 1)
 
+[node name="HoverArea" type="Control" parent="UI/ShopUI/ElementDistribution"]
+layout_mode = 0
+offset_left = 296.0
+offset_top = 11.0
+offset_right = 344.0
+offset_bottom = 51.0
+
 [node name="ElementPedestals" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0
 offset_left = -276.0
