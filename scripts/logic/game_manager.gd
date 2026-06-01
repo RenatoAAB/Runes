@@ -153,6 +153,11 @@ func start_game() -> void:
 	is_initial_setup = true
 	_bind_panel_manager()
 
+	if _main_controller and _main_controller.has_method("get_shop_manager"):
+		var shop_manager = _main_controller.get_shop_manager()
+		if shop_manager:
+			shop_manager.reset_elemental_probabilities()
+
 	if _panel_manager:
 		_panel_manager.full_reset_all_panels()
 	

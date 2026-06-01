@@ -47,6 +47,12 @@ enum ModifierType {
 ## Cannot be applied with these other modifiers
 @export var incompatible_modifier_ids: Array[String] = []
 
+@export_group("Special Flags")
+## Marca este modificador como Anômalo — produz uma anomalia de mana após cada leitura,
+## independentemente do efeito principal do modificador.
+## Permite criar combinações como "Anômalo Igniter", "Anômalo Resonator", etc.
+@export var is_anomalous: bool = false
+
 @export_group("Visuals")
 @export var icon: Texture2D
 @export var color_tint: Color = Color.WHITE
@@ -91,6 +97,9 @@ func get_full_description() -> String:
 ## Check if this modifier can be applied to a slot
 func can_apply_to_slot(slot_instance) -> bool:  # SlotInstance
 	if slot_instance == null:
+		return false
+	
+	if slot_instance.has_meta("can_receive_modifiers") and slot_instance.get_meta("can_receive_modifiers") == false:
 		return false
 	
 	# Check slot compatibility

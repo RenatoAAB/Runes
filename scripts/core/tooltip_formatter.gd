@@ -24,6 +24,8 @@ extends Object
 const TERMS: Dictionary = {
 	"Mana Residue": "[mana_residue_fx][color=#66B3FF]Mana\u00A0Residue[/color][/mana_residue_fx]",
 	"Mana Anomaly":  "[mana_anomaly_fx][color=#EAF2FF]Mana\u00A0Anomaly[/color][/mana_anomaly_fx]",
+	"Anomalia de Mana": "[mana_anomaly_fx][color=#EAF2FF]Anomalia\u00A0de\u00A0Mana[/color][/mana_anomaly_fx]",
+	"anomalia de mana": "[mana_anomaly_fx][color=#EAF2FF]anomalia\u00A0de\u00A0mana[/color][/mana_anomaly_fx]",
 }
 
 # ---------------------------------------------------------------------------

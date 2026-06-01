@@ -21,7 +21,16 @@ var shop_manager: ShopManager
 # --- UI Node References (from scene via @onready) ---
 @onready var enter_panel_button: Button = $EnterPanel
 @onready var purchasable_runes_container: GridContainer = $PurchasableRunes
-@onready var purchasable_slots_container: GridContainer = get_node_or_null("PurchasableSlots")  # For pieces & modifiers
+# @onready var purchasable_slots_container: GridContainer = get_node_or_null("PurchasableSlots")  # For pieces & modifiers
+@onready var purchasable_pieces_container: GridContainer = get_node_or_null("PurchasableSlotsPieces")
+@onready var purchasable_modifiers_container: GridContainer = get_node_or_null("PurchasableSlotsModifiers")
+@onready var overclock_button: Button = get_node_or_null("ExtraOptionsFurnace")
+@onready var refresh_relic_button: Button = get_node_or_null("RefreshRelicButton")
+@onready var water_bar: ColorRect = get_node_or_null("ElementDistribution/WaterBar")
+@onready var earth_bar: ColorRect = get_node_or_null("ElementDistribution/EarthBar")
+@onready var spirit_bar: ColorRect = get_node_or_null("ElementDistribution/SpiritBar")
+@onready var air_bar: ColorRect = get_node_or_null("ElementDistribution/AirBar")
+@onready var fire_bar: ColorRect = get_node_or_null("ElementDistribution/FireBar")
 @onready var purchasable_relics_container: GridContainer = get_node_or_null("PurchasableRelics")
 @onready var sell_area: SellArea = get_node_or_null("SellArea")
 
@@ -42,6 +51,9 @@ var _piece_preview_grids: Array[SlotPiecePreviewGrid] = []  # Track for cleanup
 
 
 func _ready() -> void:
+	# Permitir que eventos de mouse passem pelo ShopUI para o inventário embaixo
+	# (necessario para drag&drop de runas funcionar na tela da loja)
+	mouse_filter = Control.MOUSE_FILTER_PASS
 	_connect_signals()
 	_setup_ui()
 
@@ -60,6 +72,44 @@ func _connect_signals() -> void:
 	if event_bus and event_bus.has_signal("economy_transaction"):
 		if not event_bus.economy_transaction.is_connected(_on_economy_changed):
 			event_bus.economy_transaction.connect(_on_economy_changed)
+			
+	# Overclock button
+	if overclock_button and not overclock_button.pressed.is_connected(_on_overclock_pressed):
+		overclock_button.pressed.connect(_on_overclock_pressed)
+		
+	# Refresh relic button
+	if refresh_relic_button and not refresh_relic_button.pressed.is_connected(_on_refresh_relic_pressed):
+		refresh_relic_button.pressed.connect(_on_refresh_relic_pressed)
+		
+	# ElementPedestals
+	var element_pedestals = get_node_or_null("ElementPedestals")
+	if element_pedestals:
+		element_pedestals.visible = true
+		
+		# Connect pedestal buttons to show color bars and adjust weights
+		var fire_btn = element_pedestals.get_node_or_null("Fire")
+		if fire_btn and not fire_btn.pressed.is_connected(_on_pedestal_pressed.bind(GameEnums.Element.FIRE)):
+			fire_btn.pressed.connect(_on_pedestal_pressed.bind(GameEnums.Element.FIRE))
+			
+		var air_btn = element_pedestals.get_node_or_null("Air")
+		if air_btn and not air_btn.pressed.is_connected(_on_pedestal_pressed.bind(GameEnums.Element.AIR)):
+			air_btn.pressed.connect(_on_pedestal_pressed.bind(GameEnums.Element.AIR))
+			
+		var spirit_btn = element_pedestals.get_node_or_null("Spirit")
+		if spirit_btn and not spirit_btn.pressed.is_connected(_on_pedestal_pressed.bind(GameEnums.Element.SPIRIT)):
+			spirit_btn.pressed.connect(_on_pedestal_pressed.bind(GameEnums.Element.SPIRIT))
+			
+		var earth_btn = element_pedestals.get_node_or_null("Earth")
+		if earth_btn and not earth_btn.pressed.is_connected(_on_pedestal_pressed.bind(GameEnums.Element.EARTH)):
+			earth_btn.pressed.connect(_on_pedestal_pressed.bind(GameEnums.Element.EARTH))
+			
+		var water_btn = element_pedestals.get_node_or_null("Water")
+		if water_btn and not water_btn.pressed.is_connected(_on_pedestal_pressed.bind(GameEnums.Element.WATER)):
+			water_btn.pressed.connect(_on_pedestal_pressed.bind(GameEnums.Element.WATER))
+			
+		var repeat_btn = element_pedestals.get_node_or_null("Repeat")
+		if repeat_btn and not repeat_btn.pressed.is_connected(_on_pedestal_pressed.bind(-1)):
+			repeat_btn.pressed.connect(_on_pedestal_pressed.bind(-1))
 
 
 func _connect_shop_manager_signals() -> void:
@@ -81,7 +131,7 @@ func _setup_ui() -> void:
 
 
 func _setup_shop_slot_contexts() -> void:
-	for container in [purchasable_runes_container, purchasable_slots_container, purchasable_relics_container]:
+	for container in [purchasable_runes_container, purchasable_pieces_container, purchasable_modifiers_container, purchasable_relics_container]:
 		if not container:
 			continue
 		for child in container.get_children():
@@ -165,65 +215,109 @@ func _on_shop_slot_clicked(event: InputEvent, index: int, item_type: String) -> 
 
 # --- Purchasable Pieces Section ---
 
-# --- Purchasable Slots Section (Pieces & Modifiers combined) ---
+# --- Purchasable Slots Section (Pieces & Modifiers separated) ---
 
 func _refresh_slots_shop() -> void:
-	if not purchasable_slots_container or not shop_manager:
+	_refresh_pieces_shop()
+	_refresh_modifiers_shop()
+
+
+func _refresh_pieces_shop() -> void:
+	if not purchasable_pieces_container or not shop_manager:
 		return
+		
+	var slots = purchasable_pieces_container.get_children()
 	
-	var slots = purchasable_slots_container.get_children()
-	
-	# Combine pieces and modifiers into a single list
-	var shop_items: Array = []  # Each item is {type: "piece"/"modifier", data: ..., index: ...}
-	
-	for i in range(shop_manager.available_pieces.size()):
-		shop_items.append({"type": "piece", "data": shop_manager.available_pieces[i], "index": i})
-	
-	for i in range(shop_manager.available_modifiers.size()):
-		shop_items.append({"type": "modifier", "data": shop_manager.available_modifiers[i], "index": i})
-	
-	# Display items in available slots
+	# Control "Extra" slot visibility based on overclock purchase
+	var extra_slot = purchasable_pieces_container.get_node_or_null("Extra")
+	if extra_slot:
+		extra_slot.visible = shop_manager.overclock_purchased_this_round
+		
 	# Clean up old preview grids
 	for pg in _piece_preview_grids:
 		if is_instance_valid(pg):
 			pg.queue_free()
 	_piece_preview_grids.clear()
 	
+	var item_index = 0
 	for i in range(slots.size()):
 		var slot_ui = slots[i] as SlotUI
 		if not slot_ui:
 			continue
-		
-		if i < shop_items.size():
-			var item = shop_items[i]
 			
-			if item.type == "piece":
-				var piece_data = item.data as SlotPieceData
-				# Use SlotPiecePreviewGrid for visual representation
-				slot_ui.clear_display()
-				var preview_grid = SlotPiecePreviewGrid.new()
-				preview_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-				preview_grid.set_anchors_preset(Control.PRESET_CENTER)
-				slot_ui.add_child(preview_grid)
-				preview_grid.setup_auto_fit(piece_data, Vector2(28, 28), 2)
-				_piece_preview_grids.append(preview_grid)
-				# Set background color based on piece
-				var bg_style = StyleBoxFlat.new()
-				bg_style.bg_color = _get_piece_shape_color(piece_data).darkened(0.6)
-				bg_style.set_border_width_all(2)
-				bg_style.border_color = _get_piece_shape_color(piece_data).darkened(0.2)
-				bg_style.set_corner_radius_all(4)
-				slot_ui.add_theme_stylebox_override("panel", bg_style)
-				slot_ui.set_shop_mode(true, shop_manager.get_piece_price_display(piece_data))
-				slot_ui.set_shop_item("piece", piece_data)
-				_connect_slot_buy_signal(slot_ui, item.index, "piece")
-			else:  # modifier
-				var modifier_data = item.data as SlotModifierData
-				var color = SlotPieceUI.get_color_for_modifier_type(modifier_data.modifier_type)
-				slot_ui.set_placeholder_display(modifier_data.display_name.substr(0, 2), color)
-				slot_ui.set_shop_mode(true, shop_manager.get_modifier_price_display(modifier_data))
-				slot_ui.set_shop_item("modifier", modifier_data)
-				_connect_slot_buy_signal(slot_ui, item.index, "modifier")
+		if slot_ui.name == "Extra":
+			slot_ui.visible = shop_manager.overclock_purchased_this_round
+			
+		if not slot_ui.visible:
+			slot_ui.clear_display()
+			slot_ui.set_shop_mode(false)
+			slot_ui.set_shop_item("", null)
+			continue
+			
+		if item_index < shop_manager.available_pieces.size():
+			var piece_data = shop_manager.available_pieces[item_index] as SlotPieceData
+			slot_ui.clear_display()
+			var preview_grid = SlotPiecePreviewGrid.new()
+			preview_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			preview_grid.set_anchors_preset(Control.PRESET_CENTER)
+			slot_ui.add_child(preview_grid)
+			# Criar instância temporária com a rotação da vitrine para exibir corretamente
+			var display_rot = shop_manager.get_piece_display_rotation(item_index)
+			var preview_instance = SlotPieceInstance.new(piece_data)
+			preview_instance.current_rotation = display_rot
+			preview_grid.setup_auto_fit_instance(preview_instance, Vector2(28, 28), 2)
+			_piece_preview_grids.append(preview_grid)
+			
+			var bg_style = StyleBoxFlat.new()
+			bg_style.bg_color = _get_piece_shape_color(piece_data).darkened(0.6)
+			bg_style.set_border_width_all(2)
+			bg_style.border_color = _get_piece_shape_color(piece_data).darkened(0.2)
+			bg_style.set_corner_radius_all(4)
+			slot_ui.add_theme_stylebox_override("panel", bg_style)
+			slot_ui.set_shop_mode(true, shop_manager.get_piece_price_display(piece_data))
+			slot_ui.set_shop_item("piece", piece_data)
+			_connect_slot_buy_signal(slot_ui, item_index, "piece")
+			item_index += 1
+		else:
+			slot_ui.clear_display()
+			slot_ui.set_shop_mode(false)
+			slot_ui.set_shop_item("", null)
+
+
+func _refresh_modifiers_shop() -> void:
+	if not purchasable_modifiers_container or not shop_manager:
+		return
+		
+	var slots = purchasable_modifiers_container.get_children()
+	
+	# Control "Extra" slot visibility based on overclock purchase
+	var extra_slot = purchasable_modifiers_container.get_node_or_null("Extra")
+	if extra_slot:
+		extra_slot.visible = shop_manager.overclock_purchased_this_round
+		
+	var item_index = 0
+	for i in range(slots.size()):
+		var slot_ui = slots[i] as SlotUI
+		if not slot_ui:
+			continue
+			
+		if slot_ui.name == "Extra":
+			slot_ui.visible = shop_manager.overclock_purchased_this_round
+			
+		if not slot_ui.visible:
+			slot_ui.clear_display()
+			slot_ui.set_shop_mode(false)
+			slot_ui.set_shop_item("", null)
+			continue
+			
+		if item_index < shop_manager.available_modifiers.size():
+			var modifier_data = shop_manager.available_modifiers[item_index] as SlotModifierData
+			var color = SlotPieceUI.get_color_for_modifier_type(modifier_data.modifier_type)
+			slot_ui.set_placeholder_display(modifier_data.display_name.substr(0, 2), color)
+			slot_ui.set_shop_mode(true, shop_manager.get_modifier_price_display(modifier_data))
+			slot_ui.set_shop_item("modifier", modifier_data)
+			_connect_slot_buy_signal(slot_ui, item_index, "modifier")
+			item_index += 1
 		else:
 			slot_ui.clear_display()
 			slot_ui.set_shop_mode(false)
@@ -433,11 +527,7 @@ func _on_buy_relic_pressed(index: int) -> void:
 	if not shop_manager:
 		return
 	
-	var main_ctrl = get_tree().get_first_node_in_group("main_controller")
-	if main_ctrl and main_ctrl.is_inventory_full():
-		shop_manager.transaction_completed.emit(false, "Inventory full!")
-		return
-	
+	# Relics bypass the inventory capacity limit (they integrate directly into active passives)
 	var relic = shop_manager.buy_relic(index)
 	if relic:
 		relic_purchased.emit(relic)
@@ -454,12 +544,78 @@ func _on_reroll_pressed() -> void:
 
 
 func _update_reroll_button() -> void:
-	if not pergaminho_button or not shop_manager:
+	if not shop_manager:
 		return
 	
-	var cost = shop_manager.get_current_scroll_cost()
-	pergaminho_button.text = "Pergaminho\n%d Mana" % cost
-	pergaminho_button.disabled = _get_money() < cost
+	if pergaminho_button:
+		var cost = shop_manager.get_current_scroll_cost()
+		pergaminho_button.text = "Pergaminho\n%d Mana" % cost
+		pergaminho_button.disabled = _get_money() < cost
+		
+	if overclock_button:
+		if shop_manager.overclock_purchased_this_round:
+			overclock_button.text = "Overclock Ativo"
+			overclock_button.disabled = true
+		else:
+			overclock_button.text = "Overclock\n1 Mana"
+			overclock_button.disabled = _get_money() < 1
+			
+	if refresh_relic_button:
+		if shop_manager.relic_refresh_purchased_this_round:
+			refresh_relic_button.text = "Reroll Usado"
+			refresh_relic_button.disabled = true
+		else:
+			refresh_relic_button.text = "Reroll Relíquia\n1 Mana"
+			refresh_relic_button.disabled = _get_money() < 1
+			
+	_update_elemental_bars()
+
+
+func _on_overclock_pressed() -> void:
+	if not shop_manager:
+		return
+	shop_manager.buy_overclock()
+
+
+func _on_refresh_relic_pressed() -> void:
+	if not shop_manager:
+		return
+	shop_manager.reroll_relic()
+
+
+func _on_pedestal_pressed(element_index: int) -> void:
+	if not shop_manager:
+		return
+	if element_index == -1:
+		shop_manager.reset_elemental_probabilities()
+	else:
+		shop_manager.adjust_elemental_probabilities(element_index as GameEnums.Element)
+	_update_elemental_bars()
+
+
+func _update_elemental_bars() -> void:
+	if not shop_manager or not shop_manager.elemental_weights:
+		return
+		
+	if water_bar:
+		var prob = shop_manager.elemental_weights.get(GameEnums.Element.WATER, 0.20)
+		water_bar.offset_top = 47.0 - (32.0 * prob)
+		
+	if earth_bar:
+		var prob = shop_manager.elemental_weights.get(GameEnums.Element.EARTH, 0.20)
+		earth_bar.offset_top = 47.0 - (32.0 * prob)
+		
+	if spirit_bar:
+		var prob = shop_manager.elemental_weights.get(GameEnums.Element.SPIRIT, 0.20)
+		spirit_bar.offset_top = 47.0 - (32.0 * prob)
+		
+	if air_bar:
+		var prob = shop_manager.elemental_weights.get(GameEnums.Element.AIR, 0.20)
+		air_bar.offset_top = 47.0 - (32.0 * prob)
+		
+	if fire_bar:
+		var prob = shop_manager.elemental_weights.get(GameEnums.Element.FIRE, 0.20)
+		fire_bar.offset_top = 47.0 - (32.0 * prob)
 
 
 # --- Sell Area ---

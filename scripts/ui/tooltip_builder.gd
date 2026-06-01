@@ -186,6 +186,10 @@ static func build_modifier_tooltip(data: SlotModifierData, shop_price_text: Stri
 	else:
 		text += "\n%s" % TooltipFormatter.colorize(TooltipTexts.get_modifier_auto_description(data), Color.SILVER)
 
+	if data.is_anomalous:
+		var raw_desc = "Anômalo: produz uma anomalia de mana após ser lido."
+		text += "\n%s" % TooltipFormatter.bold(TooltipFormatter.format(raw_desc))
+
 	return text
 
 
@@ -205,6 +209,9 @@ static func build_piece_tooltip(data: SlotPieceData, shop_price_text: String = "
 
 	if data.description and not data.description.is_empty():
 		text += "\n%s" % TooltipFormatter.colorize(data.description, Color.SILVER)
+
+	if data.has_meta("can_receive_modifiers") and not data.get_meta("can_receive_modifiers"):
+		text += "\n%s" % TooltipFormatter.bold(TooltipFormatter.colorize("DEFEITUOSA: Os slots desbloqueados por esta peça de overclock NUNCA poderão receber nenhum modificador.", Color.RED))
 
 	return text
 

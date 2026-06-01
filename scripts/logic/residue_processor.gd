@@ -88,6 +88,12 @@ func on_reader_visit(slot: GridSlot, context: BattleContext) -> ReaderVisitResul
 			if context:
 				context.record_residue_created("mana_anomaly")
 	
+	# Se o slot tem a flag anomalous (independente de qual modificador está combinado), produz anomalia de mana
+	if slot.slot.has_anomalous_flag() or slot.slot.has_modifier("anomalous"):
+		slot.slot.apply_residue("mana_anomaly")
+		if context:
+			context.record_residue_created("mana_anomaly")
+	
 	return result
 
 

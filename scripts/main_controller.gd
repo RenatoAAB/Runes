@@ -207,6 +207,16 @@ func _ready() -> void:
 	# Register UI references with JuiceManager
 	_register_juice_manager()
 	
+	# Ensure main inventory parent node and money label render on top of the ShopUI
+	if inventory_container:
+		var inventory_node = inventory_container.get_parent()
+		if inventory_node is CanvasItem:
+			inventory_node.z_index = 10
+	if money_label:
+		money_label.z_index = 10
+	if shop_ui:
+		shop_ui.z_index = 2
+	
 	print("[MainController] Initialization complete!")
 	# Signal that initialization is complete - GameManager waits for this
 	initialization_complete.emit()
@@ -1333,14 +1343,14 @@ func _remove_stats_display() -> void:
 		_stats_display = null
 
 
-## Check if the shared inventory is full (runes + extra items >= available UI slots)
+## Check if the shared inventory is full (runes + extra items >= absolute limit of 8)
 func is_inventory_full() -> bool:
 	var total_items: int = inventory_manager.get_rune_count()
 	if _extra_inventory:
-		total_items += _extra_inventory.relics.size()
+		# Relics do not enter the bag storage limit check per Design Spec
 		total_items += _extra_inventory.modifiers.size()
 		total_items += _extra_inventory.slot_pieces.size()
-	return total_items >= inventory_ui_slots.size()
+	return total_items >= 8
 
 
 # --- Extra Inventory (Pieces, Modifiers, Relics) Display ---
@@ -1469,3 +1479,8 @@ func _on_extra_item_returned(item_type: String, item_data: Variant, item_instanc
 
 	_update_other_inventory_display()
 	_update_relic_slots_display()
+
+
+## Get the shop manager instance.
+func get_shop_manager() -> ShopManager:
+	return _shop_manager

@@ -13,6 +13,7 @@ signal free_pick_available(count: int)  # Emitted when free picks are available
 # --- Shop Inventory ---
 var available_runes: Array[RuneData] = []
 var available_pieces: Array[SlotPieceData] = []
+var _available_piece_rotations: Array[int] = []  # Rotação de exibição para cada peça na vitrine
 var available_modifiers: Array[SlotModifierData] = []
 var available_relics: Array[RelicData] = []
 
@@ -30,6 +31,17 @@ var _upgrade_slot_2: RuneInstance = null
 # --- Free Picks & Level Tracking ---
 var free_rune_picks: int = 0  # Number of free rune picks available
 var current_level: int = 1
+
+# --- Elemental & Overclock State ---
+var elemental_weights: Dictionary = {
+	GameEnums.Element.FIRE: 0.20,
+	GameEnums.Element.WATER: 0.20,
+	GameEnums.Element.EARTH: 0.20,
+	GameEnums.Element.AIR: 0.20,
+	GameEnums.Element.SPIRIT: 0.20
+}
+var overclock_purchased_this_round: bool = false
+var relic_refresh_purchased_this_round: bool = false
 
 # --- Scroll (Pergaminho) State ---
 var _scroll_count: int = 0  # Scrolls purchased this round (resets each round)
@@ -152,6 +164,8 @@ func _load_relic_pool() -> void:
 func refresh_shop(player_level: int = 1) -> void:
 	current_level = player_level
 	reset_scroll_count()
+	overclock_purchased_this_round = false
+	relic_refresh_purchased_this_round = false
 	_generate_rune_inventory(player_level)
 	_generate_piece_inventory(player_level)
 	_generate_modifier_inventory(player_level)
@@ -269,8 +283,15 @@ func _generate_rune_inventory(player_level: int) -> void:
 			available_runes.append(rune_data)
 
 
+func get_piece_display_rotation(index: int) -> int:
+	if index < 0 or index >= _available_piece_rotations.size():
+		return 0
+	return _available_piece_rotations[index]
+
+
 func _generate_piece_inventory(_player_level: int) -> void:
 	available_pieces.clear()
+	_available_piece_rotations.clear()
 	
 	if _piece_pool.is_empty():
 		return
@@ -280,6 +301,7 @@ func _generate_piece_inventory(_player_level: int) -> void:
 	for i in range(count):
 		var piece = _piece_pool[_rng.randi() % _piece_pool.size()]
 		available_pieces.append(piece)
+		_available_piece_rotations.append(_rng.randi() % 4)
 
 
 func _generate_modifier_inventory(_player_level: int) -> void:
@@ -332,53 +354,330 @@ func _get_max_rarity_for_level(player_level: int) -> GameEnums.Rarity:
 		return GameEnums.Rarity.LEGENDARY
 
 
-## Pick a random rune using weighted probabilities adjusted by level
+## Reset elemental probabilities to a uniform 0.20 weight. Costs 1 Mana and rerolls runes.
+func reset_elemental_probabilities() -> bool:
+	var cost = 1
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Nao ha mana suficiente para resetar pedestais")
+		return false
+		
+	_spend_money(cost, "pedestal_reset")
+	
+	elemental_weights = {
+		GameEnums.Element.FIRE: 0.20,
+		GameEnums.Element.WATER: 0.20,
+		GameEnums.Element.EARTH: 0.20,
+		GameEnums.Element.AIR: 0.20,
+		GameEnums.Element.SPIRIT: 0.20
+	}
+	
+	_generate_rune_inventory(current_level)
+	print("[Shop] Elemental probabilities reset to uniform 0.20 and runes rerolled")
+	transaction_completed.emit(true, "Pedestais resetados — 1 mana")
+	shop_updated.emit()
+	return true
+
+
+## Adjust elemental probabilities using proportional redistribution. Costs 1 Mana and rerolls runes.
+func adjust_elemental_probabilities(chosen_element: GameEnums.Element) -> bool:
+	var cost = 1
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Nao ha mana suficiente para ajustar pedestal")
+		return false
+		
+	var p_e = elemental_weights.get(chosen_element, 0.20)
+	var d = min(0.20, 1.0 - p_e)
+	
+	_spend_money(cost, "pedestal_adjust_%d" % chosen_element)
+	
+	if d > 0.0:
+		# Sum of probabilities of other elements
+		var s = 0.0
+		for key in elemental_weights.keys():
+			if key != chosen_element:
+				s += elemental_weights[key]
+		
+		for key in elemental_weights.keys():
+			if key == chosen_element:
+				elemental_weights[key] = p_e + d
+			else:
+				if s > 0.0:
+					elemental_weights[key] = elemental_weights[key] - d * (elemental_weights[key] / s)
+				else:
+					elemental_weights[key] = 0.0
+		
+		# Micro normalization to avoid precision errors keeping sum at 1.0
+		var total = 0.0
+		for val in elemental_weights.values():
+			total += val
+		if total > 0.0:
+			for key in elemental_weights.keys():
+				elemental_weights[key] /= total
+				
+	_generate_rune_inventory(current_level)
+	print("[Shop] Probe weight adjusted. New probabilities: ", elemental_weights)
+	transaction_completed.emit(true, "Pedestal ajustado — 1 mana")
+	shop_updated.emit()
+	return true
+
+
+## Get the current shop instability index based on the maximum elemental weight.
+func get_instability_index() -> float:
+	var p_max = 0.20
+	for val in elemental_weights.values():
+		if val > p_max:
+			p_max = val
+	var inst = (p_max - 0.20) / 0.80
+	return clamp(inst, 0.0, 1.0)
+
+
+## Get the decay factor for a given rarity under current shop instability.
+func get_rarity_decay(rarity: GameEnums.Rarity) -> float:
+	var i = get_instability_index()
+	var d_rarity = 0.0
+	match rarity:
+		GameEnums.Rarity.COMMON:
+			d_rarity = 0.0
+		GameEnums.Rarity.UNCOMMON:
+			d_rarity = 0.5
+		GameEnums.Rarity.RARE:
+			d_rarity = 1.0
+		GameEnums.Rarity.EPIC:
+			d_rarity = 2.0
+		GameEnums.Rarity.LEGENDARY:
+			d_rarity = 4.0
+	return pow(1.0 - i, d_rarity)
+
+
+## Get weight for a rarity, scaled by player level and decreased by instability decay.
+func _get_scaled_weight(rarity: GameEnums.Rarity, player_level: int) -> float:
+	var base_weight = 0.0
+	var bonus_per_level = 0.0
+	var ceiling = 0.0
+	match rarity:
+		GameEnums.Rarity.COMMON:
+			base_weight = 200.0
+			bonus_per_level = 0.0
+			ceiling = 200.0
+		GameEnums.Rarity.UNCOMMON:
+			base_weight = 100.0
+			bonus_per_level = 2.0
+			ceiling = 120.0
+		GameEnums.Rarity.RARE:
+			base_weight = 50.0
+			bonus_per_level = 3.0
+			ceiling = 80.0
+		GameEnums.Rarity.EPIC:
+			base_weight = 50.0
+			bonus_per_level = 4.0
+			ceiling = 70.0
+		GameEnums.Rarity.LEGENDARY:
+			base_weight = 10.0
+			bonus_per_level = 5.0
+			ceiling = 50.0
+	
+	var base_real = min(base_weight + bonus_per_level * (player_level - 1), ceiling)
+	var decay = get_rarity_decay(rarity)
+	return base_real * decay
+
+
+## Pick a random rune using the 4-phase algorithm with elemental weights, instability, and cascade fallback.
 func _pick_weighted_rune_from_pool(pool: Array[RuneData], player_level: int) -> RuneData:
 	if pool.is_empty():
 		return null
 	
-	# Calculate weights with level scaling
-	var total_weight = 0
-	var weights: Array[int] = []
+	# Passo 1: Determinar a Raridade (R_sorteada)
+	var active_rarities: Array[GameEnums.Rarity] = []
+	var max_rarity = _get_max_rarity_for_level(player_level)
+	for r in [GameEnums.Rarity.COMMON, GameEnums.Rarity.UNCOMMON, GameEnums.Rarity.RARE, GameEnums.Rarity.EPIC, GameEnums.Rarity.LEGENDARY]:
+		if r <= max_rarity:
+			active_rarities.append(r)
 	
-	for rune in pool:
-		var weight = _get_scaled_weight(rune.rarity, player_level)
-		weights.append(weight)
-		total_weight += weight
+	var r_sorteada = _draw_rarity(active_rarities, player_level)
 	
-	if total_weight == 0:
-		return pool[_rng.randi() % pool.size()]
+	# Iniciamos o loop de degradação caso necessário
+	var current_rarity = r_sorteada
 	
-	# Roll and pick using seeded RNG
-	var roll = _rng.randi() % total_weight
-	var current_weight = 0
-	for i in range(pool.size()):
-		current_weight += weights[i]
-		if roll < current_weight:
-			return pool[i]
+	while true:
+		# Fase 1: Vigilância Elemental (até 3 tentativas de sorteio de elemento)
+		var tested_elements: Array[GameEnums.Element] = []
+		var target_element = -1
+		var sub_pool: Array[RuneData] = []
+		
+		for attempt in range(3):
+			# Sorteamos um elemento excluindo os já testados que falharam
+			var elements_to_draw: Array[GameEnums.Element] = []
+			for el in GameEnums.Element.values():
+				if not el in tested_elements:
+					elements_to_draw.append(el)
+			
+			if elements_to_draw.is_empty():
+				break
+			
+			target_element = _draw_element_with_weights(elements_to_draw)
+			if target_element == -1:
+				break
+				
+			tested_elements.append(target_element as GameEnums.Element)
+			
+			# Monta sub-pool para a raridade atual e elemento atual
+			sub_pool.clear()
+			for rune in pool:
+				if rune.rarity == current_rarity and target_element in rune.elements:
+					sub_pool.append(rune)
+			
+			if not sub_pool.is_empty():
+				# Encontrado! Seleção uniforme simples
+				return sub_pool[_rng.randi() % sub_pool.size()]
+		
+		# Fase 2: Elasticidade Elemental
+		# Despreza o elemento e cria-se o sub-pool puramente com base na raridade atual
+		sub_pool.clear()
+		for rune in pool:
+			if rune.rarity == current_rarity:
+				sub_pool.append(rune)
+				
+		if not sub_pool.is_empty():
+			return sub_pool[_rng.randi() % sub_pool.size()]
+			
+		# Fase 3: Degradação progressiva
+		if current_rarity > GameEnums.Rarity.COMMON:
+			var values_list = GameEnums.Rarity.values()
+			# Rebaixa a raridade
+			var next_r_index = values_list.find(current_rarity) - 1
+			if next_r_index >= 0:
+				current_rarity = values_list[next_r_index]
+				# Reinicia o loop com a nova raridade
+				continue
+		
+		# Se chegamos aqui, mesmo em COMMON não achamos nada com as regras acima.
+		break
 	
-	return pool[0]
+	# Fallback absoluto de emergência: qualquer runa do pool
+	return pool[_rng.randi() % pool.size()]
 
 
-## Get weight for a rarity, scaled by player level
-## Higher levels increase weight of rarer items
-func _get_scaled_weight(rarity: GameEnums.Rarity, player_level: int) -> int:
-	if not _drop_rates:
-		return 10
+func _draw_rarity(active_rarities: Array[GameEnums.Rarity], player_level: int) -> GameEnums.Rarity:
+	var total_w = 0.0
+	var r_weights: Array[float] = []
+	for r in active_rarities:
+		var w = _get_scaled_weight(r, player_level)
+		r_weights.append(w)
+		total_w += w
 	
-	var base_weight = _drop_rates.get_weight(rarity)
+	if total_w <= 0.0:
+		return active_rarities[0]
 	
-	# Level scaling: each level adds bonus weight to rarer items
-	var rarity_bonus_per_level = {
-		GameEnums.Rarity.COMMON: 0,      # Common doesn't scale up
-		GameEnums.Rarity.UNCOMMON: 2,    # +2 per level
-		GameEnums.Rarity.RARE: 3,        # +3 per level
-		GameEnums.Rarity.EPIC: 4,        # +4 per level
-		GameEnums.Rarity.LEGENDARY: 5,   # +5 per level
-	}
+	var roll = _rng.randf() * total_w
+	var current_w = 0.0
+	for i in range(active_rarities.size()):
+		current_w += r_weights[i]
+		if roll <= current_w:
+			return active_rarities[i]
+	return active_rarities[0]
+
+
+func _draw_element_with_weights(elements_to_draw_from: Array[GameEnums.Element]) -> int:
+	var total_w = 0.0
+	var e_weights: Array[float] = []
+	for e in elements_to_draw_from:
+		var w = elemental_weights.get(e, 0.20)
+		e_weights.append(w)
+		total_w += w
 	
-	var bonus = rarity_bonus_per_level.get(rarity, 0) * (player_level - 1)
-	return base_weight + bonus
+	if total_w <= 0.0:
+		return -1
+	
+	var roll = _rng.randf() * total_w
+	var current_w = 0.0
+	for i in range(elements_to_draw_from.size()):
+		current_w += e_weights[i]
+		if roll <= current_w:
+			return elements_to_draw_from[i]
+	return elements_to_draw_from[0]
+
+
+## Buy Overclock on the machinery: costs 1 Mana, yields 1 defective slot piece and 1 anomalous modifier.
+func buy_overclock() -> bool:
+	if overclock_purchased_this_round:
+		transaction_completed.emit(false, "Overclock already purchased this round")
+		return false
+	
+	var cost = 1
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Not enough mana for Overclock")
+		return false
+	
+	if _piece_pool.is_empty():
+		transaction_completed.emit(false, "No pieces in pool")
+		return false
+	
+	_spend_money(cost, "overclock_machinery")
+	overclock_purchased_this_round = true
+	
+	# Draw one Slot Piece, duplicate, set metadata and rename
+	var base_piece = _piece_pool[_rng.randi() % _piece_pool.size()]
+	var defective_piece = base_piece.duplicate() as SlotPieceData
+	defective_piece.set_meta("can_receive_modifiers", false)
+	defective_piece.display_name = "Defective " + defective_piece.display_name
+	available_pieces.append(defective_piece)
+	_available_piece_rotations.append(_rng.randi() % 4)
+	
+	# Sortear um modificador real do pool (com slot_data_override) e combinar com flag anômalo
+	# Resulta em: "Anômalo Igniter", "Anômalo Resonator", etc.
+	var candidates: Array[SlotModifierData] = []
+	for mod in _modifier_pool:
+		if mod.slot_data_override and not mod.is_anomalous:
+			candidates.append(mod)
+	
+	var anomalous_modifier: SlotModifierData = null
+	if not candidates.is_empty():
+		var base_mod = candidates[_rng.randi() % candidates.size()]
+		anomalous_modifier = base_mod.duplicate() as SlotModifierData
+		anomalous_modifier.is_anomalous = true
+		anomalous_modifier.id = "anomalous_" + base_mod.id
+		anomalous_modifier.display_name = "Anômalo " + base_mod.display_name
+		# Mantém descrição original; o tooltip builder adiciona a parte do anômalo
+	elif not _modifier_pool.is_empty():
+		# Fallback: qualquer modifier do pool marcado como anômalo
+		anomalous_modifier = _modifier_pool[_rng.randi() % _modifier_pool.size()].duplicate() as SlotModifierData
+		anomalous_modifier.is_anomalous = true
+		anomalous_modifier.id = "anomalous_" + anomalous_modifier.id
+		anomalous_modifier.display_name = "Anômalo " + anomalous_modifier.display_name
+	
+	if anomalous_modifier:
+		available_modifiers.append(anomalous_modifier)
+		
+	print("[Shop] Overclock purchased! Defective piece and Anomalous modifier added.")
+	transaction_completed.emit(true, "Overclock purchased for 1 mana")
+	shop_updated.emit()
+	return true
+
+
+## Refresh/Reroll the offered relic: costs 1 Mana, limited to 1x per round.
+func reroll_relic() -> bool:
+	if relic_refresh_purchased_this_round:
+		transaction_completed.emit(false, "Permitido apenas 1 reroll de reliquia por rodada")
+		return false
+		
+	var cost = 1
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Nao ha mana suficiente para reroll de reliquia")
+		return false
+		
+	_spend_money(cost, "relic_reroll")
+	relic_refresh_purchased_this_round = true
+	
+	_generate_relic_inventory(current_level)
+	
+	print("[Shop] Relic rerolled successfully")
+	transaction_completed.emit(true, "Relic rerolled for 1 mana")
+	shop_updated.emit()
+	return true
 
 
 ## Pick a random rune using weighted probabilities (legacy, uses current level)
@@ -442,10 +741,14 @@ func buy_piece(index: int) -> SlotPieceInstance:
 	_spend_money(cost, "shop_piece_%s" % piece_data.id)
 	
 	# Remove from shop
+	var display_rotation = _available_piece_rotations[index] if index < _available_piece_rotations.size() else 0
 	available_pieces.remove_at(index)
+	if index < _available_piece_rotations.size():
+		_available_piece_rotations.remove_at(index)
 	
-	# Create instance
+	# Create instance com a rotação exibida na vitrine
 	var piece_instance = SlotPieceInstance.new(piece_data)
+	piece_instance.current_rotation = display_rotation
 	
 	transaction_completed.emit(true, "Bought %s for %d mana" % [piece_data.display_name, cost])
 	shop_updated.emit()

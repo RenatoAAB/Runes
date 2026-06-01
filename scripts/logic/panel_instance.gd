@@ -157,17 +157,27 @@ func unlock_slots_from_piece(piece: SlotPieceData, base_coord: Vector2i) -> int:
 		return 0
 	var unlocked_count = 0
 	var positions = piece.shape
+	
+	var can_receive = true
+	if piece.has_meta("can_receive_modifiers"):
+		can_receive = piece.get_meta("can_receive_modifiers")
+		
 	for i in range(positions.size()):
 		var actual_coord = base_coord + positions[i]
 		if unlock_slot(actual_coord):
 			unlocked_count += 1
-			# Apply slot modifier from the piece, if provided
-			if piece.slot_modifiers and i < piece.slot_modifiers.size():
-				var mod = piece.slot_modifiers[i]
-				if mod and mod is SlotModifierData and grid_manager:
-					var grid_slot = grid_manager.get_slot(actual_coord)
-					if grid_slot and grid_slot.slot:
-						grid_slot.slot.apply_modifier(mod)
+			
+			if grid_manager:
+				var grid_slot = grid_manager.get_slot(actual_coord)
+				if grid_slot and grid_slot.slot:
+					if not can_receive:
+						grid_slot.slot.set_meta("can_receive_modifiers", false)
+					
+					# Apply slot modifier from the piece, if provided
+					if piece.slot_modifiers and i < piece.slot_modifiers.size():
+						var mod = piece.slot_modifiers[i]
+						if mod and mod is SlotModifierData:
+							grid_slot.slot.apply_modifier(mod)
 	return unlocked_count
 
 

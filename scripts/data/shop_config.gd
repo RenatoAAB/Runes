@@ -8,57 +8,16 @@ const RUNE_BUY_PRICES: Dictionary = {
 	GameEnums.Rarity.COMMON: 2,
 	GameEnums.Rarity.UNCOMMON: 3,
 	GameEnums.Rarity.RARE: 5,
-	GameEnums.Rarity.EPIC: 8,
-	GameEnums.Rarity.LEGENDARY: 12,
+	GameEnums.Rarity.EPIC: 7,
+	GameEnums.Rarity.LEGENDARY: 10,
 }
 
 const RUNE_SELL_PRICES: Dictionary = {
 	GameEnums.Rarity.COMMON: 1,
 	GameEnums.Rarity.UNCOMMON: 1,
 	GameEnums.Rarity.RARE: 2,
-	GameEnums.Rarity.EPIC: 4,
-	GameEnums.Rarity.LEGENDARY: 6,
-}
-
-# --- Slot Piece Prices (spec defines 3 rarities: Common, Uncommon, Rare) ---
-const PIECE_BUY_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 3,
-	GameEnums.Rarity.UNCOMMON: 4,
-	GameEnums.Rarity.RARE: 5,
-}
-
-const PIECE_SELL_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 1,
-	GameEnums.Rarity.UNCOMMON: 1,
-	GameEnums.Rarity.RARE: 2,
-}
-
-# --- Slot Modifier Prices (spec defines 3 rarities: Common, Uncommon, Rare) ---
-const MODIFIER_BUY_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 3,
-	GameEnums.Rarity.UNCOMMON: 4,
-	GameEnums.Rarity.RARE: 5,
-}
-
-const MODIFIER_SELL_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 1,
-	GameEnums.Rarity.UNCOMMON: 1,
-	GameEnums.Rarity.RARE: 1,
-}
-
-# --- Relic Prices (spec defines 4 rarities: Common, Uncommon, Rare, Epic) ---
-const RELIC_BUY_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 5,
-	GameEnums.Rarity.UNCOMMON: 6,
-	GameEnums.Rarity.RARE: 7,
-	GameEnums.Rarity.EPIC: 8,
-}
-
-const RELIC_SELL_PRICES: Dictionary = {
-	GameEnums.Rarity.COMMON: 1,
-	GameEnums.Rarity.UNCOMMON: 2,
-	GameEnums.Rarity.RARE: 2,
 	GameEnums.Rarity.EPIC: 3,
+	GameEnums.Rarity.LEGENDARY: 5,
 }
 
 # --- Economy Constants ---
@@ -91,31 +50,35 @@ static func get_rune_sell_price(rarity: GameEnums.Rarity, tier: GameEnums.Tier =
 	return base + (tier - 1)
 
 
-## Get buy price for a slot piece (based on rarity)
+## Get buy price for a slot piece (based on size/count)
 static func get_piece_buy_price(piece: SlotPieceData) -> int:
-	return PIECE_BUY_PRICES.get(piece.rarity, 10)
+	if piece:
+		return 2 * piece.get_slot_count() + 1
+	return 3
 
 
-## Get sell price for a slot piece (based on rarity)
+## Get sell price for a slot piece (based on size/count)
 static func get_piece_sell_price(piece: SlotPieceData) -> int:
-	return PIECE_SELL_PRICES.get(piece.rarity, 3)
+	if piece:
+		return piece.get_slot_count()
+	return 1
 
 
-## Get buy price for a modifier (based on rarity)
+## Get buy price for a modifier (flat cost)
 static func get_modifier_buy_price(modifier: SlotModifierData) -> int:
-	return MODIFIER_BUY_PRICES.get(modifier.rarity, 6)
+	return 4
 
 
-## Get sell price for a modifier (based on rarity)
+## Get sell price for a modifier (flat cost)
 static func get_modifier_sell_price(modifier: SlotModifierData) -> int:
-	return MODIFIER_SELL_PRICES.get(modifier.rarity, 2)
+	return 1
 
 
-## Get buy price for a relic (based on rarity)
+## Get buy price for a relic (flat cost)
 static func get_relic_buy_price(relic: RelicData) -> int:
-	return RELIC_BUY_PRICES.get(relic.rarity, 15)
+	return 10
 
 
-## Get sell price for a relic (based on rarity)
+## Get sell price for a relic (flat cost)
 static func get_relic_sell_price(relic: RelicData) -> int:
-	return RELIC_SELL_PRICES.get(relic.rarity, 5)
+	return 5

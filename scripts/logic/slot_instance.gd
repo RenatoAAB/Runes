@@ -282,6 +282,11 @@ func has_modifier(modifier_id: String) -> bool:
 	return applied.has(modifier_id) and applied[modifier_id] > 0
 
 
+## Check if this slot has the anomalous flag active (produz anomalia de mana após leitura)
+func has_anomalous_flag() -> bool:
+	return get_meta("permanent_is_anomalous", false)
+
+
 ## Get the stack count of a specific modifier
 func get_modifier_stack_count(modifier_id: String) -> int:
 	var applied = get_meta("applied_modifiers", {})
@@ -306,6 +311,8 @@ func apply_modifier(modifier: SlotModifierData) -> bool:
 		slot_type_id = data.id if data else ""
 		upgrade_level = clamp(upgrade_level, 0, data.max_upgrade_level if data else 0)
 		set_meta("applied_modifiers", { modifier.id: 1 })
+		if modifier.is_anomalous:
+			set_meta("permanent_is_anomalous", true)
 		return true
 	
 	# Check if already at max stacks
@@ -351,6 +358,8 @@ func apply_modifier(modifier: SlotModifierData) -> bool:
 	# Track applied modifier
 	applied[modifier.id] = current_stacks + 1
 	set_meta("applied_modifiers", applied)
+	if modifier.is_anomalous:
+		set_meta("permanent_is_anomalous", true)
 	
 	print("Applied modifier '%s' (stack %d)" % [modifier.display_name, current_stacks + 1])
 	return true
