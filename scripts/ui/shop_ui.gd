@@ -111,6 +111,8 @@ func _connect_signals() -> void:
 		if repeat_btn and not repeat_btn.pressed.is_connected(_on_pedestal_pressed.bind(-1)):
 			repeat_btn.pressed.connect(_on_pedestal_pressed.bind(-1))
 
+	_connect_element_distribution_hover()
+
 
 func _connect_shop_manager_signals() -> void:
 	if shop_manager:
@@ -591,6 +593,41 @@ func _on_pedestal_pressed(element_index: int) -> void:
 	else:
 		shop_manager.adjust_elemental_probabilities(element_index as GameEnums.Element)
 	_update_elemental_bars()
+
+
+func _connect_element_distribution_hover() -> void:
+	for bar in [water_bar, earth_bar, spirit_bar, air_bar, fire_bar]:
+		if not bar:
+			continue
+		if not bar.mouse_entered.is_connected(_on_element_distribution_mouse_entered):
+			bar.mouse_entered.connect(_on_element_distribution_mouse_entered)
+		if not bar.mouse_exited.is_connected(_on_element_distribution_mouse_exited):
+			bar.mouse_exited.connect(_on_element_distribution_mouse_exited)
+
+
+func _on_element_distribution_mouse_entered() -> void:
+	_show_element_distribution_tooltip()
+
+
+func _on_element_distribution_mouse_exited() -> void:
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if tooltip_manager and tooltip_manager.has_method("clear_slot_tooltip"):
+		tooltip_manager.clear_slot_tooltip()
+
+
+func _show_element_distribution_tooltip() -> void:
+	if not shop_manager:
+		return
+
+	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
+	if not tooltip_manager or not tooltip_manager.has_method("set_slot_tooltip"):
+		return
+
+	var text = TooltipBuilder.build_element_distribution_tooltip(
+		shop_manager.elemental_weights,
+		shop_manager.get_current_rarity_probabilities()
+	)
+	tooltip_manager.set_slot_tooltip(text)
 
 
 func _update_elemental_bars() -> void:

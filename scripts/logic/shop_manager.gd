@@ -451,6 +451,37 @@ func get_rarity_decay(rarity: GameEnums.Rarity) -> float:
 	return pow(1.0 - i, d_rarity)
 
 
+## Returns normalized rarity probabilities for the current shop state.
+## Values are in the [0.0, 1.0] range and include all 5 rarities.
+func get_current_rarity_probabilities() -> Dictionary:
+	var rarities: Array[GameEnums.Rarity] = [
+		GameEnums.Rarity.COMMON,
+		GameEnums.Rarity.UNCOMMON,
+		GameEnums.Rarity.RARE,
+		GameEnums.Rarity.EPIC,
+		GameEnums.Rarity.LEGENDARY
+	]
+	var max_rarity = _get_max_rarity_for_level(current_level)
+
+	var weights: Dictionary = {}
+	var total_w = 0.0
+	for rarity in rarities:
+		var weight = 0.0
+		if rarity <= max_rarity:
+			weight = _get_scaled_weight(rarity, current_level)
+		weights[rarity] = weight
+		total_w += weight
+
+	var probabilities: Dictionary = {}
+	for rarity in rarities:
+		if total_w > 0.0:
+			probabilities[rarity] = weights.get(rarity, 0.0) / total_w
+		else:
+			probabilities[rarity] = 0.0
+
+	return probabilities
+
+
 ## Get weight for a rarity, scaled by player level and decreased by instability decay.
 func _get_scaled_weight(rarity: GameEnums.Rarity, player_level: int) -> float:
 	var base_weight = 0.0

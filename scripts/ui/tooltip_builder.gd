@@ -238,6 +238,47 @@ static func build_rune_stats_tooltip(rune: RuneInstance) -> String:
 	return text
 
 
+# --- Shop: Element Distribution Tooltip ---
+
+static func build_element_distribution_tooltip(element_weights: Dictionary, rarity_probabilities: Dictionary) -> String:
+	var lines: Array[String] = []
+	lines.append(TooltipFormatter.bold("Distribuição Elemental"))
+
+	var ordered_elements: Array[GameEnums.Element] = [
+		GameEnums.Element.FIRE,
+		GameEnums.Element.WATER,
+		GameEnums.Element.EARTH,
+		GameEnums.Element.AIR,
+		GameEnums.Element.SPIRIT
+	]
+
+	for element in ordered_elements:
+		var icon = TooltipFormatter.element_icon(element)
+		var element_name = _get_element_name_pt_br(element)
+		var raw_value = float(element_weights.get(element, 0.0))
+		var percent = int(round(raw_value * 100.0))
+		lines.append("%s %s: [color=yellow]%d%%[/color]" % [icon, element_name, percent])
+
+	lines.append(TooltipTexts.SEPARATOR)
+	lines.append(TooltipFormatter.bold("Chance por Raridade"))
+
+	var ordered_rarities: Array[GameEnums.Rarity] = [
+		GameEnums.Rarity.COMMON,
+		GameEnums.Rarity.UNCOMMON,
+		GameEnums.Rarity.RARE,
+		GameEnums.Rarity.EPIC,
+		GameEnums.Rarity.LEGENDARY
+	]
+
+	for rarity in ordered_rarities:
+		var rarity_tag = TooltipFormatter.rarity_tag(rarity)
+		var raw_prob = float(rarity_probabilities.get(rarity, 0.0))
+		var percent = int(round(raw_prob * 100.0))
+		lines.append("%s: [color=yellow]%d%%[/color]" % [rarity_tag, percent])
+
+	return "\n".join(lines)
+
+
 # --- Private Helpers ---
 
 static func _build_element_icons_text(base_elements: Array[GameEnums.Element]) -> String:
@@ -283,3 +324,19 @@ static func _build_buff_summary(rune: RuneInstance) -> String:
 	if parts.is_empty():
 		return ""
 	return TooltipFormatter.colorize("⬆ " + ", ".join(parts), Color.YELLOW)
+
+
+static func _get_element_name_pt_br(element: GameEnums.Element) -> String:
+	match element:
+		GameEnums.Element.FIRE:
+			return "Fogo"
+		GameEnums.Element.WATER:
+			return "Água"
+		GameEnums.Element.EARTH:
+			return "Terra"
+		GameEnums.Element.AIR:
+			return "Ar"
+		GameEnums.Element.SPIRIT:
+			return "Espírito"
+		_:
+			return "Desconhecido"
