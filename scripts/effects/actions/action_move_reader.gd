@@ -37,6 +37,8 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 	match mode:
 		MoveMode.REWIND_STEPS:
 			var steps = value.resolve_int(ctx, targets) if value else 1
+			steps += _get_reader_return_bonus(ctx)
+			steps = maxi(steps, 0)
 			target_idx = max(0, base_idx - steps)
 		MoveMode.FORWARD_STEPS:
 			var steps = value.resolve_int(ctx, targets) if value else 1
@@ -55,6 +57,12 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 		ctx.battle.request_reader_jump(target_idx)
 
 
+func _get_reader_return_bonus(ctx: EffectContext) -> int:
+	if not ctx or not ctx.source_rune:
+		return 0
+	return ctx.source_rune.get_reader_return_bonus()
+
+
 func _find_previous_element(ctx: EffectContext, current_index: int) -> int:
 	for i in range(current_index - 1, -1, -1):
 		var coord = ctx.battle.get_reader_coord(i)
@@ -69,6 +77,10 @@ func _find_previous_element(ctx: EffectContext, current_index: int) -> int:
 func get_description() -> String:
 	match mode:
 		MoveMode.REWIND_STEPS:
+			if value and value.base == 0.0 and not value.per.is_empty():
+				var per_desc = value.get_per_str()
+				var steps_desc = per_desc.replace(" per ", " step(s) per ")
+				return "Reader rewinds %s" % steps_desc
 			var val_desc = value.get_description() if value else "1"
 			return "Reader rewinds %s step(s)" % val_desc
 		MoveMode.FORWARD_STEPS:

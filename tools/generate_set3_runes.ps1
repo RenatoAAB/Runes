@@ -27,6 +27,7 @@ $S = @{
     game_effect     = 'res://scripts/effects/game_effect.gd'
     action_score    = 'res://scripts/effects/actions/action_score.gd'
     action_buff     = 'res://scripts/effects/actions/action_buff_activation.gd'
+    action_buff_reader_return = 'res://scripts/effects/actions/action_buff_reader_return.gd'
     action_trigger  = 'res://scripts/effects/actions/action_trigger_activation.gd'
     action_destroy  = 'res://scripts/effects/actions/action_destroy_rune.gd'
     action_create   = 'res://scripts/effects/actions/action_create_rune.gd'
@@ -1291,14 +1292,12 @@ selector = ExtResource("4_sel")
 action = SubResource("act")
 "@
 
-# ge_s3_poeira_perm_reader_1 (+1 permanent reader return = +1 permanent activation to self, effectively)
-# Since there's no direct "permanent reader bonus", we model this as +1 buff activation permanent on self
-# Actually this is a unique mechanic. Let's use ActionBuffActivation permanent on self as approximation.
+# ge_s3_poeira_perm_reader_1 (+1 permanent reader return)
 Write-TresFile "$effectsDir\ge_s3_buff_self_1_perm.tres" @"
 [gd_resource type="Resource" script_class="GameEffect" load_steps=4 format=3]
 
 [ext_resource type="Script" path="$($S.game_effect)" id="1_ge"]
-[ext_resource type="Script" path="$($S.action_buff)" id="2_ab"]
+[ext_resource type="Script" path="$($S.action_buff_reader_return)" id="2_ab"]
 [ext_resource type="Script" path="$($S.value_resolver)" id="3_vr"]
 [ext_resource type="Resource" path="$($Shared.sel_self)" id="4_sel"]
 
@@ -2084,7 +2083,7 @@ New-RuneFile $runesUncommon "rune_areia.tres" "areia" "Areia" `
 ) $defaultTextures.air_earth
 
 New-RuneFile $runesRare "rune_poeira.tres" "poeira" "Poeira" `
-    "Reader volta 1 casa. +1 ativacao permanente para si." 2 @(3, 2) @(
+    "Reader volta 1 casa. +1 retorno do Reader permanente." 2 @(3, 2) @(
     'res://resources/effects/rune_effects/ge_s3_reader_back_1.tres',
     'res://resources/effects/rune_effects/ge_s3_buff_self_1_perm.tres'
 ) $defaultTextures.air_earth

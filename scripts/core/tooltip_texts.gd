@@ -140,6 +140,7 @@ const LABEL_PERMANENT := "(permanente)"
 const LABEL_DURATION := "(%d turnos)"
 const LABEL_SCORE_BONUS := "+%d Pontuação"
 const LABEL_ACTIVATION_BONUS := "+%d Ativações"
+const LABEL_READER_RETURN_BONUS := "+%d Retorno do Reader"
 const LABEL_MULTIPLIER_BONUS := "+%.1fx Mult"
 const LABEL_ACCUMULATED_BUFF := "Buff Acumulado Atual: +%.1f"
 

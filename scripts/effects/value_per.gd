@@ -122,8 +122,35 @@ func get_description() -> String:
 		filter_desc = filter.get_description()
 		filter.slot_state = saved_state
 	if filter_desc != "":
+		if _should_prefix_filter_on_rune(filter_desc):
+			return _prefix_filter_on_rune(source_desc, filter_desc)
 		return "%s %s" % [source_desc, filter_desc]
 	return source_desc
+
+
+func _should_prefix_filter_on_rune(filter_desc: String) -> bool:
+	if filter_desc.is_empty():
+		return false
+	if not source_desc_uses_rune_noun():
+		return false
+	# Common case for element filters (e.g. "/fire").
+	return true
+
+
+func source_desc_uses_rune_noun() -> bool:
+	return source in [
+		CountSource.ADJACENT,
+		CountSource.ADJACENT_DIAGONAL,
+		CountSource.PANEL,
+		CountSource.COLUMN,
+		CountSource.ROW,
+	]
+
+
+func _prefix_filter_on_rune(source_desc: String, filter_desc: String) -> String:
+	if not source_desc.contains("rune"):
+		return "%s %s" % [source_desc, filter_desc]
+	return source_desc.replace("rune", "%s rune" % filter_desc)
 
 
 func _source_consumes_filter() -> bool:

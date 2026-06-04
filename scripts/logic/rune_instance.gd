@@ -16,7 +16,8 @@ var permanent_elements: Array[GameEnums.Element] = [] # Persists across rounds
 var stat_modifiers: Dictionary = {
 	"score_bonus": 0,
 	"score_multiplier": 1.0,
-	"activation_bonus": 0
+	"activation_bonus": 0,
+	"reader_return_bonus": 0
 }
 var is_disabled: bool = false
 var last_effect_success: bool = false
@@ -54,7 +55,8 @@ func reset_state() -> void:
 	stat_modifiers = {
 		"score_bonus": 0,
 		"score_multiplier": 1.0,
-		"activation_bonus": 0
+		"activation_bonus": 0,
+		"reader_return_bonus": 0
 	}
 	
 	# Re-apply permanent buffs if any logic requires it here
@@ -75,6 +77,12 @@ func get_max_activations() -> int:
 	var bonus = stat_modifiers.get("activation_bonus", 0)
 	var perm_bonus = permanent_buffs.get("activation_bonus", 0)
 	return data.base_max_activations + bonus + perm_bonus
+
+
+func get_reader_return_bonus() -> int:
+	var bonus = stat_modifiers.get("reader_return_bonus", 0)
+	var perm_bonus = permanent_buffs.get("reader_return_bonus", 0)
+	return bonus + perm_bonus
 
 
 ## Returns effective elements for this rune (with residue overrides)

@@ -313,6 +313,10 @@ static func _build_buff_summary(rune: RuneInstance) -> String:
 	if perm_mult != 1.0:
 		parts.append(TooltipTexts.LABEL_MULTIPLIER_BONUS % (perm_mult - 1.0) + " " + TooltipTexts.LABEL_PERMANENT)
 
+	var perm_reader_return = rune.permanent_buffs.get("reader_return_bonus", 0)
+	if perm_reader_return != 0:
+		parts.append(TooltipTexts.LABEL_READER_RETURN_BONUS % perm_reader_return + " " + TooltipTexts.LABEL_PERMANENT)
+
 	var temp_score = rune.stat_modifiers.get("score_bonus", 0)
 	if temp_score != 0:
 		parts.append("[color=cyan]" + TooltipTexts.LABEL_SCORE_BONUS % temp_score + "[/color]")
@@ -320,6 +324,10 @@ static func _build_buff_summary(rune: RuneInstance) -> String:
 	var temp_mult = rune.stat_modifiers.get("score_multiplier", 1.0)
 	if temp_mult != 1.0:
 		parts.append("[color=cyan]" + TooltipTexts.LABEL_MULTIPLIER_BONUS % (temp_mult - 1.0) + "[/color]")
+
+	var temp_reader_return = rune.stat_modifiers.get("reader_return_bonus", 0)
+	if temp_reader_return != 0:
+		parts.append("[color=cyan]" + TooltipTexts.LABEL_READER_RETURN_BONUS % temp_reader_return + "[/color]")
 
 	if parts.is_empty():
 		return ""
