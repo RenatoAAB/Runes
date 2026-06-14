@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=24 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -12,10 +12,8 @@
 [ext_resource type="Resource" path="res://resources/runes/common/rune_rocha.tres" id="8_jscy8"]
 [ext_resource type="Resource" path="res://resources/runes/common/rune_vento.tres" id="9_og1vs"]
 [ext_resource type="Resource" path="res://resources/runes/common/rune_gota.tres" id="9_pm3ni"]
-[ext_resource type="Resource" path="res://resources/runes/rare/rune_poeira.tres" id="10_pm3ni"]
 [ext_resource type="Texture2D" uid="uid://cpe1u42w8fhu7" path="res://sprites/scenes/background-cristal-painel.png" id="11_dp3eg"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
-[ext_resource type="Resource" path="res://resources/runes/uncommon/rune_conveccao.tres" id="11_y6deb"]
 [ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
 [ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
@@ -64,7 +62,7 @@ default_tooltip_label_settings = ExtResource("3_dp3eg")
 script = ExtResource("1_o6xl0")
 inventory_manager = NodePath("../InventoryManager")
 score_growth_acceleration = 0.01
-initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_yc10j"), ExtResource("9_og1vs"), ExtResource("8_jscy8"), ExtResource("9_pm3ni"), ExtResource("10_pm3ni"), ExtResource("11_y6deb")])
+initial_runes = Array[ExtResource("5_muem4")]([ExtResource("6_yc10j"), ExtResource("9_og1vs"), ExtResource("8_jscy8"), ExtResource("9_pm3ni")])
 rune_drop_rates = ExtResource("18_pm3ni")
 
 [node name="InventoryManager" type="Node" parent="Managers"]

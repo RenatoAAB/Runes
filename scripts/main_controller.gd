@@ -920,8 +920,8 @@ func _on_modifier_dropped(modifier: SlotModifierData, target_slot_ui: SlotUI) ->
 
 
 ## Handle piece dropped on a locked grid slot
-func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
-	if not piece or not _panel_manager or not _extra_inventory:
+func _on_piece_dropped(piece: SlotPieceInstance, target_slot_ui: SlotUI) -> void:
+	if not piece or not piece.data or not _panel_manager or not _extra_inventory:
 		return
 	
 	var coord = target_slot_ui.grid_coord
@@ -931,9 +931,11 @@ func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
 	var panel = _panel_manager.get_panel(_current_panel_index)
 	if not panel:
 		return
+
+	var piece_shape := piece.get_current_shape()
 	
 	# Check if piece can be placed (must be adjacent to existing slots)
-	if not panel.can_place_piece(piece.shape, coord):
+	if not panel.can_place_piece(piece_shape, coord):
 		print("Cannot place piece: invalid position")
 		return
 	
@@ -941,24 +943,22 @@ func _on_piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI) -> void:
 	clear_piece_drag_preview()
 	
 	# Unlock slots from the piece
-	var unlocked_count = panel.unlock_slots_from_piece(piece, coord)
+	var unlocked_count = panel.unlock_slots_from_piece(piece.data, coord, piece_shape)
 	if unlocked_count > 0:
 		# Remove piece from extra inventory
-		var piece_instance = _extra_inventory.find_piece_by_data(piece)
-		if piece_instance:
-			_extra_inventory.remove_piece(piece_instance)
+		_extra_inventory.remove_piece(piece)
 		
 		# Regenerate grid UI to show newly unlocked slots
 		_generate_grid_ui()
 		_update_other_inventory_display()
-		print("Piece '%s' placed at %s, unlocked %d slots" % [piece.display_name, coord, unlocked_count])
+		print("Piece '%s' placed at %s, unlocked %d slots" % [piece.data.display_name, coord, unlocked_count])
 	else:
 		print("No slots were unlocked from piece")
 
 
 ## Show drag preview highlighting the grid slots a piece would cover.
 ## Called from SlotUI._can_drop_data during piece drag.
-func show_piece_drag_preview(piece_data: SlotPieceData, base_coord: Vector2i) -> void:
+func show_piece_drag_preview(piece: SlotPieceInstance, piece_data: SlotPieceData, base_coord: Vector2i) -> void:
 	# Skip redundant updates for the same coord
 	if base_coord == _piece_preview_last_coord:
 		return
@@ -971,11 +971,19 @@ func show_piece_drag_preview(piece_data: SlotPieceData, base_coord: Vector2i) ->
 	var panel := _panel_manager.get_panel(_current_panel_index)
 	if not panel:
 		return
+
+	var shape: Array[Vector2i] = []
+	if piece:
+		shape = piece.get_current_shape()
+	elif piece_data:
+		shape = piece_data.shape
+	if shape.is_empty():
+		return
 	
-	var is_valid := panel.can_place_piece(piece_data.shape, base_coord)
+	var is_valid := panel.can_place_piece(shape, base_coord)
 	var color := Color(0.2, 0.8, 0.2, 0.4) if is_valid else Color(0.8, 0.2, 0.2, 0.4)
 	
-	for offset in piece_data.shape:
+	for offset in shape:
 		var coord := base_coord + offset
 		_piece_preview_coords.append(coord)
 		var slot_ui: SlotUI = grid_ui_slots.get(coord) as SlotUI

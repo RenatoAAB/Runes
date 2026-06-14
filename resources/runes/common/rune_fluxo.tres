@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://ceohlh5bcg7es"]
 
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_1bbiv"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_buff_next_2.tres" id="2_e1"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon46.png" id="3_tex"]
+[ext_resource type="Resource" uid="uid://by4avhvxd4mkc" path="res://resources/effects/rune_effects/ge_s3_buff_next_2.tres" id="2_e1"]
+[ext_resource type="Texture2D" uid="uid://bslnugljfwld5" path="res://sprites/runes/rune_017.png" id="4_tjggm"]
 
 [resource]
 script = ExtResource("1_data")
@@ -10,5 +11,5 @@ id = "fluxo"
 rune_name = "Fluxo"
 description = "+2 de ativacao para a runa seguinte."
 elements = Array[int]([1])
-textures = Array[Texture2D]([ExtResource("3_tex")])
-effects = [ExtResource("2_e1")]
+textures = Array[Texture2D]([ExtResource("4_tjggm")])
+effects = Array[ExtResource("1_1bbiv")]([ExtResource("2_e1")])

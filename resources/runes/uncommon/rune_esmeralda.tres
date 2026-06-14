@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://blvxobafmals0"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_score_10_per_formation.tres" id="2_e1"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon8.png" id="3_tex"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_jvcfc"]
+[ext_resource type="Resource" uid="uid://cmhnethevt1rj" path="res://resources/effects/rune_effects/ge_s4_score_10_per_formation.tres" id="2_e1"]
+[ext_resource type="Texture2D" uid="uid://csq74v6rb75ly" path="res://sprites/runes/rune_036.png" id="4_3tb37"]
 
 [resource]
 script = ExtResource("1_data")
@@ -11,5 +12,5 @@ rune_name = "Esmeralda"
 description = "+10 pontos por cada runa da Formação Rochosa."
 rarity = 1
 elements = Array[int]([2])
-textures = Array[Texture2D]([ExtResource("3_tex")])
-effects = [ExtResource("2_e1")]
+textures = Array[Texture2D]([ExtResource("4_3tb37")])
+effects = Array[ExtResource("1_jvcfc")]([ExtResource("2_e1")])

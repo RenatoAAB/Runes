@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=6 format=3 uid="uid://bnmug7jnexwkt"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_score_5_per_formation_perm.tres" id="3_e2"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon8.png" id="4_tex"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_pmpof"]
+[ext_resource type="Resource" uid="uid://qiogqiccumgk" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
+[ext_resource type="Resource" uid="uid://dvhot8um0gkp0" path="res://resources/effects/rune_effects/ge_s4_score_5_per_formation_perm.tres" id="3_e2"]
+[ext_resource type="Texture2D" uid="uid://c6g5hs3mwggma" path="res://sprites/runes/rune_032.png" id="5_wdrt4"]
 
 [resource]
 script = ExtResource("1_data")
@@ -11,5 +12,5 @@ id = "rocha"
 rune_name = "Rocha"
 description = "+10 pontos. +5 pontos permanente por cada terra em sua formação."
 elements = Array[int]([2])
-textures = Array[Texture2D]([ExtResource("4_tex")])
-effects = [ExtResource("2_e1"), ExtResource("3_e2")]
+textures = Array[Texture2D]([ExtResource("5_wdrt4")])
+effects = Array[ExtResource("1_pmpof")]([ExtResource("2_e1"), ExtResource("3_e2")])

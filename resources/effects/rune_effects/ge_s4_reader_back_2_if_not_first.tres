@@ -1,13 +1,11 @@
-[gd_resource type="Resource" script_class="GameEffect" load_steps=8 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=10 format=3 uid="uid://m5bksqe7yxjk"]
 
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ge"]
 [ext_resource type="Script" uid="uid://grn11506sows" path="res://scripts/effects/actions/action_move_reader.gd" id="2_mr"]
+[ext_resource type="Script" uid="uid://pxg18d1ajvew" path="res://scripts/effects/value_per.gd" id="2_px0xa"]
 [ext_resource type="Script" uid="uid://coisli21fkmdp" path="res://scripts/effects/value_resolver.gd" id="3_vr"]
-[ext_resource type="Script" uid="uid://os76io1go34wx" path="res://scripts/effects/conditions/condition_not_first_activation.gd" id="4_cond"]
+[ext_resource type="Script" uid="uid://c70kqjao0iinn" path="res://scripts/effects/conditions/condition_not_first_activation.gd" id="4_cond"]
 [ext_resource type="Resource" path="res://resources/effects/shared/selectors/selector_self.tres" id="5_sel"]
-
-[sub_resource type="Resource" id="cond"]
-script = ExtResource("4_cond")
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")
@@ -15,8 +13,10 @@ base = 2.0
 
 [sub_resource type="Resource" id="act"]
 script = ExtResource("2_mr")
-mode = 0
 value = SubResource("vr")
+
+[sub_resource type="Resource" id="cond"]
+script = ExtResource("4_cond")
 
 [resource]
 script = ExtResource("1_ge")

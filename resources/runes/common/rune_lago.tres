@@ -1,8 +1,9 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=4 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3 uid="uid://diaweyj2bul8w"]
 
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_7770p"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_buff_adj_if_2earth.tres" id="2_e1"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon46.png" id="3_tex"]
+[ext_resource type="Resource" uid="uid://bx1xsw1q6gepp" path="res://resources/effects/rune_effects/ge_s3_buff_adj_if_2earth.tres" id="2_e1"]
+[ext_resource type="Texture2D" uid="uid://bkqfpougvn467" path="res://sprites/runes/rune_013.png" id="4_0jf7m"]
 
 [resource]
 script = ExtResource("1_data")
@@ -10,5 +11,5 @@ id = "lago"
 rune_name = "Lago"
 description = "+1 ativacao para runas adjacentes se adjacente a 2 terras."
 elements = Array[int]([1])
-textures = Array[Texture2D]([ExtResource("3_tex")])
-effects = [ExtResource("2_e1")]
+textures = Array[Texture2D]([ExtResource("4_0jf7m")])
+effects = Array[ExtResource("1_7770p")]([ExtResource("2_e1")])

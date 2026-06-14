@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://hlfalrkxb8pd" path="res://scripts/effects/actions/action_petrify.gd" id="3_g43hp"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="4_h1na3"]
 [ext_resource type="Script" uid="uid://ce7r3k4fr4064" path="res://scripts/effects/selectors/selector_self.gd" id="4_ko0jh"]
-[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="5_vny4e"]
+[ext_resource type="Texture2D" uid="uid://drnvlf05qttlf" path="res://sprites/runes/rune_007.png" id="6_g43hp"]
 
 [sub_resource type="Resource" id="Resource_h1na3"]
 script = ExtResource("3_g43hp")
@@ -27,5 +27,5 @@ id = "derretimento"
 rune_name = "Derretimento"
 description = "+200 pontos. petrifique o slot"
 elements = Array[int]([0])
-textures = Array[Texture2D]([ExtResource("5_vny4e")])
+textures = Array[Texture2D]([ExtResource("6_g43hp")])
 effects = Array[ExtResource("1_ht0bi")]([ExtResource("2_g43hp"), SubResource("Resource_lf775")])

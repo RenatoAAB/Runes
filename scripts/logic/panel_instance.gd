@@ -152,11 +152,11 @@ func unlock_slot(coord: Vector2i) -> bool:
 
 
 ## Unlock multiple slots from a slot piece
-func unlock_slots_from_piece(piece: SlotPieceData, base_coord: Vector2i) -> int:
+func unlock_slots_from_piece(piece: SlotPieceData, base_coord: Vector2i, piece_positions: Array[Vector2i] = []) -> int:
 	if not piece:
 		return 0
 	var unlocked_count = 0
-	var positions = piece.shape
+	var positions = piece_positions if not piece_positions.is_empty() else piece.shape
 	
 	var can_receive = true
 	if piece.has_meta("can_receive_modifiers"):

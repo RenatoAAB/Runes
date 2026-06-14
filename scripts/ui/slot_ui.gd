@@ -13,7 +13,7 @@ signal rune_dropped(source_rune: RuneInstance, target_slot_ui: SlotUI, source_sl
 signal slot_type_dropped(source_slot: SlotInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
 signal extra_item_dropped(item_type: String, item_data: Variant, item_instance: Variant, target_slot_ui: SlotUI)
 signal modifier_dropped(modifier: SlotModifierData, target_slot_ui: SlotUI)
-signal piece_dropped(piece: SlotPieceData, target_slot_ui: SlotUI)
+signal piece_dropped(piece: SlotPieceInstance, target_slot_ui: SlotUI)
 signal relic_slot_dropped(relic: RelicInstance, target_slot_ui: SlotUI, source_slot_ui: SlotUI)
 signal relic_slot_clicked(relic: RelicInstance)
 
@@ -467,7 +467,7 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 		var mc = get_tree().get_first_node_in_group("main_controller")
 		if not is_unlocked:
 			if mc and mc.has_method("show_piece_drag_preview"):
-				mc.show_piece_drag_preview(data["piece_data"], grid_coord)
+				mc.show_piece_drag_preview(data.get("piece_instance"), data["piece_data"], grid_coord)
 		else:
 			# Hovering unlocked slot with a piece — clear any previous preview
 			if mc and mc.has_method("clear_piece_drag_preview"):
@@ -527,7 +527,13 @@ func _drop_data(_at_position: Vector2, data: Variant) -> void:
 	
 	# Handle piece drop on locked slot
 	elif data.has("piece_data"):
-		piece_dropped.emit(data["piece_data"], self)
+		var piece_instance = data.get("piece_instance") as SlotPieceInstance
+		if not piece_instance:
+			piece_instance = data.get("item_instance") as SlotPieceInstance
+		if not piece_instance and data["piece_data"] is SlotPieceData:
+			piece_instance = SlotPieceInstance.new(data["piece_data"])
+		if piece_instance:
+			piece_dropped.emit(piece_instance, self)
 
 
 # --- Shop Mode Support ---

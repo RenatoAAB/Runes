@@ -335,6 +335,7 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 			drag_data["modifier_data"] = item_data
 		ItemType.PIECE:
 			drag_data["piece_data"] = item_data
+			drag_data["piece_instance"] = item_instance
 		ItemType.RELIC:
 			drag_data["relic_data"] = item_data
 			drag_data["relic_instance"] = item_instance

@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_miyae"]
 [ext_resource type="Resource" uid="uid://biu75sqkfei4p" path="res://resources/effects/rune_effects/ge_s3_incendio_score.tres" id="2_e1"]
-[ext_resource type="Texture2D" uid="uid://dalvpfawsmee6" path="res://sprites/icons/runes/Icon3.png" id="3_tex"]
+[ext_resource type="Texture2D" uid="uid://c5h03ullhvfa3" path="res://sprites/runes/rune_002.png" id="4_miyae"]
 
 [resource]
 script = ExtResource("1_data")
@@ -12,5 +12,5 @@ rune_name = "Incendio"
 description = "+50 pts para cada runa de fogo ou ar proximo (com diagonal)"
 rarity = 1
 elements = Array[int]([0])
-textures = Array[Texture2D]([ExtResource("3_tex")])
+textures = Array[Texture2D]([ExtResource("4_miyae")])
 effects = Array[ExtResource("1_miyae")]([ExtResource("2_e1")])
