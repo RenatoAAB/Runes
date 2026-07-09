@@ -25,12 +25,20 @@ Dashboard local para consolidar as estatísticas enviadas pelos beta testers
   profunda" (% das runs com o item que chegam ao nível N — o limiar é
   configurável no filtro, já que o jogo ainda não tem condição de vitória).
   Pódio no topo: mais escolhida 🏆, melhor desempenho 🔥, mais ignorada 🥷.
+  Clique num item para o detalhe, incluindo **"Valor por nível de aquisição"** —
+  quanto o item rende conforme o nível em que foi comprado/adquirido.
 - **Pontuações** — recordes, histograma (faixas que dobram, pois a pontuação
   cresce exponencialmente), curva média vs pontuação alvo, Hall da Fama com o
-  loadout final de cada run.
+  **snapshot 5x5 do painel final** de cada run: uma grade de runas e, ao lado,
+  uma grade de modificadores (ambas por posição real); relíquias e peças ficam
+  numa tira à parte por não terem posição no grid.
 - **Funil** — % de runs que alcançam cada nível, separado por versão do jogo,
   com o "nível mais mortal" 💀.
 - **Economia** — mana ganha/gasta e para onde vai (por categoria de compra).
+
+O filtro **"Nível atingido"** (mín–máx) recorta as runs pelo nível alcançado em
+todas as abas — útil na Economia, já que as compras mudam entre runs curtas
+(início do jogo) e longas (fim do jogo).
 
 Todos os gráficos têm um botão **tabela** com os mesmos números.
 

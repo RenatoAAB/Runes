@@ -48,6 +48,10 @@
     <option value="30">últimos 30 dias</option>
     <option value="90">últimos 90 dias</option>
   </select>
+  <label>Nível atingido:</label>
+  <input type="number" id="f-minlevel" min="0" max="99" placeholder="mín" style="width:58px" title="Nível mínimo alcançado pela run (vazio = sem limite)">
+  <span style="color:var(--muted)">–</span>
+  <input type="number" id="f-maxlevel" min="0" max="99" placeholder="máx" style="width:58px" title="Nível máximo alcançado pela run (vazio = sem limite)">
   <label>Run profunda ≥ nível</label>
   <input type="number" id="f-threshold" min="1" max="99" style="width:64px">
 </div>

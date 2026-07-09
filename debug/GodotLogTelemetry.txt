@@ -1,0 +1,1271 @@
+Godot Engine v4.5.1.stable.official.f62fdbde1 - https://godotengine.org
+Vulkan 1.3.278 - Forward+ - Using Device #0: NVIDIA - NVIDIA GeForce GTX 1650
+
+[EventBus] Initialized
+[Stats] History loaded from user://statistics.json
+[Stats] Connected to EventBus
+[Telemetry] enabled (v0.6.0-beta)
+[GameManager] Initialization starting...
+Loaded rune: Ametista
+Loaded rune: Chuva
+Loaded rune: Derretimento
+Loaded rune: Estalactite
+Loaded rune: Explosao
+Loaded rune: Fluxo
+Loaded rune: Gota
+Loaded rune: Labareda
+Loaded rune: Lago
+Loaded rune: Pressao
+Loaded rune: Quartzo
+Loaded rune: Queimadura
+Loaded rune: Redemoinho
+Loaded rune: Rocha
+Loaded rune: Sopro
+Loaded rune: Tempo
+Loaded rune: Vento
+Loaded rune: Acido
+Loaded rune: Areia
+Loaded rune: Bolha
+Loaded rune: Borbulhar
+Loaded rune: Brisa
+Loaded rune: Cachoeira
+Loaded rune: Calor
+Loaded rune: Conveccao
+Loaded rune: Esmeralda
+Loaded rune: Furacao
+Loaded rune: Gelo
+Loaded rune: Incendio
+Loaded rune: Lama
+Loaded rune: Lava
+Loaded rune: Luz
+Loaded rune: Mar
+Loaded rune: Mudanca
+Loaded rune: Nuvem
+Loaded rune: Obsidiana
+Loaded rune: Oleo
+Loaded rune: Ordem
+Loaded rune: Plasma
+Loaded rune: Raio
+Loaded rune: Rio
+Loaded rune: Rubi
+Loaded rune: Sedimentacao
+Loaded rune: Topazio
+Loaded rune: Trevas
+Loaded rune: Vacuo
+Loaded rune: Vendaval
+Loaded rune: Caos
+Loaded rune: Corrente
+Loaded rune: Diamante
+Loaded rune: Djinn
+Loaded rune: Ebulicao
+Loaded rune: Eletricidade
+Loaded rune: Empatia
+Loaded rune: Entropia
+Loaded rune: Erupcao
+Loaded rune: Fenix
+Loaded rune: Geada
+Loaded rune: Golem
+Loaded rune: Ninfa
+Loaded rune: Pleroma
+Loaded rune: Poeira
+Loaded rune: Praia
+Loaded rune: Supernova
+Loaded rune: Estagnacao
+Loaded rune: Gravidade
+Loaded rune: Instabilidade
+Loaded rune: Vida
+Total runes loaded: 68
+[GameManager] Waiting for MainController initialization...
+[MainController] Initialization starting...
+[MainController] Initializing panel system...
+[PanelManager] Creating default panel configuration...
+[PanelManager] Created 3 panels (1 unlocked, 2 locked)
+[MainController] PanelManager created with 3 panels
+[MainController] Panel nodes bound (grid_manager=true, reader=true)
+[GameManager] PanelManager reference set (panels=3)
+[MainController] PanelManager reference passed to GameManager
+[MainController] Initialization complete!
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Economy] +5 mana (ROUND_BONUS) | Balance: 0 → 5
+[Economy] Starting mana: 5
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 1 Started. Target: 100
+[Economy] -2 mana (SHOP_PURCHASE) | Balance: 5 → 3
+[Shop] Success: Bought Ametista for 2 mana
+[Economy] -2 mana (SHOP_PURCHASE) | Balance: 3 → 1
+[Shop] Success: Bought Labareda for 2 mana
+[Planning] PLACE derretimento → (0,0)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Planning] PLACE rocha → (1,1)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Planning] PLACE ametista → (0,1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Planning] MOVE rocha: (1,1) → (2,1)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → FAIL
+[Effect]   CONDITION ConditionInFormation → FAIL
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → FAIL
+[Planning] MOVE ametista: (0,1) → (1,1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 4 targets ["(1, 0)", "(1, 2)", "(0, 1)", "(2, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Planning] PLACE gota → (1,0)
+[Effect]   SELECTOR SelectorDirectional → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +200 from derretimento | total=200
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=gota | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorDirectional → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionBuffActivation → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=gota | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionApplyResidue → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=gota | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionDestroyRune → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,0) gota - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: gota at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+  [SlotRead] (0,1) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=210
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(1, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 4 targets ["(1, 0)", "(1, 2)", "(0, 1)", "(2, 1)"]
+[Effect]   ACTION ActionScore → targets=4
+[Effect]   SCORE +20 from rocha | total=210
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (1,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (1, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=240
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from rocha | total=240
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) rocha - +30 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (2, 1) (remaining: 0)
+  [SlotRead] (0,2) Empty
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+[PanelComplete] Panel 0 - 240 pts (raw: 240 x1.00) | 4 runes activated
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 240/100 - Victory!
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 240/100 - Victory!
+Battle Finished. Score: 240 / 100
+[Economy] Victory!
+[Economy] Interest: 0 mana (balance 1)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 1 → 6
+[Economy] Victory bonus: 5 mana (level 1)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 2 Started. Target: 151
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 4 targets ["(1, 0)", "(1, 2)", "(0, 1)", "(2, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 4 targets ["(1, 0)", "(1, 2)", "(0, 1)", "(2, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Planning] MOVE ametista: (1,1) → (0,1)
+[Effect]   CONDITION ConditionInFormation → FAIL
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → FAIL
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Planning] MOVE rocha: (2,1) → (1,1)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Planning] PLACE vento → (2,1)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Planning] PLACE labareda → (1,0)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +200 from derretimento | total=200
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Economy] +1 mana (RUNE_ACTIVATION) | Balance: 6 → 7
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=300
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=400
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=410
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=410
+[Effect]   SCORE +20 from rocha | total=410
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +60 from rocha | total=470
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from rocha | total=470
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +60 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=480
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=480
+[Effect]   SCORE +20 from rocha | total=480
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+  [SlotRead] (0,2) Empty
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[PanelComplete] Panel 0 - 480 pts (raw: 480 x1.00) | 6 runes activated
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 480/151 - Victory!
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 480/151 - Victory!
+Battle Finished. Score: 480 / 151
+[Economy] Victory!
+[Economy] +1 mana (INTEREST) | Balance: 7 → 8
+[Economy] Interest: 1 mana (balance 7 → 8)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 8 → 13
+[Economy] Victory bonus: 5 mana (level 2)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 3 Started. Target: 231
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Economy] -2 mana (SHOP_PURCHASE) | Balance: 13 → 11
+[Shop] Success: Bought Estalactite for 2 mana
+[Economy] -4 mana (SHOP_PURCHASE) | Balance: 11 → 7
+[Shop] Success: Bought Enhancer for 4 mana
+Modifier added to inventory: Enhancer
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+Modifier 'Enhancer' applied to slot at (1, 1)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Planning] PLACE estalactite → (0,2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +240 from derretimento | total=240
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +240 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=340
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=440
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=450
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=450
+[Effect]   SCORE +20 from estalactite | total=450
+[Effect]   SCORE +40 from rocha | total=450
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +130 from rocha | total=580
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=580
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +130 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=590
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=590
+[Effect]   SCORE +20 from estalactite | total=590
+[Effect]   SCORE +40 from rocha | total=590
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +50 from estalactite | total=640
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +20 from estalactite | total=640
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (0,2) estalactite - +50 pts (x1.00)
+[InfiniteLoopDetector] Recorded: estalactite at (0, 2) (remaining: 0)
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[PanelComplete] Panel 0 - 640 pts (raw: 640 x1.00) | 7 runes activated
+[EventBus] Processing round end effects...
+[Stats] History saved to user://statistics.json
+[EventBus] Battle ended. Score: 640/231 - Victory!
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 640/231 - Victory!
+Battle Finished. Score: 640 / 231
+[Economy] Victory!
+[Economy] +1 mana (INTEREST) | Balance: 7 → 8
+[Economy] Interest: 1 mana (balance 7 → 8)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 8 → 13
+[Economy] Victory bonus: 5 mana (level 3)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 4 Started. Target: 358
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +280 from derretimento | total=280
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +280 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=380
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=480
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=490
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=490
+[Effect]   SCORE +20 from estalactite | total=490
+[Effect]   SCORE +40 from rocha | total=490
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +240 from rocha | total=730
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=730
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +240 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=740
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=740
+[Effect]   SCORE +20 from estalactite | total=740
+[Effect]   SCORE +40 from rocha | total=740
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +110 from estalactite | total=850
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +20 from estalactite | total=850
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (0,2) estalactite - +110 pts (x1.00)
+[InfiniteLoopDetector] Recorded: estalactite at (0, 2) (remaining: 0)
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+[PanelComplete] Panel 0 - 850 pts (raw: 850 x1.00) | 7 runes activated
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 850/358 - Victory!
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 850/358 - Victory!
+Battle Finished. Score: 850 / 358
+[Economy] Victory!
+[Economy] +2 mana (INTEREST) | Balance: 13 → 15
+[Economy] Interest: 2 mana (balance 13 → 15)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 15 → 20
+[Economy] Victory bonus: 5 mana (level 4)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 5 Started. Target: 562
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Economy] -7 mana (SHOP_PURCHASE) | Balance: 20 → 13
+[Shop] Success: Bought L-Shape for 7 mana
+Piece added to inventory: L-Shape
+Piece 'L-Shape' placed at (2, 2), unlocked 3 slots
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +320 from derretimento | total=320
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +320 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=420
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=520
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=530
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=530
+[Effect]   SCORE +20 from estalactite | total=530
+[Effect]   SCORE +40 from rocha | total=530
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +350 from rocha | total=880
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=880
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +350 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=890
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=890
+[Effect]   SCORE +20 from estalactite | total=890
+[Effect]   SCORE +40 from rocha | total=890
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +170 from estalactite | total=1060
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +20 from estalactite | total=1060
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (0,2) estalactite - +170 pts (x1.00)
+[InfiniteLoopDetector] Recorded: estalactite at (0, 2) (remaining: 0)
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+  [SlotRead] (3,2) Empty
+  [SlotRead] (2,3) Empty
+  [SlotRead] (3,3) Empty
+[PanelComplete] Panel 0 - 1060 pts (raw: 1060 x1.00) | 7 runes activated
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 1060/562 - Victory!
+[EventBus] Processing round end effects...
+[Stats] History saved to user://statistics.json
+[EventBus] Battle ended. Score: 1060/562 - Victory!
+Battle Finished. Score: 1060 / 562
+[Economy] Victory!
+[Economy] +2 mana (INTEREST) | Balance: 13 → 15
+[Economy] Interest: 2 mana (balance 13 → 15)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 15 → 20
+[Economy] Victory bonus: 5 mana (level 5)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 6 Started. Target: 894
+[Economy] -1 mana (SHOP_PURCHASE) | Balance: 20 → 19
+[Shop] Relic rerolled successfully
+[Shop] Success: Relic rerolled for 1 mana
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +360 from derretimento | total=360
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +360 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=460
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=560
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=570
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=570
+[Effect]   SCORE +20 from estalactite | total=570
+[Effect]   SCORE +40 from rocha | total=570
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +460 from rocha | total=1030
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=1030
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +460 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=1040
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=1040
+[Effect]   SCORE +20 from estalactite | total=1040
+[Effect]   SCORE +40 from rocha | total=1040
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +230 from estalactite | total=1270
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +20 from estalactite | total=1270
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (0,2) estalactite - +230 pts (x1.00)
+[InfiniteLoopDetector] Recorded: estalactite at (0, 2) (remaining: 0)
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+  [SlotRead] (3,2) Empty
+  [SlotRead] (2,3) Empty
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (3,3) Empty
+[PanelComplete] Panel 0 - 1270 pts (raw: 1270 x1.00) | 7 runes activated
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 1270/894 - Victory!
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 1270/894 - Victory!
+Battle Finished. Score: 1270 / 894
+[Economy] Victory!
+[Economy] +3 mana (INTEREST) | Balance: 19 → 22
+[Economy] Interest: 3 mana (balance 19 → 22)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 22 → 27
+[Economy] Victory bonus: 5 mana (level 6)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 7 Started. Target: 1441
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +400 from derretimento | total=400
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +400 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=500
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=600
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=610
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=610
+[Effect]   SCORE +20 from estalactite | total=610
+[Effect]   SCORE +40 from rocha | total=610
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +570 from rocha | total=1180
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=1180
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +570 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=1190
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=1190
+[Effect]   SCORE +20 from estalactite | total=1190
+[Effect]   SCORE +40 from rocha | total=1190
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +290 from estalactite | total=1480
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +20 from estalactite | total=1480
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (0,2) estalactite - +290 pts (x1.00)
+[InfiniteLoopDetector] Recorded: estalactite at (0, 2) (remaining: 0)
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+  [SlotRead] (3,2) Empty
+  [SlotRead] (2,3) Empty
+  [SlotRead] (3,3) Empty
+[PanelComplete] Panel 0 - 1480 pts (raw: 1480 x1.00) | 7 runes activated
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 1480/1441 - Victory!
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 1480/1441 - Victory!
+Battle Finished. Score: 1480 / 1441
+[Economy] Victory!
+[Economy] +5 mana (INTEREST) | Balance: 27 → 32
+[Economy] Interest: 5 mana (balance 27 → 32)
+[Economy] +5 mana (ROUND_BONUS) | Balance: 32 → 37
+[Economy] Victory bonus: 5 mana (level 7)
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 8 Started. Target: 2351
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Reader] InfiniteLoopDetector initialized
+[EventBus] Battle started with 1 panel(s)
+[EventBus] Processing panel 0
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +440 from derretimento | total=440
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=derretimento | slot=(0, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 0)"]
+[Effect]   ACTION ActionPetrify → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (0,0) derretimento - +440 pts (x1.00)
+[InfiniteLoopDetector] Recorded: derretimento at (0, 0) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=540
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=labareda | slot=(1, 0)
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 0)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +100 from labareda | total=640
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionLastActivatedElementNew → PASS
+  [SlotRead] (1,0) labareda - +200 pts (x1.00)
+[InfiniteLoopDetector] Recorded: labareda at (1, 0) (remaining: 0)
+  [SlotRead] (2,0) Empty
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=650
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=650
+[Effect]   SCORE +20 from estalactite | total=650
+[Effect]   SCORE +40 from rocha | total=650
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 1)
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +680 from rocha | total=1330
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=rocha | slot=(1, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(1, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +30 from rocha | total=1330
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (1,1) rocha - +680 pts (x1.00)
+[InfiniteLoopDetector] Recorded: rocha at (1, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=vento | slot=(2, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(2, 1)"]
+[Effect]   ACTION ActionMoveReader → targets=1
+[Effect] COMPLETE GameEffect → SUCCESS
+  [SlotRead] (2,1) vento - +0 pts (x1.00)
+[InfiniteLoopDetector] Recorded: vento at (2, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 1)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +10 from ametista | total=1340
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=ametista | slot=(0, 1)
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   CONDITION ConditionInFormation → PASS
+[Effect]   SELECTOR SelectorAdjacent → 3 targets ["(0, 0)", "(0, 2)", "(1, 1)"]
+[Effect]   ACTION ActionScore → targets=3
+[Effect]   SCORE +20 from derretimento | total=1340
+[Effect]   SCORE +20 from estalactite | total=1340
+[Effect]   SCORE +40 from rocha | total=1340
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionInFormation → PASS
+  [SlotRead] (0,1) ametista - +10 pts (x1.00)
+[InfiniteLoopDetector] Recorded: ametista at (0, 1) (remaining: 0)
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION Always → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +350 from estalactite | total=1690
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect] TRIGGER ON_READ | rune=estalactite | slot=(0, 2)
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+[Effect]   SELECTOR SelectorSelf → 1 targets ["(0, 2)"]
+[Effect]   ACTION ActionScore → targets=1
+[Effect]   SCORE +20 from estalactite | total=1690
+[Effect] COMPLETE GameEffect → SUCCESS
+[Effect]   CONDITION ConditionFormationBorder → PASS
+  [SlotRead] (0,2) estalactite - +350 pts (x1.00)
+[InfiniteLoopDetector] Recorded: estalactite at (0, 2) (remaining: 0)
+  [SlotRead] (1,2) Empty
+  [SlotRead] (2,2) Empty
+  [SlotRead] (3,2) Empty
+  [SlotRead] (2,3) Empty
+  [SlotRead] (3,3) Empty
+[PanelComplete] Panel 0 - 1690 pts (raw: 1690 x1.00) | 7 runes activated
+[EventBus] Processing round end effects...
+[Stats] History saved to user://statistics.json
+[EventBus] Battle ended. Score: 1690/2351 - Defeat
+[EventBus] Processing round end effects...
+[EventBus] Battle ended. Score: 1690/2351 - Defeat
+Battle Finished. Score: 1690 / 2351
+Defeat!
+[Stats] History saved to user://statistics.json
+[Telemetry] Run finalized (loss, level 8, 55 items)
+[Shop] Insufficient mana: need 1, have 0
+[Shop] Failed: Nao ha mana suficiente para resetar pedestais
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+[Economy] +5 mana (ROUND_BONUS) | Balance: 0 → 5
+[Economy] Starting mana: 5
+[Shop] Refreshed: 3 runes, 1 pieces, 1 modifiers, 1 relics
+Level 1 Started. Target: 100
+[Stats] History saved to user://statistics.json
+--- Debugging process stopped ---

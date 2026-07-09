@@ -12,8 +12,26 @@ const RARITY_VAR = {
   COMMON: "--rar-common", UNCOMMON: "--rar-uncommon", RARE: "--rar-rare",
   EPIC: "--rar-epic", LEGENDARY: "--rar-legendary",
 };
-// Target(n) = 100 × (1.5 + 0.05·(n-1))^(n-1)  — mirror of GameManager._calculate_target_score
-const targetScore = (lv) => Math.floor(100 * Math.pow(1.5 + 0.05 * (lv - 1), lv - 1));
+// The target curve is NOT hardcoded here — the game's params are @export-overridable
+// per scene/version, so a copied constant drifts (it did: accel 0.05 vs real 0.01).
+// Source of truth order: (1) target observed per round in the data, (2) the curve
+// params the run carries in summary.curve, (3) these legacy defaults as last resort.
+const CURVE_FALLBACK = { base: 100, growth_initial: 1.5, growth_acceleration: 0.05 };
+// Target(n) = base × (growth_initial + growth_acceleration·(n-1))^(n-1), n = level.
+const curveTarget = (lv, c = CURVE_FALLBACK) =>
+  Math.floor(c.base * Math.pow(c.growth_initial + c.growth_acceleration * (lv - 1), lv - 1));
+// Pick the curve params from the data (most recent run that carries them wins, so
+// the newest balancing shows), falling back to the legacy constants for old runs.
+function resolveCurve(runs) {
+  let best = null, bestAt = "";
+  for (const r of runs) {
+    const c = r.summary?.curve;
+    if (!c || typeof c.base !== "number") continue;
+    const at = r.ended_at || r.created_at || "";
+    if (best === null || at >= bestAt) { best = c; bestAt = at; }
+  }
+  return best || CURVE_FALLBACK;
+}
 
 const state = {
   runs: [],
@@ -21,7 +39,7 @@ const state = {
   tab: "items",
   sortBy: "pickRate",
   itemType: "all",
-  filters: { versions: new Set(), outcome: "all", days: 0, threshold: 8 },
+  filters: { versions: new Set(), outcome: "all", days: 0, threshold: 8, minLevel: 0, maxLevel: 0 },
 };
 
 /* ---------------- manifest helpers ---------------- */
@@ -58,6 +76,81 @@ function spriteNode(key, size = "") {
   ph.className = "sprite placeholder" + size;
   ph.textContent = TYPE_GLYPH[type] || "?";
   return ph;
+}
+
+/* One panel's 5x5 grid as a snapshot (row-major, index = y*5 + x).
+   `type` is the item type each cell id maps to (rune / slot_modifier). */
+function gridNode(cells, type) {
+  const g = document.createElement("div");
+  g.className = "grid-snapshot";
+  for (let i = 0; i < 25; i++) {
+    const cell = document.createElement("div");
+    cell.className = "gcell";
+    const id = cells && cells[i];
+    if (id) {
+      const key = type + ":" + id;
+      const s = spriteNode(key);
+      s.title = displayName(key);
+      cell.appendChild(s);
+      cell.classList.add("filled");
+    }
+    g.appendChild(cell);
+  }
+  return g;
+}
+
+/* A labelled panel snapshot: the 5x5 grid with a small caption above. */
+function labelledGrid(cells, type, label) {
+  const wrap = document.createElement("div");
+  wrap.className = "grid-labelled";
+  const cap = document.createElement("div");
+  cap.className = "grid-cap";
+  cap.textContent = label;
+  wrap.append(cap, gridNode(cells, type));
+  return wrap;
+}
+
+/* Final loadout: the rune grid and (beside it) the slot-modifier grid, plus a
+   row of the off-grid items (relics / pieces). Falls back to a flat row for old
+   runs that predate final_grid. */
+function loadoutSnapshot(r) {
+  const wrap = document.createElement("div");
+  wrap.className = "snapshot";
+  const grids = r.summary?.final_grid;
+  const modGrids = r.summary?.final_modifier_grid;
+  if (grids && grids.length) {
+    const grow = document.createElement("div");
+    grow.className = "grid-row";
+    grids.forEach((cells, i) => {
+      grow.appendChild(labelledGrid(cells, "rune", "Runas"));
+      const mods = modGrids && modGrids[i];
+      if (mods && mods.some((c) => c)) grow.appendChild(labelledGrid(mods, "slot_modifier", "Modificadores"));
+    });
+    wrap.appendChild(grow);
+    // relics and pieces are not positional → show them in a row
+    const extras = (r.summary?.final_loadout || [])
+      .filter((k) => k.startsWith("relic:") || k.startsWith("slot_piece:"));
+    if (extras.length) {
+      const strip = document.createElement("div");
+      strip.className = "extras";
+      for (const key of extras.slice(0, 12)) {
+        const s = spriteNode(key);
+        s.title = displayName(key);
+        strip.appendChild(s);
+      }
+      wrap.appendChild(strip);
+    }
+  } else {
+    const flat = document.createElement("div");
+    flat.className = "loadout";
+    for (const key of (r.summary?.final_loadout || []).slice(0, 14)) {
+      const s = spriteNode(key);
+      s.title = displayName(key);
+      flat.appendChild(s);
+    }
+    wrap.appendChild(flat);
+  }
+  return wrap;
 }
 
 function displayName(key) {
@@ -181,6 +274,8 @@ function filteredRuns() {
   return state.runs.filter((r) =>
     f.versions.has(r.client_version) &&
     (f.outcome === "all" || r.outcome === f.outcome) &&
+    (!f.minLevel || r.final_level >= f.minLevel) &&
+    (!f.maxLevel || r.final_level <= f.maxLevel) &&
     (!cutoff || new Date(r.created_at).getTime() >= cutoff));
 }
 
@@ -199,7 +294,8 @@ function aggregateItems(runs, items) {
     let agg = byKey.get(key);
     if (!agg) {
       agg = { key, type: it.item_type, offered: 0, bought: 0, acquired: 0, sold: 0,
-        upgradedInto: 0, activations: 0, score: 0, loadouts: 0, runsWith: 0, deepWith: 0 };
+        upgradedInto: 0, activations: 0, score: 0, loadouts: 0, runsWith: 0, deepWith: 0,
+        byAcqLevel: new Map() };
       byKey.set(key, agg);
     }
     agg.offered += it.times_offered;
@@ -210,6 +306,14 @@ function aggregateItems(runs, items) {
     agg.activations += it.activations;
     agg.score += Number(it.score_contribution);
     if (it.in_final_loadout) agg.loadouts++;
+    // temporal progression: value of this item grouped by the level it was taken at
+    const lvl = it.acquired_at_level;
+    if (lvl != null && lvl >= 1 && (it.times_bought > 0 || it.times_acquired > 0)) {
+      const b = agg.byAcqLevel.get(lvl) || { n: 0, score: 0 };
+      b.n++;
+      b.score += Number(it.score_contribution);
+      agg.byAcqLevel.set(lvl, b);
+    }
     const has = it.times_acquired > 0 || it.in_final_loadout;
     if (has) {
       agg.runsWith++;
@@ -479,6 +583,34 @@ function showDetail(agg, baseline) {
     rows);
   table.className = "detail-stats";
   dialog.appendChild(table);
+
+  // temporal progression: does taking this item earlier pay off more?
+  const levels = [...agg.byAcqLevel.keys()].sort((a, b) => a - b);
+  if (levels.length >= 2) {
+    const h4 = document.createElement("h4");
+    h4.textContent = "Valor por nível de aquisição";
+    h4.style.margin = "16px 0 2px";
+    dialog.appendChild(h4);
+    const sub = document.createElement("div");
+    sub.className = "meta";
+    sub.style.cssText = "color:var(--muted);margin-bottom:8px";
+    sub.textContent = "pontos médios por run conforme o nível em que o item foi adquirido";
+    dialog.appendChild(sub);
+    const acqRows = levels.map((l) => {
+      const b = agg.byAcqLevel.get(l);
+      return { label: "Nível " + l, value: b.score / b.n, hint: `n=${b.n}` };
+    });
+    const box = document.createElement("div");
+    dialog.appendChild(box);
+    hbar(box, acqRows);
+  } else if (levels.length === 1) {
+    const only = document.createElement("div");
+    only.className = "meta";
+    only.style.cssText = "color:var(--muted);margin-top:12px";
+    only.textContent = "Adquirida sempre por volta do nível " + levels[0] + ".";
+    dialog.appendChild(only);
+  }
+
   const close = document.createElement("button");
   close.textContent = "Fechar";
   close.style.marginTop = "12px";
@@ -522,15 +654,20 @@ function renderScores(main, runs) {
   // score by level vs target curve
   const maxLv = Math.max(1, ...runs.map((r) => r.final_level));
   const levels = Array.from({ length: maxLv }, (_, i) => i + 1);
-  const sums = new Map(), counts = new Map();
+  const sums = new Map(), counts = new Map(), obsTarget = new Map();
   for (const r of runs) {
     for (const round of (r.summary?.rounds || [])) {
       sums.set(round.level, (sums.get(round.level) || 0) + round.score);
       counts.set(round.level, (counts.get(round.level) || 0) + 1);
+      // the target the game actually showed — ground truth, never drifts
+      if (typeof round.target === "number" && round.target > 0)
+        obsTarget.set(round.level, Math.max(obsTarget.get(round.level) || 0, round.target));
     }
   }
   const avg = levels.map((lv) => counts.get(lv) ? sums.get(lv) / counts.get(lv) : null);
-  const target = levels.map((lv) => targetScore(lv));
+  // observed target where a run reached that level; else rebuild from the run's own curve params
+  const curve = resolveCurve(runs);
+  const target = levels.map((lv) => obsTarget.get(lv) ?? curveTarget(lv, curve));
   const seriesColor = getComputedStyle(document.documentElement).getPropertyValue("--series-1").trim();
   const mutedColor = getComputedStyle(document.documentElement).getPropertyValue("--baseline").trim();
   makeCard(grid, "Pontuação média por nível vs alvo", "escala log — o alvo cresce exponencialmente",
@@ -553,20 +690,13 @@ function renderScores(main, runs) {
   h3.textContent = "\u{1F3DB}️ Hall da Fama — melhores runs";
   hof.appendChild(h3);
   const rows = top.map((r, i) => {
-    const loadout = document.createElement("div");
-    loadout.className = "loadout";
-    for (const key of (r.summary?.final_loadout || []).slice(0, 14)) {
-      const s = spriteNode(key);
-      s.title = displayName(key);
-      loadout.appendChild(s);
-    }
     return [
       ["\u{1F947}", "\u{1F948}", "\u{1F949}"][i] || String(i + 1),
       fmt(Number(r.best_round_score)),
       String(r.final_level),
       r.client_version,
       String(r.seed ?? "–"),
-      loadout,
+      loadoutSnapshot(r),
     ];
   });
   hof.appendChild(buildTable(
@@ -722,6 +852,10 @@ function boot() {
   const threshold = document.getElementById("f-threshold");
   threshold.value = state.filters.threshold;
   threshold.onchange = () => { state.filters.threshold = Math.max(1, Number(threshold.value) || 8); render(); };
+  const minLevel = document.getElementById("f-minlevel");
+  const maxLevel = document.getElementById("f-maxlevel");
+  minLevel.onchange = () => { state.filters.minLevel = Math.max(0, Number(minLevel.value) || 0); render(); };
+  maxLevel.onchange = () => { state.filters.maxLevel = Math.max(0, Number(maxLevel.value) || 0); render(); };
 
   for (const btn of document.querySelectorAll("nav.tabs button")) {
     btn.onclick = () => {

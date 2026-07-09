@@ -99,7 +99,7 @@ func _notification(what: int) -> void:
 		_closing = true
 		# Persist an in-progress run to the disk queue only; it uploads next launch
 		if _run_active and _rounds.size() > 0:
-			_finalize_run("abandoned", _current_level)
+			_finalize_run("abandoned", _get_game_level())
 
 
 # =============================================================================
@@ -217,17 +217,19 @@ func _finalize_run(outcome: String, final_level: int) -> void:
 		if round_entry["score"] > best_round:
 			best_round = round_entry["score"]
 
+	# Postgres bigint/int columns reject JSON floats ("270.0"), and scores can arrive
+	# as floats from the battle signals, so coerce every numeric column to int here.
 	var run_row := {
 		"run_id": _run_id,
 		"player_id": _player_id,
 		"client_version": _client_version,
-		"seed": _run_seed,
+		"seed": int(_run_seed),
 		"outcome": outcome,
-		"final_level": final_level,
+		"final_level": int(final_level),
 		"rounds_played": _rounds.size(),
-		"best_round_score": best_round,
-		"total_score": total,
-		"duration_msec": Time.get_ticks_msec() - _run_started_msec,
+		"best_round_score": int(best_round),
+		"total_score": int(total),
+		"duration_msec": int(Time.get_ticks_msec() - _run_started_msec),
 		"started_at": _run_started_iso,
 		"ended_at": Time.get_datetime_string_from_system(true),
 		"summary": {
@@ -235,6 +237,9 @@ func _finalize_run(outcome: String, final_level: int) -> void:
 			"economy": _economy,
 			"upgrades": _upgrades,
 			"final_loadout": _get_final_loadout_keys(),
+			"final_grid": _get_final_grid(),
+			"final_modifier_grid": _get_final_modifier_grid(),
+			"curve": _get_curve(),
 		},
 	}
 
@@ -248,16 +253,17 @@ func _finalize_run(outcome: String, final_level: int) -> void:
 			"client_version": _client_version,
 			"item_type": parts[0],
 			"item_id": parts[1],
-			"times_offered": entry["offered"],
-			"times_bought": entry["bought"],
-			"times_acquired": entry["acquired"],
-			"times_sold": entry["sold"],
-			"times_upgraded_into": entry["upgraded_into"],
-			"activations": entry["activations"],
-			"score_contribution": entry["score"],
+			"times_offered": int(entry["offered"]),
+			"times_bought": int(entry["bought"]),
+			"times_acquired": int(entry["acquired"]),
+			"times_sold": int(entry["sold"]),
+			"times_upgraded_into": int(entry["upgraded_into"]),
+			"activations": int(entry["activations"]),
+			"score_contribution": int(entry["score"]),
 			"in_final_loadout": entry["in_final_loadout"],
+			"acquired_at_level": int(entry["acquired_at_level"]),
 			"run_outcome": outcome,
-			"run_final_level": final_level,
+			"run_final_level": int(final_level),
 		})
 
 	# runs before run_items so the dashboard rarely sees orphan items
@@ -303,6 +309,66 @@ func _get_final_loadout_keys() -> Array:
 	return keys
 
 
+## Snapshot of each panel's 5x5 grid at run end: one array of 25 cells per panel,
+## row-major (index = y*5 + x), each cell a rune id string or null for empty.
+const _GRID_SIZE := 5
+
+func _get_final_grid() -> Array:
+	var panels_out: Array = []
+	var panel_manager = get_tree().get_first_node_in_group("panel_manager")
+	if panel_manager and panel_manager.get("panels") != null:
+		for panel in panel_manager.panels:
+			if not panel.grid_manager:
+				continue
+			var cells: Array = []
+			cells.resize(_GRID_SIZE * _GRID_SIZE)
+			cells.fill(null)
+			for slot in panel.grid_manager.grid:
+				if slot.rune and slot.rune.data:
+					var idx: int = slot.grid_position.y * _GRID_SIZE + slot.grid_position.x
+					if idx >= 0 and idx < cells.size():
+						cells[idx] = str(slot.rune.data.id)
+			panels_out.append(cells)
+	return panels_out
+
+
+## Parallel snapshot of the slot modifier applied at each grid position (same
+## layout as _get_final_grid): one array of 25 cells per panel, modifier id or null.
+func _get_final_modifier_grid() -> Array:
+	var panels_out: Array = []
+	var panel_manager = get_tree().get_first_node_in_group("panel_manager")
+	if panel_manager and panel_manager.get("panels") != null:
+		for panel in panel_manager.panels:
+			if not panel.grid_manager:
+				continue
+			var cells: Array = []
+			cells.resize(_GRID_SIZE * _GRID_SIZE)
+			cells.fill(null)
+			for slot in panel.grid_manager.grid:
+				var mod_id := str(slot.slot.slot_modifier_id) if slot.slot else ""
+				if mod_id != "":
+					var idx: int = slot.grid_position.y * _GRID_SIZE + slot.grid_position.x
+					if idx >= 0 and idx < cells.size():
+						cells[idx] = mod_id
+			panels_out.append(cells)
+	return panels_out
+
+
+## Effective target-score curve parameters, read live from GameManager (which
+## already reflects any per-scene @export overrides). Lets the dashboard rebuild
+## the exact curve per run/version instead of hardcoding a copy that drifts.
+## Target(n) = base * (growth_initial + growth_acceleration*(level-1)) ^ (level-1)
+func _get_curve() -> Dictionary:
+	var gm = get_tree().get_first_node_in_group("game_manager")
+	if not gm:
+		return {}
+	return {
+		"base": int(gm.base_target_score),
+		"growth_initial": float(gm.score_growth_initial),
+		"growth_acceleration": float(gm.score_growth_acceleration),
+	}
+
+
 # =============================================================================
 # EVENT HANDLERS (aggregation)
 # =============================================================================
@@ -314,8 +380,15 @@ func _item_entry(item_type: String, item_id: String) -> Dictionary:
 			"offered": 0, "bought": 0, "acquired": 0, "sold": 0,
 			"upgraded_into": 0, "activations": 0, "score": 0,
 			"in_final_loadout": false,
+			"acquired_at_level": -1,  # run level when first bought/acquired (-1 = never)
 		}
 	return _items[key]
+
+
+## Stamp the acquisition level the first time an item is taken (buy or free pick)
+func _stamp_acquired_level(entry: Dictionary) -> void:
+	if entry["acquired_at_level"] < 0:
+		entry["acquired_at_level"] = _get_game_level()
 
 
 func _on_slot_read(event: SlotReadEvent) -> void:
@@ -335,7 +408,9 @@ func _on_relic_activated(event: RelicActivatedEvent) -> void:
 func _on_item_acquired(item_type: StringName, item_id: StringName) -> void:
 	if not _run_active:
 		return
-	_item_entry(str(item_type), str(item_id))["acquired"] += 1
+	var entry := _item_entry(str(item_type), str(item_id))
+	entry["acquired"] += 1
+	_stamp_acquired_level(entry)
 
 
 func _on_planning_action(event: PlanningEvent) -> void:
@@ -351,18 +426,38 @@ func _on_battle_started(_panel_count: int) -> void:
 	_battle_started_msec = Time.get_ticks_msec()
 
 
+## Live game level from the GameManager (single source of truth). battle_ended
+## fires more than once per level (reader.gd per panel + panel_manager at the end),
+## so counting signals double-counts levels — anchor on the real level instead.
+func _get_game_level() -> int:
+	var gm = get_tree().get_first_node_in_group("game_manager")
+	if gm and gm.get("current_level") != null:
+		return int(gm.current_level)
+	return _current_level
+
+
 func _on_battle_ended(total_score: int, target_score: int, victory: bool) -> void:
 	if not _run_active:
 		return
-	_rounds.append({
-		"level": _current_level,
+	# One round per real level. The last write for a level (panel_manager's, after
+	# all panels) carries the final multiplied score, so replace-in-place per level.
+	var lv := _get_game_level()
+	var entry := {
+		"level": lv,
 		"score": total_score,
 		"target": target_score,
 		"victory": victory,
 		"duration_msec": Time.get_ticks_msec() - _battle_started_msec,
-	})
-	if victory:
-		_current_level += 1
+	}
+	var replaced := false
+	for i in _rounds.size():
+		if _rounds[i]["level"] == lv:
+			_rounds[i] = entry
+			replaced = true
+			break
+	if not replaced:
+		_rounds.append(entry)
+	_current_level = lv
 
 
 # Prefixes ride on ShopManager's _spend_money/_add_money source strings; a rename
@@ -393,7 +488,9 @@ func _on_economy_transaction(event: EconomyEvent) -> void:
 		var matched := false
 		for prefix in _BUY_PREFIXES:
 			if source.begins_with(prefix):
-				_item_entry(_BUY_PREFIXES[prefix], source.substr(prefix.length()))["bought"] += 1
+				var bought_entry := _item_entry(_BUY_PREFIXES[prefix], source.substr(prefix.length()))
+				bought_entry["bought"] += 1
+				_stamp_acquired_level(bought_entry)
 				matched = true
 				break
 		if not matched and not source.begins_with("scroll_") \
@@ -456,7 +553,11 @@ func _enqueue(endpoint: String, body: Variant) -> void:
 	if not file:
 		push_error("[Telemetry] Failed to write queue file: %s" % FileAccess.get_open_error())
 		return
-	file.store_string(JSON.stringify({"endpoint": endpoint, "body": body, "attempts": 0}))
+	# Store the body already serialized: Godot's JSON.parse_string turns every JSON
+	# number into a float, so re-stringifying a parsed body would resurrect "270.0"
+	# and Postgres would reject it on bigint columns. Keeping it as an opaque string
+	# means the drain never re-parses the numbers.
+	file.store_string(JSON.stringify({"endpoint": endpoint, "body_json": JSON.stringify(body), "attempts": 0}))
 	file.close()
 	_trim_queue()
 	if not _closing:
@@ -509,9 +610,16 @@ func _drain_queue() -> void:
 		"Content-Type: application/json",
 		"Prefer: return=minimal",
 	]
+	# body_json is a pre-serialized string (numbers already correct). Old queue files
+	# stored the object under "body" instead; re-stringify those as a fallback.
+	var body_str: String = payload.get("body_json", "")
+	if body_str == "":
+		body_str = JSON.stringify(payload.get("body", {}))
 	_uploading = true
-	var err = _http.request(url, headers, HTTPClient.METHOD_POST, JSON.stringify(payload["body"]))
+	print("[Telemetry] POST %s -> %s" % [payload["endpoint"], _current_file.get_file()])
+	var err = _http.request(url, headers, HTTPClient.METHOD_POST, body_str)
 	if err != OK:
+		push_warning("[Telemetry] HTTPRequest failed to start (err %d)" % err)
 		_uploading = false
 		_schedule_retry()
 
@@ -519,6 +627,7 @@ func _drain_queue() -> void:
 func _on_request_completed(result: int, response_code: int, _headers: PackedStringArray, body: PackedByteArray) -> void:
 	_uploading = false
 	if result == HTTPRequest.RESULT_SUCCESS and response_code >= 200 and response_code < 300:
+		print("[Telemetry] Uploaded %s (HTTP %d)" % [_current_file.get_file(), response_code])
 		DirAccess.remove_absolute(_current_file)
 		_session_failures = 0
 		_drain_queue()
@@ -527,13 +636,19 @@ func _on_request_completed(result: int, response_code: int, _headers: PackedStri
 	if response_code >= 400 and response_code < 500:
 		# Client-side problem (schema mismatch, bad key): don't retry forever
 		var attempts := _bump_attempts(_current_file)
-		push_warning("[Telemetry] Upload rejected (%d, attempt %d): %s" % [
-			response_code, attempts, body.get_string_from_utf8().left(200)
-		])
+		# print() so it shows in the Output panel (push_warning only hits Debugger>Errors)
+		var msg := "[Telemetry] Upload REJECTED (HTTP %d, attempt %d): %s" % [
+			response_code, attempts, body.get_string_from_utf8().left(300)
+		]
+		print(msg)
+		push_warning(msg)
 		if attempts >= MAX_ATTEMPTS:
+			print("[Telemetry] Giving up on %s -> dead/" % _current_file.get_file())
 			DirAccess.rename_absolute(_current_file, "%s/%s" % [DEAD_DIR, _current_file.get_file()])
 			_drain_queue()
 			return
+	else:
+		print("[Telemetry] Upload failed (result %d, HTTP %d) — will retry" % [result, response_code])
 
 	_schedule_retry()
 

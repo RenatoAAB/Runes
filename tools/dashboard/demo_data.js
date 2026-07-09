@@ -3,6 +3,8 @@
  * Supabase connection exists. Deterministic: same numbers on every load.
  * window.RUNES_DEMO() -> { runs, items } in the exact shape the REST API returns. */
 (() => {
+  // fictitious target curve params, carried in each run's summary.curve (like real runs)
+  const DEMO_CURVE = { base: 100, growth_initial: 1.5, growth_acceleration: 0.05 };
   // deterministic PRNG so the demo looks the same every time you open it
   let _s = 0x9e3779b9;
   const rnd = () => { _s = (_s * 1103515245 + 12345) & 0x7fffffff; return _s / 0x7fffffff; };
@@ -70,7 +72,7 @@
       const rounds = [];
       let best = 0, total = 0, dur = 0;
       for (let lv = 1; lv <= finalLevel; lv++) {
-        const target = Math.floor(100 * Math.pow(1.5 + 0.05 * (lv - 1), lv - 1));
+        const target = Math.floor(DEMO_CURVE.base * Math.pow(DEMO_CURVE.growth_initial + DEMO_CURVE.growth_acceleration * (lv - 1), lv - 1));
         const score = Math.floor(target * (0.8 + rnd() * 0.5) * lp);
         const d = int(20000, 90000);
         rounds.push({ level: lv, score, target, victory: lv < finalLevel, duration_msec: d });
@@ -96,27 +98,47 @@
           economy: { earned, spent, final_money: Math.max(0, earned - spent + int(0, 20)), spend_by_source: spendBySource },
           upgrades: [],
           final_loadout: loadout,
+          curve: DEMO_CURVE,
         },
       });
 
       const seen = new Set(loadout);
       for (const k of loadout) {
         const [type, id] = splitTypeId(k);
-        const acts = type === "rune" ? int(1, finalLevel * 3) : 0;
+        const acqLevel = int(1, finalLevel);
+        // earlier acquisition = more rounds in play = more activations/value (temporal signal)
+        const span = finalLevel - acqLevel + 1;
+        const acts = type === "rune" ? int(1, span * 3) : 0;
         items.push(mkItem(runId, pid, version, type, id, {
           times_offered: 1, times_bought: rnd() < 0.7 ? 1 : 0, times_acquired: 1,
           times_sold: rnd() < 0.1 ? 1 : 0,
           activations: acts, score_contribution: Math.floor(acts * (30 + (power[k] || 1) * 45)),
-          in_final_loadout: true, run_outcome: outcome, run_final_level: finalLevel,
+          in_final_loadout: true, acquired_at_level: acqLevel,
+          run_outcome: outcome, run_final_level: finalLevel,
         }));
       }
       // items offered but never taken → makes pick-rate / "most ignored" meaningful
       for (const k of pickN([...runeKeys, ...relicKeys], int(2, 6)).filter((k) => !seen.has(k))) {
         const [type, id] = splitTypeId(k);
         items.push(mkItem(runId, pid, version, type, id, {
-          times_offered: 1, in_final_loadout: false, run_outcome: outcome, run_final_level: finalLevel,
+          times_offered: 1, in_final_loadout: false, acquired_at_level: null,
+          run_outcome: outcome, run_final_level: finalLevel,
         }));
       }
+
+      // final panel snapshot: scatter the loadout runes into a 5x5 grid
+      const scatter = (prefix) => {
+        const ids = loadout.filter((k) => k.startsWith(prefix)).map((k) => k.slice(prefix.length));
+        const cells = Array(25).fill(null);
+        const empties = [...Array(25).keys()];
+        for (const id of ids) {
+          if (!empties.length) break;
+          cells[empties.splice(Math.floor(rnd() * empties.length), 1)[0]] = id;
+        }
+        return cells;
+      };
+      runs[runs.length - 1].summary.final_grid = [scatter("rune:")];
+      runs[runs.length - 1].summary.final_modifier_grid = [scatter("slot_modifier:")];
     }
     return { runs, items };
   }

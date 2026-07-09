@@ -49,6 +49,7 @@ create table public.run_items (
   activations    int not null default 0,
   score_contribution bigint not null default 0,
   in_final_loadout boolean not null default false,
+  acquired_at_level int,   -- run level when the item was first bought/acquired (null = never taken)
   -- denormalized so per-item analytics never need a join (anon cannot UPDATE,
   -- and items upload once at run end when the outcome is already known)
   run_outcome    text,
@@ -68,3 +69,9 @@ create policy anon_insert_run_items on public.run_items for insert to anon with 
 create policy anon_select_runs      on public.runs      for select to anon using (true);
 create policy anon_select_run_items on public.run_items for select to anon using (true);
 -- Still no UPDATE/DELETE for anon => rows are append-only from the client's side.
+
+-- ============ Migrations (run only if the table already existed) ============
+-- If you created run_items before the temporal-progression update, add the column:
+--   alter table public.run_items add column if not exists acquired_at_level int;
+-- If you created the tables before dashboard reads used the anon key, add the
+-- select policies above (anon_select_runs / anon_select_run_items).

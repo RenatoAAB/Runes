@@ -288,4 +288,31 @@ tr.hof td { padding: 6px 10px 6px 0; }
 .loadout .sprite { width: 22px; height: 22px; }
 .loadout .sprite.placeholder { font-size: 12px; }
 
+/* final-panel snapshot: rune grid + modifier grid side by side + off-grid strip */
+.snapshot { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.grid-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.grid-labelled { display: flex; flex-direction: column; gap: 3px; }
+.grid-cap { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+.grid-snapshot {
+  display: grid;
+  grid-template-columns: repeat(5, 26px);
+  grid-auto-rows: 26px;
+  gap: 2px;
+  padding: 3px;
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.grid-snapshot .gcell {
+  width: 26px; height: 26px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--border) 40%, transparent);
+}
+.grid-snapshot .gcell.filled { background: var(--surface); }
+.grid-snapshot .sprite { width: 26px; height: 26px; }
+.grid-snapshot .sprite.placeholder { font-size: 13px; border-radius: 4px; }
+.snapshot .extras { display: flex; gap: 2px; flex-wrap: wrap; max-width: 140px; }
+.snapshot .extras .sprite { width: 22px; height: 22px; }
+.snapshot .extras .sprite.placeholder { font-size: 12px; }
+
 .deadliest { font-size: 13px; color: var(--ink-2); margin-top: 8px; }
