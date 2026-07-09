@@ -465,13 +465,12 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	if data.has("piece_data") and grid_coord != Vector2i(-1, -1):
 		# Request drag preview highlighting on the grid
 		var mc = get_tree().get_first_node_in_group("main_controller")
-		if not is_unlocked:
-			if mc and mc.has_method("show_piece_drag_preview"):
-				mc.show_piece_drag_preview(data.get("piece_instance"), data["piece_data"], grid_coord)
-		else:
-			# Hovering unlocked slot with a piece — clear any previous preview
-			if mc and mc.has_method("clear_piece_drag_preview"):
-				mc.clear_piece_drag_preview()
+		if mc and mc.has_method("show_piece_drag_preview"):
+			mc.show_piece_drag_preview(data.get("piece_instance"), data["piece_data"], grid_coord)
+
+		# Validity must be based on the actual piece shape placement, not anchor slot state.
+		if mc and mc.has_method("can_place_piece_at_coord"):
+			return mc.can_place_piece_at_coord(data.get("piece_instance"), data["piece_data"], grid_coord)
 		return not is_unlocked
 	
 	return false

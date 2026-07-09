@@ -153,22 +153,28 @@ func start_game() -> void:
 	is_initial_setup = true
 	_bind_panel_manager()
 
+	var shop_manager = null
 	if _main_controller and _main_controller.has_method("get_shop_manager"):
-		var shop_manager = _main_controller.get_shop_manager()
+		shop_manager = _main_controller.get_shop_manager()
 		if shop_manager:
 			shop_manager.reset_elemental_probabilities()
 
 	if _panel_manager:
 		_panel_manager.full_reset_all_panels()
-	
+
 	# Clear all grids via panel manager (grid_manager getter may return null before panels are ready)
 	if grid_manager:
 		grid_manager.clear_grid()
-	
+
 	# Reset run statistics (including money) when starting a new game
 	var stats = get_node_or_null("/root/Stats")
 	if stats and stats.has_method("start_new_run"):
 		stats.start_new_run()
+
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		var run_seed: int = shop_manager.get_seed() if shop_manager else 0
+		event_bus.run_started.emit(run_seed, 1)
 	
 	# Refresh shop inventory at game start
 	_refresh_shop_after_victory()
@@ -318,6 +324,13 @@ func _refresh_shop_after_victory() -> void:
 
 func _handle_loss() -> void:
 	print("Defeat!")
+	# When a win condition exists, _handle_win must mirror these two calls with victory = true
+	var stats = get_node_or_null("/root/Stats")
+	if stats and stats.has_method("end_run"):
+		stats.end_run(false)
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		event_bus.run_ended.emit(false, current_level)
 	game_lost.emit(current_level)
 	# Restart or Game Over logic
 	# For now, just restart

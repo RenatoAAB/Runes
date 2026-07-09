@@ -30,6 +30,7 @@ func add_rune(rune: RuneInstance) -> bool:
 		return false
 	slots[empty_slot] = rune
 	inventory_updated.emit()
+	_notify_acquired(rune)
 	return true
 
 
@@ -41,7 +42,14 @@ func add_rune_at(rune: RuneInstance, index: int) -> bool:
 		return false  # Slot is occupied
 	slots[index] = rune
 	inventory_updated.emit()
+	_notify_acquired(rune)
 	return true
+
+
+func _notify_acquired(rune: RuneInstance) -> void:
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus and rune and rune.data:
+		event_bus.item_acquired.emit(&"rune", StringName(rune.data.id))
 
 
 ## Remove a rune from inventory (finds it and clears the slot)

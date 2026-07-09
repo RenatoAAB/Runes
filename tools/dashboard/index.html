@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="format-detection" content="telephone=no">
+<title>Runas — Balanceamento Beta</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header>
+  <h1>◈ Runas — Balanceamento Beta</h1>
+  <span class="status" id="status">sem dados</span>
+  <span class="spacer"></span>
+  <button id="btn-refresh" class="primary">Atualizar</button>
+  <button id="btn-demo" title="Ver o dashboard com dados de exemplo (sem conexão)">▶ Exemplo</button>
+  <button id="btn-snapshot" title="Baixar os dados atuais como arquivo">⇩ Snapshot</button>
+  <button id="btn-load" title="Carregar um snapshot salvo">⇧ Carregar</button>
+  <button id="btn-config" title="Conexão com o Supabase">⚙</button>
+  <input type="file" id="file-snapshot" accept=".json" hidden>
+</header>
+
+<div id="settings" hidden>
+  <input type="text" id="cfg-url" placeholder="https://xxxx.supabase.co" autocomplete="off">
+  <input type="password" id="cfg-key" placeholder="anon / publishable key" autocomplete="off">
+  <button id="cfg-save" class="primary">Salvar e atualizar</button>
+  <div class="warn">Use a <b>anon</b> (ou <b>publishable</b>) key — a mesma do jogo, não a
+    secret/service_role (o navegador bloqueia keys secretas). A leitura exige a policy
+    <code>anon_select_*</code> do <code>schema.sql</code>. A key fica só no localStorage
+    deste navegador.</div>
+</div>
+
+<div id="filters">
+  <label>Versões:</label>
+  <span id="version-chips"></span>
+  <label>Resultado:</label>
+  <select id="f-outcome">
+    <option value="all">todos</option>
+    <option value="loss">derrota</option>
+    <option value="win">vitória</option>
+    <option value="abandoned">abandonada</option>
+  </select>
+  <label>Período:</label>
+  <select id="f-days">
+    <option value="0">tudo</option>
+    <option value="7">últimos 7 dias</option>
+    <option value="30">últimos 30 dias</option>
+    <option value="90">últimos 90 dias</option>
+  </select>
+  <label>Run profunda ≥ nível</label>
+  <input type="number" id="f-threshold" min="1" max="99" style="width:64px">
+</div>
+
+<nav class="tabs">
+  <button data-tab="items" class="active">Itens</button>
+  <button data-tab="scores">Pontuações</button>
+  <button data-tab="funnel">Funil</button>
+  <button data-tab="economy">Economia</button>
+</nav>
+
+<main id="content"></main>
+
+<dialog id="detail"></dialog>
+<div id="tooltip"></div>
+
+<script src="assets/manifest.js"></script>
+<script src="demo_data.js"></script>
+<script src="charts.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

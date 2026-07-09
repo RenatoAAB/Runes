@@ -1,3 +1,6 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+
+# Telemetry credentials (copy telemetry.cfg.example -> telemetry.cfg)
+telemetry.cfg

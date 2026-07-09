@@ -31,6 +31,12 @@ func _ready() -> void:
 	add_to_group("extra_inventory")
 
 
+func _notify_acquired(item_type: StringName, item_id: String) -> void:
+	var event_bus = get_node_or_null("/root/EventBus")
+	if event_bus:
+		event_bus.item_acquired.emit(item_type, StringName(item_id))
+
+
 # --- Relic Management ---
 
 ## Add a relic to the inventory
@@ -45,6 +51,7 @@ func add_relic(relic: RelicInstance) -> bool:
 	relics.append(relic)
 	relic_added.emit(relic)
 	inventory_changed.emit()
+	_notify_acquired(&"relic", relic.data.id)
 	return true
 
 
@@ -97,6 +104,7 @@ func add_modifier(modifier: SlotModifierData) -> bool:
 	modifiers.append(modifier)
 	modifier_added.emit(modifier)
 	inventory_changed.emit()
+	_notify_acquired(&"slot_modifier", modifier.id)
 	return true
 
 
@@ -144,6 +152,7 @@ func add_slot_piece(piece: SlotPieceInstance) -> bool:
 	slot_pieces.append(piece)
 	piece_added.emit(piece)
 	inventory_changed.emit()
+	_notify_acquired(&"slot_piece", piece.data.id)
 	return true
 
 

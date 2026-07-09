@@ -101,6 +101,7 @@ func _ready() -> void:
 		event_bus.economy_transaction.connect(_on_economy_transaction)
 		event_bus.battle_started.connect(_on_battle_started)
 		event_bus.battle_ended.connect(_on_battle_ended)
+		event_bus.item_acquired.connect(_on_item_acquired)
 		print("[Stats] Connected to EventBus")
 	else:
 		push_warning("[Stats] EventBus not found - statistics will not be tracked")
@@ -222,6 +223,11 @@ func _on_planning_action(event: PlanningEvent) -> void:
 			})
 
 
+func _on_item_acquired(item_type: StringName, item_id: StringName) -> void:
+	if item_type == &"rune":
+		run["runes_acquired"].append(str(item_id))
+
+
 func _on_economy_transaction(event: EconomyEvent) -> void:
 	run["money"] = event.balance_after
 	
@@ -249,6 +255,9 @@ func start_new_run() -> void:
 func end_run(victory: bool) -> void:
 	_finalize_run(victory)
 	save_history()
+	# Reset immediately so start_new_run's rounds_played guard doesn't finalize this run a second time
+	_reset_run_stats()
+	_reset_battle_stats()
 
 
 func _finalize_run(victory: bool) -> void:

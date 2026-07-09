@@ -9,6 +9,9 @@ signal shop_updated  # Emitted when shop inventory changes
 signal transaction_completed(success: bool, message: String)
 signal insufficient_funds(cost: int, balance: int)
 signal free_pick_available(count: int)  # Emitted when free picks are available
+# Emitted only when new offers are stocked (refresh/scroll/reroll), never on purchases —
+# purchases also fire shop_updated, which would inflate "times offered" telemetry
+signal shop_stocked(offers: Array[Dictionary])  # [{"type": "rune", "id": "..."}]
 
 # --- Shop Inventory ---
 var available_runes: Array[RuneData] = []
@@ -174,7 +177,25 @@ func refresh_shop(player_level: int = 1) -> void:
 		available_runes.size(), available_pieces.size(),
 		available_modifiers.size(), available_relics.size()
 	])
+	_emit_shop_stocked(true, true, true, true)
 	shop_updated.emit()
+
+
+func _emit_shop_stocked(runes: bool, pieces: bool, mods: bool, relics: bool) -> void:
+	var offers: Array[Dictionary] = []
+	if runes:
+		for rune_data in available_runes:
+			offers.append({"type": "rune", "id": str(rune_data.id)})
+	if pieces:
+		for piece_data in available_pieces:
+			offers.append({"type": "slot_piece", "id": str(piece_data.id)})
+	if mods:
+		for modifier_data in available_modifiers:
+			offers.append({"type": "slot_modifier", "id": str(modifier_data.id)})
+	if relics:
+		for relic_data in available_relics:
+			offers.append({"type": "relic", "id": str(relic_data.id)})
+	shop_stocked.emit(offers)
 
 
 ## Get the current scroll (pergaminho) cost: base + number already purchased
@@ -235,6 +256,7 @@ func buy_scroll() -> bool:
 	
 	print("[Shop] Scroll #%d purchased for %d mana" % [_scroll_count, cost])
 	transaction_completed.emit(true, "Scroll #%d — %d mana" % [_scroll_count, cost])
+	_emit_shop_stocked(true, false, false, false)
 	shop_updated.emit()
 	return true
 
@@ -707,6 +729,7 @@ func reroll_relic() -> bool:
 	
 	print("[Shop] Relic rerolled successfully")
 	transaction_completed.emit(true, "Relic rerolled for 1 mana")
+	_emit_shop_stocked(false, false, false, true)
 	shop_updated.emit()
 	return true
 

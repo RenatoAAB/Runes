@@ -32,6 +32,15 @@ signal battle_started(panel_count: int)
 ## Emitted when the battle sequence ends
 signal battle_ended(total_score: int, target_score: int, victory: bool)
 
+## Emitted when a new run begins (seed from ShopManager, starting level)
+signal run_started(run_seed: int, level: int)
+
+## Emitted when a run ends (loss today; win when a victory condition exists)
+signal run_ended(victory: bool, final_level: int)
+
+## Emitted when the player acquires any item (shop, reward, free pick, starting items)
+signal item_acquired(item_type: StringName, item_id: StringName)
+
 # --- Trigger Signals (for non-ON_READ effects) ---
 
 ## Emitted when a rune is destroyed

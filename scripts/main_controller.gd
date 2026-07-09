@@ -991,6 +991,27 @@ func show_piece_drag_preview(piece: SlotPieceInstance, piece_data: SlotPieceData
 			slot_ui.set_buff_highlight(color)
 
 
+## Check whether a slot piece can be placed at a coordinate using its effective shape.
+## This intentionally validates by covered cells, not by the anchor slot lock state.
+func can_place_piece_at_coord(piece: SlotPieceInstance, piece_data: SlotPieceData, base_coord: Vector2i) -> bool:
+	if not _panel_manager:
+		return false
+	var panel := _panel_manager.get_panel(_current_panel_index)
+	if not panel:
+		return false
+
+	var shape: Array[Vector2i] = []
+	if piece:
+		shape = piece.get_current_shape()
+	elif piece_data:
+		shape = piece_data.shape
+
+	if shape.is_empty():
+		return false
+
+	return panel.can_place_piece(shape, base_coord)
+
+
 ## Clear all piece drag preview highlights from the grid.
 func clear_piece_drag_preview() -> void:
 	for coord in _piece_preview_coords:

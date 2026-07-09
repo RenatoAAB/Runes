@@ -1,0 +1,13 @@
+; Beta telemetry configuration.
+; Copy this file to telemetry.cfg (gitignored) and fill in your Supabase project values.
+; Without telemetry.cfg the game runs with telemetry silently disabled.
+; The anon key is safe to ship in beta builds: RLS only allows INSERTs with it.
+
+[supabase]
+url="https://YOUR-PROJECT.supabase.co"
+anon_key="eyJ..."
+
+[telemetry]
+enabled=true
+; Telemetry is off when running from the editor unless this is true (for testing)
+allow_in_editor=false
