@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_f3g1c"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_trigger_or_buff_column.tres" id="2_e1"]
-[ext_resource type="Texture2D" uid="uid://dk7nb81ul12tx" path="res://sprites/icons/runes/Icon28.png" id="3_tex"]
+[ext_resource type="Resource" uid="uid://c8ho2wwvs3g8l" path="res://resources/effects/rune_effects/ge_s3_trigger_or_buff_column.tres" id="2_e1"]
+[ext_resource type="Texture2D" uid="uid://2yf0eqq337t3" path="res://sprites/runes/geada.png" id="4_f3g1c"]
 
 [resource]
 script = ExtResource("1_data")
@@ -12,5 +12,5 @@ rune_name = "Geada"
 description = "Ative todas as runas da coluna simultaneamente. Runas com 0 ativacoes recebem +1 ativacao no lugar."
 rarity = 2
 elements = Array[int]([1, 3])
-textures = Array[Texture2D]([ExtResource("3_tex")])
+textures = Array[Texture2D]([ExtResource("4_f3g1c")])
 effects = Array[ExtResource("1_f3g1c")]([ExtResource("2_e1")])

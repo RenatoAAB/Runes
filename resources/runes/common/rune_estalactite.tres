@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_mplys"]
 [ext_resource type="Resource" uid="uid://qiogqiccumgk" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://4f5d7tv6mif8" path="res://resources/effects/rune_effects/ge_s4_perm_20_if_formation_border.tres" id="3_e2"]
-[ext_resource type="Texture2D" uid="uid://br1lx2dn384u2" path="res://sprites/runes/rune_037.png" id="5_n4lfw"]
+[ext_resource type="Texture2D" uid="uid://br1lx2dn384u2" path="res://sprites/runes/estalactite.png" id="5_n4lfw"]
 
 [resource]
 script = ExtResource("1_data")

@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Resource" uid="uid://b2yw1yrfif8y" path="res://resources/effects/rune_effects/ge_s3_reader_back_1.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://m5bksqe7yxjk" path="res://resources/effects/rune_effects/ge_s4_reader_back_2_if_not_first.tres" id="3_e2"]
-[ext_resource type="Texture2D" uid="uid://2i5scdakf24s" path="res://sprites/runes/rune_025.png" id="5_m2j35"]
+[ext_resource type="Texture2D" uid="uid://2i5scdakf24s" path="res://sprites/runes/sopro.png" id="5_m2j35"]
 
 [resource]
 script = ExtResource("1_data")

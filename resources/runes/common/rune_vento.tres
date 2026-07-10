@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_fjois"]
 [ext_resource type="Resource" uid="uid://eoretnntv03p" path="res://resources/effects/rune_effects/ge_reader_back_2.tres" id="2_e1"]
-[ext_resource type="Texture2D" uid="uid://bj2n3kcvakbir" path="res://sprites/runes/rune_022.png" id="4_0781h"]
+[ext_resource type="Texture2D" uid="uid://bjduxsj0ojk2g" path="res://sprites/runes/vento.png" id="4_fjois"]
 
 [resource]
 script = ExtResource("1_data")
@@ -11,5 +11,5 @@ id = "vento"
 rune_name = "Vento"
 description = "Reader retorna 2 slots."
 elements = Array[int]([3])
-textures = Array[Texture2D]([ExtResource("4_0781h")])
+textures = Array[Texture2D]([ExtResource("4_fjois")])
 effects = Array[ExtResource("1_fjois")]([ExtResource("2_e1")])

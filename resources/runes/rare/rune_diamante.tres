@@ -5,7 +5,7 @@
 [ext_resource type="Resource" uid="uid://qiogqiccumgk" path="res://resources/effects/rune_effects/ge_score_10.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://bkgcplqxd0hr4" path="res://resources/effects/rune_effects/ge_s4_perm_50_if_formation_center.tres" id="3_e2"]
 [ext_resource type="Resource" uid="uid://6stsv5kqk5fl" path="res://resources/effects/rune_effects/ge_petrify_self.tres" id="4_e3"]
-[ext_resource type="Texture2D" uid="uid://dp8nq64w3v8bf" path="res://sprites/runes/rune_038.png" id="6_eptnt"]
+[ext_resource type="Texture2D" uid="uid://dp8nq64w3v8bf" path="res://sprites/runes/diamante.png" id="6_eptnt"]
 
 [resource]
 script = ExtResource("1_data")

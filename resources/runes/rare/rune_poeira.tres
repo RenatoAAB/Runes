@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_y23xp"]
 [ext_resource type="Resource" uid="uid://b2yw1yrfif8y" path="res://resources/effects/rune_effects/ge_s3_reader_back_1.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://c5onyjhlaqv63" path="res://resources/effects/rune_effects/ge_s3_buff_self_1_perm.tres" id="3_e2"]
-[ext_resource type="Texture2D" uid="uid://n2u3u4q6apqk" path="res://sprites/icons/runes/Icon31.png" id="4_tex"]
+[ext_resource type="Texture2D" uid="uid://da8n6ehjs8yxf" path="res://sprites/runes/poeira.png" id="5_y23xp"]
 
 [resource]
 script = ExtResource("1_data")
@@ -13,5 +13,5 @@ rune_name = "Poeira"
 description = "Reader volta 1 casa. +1 retorno do Reader permanente."
 rarity = 2
 elements = Array[int]([3, 2])
-textures = Array[Texture2D]([ExtResource("4_tex")])
+textures = Array[Texture2D]([ExtResource("5_y23xp")])
 effects = Array[ExtResource("1_y23xp")]([ExtResource("2_e1"), ExtResource("3_e2")])

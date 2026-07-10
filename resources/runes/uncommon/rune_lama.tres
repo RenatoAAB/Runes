@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=6 format=3 uid="uid://dwoc84whdb8dy"]
 
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_ay7hu"]
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_buff_adj_earth_perm.tres" id="2_e1"]
-[ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s3_destroy_self.tres" id="3_e2"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon2.png" id="4_tex"]
+[ext_resource type="Resource" uid="uid://djnqtq0ky3lvu" path="res://resources/effects/rune_effects/ge_s3_buff_adj_earth_perm.tres" id="2_e1"]
+[ext_resource type="Resource" uid="uid://hj3ahv884kgi" path="res://resources/effects/rune_effects/ge_s3_destroy_self.tres" id="3_e2"]
+[ext_resource type="Texture2D" uid="uid://c482fh6cdem6h" path="res://sprites/runes/lama.png" id="5_dqj55"]
 
 [resource]
 script = ExtResource("1_data")
@@ -12,5 +13,5 @@ rune_name = "Lama"
 description = "+1 ativacao permanente para runas de terra adjacentes. Destrua essa runa."
 rarity = 1
 elements = Array[int]([1, 2])
-textures = Array[Texture2D]([ExtResource("4_tex")])
-effects = [ExtResource("2_e1"), ExtResource("3_e2")]
+textures = Array[Texture2D]([ExtResource("5_dqj55")])
+effects = Array[ExtResource("1_ay7hu")]([ExtResource("2_e1"), ExtResource("3_e2")])

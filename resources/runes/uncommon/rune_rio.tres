@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_wvmwp"]
 [ext_resource type="Resource" uid="uid://cbncr1rtadwvh" path="res://resources/effects/rune_effects/ge_s3_buff_row_if_2earth.tres" id="2_e1"]
-[ext_resource type="Texture2D" uid="uid://qm2tb6gfrtd2" path="res://sprites/runes/rune_015.png" id="4_00qqs"]
+[ext_resource type="Texture2D" uid="uid://qm2tb6gfrtd2" path="res://sprites/runes/rio.png" id="4_00qqs"]
 
 [resource]
 script = ExtResource("1_data")

@@ -1,0 +1,58 @@
+# ============================================================================
+# rune_layout.tsv  —  Mapa da grade do spritesheet de runas
+# ----------------------------------------------------------------------------
+# Fonte da ORDEM: docs do Obsidian (vault Psicodelila) — a ordem dos elementos
+# descritos lá = ordem das LINHAS aqui. A COLUNA 0 é referência visual (pulada).
+# Regra dos combos: 2 combinações de 2 elementos do Obsidian = 1 linha aqui
+# (ex.: Fogo+Terra e Fogo+Água na mesma linha).
+# Células de pixels vazios também ficam em branco (não exportam).
+#
+# FORMATO (separado por TAB):
+#   <Y>  <col0>  <col1>  <col2>  ...
+#   - Y        = índice da linha na grade (0-based). tile Y em pixels = Y * 32.
+#   - col0     = coluna de referência visual  -> sempre vazia (pulada).
+#   - colN     = id da runa naquela célula. tile X em pixels = N * 32.
+#   - célula vazia = pula (não exporta).
+#   - linhas começando com '#' ou vazias são ignoradas.
+#
+# O id aqui vira o nome do arquivo: sprites/runes/<id>.png, e casa com o
+# recurso resources/runes/**/rune_<id>.tres (mesmo id).
+#
+# Índice numérico legado = Y*10 + colN + 1  (ex: Y=0,col1 -> 002 -> incendio).
+# ============================================================================
+#
+# col:	0(ref)	1	2	3	4	5	6	7	8	9
+
+# --- Fogo (linha 0) -----------------------------------------------------------
+0		incendio	plasma	calor	explosao	queimadura	derretimento	labareda	supernova
+
+# --- Água (linha 1) -----------------------------------------------------------
+1		gota	lago	chuva	rio	cachoeira	fluxo	mar
+
+# --- Ar (linha 2) -------------------------------------------------------------
+2		vento	redemoinho	pressao	sopro	vendaval	brisa	furacao
+
+# --- Terra (linha 3) ----------------------------------------------------------
+3		rocha	quartzo	ametista	topazio	esmeralda	estalactite	diamante	rubi
+
+# --- Fogo+Terra | Fogo+Água (linha 4) --- [VERIFICAR ordem/colunas] -----------
+4		lava	obsidiana	erupcao	oleo	acido	borbulhar	ebulicao
+
+# --- Fogo+Ar | Água+Terra (linha 5) --- [VERIFICAR ordem/colunas] -------------
+5		raio	eletricidade	conveccao	gelo	lama	praia
+
+# --- Água+Ar | Ar+Terra (linha 6) --- [VERIFICAR: bate com rune_062..068] -----
+6		corrente	geada	bolha	nuvem	areia	poeira	sedimentacao
+
+# ============================================================================
+# TODO — Espírito pra frente (não preencher agora):
+#   Espírito [4]:     trevas  luz  caos  tempo  ordem  entropia  mudanca  pleroma  vacuo
+#   Esp+Fogo [4,0]:   fenix
+#   Esp+Água [4,1]:   empatia  ninfa
+#   Esp+Ar [4,3]:     djinn
+#   Esp+Terra [4,2]:  golem
+#   Triplos:          vida[4,2,1]  estagnacao[2,1,3]  gravidade[2,1,0]  instabilidade[1,3,0]
+#
+# 7
+# 8
+# 9

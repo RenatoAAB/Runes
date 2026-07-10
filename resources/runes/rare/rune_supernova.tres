@@ -5,7 +5,7 @@
 [ext_resource type="Resource" uid="uid://dnsotcepqyypq" path="res://resources/effects/rune_effects/ge_s3_supernova_score_500.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://6stsv5kqk5fl" path="res://resources/effects/rune_effects/ge_petrify_self.tres" id="3_e2"]
 [ext_resource type="Resource" uid="uid://d38gny7bh6f8o" path="res://resources/effects/rune_effects/ge_s3_anomaly_column_not_self.tres" id="4_e3"]
-[ext_resource type="Texture2D" uid="uid://8lpvvute1xla" path="res://sprites/runes/rune_009.png" id="6_b4yyt"]
+[ext_resource type="Texture2D" uid="uid://8lpvvute1xla" path="res://sprites/runes/supernova.png" id="6_b4yyt"]
 
 [resource]
 script = ExtResource("1_data")

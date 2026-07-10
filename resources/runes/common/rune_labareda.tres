@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Resource" uid="uid://df3gxuc2oop5d" path="res://resources/effects/rune_effects/ge_s3_labareda_score_100.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://ci2snk4kpph2r" path="res://resources/effects/rune_effects/ge_s3_labareda_bonus_fire.tres" id="3_e2"]
-[ext_resource type="Texture2D" uid="uid://dqjh7mmh6xosa" path="res://sprites/runes/rune_008.png" id="5_tg064"]
+[ext_resource type="Texture2D" uid="uid://dqjh7mmh6xosa" path="res://sprites/runes/labareda.png" id="5_tg064"]
 
 [resource]
 script = ExtResource("1_data")

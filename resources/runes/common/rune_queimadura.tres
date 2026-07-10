@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
 [ext_resource type="Resource" uid="uid://hkusr1c482ca" path="res://resources/effects/rune_effects/ge_s3_explosao_score_200.tres" id="2_e1"]
 [ext_resource type="Resource" uid="uid://ddnw4rq1we1c3" path="res://resources/effects/rune_effects/ge_s3_apply_anomaly_adj_random.tres" id="3_e2"]
-[ext_resource type="Texture2D" uid="uid://kcywnfme62sa" path="res://sprites/runes/rune_006.png" id="5_55gdg"]
+[ext_resource type="Texture2D" uid="uid://kcywnfme62sa" path="res://sprites/runes/queimadura.png" id="5_55gdg"]
 
 [resource]
 script = ExtResource("1_data")

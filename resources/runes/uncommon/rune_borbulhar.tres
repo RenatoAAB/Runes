@@ -1,11 +1,12 @@
-[gd_resource type="Resource" script_class="RuneData" load_steps=7 format=3]
+[gd_resource type="Resource" script_class="RuneData" load_steps=8 format=3 uid="uid://b25xug6468tiu"]
 
 [ext_resource type="Script" uid="uid://s48ipf5uo7mv" path="res://scripts/data/rune_data.gd" id="1_data"]
+[ext_resource type="Script" uid="uid://d4g7y7o1d6ou" path="res://scripts/effects/game_effect.gd" id="1_te72g"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_apply_residue_above.tres" id="2_e1"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_apply_residue_right.tres" id="3_e2"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_apply_residue_left.tres" id="4_e3"]
 [ext_resource type="Resource" path="res://resources/effects/rune_effects/ge_s4_apply_anomaly_below.tres" id="5_e4"]
-[ext_resource type="Texture2D" path="res://sprites/icons/runes/Icon8.png" id="6_tex"]
+[ext_resource type="Texture2D" uid="uid://bx3emvqwptfdj" path="res://sprites/runes/borbulhar.png" id="7_xo607"]
 
 [resource]
 script = ExtResource("1_data")
@@ -14,5 +15,5 @@ rune_name = "Borbulhar"
 description = "Gera resíduo de mana em cima, à direita e à esquerda. Gera anomalia de mana embaixo."
 rarity = 1
 elements = Array[int]([0, 1])
-textures = Array[Texture2D]([ExtResource("6_tex")])
-effects = [ExtResource("2_e1"), ExtResource("3_e2"), ExtResource("4_e3"), ExtResource("5_e4")]
+textures = Array[Texture2D]([ExtResource("7_xo607")])
+effects = Array[ExtResource("1_te72g")]([ExtResource("2_e1"), ExtResource("3_e2"), ExtResource("4_e3"), ExtResource("5_e4")])
