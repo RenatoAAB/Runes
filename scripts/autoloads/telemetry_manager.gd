@@ -494,7 +494,7 @@ func _on_economy_transaction(event: EconomyEvent) -> void:
 				matched = true
 				break
 		if not matched and not source.begins_with("scroll_") \
-				and source not in ["overclock_machinery", "relic_reroll", "upgrade_rune", "panel_unlock", "pedestal_reset"] \
+				and source not in ["overclock_machinery", "relic_reroll", "upgrade_rune", "panel_unlock", "pedestal_neutral"] \
 				and not source.begins_with("pedestal_adjust_"):
 			push_warning("[Telemetry] Unknown SHOP_PURCHASE source: %s" % source)
 	elif event.transaction_type == EconomyEvent.TransactionType.SHOP_SELL:

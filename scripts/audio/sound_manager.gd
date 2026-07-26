@@ -47,6 +47,10 @@ var _shop_manager: Node
 ## Currently connected Reader instance (changes per-panel)
 var _connected_reader: Reader
 
+## True once some rune has sounded during the current reader step.
+## Used to decide between cutting the previous note and stacking a chord.
+var _step_has_sound: bool = false
+
 
 func _ready() -> void:
 	# Try to load default resources if none assigned
@@ -107,6 +111,7 @@ func _connect_signals() -> void:
 		_safe_connect(_event_bus, "relic_activated", _on_relic_activated)
 		_safe_connect(_event_bus, "infinite_loop_detected", _on_infinite_loop)
 		_safe_connect(_event_bus, "slot_read", _on_slot_read)
+		_safe_connect(_event_bus, "rune_activation_started", _on_rune_activation_started)
 		_safe_connect(_event_bus, "drag_started", _on_drag_started)
 		_safe_connect(_event_bus, "drag_ended", _on_drag_ended)
 
@@ -174,6 +179,8 @@ func _bind_reader(panel: Object) -> void:
 			_connected_reader.step_started.disconnect(_on_step_started)
 		if _connected_reader.step_completed.is_connected(_on_step_completed):
 			_connected_reader.step_completed.disconnect(_on_step_completed)
+		if _connected_reader.rune_skipped.is_connected(_on_rune_skipped):
+			_connected_reader.rune_skipped.disconnect(_on_rune_skipped)
 		_connected_reader = null
 
 	if panel == null:
@@ -184,6 +191,7 @@ func _bind_reader(panel: Object) -> void:
 		_connected_reader = reader_ref
 		_connected_reader.step_started.connect(_on_step_started)
 		_connected_reader.step_completed.connect(_on_step_completed)
+		_connected_reader.rune_skipped.connect(_on_rune_skipped)
 
 
 func _get_active_grid_manager() -> GridManager:
@@ -239,7 +247,11 @@ func _set_bus_volume(bus_name: String, linear: float) -> void:
 # Signal handlers — Reader step events (connected per-panel)
 # ===========================================================================
 
+## Reader entered a slot. Only empty slots make noise here — runes are handled by
+## _on_rune_activation_started, so an exhausted/disabled rune stays silent.
 func _on_step_started(coord: Vector2i) -> void:
+	_step_has_sound = false
+
 	var gm = _get_active_grid_manager()
 	if not gm:
 		return
@@ -248,13 +260,15 @@ func _on_step_started(coord: Vector2i) -> void:
 	if not slot:
 		return
 
-	# Empty slot handling
 	if slot.is_empty():
 		if sfx_bank and sfx_bank.play_empty_slot_sound and sfx_bank.empty_slot_tick:
 			_play_sfx(sfx_bank.empty_slot_tick)
-		return
 
-	var rune: RuneInstance = slot.rune
+
+## A rune actually started activating — this is what makes sound.
+## Fired for every activation source: reader step, triggered activation,
+## simultaneous batch and connector chain.
+func _on_rune_activation_started(_slot: GridSlot, rune: RuneInstance, _batch_id: int) -> void:
 	if not rune:
 		return
 
@@ -265,10 +279,22 @@ func _on_step_started(coord: Vector2i) -> void:
 	match battle_audio_mode:
 		BattleAudioMode.SYMPHONY:
 			if symphony_enabled and runic_symphony:
-				runic_symphony.play_rune_sound(rune, activation_count)
+				# The first activation of a step cuts the previous note; extra
+				# activations in the same step stack into a chord.
+				runic_symphony.play_rune_sound(rune, activation_count, _step_has_sound)
 		BattleAudioMode.BATTLE_TRACK:
-			if sfx_bank and sfx_bank.rune_beat_tick:
+			# One beat per step: chained activations don't machine-gun the tick
+			if not _step_has_sound and sfx_bank and sfx_bank.rune_beat_tick:
 				_play_sfx(sfx_bank.rune_beat_tick)
+
+	_step_has_sound = true
+
+
+## The reader passed a rune that could not activate (exhausted, disabled, skipped).
+## Silent by default; opt-in via SFXBank.play_inert_rune_sound.
+func _on_rune_skipped(_coord: Vector2i, _rune: RuneInstance, _reason: StringName) -> void:
+	if sfx_bank and sfx_bank.play_inert_rune_sound and sfx_bank.inert_rune_tick:
+		_play_sfx(sfx_bank.inert_rune_tick)
 
 
 func _on_step_completed(_coord: Vector2i) -> void:

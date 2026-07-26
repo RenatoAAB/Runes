@@ -14,6 +14,10 @@ extends RefCounted
 signal score_event(amount: int, source: RuneInstance)
 signal reader_jump_request(index: int)
 signal rune_activation_queued(slot: GridSlot)
+## Emitted the instant a rune starts activating, from ANY source: reader step,
+## triggered activation, simultaneous batch or connector chain.
+## batch_id is the simultaneous batch id, or -1 when not in a batch.
+signal rune_activation_started(slot: GridSlot, rune: RuneInstance, batch_id: int)
 signal rune_destroyed(slot: GridSlot, rune: RuneInstance)
 signal rune_created(slot: GridSlot, rune: RuneInstance)
 

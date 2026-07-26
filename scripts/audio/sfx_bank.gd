@@ -21,6 +21,7 @@ extends Resource
 @export var rune_destroy: AudioStream
 @export var rune_create: AudioStream
 @export var empty_slot_tick: AudioStream   ## Subtle tick when reader passes an empty slot
+@export var inert_rune_tick: AudioStream    ## Subtle tick when reader passes a rune that cannot activate
 @export var rune_beat_tick: AudioStream     ## Simple beat per rune (BATTLE_TRACK mode)
 @export var relic_activate: AudioStream
 @export var score_pop: AudioStream
@@ -34,6 +35,9 @@ extends Resource
 @export_group("Empty Slot")
 ## If true, plays empty_slot_tick when reader passes through an empty slot
 @export var play_empty_slot_sound: bool = true
+## If true, plays inert_rune_tick when the reader passes a rune that does not activate
+## (0 activations left, disabled or skipped by residue). Off by default: no activation, no sound.
+@export var play_inert_rune_sound: bool = false
 
 
 ## Generic lookup by event name for extensibility.
@@ -52,6 +56,7 @@ func get_sfx(event_name: StringName) -> AudioStream:
 		&"rune_destroy": return rune_destroy
 		&"rune_create": return rune_create
 		&"empty_slot_tick": return empty_slot_tick
+		&"inert_rune_tick": return inert_rune_tick
 		&"rune_beat_tick": return rune_beat_tick
 		&"relic_activate": return relic_activate
 		&"score_pop": return score_pop

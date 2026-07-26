@@ -52,6 +52,12 @@ signal rune_created(slot: GridSlot, rune: RuneInstance)
 ## Emitted when a rune is activated (after all its effects execute)
 signal rune_activated(slot: GridSlot, rune: RuneInstance)
 
+## Emitted the instant a rune starts activating, from any source (reader step,
+## triggered activation, simultaneous batch, connector chain).
+## Relayed from BattleContext. Use for activation feedback (audio, juice).
+## batch_id is the simultaneous batch id, or -1 when not in a batch.
+signal rune_activation_started(slot: GridSlot, rune: RuneInstance, batch_id: int)
+
 ## Emitted when a permanent buff is applied to a rune
 signal buff_applied_to_rune(slot: GridSlot, rune: RuneInstance)
 
@@ -114,8 +120,20 @@ func _ready() -> void:
 
 ## Set references for trigger processing
 func set_battle_references(context: BattleContext, grid: GridManager) -> void:
+	# Stop relaying from the previous context (a new one is built per battle/panel)
+	if battle_context and battle_context.rune_activation_started.is_connected(_relay_rune_activation_started):
+		battle_context.rune_activation_started.disconnect(_relay_rune_activation_started)
+
 	battle_context = context
 	grid_manager = grid
+
+	if battle_context and not battle_context.rune_activation_started.is_connected(_relay_rune_activation_started):
+		battle_context.rune_activation_started.connect(_relay_rune_activation_started)
+
+
+## Relays the context-level activation signal to the global bus.
+func _relay_rune_activation_started(slot: GridSlot, rune: RuneInstance, batch_id: int) -> void:
+	rune_activation_started.emit(slot, rune, batch_id)
 
 
 ## Call at the start of a new battle sequence

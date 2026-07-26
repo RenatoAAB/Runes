@@ -149,7 +149,12 @@ func on_activate(context: BattleContext, my_slot: GridSlot) -> void:
 		# Track simultaneous batch
 		if context.is_simultaneous_active():
 			last_simultaneous_batch_id = context.get_simultaneous_batch_id()
-		
+
+		# Single source of truth for "this rune is activating now" — every activation
+		# path (reader, triggered, simultaneous, connector) funnels through here.
+		if context:
+			context.rune_activation_started.emit(my_slot, self, context.get_simultaneous_batch_id())
+
 		# Track total activations for Memory rune and Rhythm conditions
 		var total = context.get_meta("total_activations", 0)
 		context.set_meta("total_activations", total + 1)

@@ -62,8 +62,10 @@ func _connect_event_bus() -> void:
 		event_bus.drag_ended.connect(_on_drag_ended)
 
 	# Rune lifecycle
-	if event_bus.has_signal("rune_activated"):
-		event_bus.rune_activated.connect(_on_rune_activated)
+	# rune_activation_started (not rune_activated) so the flash also covers
+	# triggered/simultaneous/connector activations and charge-preserving slots.
+	if event_bus.has_signal("rune_activation_started"):
+		event_bus.rune_activation_started.connect(_on_rune_activation_started)
 	if event_bus.has_signal("rune_destroyed"):
 		event_bus.rune_destroyed.connect(_on_rune_destroyed)
 	if event_bus.has_signal("rune_created"):
@@ -133,9 +135,9 @@ func _on_drag_ended(success: bool) -> void:
 		_drag_drop_juice.on_drag_ended(success)
 
 
-func _on_rune_activated(slot: GridSlot, rune: RuneInstance) -> void:
+func _on_rune_activation_started(slot: GridSlot, rune: RuneInstance, batch_id: int) -> void:
 	if _slot_juice:
-		_slot_juice.on_rune_activated(slot, rune)
+		_slot_juice.on_rune_activated(slot, rune, batch_id)
 
 
 func _on_rune_destroyed(slot: GridSlot, rune: RuneInstance) -> void:

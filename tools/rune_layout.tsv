@@ -41,18 +41,19 @@
 # --- Fogo+Ar | Água+Terra (linha 5) --- [VERIFICAR ordem/colunas] -------------
 5		raio	eletricidade	conveccao	gelo	lama	praia
 
-# --- Água+Ar | Ar+Terra (linha 6) --- [VERIFICAR: bate com rune_062..068] -----
+# --- Água+Ar | Ar+Terra (linha 6) ---------------------------------------------
 6		corrente	geada	bolha	nuvem	areia	poeira	sedimentacao
 
+# --- Espírito (linha 7) -------------------------------------------------------
+7		trevas	luz	caos	tempo	ordem	entropia	mudanca	pleroma	vacuo
+
+# --- Espírito + elemento (linha 8) --------------------------------------------
+#   Esp+Fogo: fenix | Esp+Água: empatia, ninfa | Esp+Ar: djinn | Esp+Terra: golem
+8		fenix	empatia	ninfa	djinn	golem
+
+# --- Triplos (linha 9) --------------------------------------------------------
+#   vida[4,2,1]  estagnacao[2,1,3]  gravidade[2,1,0]  instabilidade[1,3,0]
+9		vida	estagnacao	gravidade	instabilidade
+
 # ============================================================================
-# TODO — Espírito pra frente (não preencher agora):
-#   Espírito [4]:     trevas  luz  caos  tempo  ordem  entropia  mudanca  pleroma  vacuo
-#   Esp+Fogo [4,0]:   fenix
-#   Esp+Água [4,1]:   empatia  ninfa
-#   Esp+Ar [4,3]:     djinn
-#   Esp+Terra [4,2]:  golem
-#   Triplos:          vida[4,2,1]  estagnacao[2,1,3]  gravidade[2,1,0]  instabilidade[1,3,0]
-#
-# 7
-# 8
-# 9
+# Grade completa: 68 runas (linhas 0-9). Nada pendente.

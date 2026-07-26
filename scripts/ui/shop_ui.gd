@@ -590,7 +590,8 @@ func _on_pedestal_pressed(element_index: int) -> void:
 	if not shop_manager:
 		return
 	if element_index == -1:
-		shop_manager.reset_elemental_probabilities()
+		# Neutral pedestal: rerolls offers keeping the current distribution intact
+		shop_manager.reroll_with_current_probabilities()
 	else:
 		shop_manager.adjust_elemental_probabilities(element_index as GameEnums.Element)
 	_update_elemental_bars()

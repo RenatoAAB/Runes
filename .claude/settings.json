@@ -1,5 +1,8 @@
 {
   "enabledPlugins": {
     "obsidian@obsidian-skills": true
+  },
+  "worktree": {
+    "bgIsolation": "none"
   }
 }

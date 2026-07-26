@@ -376,16 +376,10 @@ func _get_max_rarity_for_level(player_level: int) -> GameEnums.Rarity:
 		return GameEnums.Rarity.LEGENDARY
 
 
-## Reset elemental probabilities to a uniform 0.20 weight. Costs 1 Mana and rerolls runes.
-func reset_elemental_probabilities() -> bool:
-	var cost = 1
-	if not _can_afford(cost):
-		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Nao ha mana suficiente para resetar pedestais")
-		return false
-		
-	_spend_money(cost, "pedestal_reset")
-	
+## Reset elemental probabilities to a uniform 0.20 weight.
+## Free and silent: the distribution persists through the whole run and is only
+## reinitialized when a New Game starts (spec: economy_shop).
+func reset_elemental_probabilities() -> void:
 	elemental_weights = {
 		GameEnums.Element.FIRE: 0.20,
 		GameEnums.Element.WATER: 0.20,
@@ -393,10 +387,24 @@ func reset_elemental_probabilities() -> bool:
 		GameEnums.Element.AIR: 0.20,
 		GameEnums.Element.SPIRIT: 0.20
 	}
-	
+	print("[Shop] Elemental probabilities reset to uniform 0.20 (new run)")
+	shop_updated.emit()
+
+
+## Neutral pedestal: rerolls the shop runes using strictly the current elemental
+## distribution, WITHOUT altering it. Costs 1 Mana.
+func reroll_with_current_probabilities() -> bool:
+	var cost = 1
+	if not _can_afford(cost):
+		insufficient_funds.emit(cost, _get_money())
+		transaction_completed.emit(false, "Nao ha mana suficiente para usar o pedestal neutro")
+		return false
+
+	_spend_money(cost, "pedestal_neutral")
+
 	_generate_rune_inventory(current_level)
-	print("[Shop] Elemental probabilities reset to uniform 0.20 and runes rerolled")
-	transaction_completed.emit(true, "Pedestais resetados — 1 mana")
+	print("[Shop] Neutral pedestal reroll, probabilities unchanged: ", elemental_weights)
+	transaction_completed.emit(true, "Pedestal neutro — 1 mana")
 	shop_updated.emit()
 	return true
 

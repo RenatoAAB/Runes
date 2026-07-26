@@ -10,6 +10,11 @@ const _InfiniteLoopEvent = preload("res://scripts/core/events/infinite_loop_even
 
 signal step_started(coord: Vector2i)
 signal step_completed(coord: Vector2i)
+## Emitted when the reader visits a rune that will NOT activate.
+## For the "it DID activate" side, listen to EventBus.rune_activation_started —
+## it also covers activations that don't come from a reader step.
+## reason: &"disabled", &"residue_skip" or &"exhausted".
+signal rune_skipped(coord: Vector2i, rune: RuneInstance, reason: StringName)
 signal sequence_finished(total_score: int)
 signal score_updated(new_total: int)
 signal relic_step_started(relic_index: int, relic: RelicInstance)
@@ -180,16 +185,19 @@ func _activate_rune(slot: GridSlot, coord: Vector2i, score_before: int) -> void:
 	var rune = slot.rune
 	
 	if rune.is_disabled:
+		rune_skipped.emit(coord, rune, &"disabled")
 		_emit_disabled_slot_event(coord, rune, score_before)
 		return
 
 	# Residue processing
 	if grid_manager and grid_manager.residue_processor:
 		if grid_manager.residue_processor.should_skip_read(slot):
+			rune_skipped.emit(coord, rune, &"residue_skip")
 			return
-	
+
 	var can_activate = rune.can_activate()
 	if not can_activate:
+		rune_skipped.emit(coord, rune, &"exhausted")
 		return
 
 	if can_activate:
