@@ -1,0 +1,17 @@
+{
+  "name": "runes-godot-mcp-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP stdio bridge for the vendored godot_mcp editor addon (Runes project). WebSocket server on 127.0.0.1:6505.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "selftest": "node selftest.mjs",
+    "validate": "node validate-routes.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "ws": "^8.18.0"
+  }
+}

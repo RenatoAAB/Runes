@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/effect_bench.gd" id="1_effect_bench"]
+
+[node name="EffectBench" type="Node2D"]
+script = ExtResource("1_effect_bench")
+
+[node name="Background" type="ColorRect" parent="."]
+offset_right = 640.0
+offset_bottom = 360.0
+color = Color(0.05, 0.05, 0.07, 1)
+
+[node name="EffectHolder" type="Node2D" parent="."]
+position = Vector2(320, 180)

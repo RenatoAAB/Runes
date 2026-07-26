@@ -3,6 +3,27 @@
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "aseprite": {
+      "type": "stdio",
+      "command": "C:/Users/55119/AppData/Local/Microsoft/WinGet/Links/uv.exe",
+      "args": [
+        "--directory",
+        "C:/Users/55119/tools/aseprite-mcp",
+        "run",
+        "-m",
+        "aseprite_mcp"
+      ],
+      "env": {
+        "ASEPRITE_PATH": "C:/Aseprite/aseprite/build/bin/aseprite.exe"
+      }
+    },
+    "godot": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "tools/mcp-bridge/index.js"
+      ]
     }
   }
 }

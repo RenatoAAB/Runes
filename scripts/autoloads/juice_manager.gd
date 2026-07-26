@@ -10,6 +10,12 @@ var _score_juice: Node = null
 var _drag_drop_juice: Node = null
 var _level_target_juice: Node = null
 var _slot_juice: Node = null
+var _score_popup_juice: Node = null
+
+## Overlay that hosts effects which must not be clipped by, tinted with, or freed
+## alongside the slot they belong to (activation bursts, dissolve ghosts, floating
+## score numbers). Recreated on demand because this autoload outlives scenes.
+var _fx_layer: Control = null
 
 # UI references (injected by MainController)
 var _score_label: Label = null
@@ -31,12 +37,14 @@ func _ready() -> void:
 	_drag_drop_juice = _create_child("res://scripts/ui/juice/drag_drop_juice.gd", "DragDropJuice")
 	_level_target_juice = _create_child("res://scripts/ui/juice/level_target_juice.gd", "LevelTargetJuice")
 	_slot_juice = _create_child("res://scripts/ui/juice/slot_juice.gd", "SlotJuice")
+	_score_popup_juice = _create_child("res://scripts/ui/juice/score_popup_juice.gd", "ScorePopupJuice")
 
 	# Setup config on all modules
 	_score_juice.setup(config)
 	_drag_drop_juice.setup(config)
 	_level_target_juice.setup(config)
 	_slot_juice.setup(config)
+	_score_popup_juice.setup(config)
 
 	# Connect to EventBus signals
 	_connect_event_bus()
@@ -71,6 +79,11 @@ func _connect_event_bus() -> void:
 	if event_bus.has_signal("rune_created"):
 		event_bus.rune_created.connect(_on_rune_created)
 
+	# Per-slot scoring — the only source that pairs a point amount with the
+	# coordinate that produced it, which the floating numbers need.
+	if event_bus.has_signal("slot_read"):
+		event_bus.slot_read.connect(_on_slot_read)
+
 	# Round advancement
 	if event_bus.has_signal("round_advanced"):
 		event_bus.round_advanced.connect(_on_round_advanced)
@@ -85,6 +98,8 @@ func register_score_label(label: Label) -> void:
 	_score_label = label
 	if _score_juice:
 		_score_juice.set_score_label(label)
+	if _score_popup_juice:
+		_score_popup_juice.set_reference_label(label)
 
 
 ## Register level and target labels for transition juice
@@ -98,8 +113,34 @@ func register_level_labels(level_label: Label, target_label: Label) -> void:
 ## Register the grid UI slots dictionary for slot effects
 func register_grid_ui_slots(slots: Dictionary) -> void:
 	_grid_ui_slots = slots
+	var layer := _ensure_fx_layer()
 	if _slot_juice:
 		_slot_juice.set_grid_ui_slots(slots)
+		_slot_juice.set_fx_layer(layer)
+	if _score_popup_juice:
+		_score_popup_juice.set_grid_ui_slots(slots)
+		_score_popup_juice.set_fx_layer(layer)
+
+
+## Creates (or recovers) the overlay used by burst/ghost/popup effects. It is a
+## sibling of the grid inside the game UI, added last so it draws on top.
+func _ensure_fx_layer() -> Control:
+	if is_instance_valid(_fx_layer) and _fx_layer.is_inside_tree():
+		return _fx_layer
+
+	var ui_layer := get_tree().get_first_node_in_group("ui_layer")
+	if not ui_layer:
+		return null
+	var parent: Node = ui_layer.get_node_or_null("GameUI")
+	if not parent:
+		parent = ui_layer
+
+	_fx_layer = Control.new()
+	_fx_layer.name = "JuiceFXLayer"
+	_fx_layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_fx_layer.set_anchors_preset(Control.PRESET_FULL_RECT)
+	parent.add_child(_fx_layer)
+	return _fx_layer
 
 
 ## Called by MainController when a rune is dropped on a grid slot (for impact effect)
@@ -148,6 +189,11 @@ func _on_rune_destroyed(slot: GridSlot, rune: RuneInstance) -> void:
 func _on_rune_created(slot: GridSlot, rune: RuneInstance) -> void:
 	if _slot_juice:
 		_slot_juice.on_rune_created(slot, rune)
+
+
+func _on_slot_read(event) -> void:
+	if _score_popup_juice:
+		_score_popup_juice.on_slot_read(event)
 
 
 func _on_round_advanced(old_level: int, new_level: int, new_target: int) -> void:

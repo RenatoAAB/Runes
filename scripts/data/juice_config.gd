@@ -86,11 +86,55 @@ extends Resource
 
 @export_group("Rune Activation")
 ## Duration of the activation flash
-@export var activation_flash_duration: float = 0.2
+@export var activation_flash_duration: float = 0.28
 ## Scale pulse on activation
-@export var activation_pulse_scale: float = 1.15
+@export var activation_pulse_scale: float = 1.28
 ## Duration of the scale pulse
-@export var activation_pulse_duration: float = 0.2
+@export var activation_pulse_duration: float = 0.32
+## How far the flash colour is pushed past white. 1.0 tints the rune with the raw
+## element colour (which only ever darkens, since every channel is below 1);
+## values above 1 overdrive it so the rune actually reads as lit up.
+@export var activation_flash_overdrive: float = 2.0
+## How much white is mixed into the element colour before overdriving. Keeps the
+## flash from turning into a flat block of pure hue. Too much and every element
+## flashes the same near-white.
+@export var activation_flash_whiten: float = 0.35
+
+@export_group("Rune Activation - Burst")
+## Draw the expanding ring + sparks on activation
+@export var burst_enabled: bool = true
+## Ring radius at the start, as a fraction of the slot's half-size
+@export var burst_radius_start: float = 0.45
+## Ring radius at the end, as a fraction of the slot's half-size
+@export var burst_radius_end: float = 1.7
+## Lifetime of the burst
+@export var burst_duration: float = 0.36
+## Ring thickness in pixels at the start of the burst
+@export var burst_ring_width: float = 3.0
+## Number of radial spark lines (0 disables them)
+@export var burst_spark_count: int = 6
+## Spark length as a fraction of the slot's half-size
+@export var burst_spark_length: float = 0.55
+
+@export_group("Score Popup")
+## Show a floating number over the slot that scored
+@export var popup_enabled: bool = true
+## How far the number travels upward, in pixels
+@export var popup_rise: float = 22.0
+## Lifetime of the floating number. Kept just under the reader's opening step
+## delay (0.5s) so consecutive popups don't pile up on the grid.
+@export var popup_duration: float = 0.55
+## How high above the slot the number spawns, as a fraction of the slot height.
+## Without this the number covers the rune exactly while it is flashing.
+@export var popup_start_offset: float = 0.4
+## Font size for a small gain
+@export var popup_font_size_small: int = 14
+## Font size for a large gain (>= score_large_threshold)
+@export var popup_font_size_large: int = 22
+## Colour for a small gain
+@export var popup_color_small: Color = Color(1.0, 0.95, 0.7)
+## Colour for a large gain
+@export var popup_color_large: Color = Color(1.0, 0.78, 0.2)
 
 @export_group("Rune Destruction")
 ## Duration of the dissolve/fade out

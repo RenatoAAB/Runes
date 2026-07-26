@@ -42,6 +42,10 @@ window/stretch/scale_mode="integer"
 grid_highlighter=""
 tooltip_manager=""
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+
 [rendering]
 
 textures/canvas_textures/default_texture_filter=0
