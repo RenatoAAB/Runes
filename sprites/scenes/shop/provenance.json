@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "art_revision": "shop-water-r10",
+  "integration_review": "shop-water-loop-r10",
+  "editable_source": {
+    "repository": "Runes[ART]",
+    "path": "Sprites/loja/loja-editavel.aseprite",
+    "sha256": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88"
+  },
+  "archived_candidate": {
+    "repository": "Runes[ART]",
+    "path": "revisions/shop-water-r10/loja-water-loop-r10.aseprite",
+    "sha256": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88"
+  },
+  "source_export_manifest_sha256": "03b6575788ac219bb08cb513c68b9f9173d74ef056b7d81828454fcc4a17389a",
+  "source_recipe_sha256": "abd7fd7ed6f69e9986665b044231a91ac46bd8803fd804f55add122114e77f49",
+  "prior_source": {
+    "revision": "shop-water-r05",
+    "sha256": "3d5871927185e7862ff780cd8929a7f8112a9146fdc6aff8d8c8cfab7bc89295"
+  },
+  "baseline": {
+    "source_file": "loja-v1.aseprite",
+    "source_sha256": "c8865362e37f09bb6720b0c08e6ffec1c856046ce06c788bd84132103f3981b8"
+  },
+  "palette_sha256": "43d8193c2128556716aaa67866dd4b0f1af15324c01797cd7c89982d007cc4ea",
+  "approved_art_pixel_changes_during_packaging": 0,
+  "runtime_hover": {
+    "shader_reference": "Existing Start Run outline_hover.gdshader",
+    "width_pixels": 2,
+    "render_padding_pixels": 2,
+    "render_offset_pixels": [
+      -2,
+      -2
+    ],
+    "texture_filter": "nearest",
+    "mipmaps": false,
+    "source_textures_unmodified": true
+  },
+  "integration_reviews": {
+    "panels": "shop-panel-hovers-r07",
+    "water": "shop-water-loop-r10"
+  },
+  "static_water_fallback": {
+    "path": "water.png",
+    "revision": "shop-water-r05",
+    "sha256": "1786e4a04efb58970c16f90b762802a10cdc8ae1cbfc6dc8bb4101e03fd2ac31"
+  },
+  "approved_water_animation": {
+    "approval_record": "reviews/approval-r10.json",
+    "sheet": "water-loop.png",
+    "sheet_sha256": "a0a7440004fdd2314574165b444c107c670353f2c22ee2147bcf0215e9c73e8d",
+    "frame_count": 12,
+    "duration_ms": 1800,
+    "scene_sha256": "3032f1bf7d9f6b536e1ee2d168446401a7730dae662c6326daac3ffaf125c551",
+    "center_dissipation": "authored in Aseprite frames; no procedural replacement"
+  }
+}

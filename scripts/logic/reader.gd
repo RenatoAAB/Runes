@@ -103,7 +103,7 @@ func start_sequence() -> void:
 		return
 
 	# Notify EventBus that battle is starting
-	if event_bus and event_bus.has_method("begin_battle"):
+	if not panel_instance and event_bus and event_bus.has_method("begin_battle"):
 		event_bus.begin_battle(1)  # 1 panel for now
 		event_bus.begin_panel(0)
 	
@@ -420,13 +420,18 @@ func _finish_sequence() -> void:
 		panel_event.final_score = total_score
 		event_bus.emit(panel_event)
 	
-	# Notify EventBus that battle ended
-	if event_bus and event_bus.has_method("end_battle"):
+	# PanelManager owns the battle lifecycle across all panels. Resolve this
+	# panel's hooks without ending the battle or resetting cumulative statistics.
+	if panel_instance and event_bus:
+		event_bus.resolve_round_end_effects()
+	elif event_bus and event_bus.has_method("end_battle"):
 		var game_manager = get_tree().get_first_node_in_group("game_manager")
 		var target = 0
+		var victory_score = 0
 		if game_manager:
 			target = game_manager.current_target_score
-		event_bus.end_battle(target)
+			victory_score = game_manager.run_victory_score
+		event_bus.end_battle(target, -1, victory_score)
 
 	# Reset grid state after end-of-round effects have resolved
 	if grid_manager:

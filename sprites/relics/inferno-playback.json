@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 5,
+  "drawn_bounds_xyxy": [
+    5,
+    3,
+    27,
+    28
+  ],
+  "frame_files": {
+    "frame-0.png": "128c0c09e387c5d1dd74b46bf867d65489b3a19d7c6ce3f362ecbe9fa6e91089",
+    "frame-1.png": "128c0c09e387c5d1dd74b46bf867d65489b3a19d7c6ce3f362ecbe9fa6e91089",
+    "frame-10.png": "128c0c09e387c5d1dd74b46bf867d65489b3a19d7c6ce3f362ecbe9fa6e91089",
+    "frame-11.png": "128c0c09e387c5d1dd74b46bf867d65489b3a19d7c6ce3f362ecbe9fa6e91089",
+    "frame-2.png": "3939495bf59ba92306753f841bd05f8d5ae200cf3b8b0114bac1f9d5aac09296",
+    "frame-3.png": "3939495bf59ba92306753f841bd05f8d5ae200cf3b8b0114bac1f9d5aac09296",
+    "frame-4.png": "0b7efd312b1209effc5fa0fc2e79d16413cf9d18345bcfd7f8a2d76619e949cb",
+    "frame-5.png": "0b7efd312b1209effc5fa0fc2e79d16413cf9d18345bcfd7f8a2d76619e949cb",
+    "frame-6.png": "0b7efd312b1209effc5fa0fc2e79d16413cf9d18345bcfd7f8a2d76619e949cb",
+    "frame-7.png": "3939495bf59ba92306753f841bd05f8d5ae200cf3b8b0114bac1f9d5aac09296",
+    "frame-8.png": "3939495bf59ba92306753f841bd05f8d5ae200cf3b8b0114bac1f9d5aac09296",
+    "frame-9.png": "128c0c09e387c5d1dd74b46bf867d65489b3a19d7c6ce3f362ecbe9fa6e91089"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "elemental-trio-v1",
+  "runtime_tag": "Inferno",
+  "selected_variant": "inferno",
+  "sheet_sha256": "4ca58b74c1141096bc7d59c48ffbc3241aa23696e364d227c0a7386fc3bd809c",
+  "source": "art:reviews/relic-item-inventory-r01/elemental-trio-v1/inferno.aseprite",
+  "source_sha256": "fc522c91eb004bf3174429d0295b1ae6373194124d0215556b56cfa1baaeb883"
+}

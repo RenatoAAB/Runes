@@ -12,6 +12,13 @@ extends Resource
 
 
 func execute(ctx: EffectContext) -> bool:
+	ctx.begin_effect_execution()
+	var result := _execute(ctx)
+	ctx.end_effect_execution()
+	return result
+
+
+func _execute(ctx: EffectContext) -> bool:
 	EffectLogger.log_trigger(ctx, self)
 
 	if not selector or not action:
@@ -24,8 +31,7 @@ func execute(ctx: EffectContext) -> bool:
 	# Evaluate condition (null condition = always true)
 	var condition_met: bool = true
 	if condition:
-		condition_met = bool(condition.evaluate(ctx))
-	var raw_condition_met: bool = condition_met
+		condition_met = condition.evaluate_for_execution(ctx)
 	EffectLogger.log_condition(ctx, condition, condition_met)
 
 	# Slot Refractor bypass
@@ -38,9 +44,6 @@ func execute(ctx: EffectContext) -> bool:
 			ctx.source_rune.last_effect_success = false
 		EffectLogger.log_effect_complete(ctx, self, false)
 		return false
-
-	if condition and raw_condition_met and ctx.battle:
-		ctx.battle.record_successful_condition()
 
 	# Select targets
 	var targets = selector.select(ctx)

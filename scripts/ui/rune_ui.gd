@@ -7,6 +7,18 @@ extends TextureRect
 var rune_instance: RuneInstance
 var disabled_material: ShaderMaterial
 
+# Keep the node in its source slot so drop/sale handlers retain their origin.
+# Top-level drawing lifts the actual rune out of container layout and clipping.
+var _dragging := false
+var _drag_offset := Vector2.ZERO
+var _pointer_position := Vector2.ZERO
+var _drag_origin := Vector2.ZERO
+var _drag_rotation := 0.0
+var _drag_scale := Vector2.ONE
+var _drag_mouse_filter: int
+var _drag_z_index: int
+var _drag_top_level: bool
+
 func setup(rune: RuneInstance) -> void:
 	rune_instance = rune
 	# In a real scene, we would set the texture from the data
@@ -30,6 +42,8 @@ func _process(_delta: float) -> void:
 			material = disabled_material
 
 func _on_mouse_entered() -> void:
+	if get_viewport().gui_is_dragging():
+		return
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
 	
@@ -75,7 +89,7 @@ func _on_mouse_exited() -> void:
 		tooltip_manager.clear_rune_tooltip()
 		
 	var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
-	if highlighter:
+	if highlighter and not _dragging and not get_viewport().gui_is_dragging():
 		highlighter.clear_highlights()
 
 func _get_drag_data(at_position: Vector2) -> Variant:
@@ -91,26 +105,48 @@ func _get_drag_data(at_position: Vector2) -> Variant:
 		if parent.current_slot_data.has_state("petrified"):
 			return null
 
-	# Create a visual preview for the drag
-	var preview = TextureRect.new()
-	preview.texture = texture
-	preview.expand_mode = expand_mode
-	preview.size = size
-	preview.modulate = Color(1, 1, 1, 0.7)
-	
-	# Center the preview on the mouse
-	var control = Control.new()
-	control.add_child(preview)
-	preview.position = -0.5 * size
-	set_drag_preview(control)
-	
-	# Start breathing animation on the preview
-	var juice = get_node_or_null("/root/JuiceManager")
-	if juice:
-		juice.start_breathing_on_preview(preview)
+	_dragging = true
+	_drag_origin = position
+	_drag_rotation = rotation
+	_drag_scale = scale
+	_drag_mouse_filter = mouse_filter
+	_drag_z_index = z_index
+	_drag_top_level = is_set_as_top_level()
+	var origin := get_global_transform()
+	_drag_offset = origin.basis_xform(at_position)
+	set_as_top_level(true)
+	rotation = origin.get_rotation()
+	scale = origin.get_scale()
+	global_position = _pointer_position - _drag_offset
+	z_index = RenderingServer.CANVAS_ITEM_Z_MAX
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_on_mouse_exited()
 	
 	# Return data dictionary
 	return {
 		"source_ui": self,
 		"rune_instance": rune_instance
 	}
+
+
+func is_dragging_rune() -> bool:
+	return _dragging
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		# Input coordinates work for both real pointers and viewport-injected input.
+		_pointer_position = get_canvas_transform().affine_inverse() * event.position
+		if _dragging:
+			global_position = _pointer_position - _drag_offset
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END and _dragging:
+		_dragging = false
+		set_as_top_level(_drag_top_level)
+		position = _drag_origin
+		rotation = _drag_rotation
+		scale = _drag_scale
+		z_index = _drag_z_index
+		mouse_filter = _drag_mouse_filter

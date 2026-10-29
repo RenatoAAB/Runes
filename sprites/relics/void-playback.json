@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 10,
+  "drawn_bounds_xyxy": [
+    5,
+    3,
+    24,
+    31
+  ],
+  "frame_files": {
+    "frame-0.png": "63bfe305f0224972acb428e970da76b7e009f268fa85097403b039658fdc65f3",
+    "frame-1.png": "63bfe305f0224972acb428e970da76b7e009f268fa85097403b039658fdc65f3",
+    "frame-10.png": "63bfe305f0224972acb428e970da76b7e009f268fa85097403b039658fdc65f3",
+    "frame-11.png": "63bfe305f0224972acb428e970da76b7e009f268fa85097403b039658fdc65f3",
+    "frame-2.png": "1bc97fbdcfccb2eb5feee420d1aac20a49c711e00260351e414870fe764db3fe",
+    "frame-3.png": "1bc97fbdcfccb2eb5feee420d1aac20a49c711e00260351e414870fe764db3fe",
+    "frame-4.png": "a8f66334a157a8a1a0da35c4707f0e218755259818fa2959b3843f620d0f2ee4",
+    "frame-5.png": "a8f66334a157a8a1a0da35c4707f0e218755259818fa2959b3843f620d0f2ee4",
+    "frame-6.png": "a8f66334a157a8a1a0da35c4707f0e218755259818fa2959b3843f620d0f2ee4",
+    "frame-7.png": "1bc97fbdcfccb2eb5feee420d1aac20a49c711e00260351e414870fe764db3fe",
+    "frame-8.png": "1bc97fbdcfccb2eb5feee420d1aac20a49c711e00260351e414870fe764db3fe",
+    "frame-9.png": "63bfe305f0224972acb428e970da76b7e009f268fa85097403b039658fdc65f3"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "metaphysical-trio-v2",
+  "runtime_tag": "Chalices",
+  "selected_variant": "void",
+  "sheet_sha256": "a0b41269f40d067591b62dfa82caac8622e04886be9dcde6d736d80bac5010a4",
+  "source": "art:reviews/relic-item-inventory-r01/metaphysical-trio-v2/void.aseprite",
+  "source_sha256": "e52d3baf2a45490a387c7acc30f2ca8c8d791cabd9f2ed3d603f07520984100d"
+}

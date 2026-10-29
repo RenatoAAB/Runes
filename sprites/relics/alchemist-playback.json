@@ -1,0 +1,27 @@
+{
+  "revision": "alchemist-energy-loops-v3-L1",
+  "source_aseprite_sha256": "9d8f0acb7f3d1bd6896a89bc52670a7982d2ccb651ef45c008645c95cdeaccb3",
+  "sheet_sha256": "a14994241d498b094a4e553d21bb1a7e183c27d5c910a7e78926c279faafb667",
+  "native_size": [
+    32,
+    32
+  ],
+  "frames": 12,
+  "frame_ms": 200,
+  "loop_ms": 2400,
+  "frame_files": {
+    "frame-0.png": "c5c1a8d4e42eff64a048983c3d62e2f9b4d6a412aed4dab9bd0abe7c0e47c6fe",
+    "frame-1.png": "c5c1a8d4e42eff64a048983c3d62e2f9b4d6a412aed4dab9bd0abe7c0e47c6fe",
+    "frame-2.png": "be1670e466e6017f6df3f9c9f53d529e9986fa2dc32972fef239fbd7a66c7b8e",
+    "frame-3.png": "be1670e466e6017f6df3f9c9f53d529e9986fa2dc32972fef239fbd7a66c7b8e",
+    "frame-4.png": "4943805cc17d71d9e4f9538955c72434fae5c6afe02806436b725c862b201c1f",
+    "frame-5.png": "4943805cc17d71d9e4f9538955c72434fae5c6afe02806436b725c862b201c1f",
+    "frame-6.png": "4943805cc17d71d9e4f9538955c72434fae5c6afe02806436b725c862b201c1f",
+    "frame-7.png": "be1670e466e6017f6df3f9c9f53d529e9986fa2dc32972fef239fbd7a66c7b8e",
+    "frame-8.png": "be1670e466e6017f6df3f9c9f53d529e9986fa2dc32972fef239fbd7a66c7b8e",
+    "frame-9.png": "c5c1a8d4e42eff64a048983c3d62e2f9b4d6a412aed4dab9bd0abe7c0e47c6fe",
+    "frame-10.png": "c5c1a8d4e42eff64a048983c3d62e2f9b4d6a412aed4dab9bd0abe7c0e47c6fe",
+    "frame-11.png": "c5c1a8d4e42eff64a048983c3d62e2f9b4d6a412aed4dab9bd0abe7c0e47c6fe"
+  },
+  "pixel_verification": "Every PNG matches its approved sheet frame exactly"
+}

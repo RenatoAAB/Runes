@@ -44,7 +44,8 @@ var elemental_weights: Dictionary = {
 	GameEnums.Element.SPIRIT: 0.20
 }
 var overclock_purchased_this_round: bool = false
-var relic_refresh_purchased_this_round: bool = false
+## A sealed altar preserves its offer, including an empty altar after purchase.
+var relic_sealed: bool = false
 
 # --- Scroll (Pergaminho) State ---
 var _scroll_count: int = 0  # Scrolls purchased this round (resets each round)
@@ -168,16 +169,16 @@ func refresh_shop(player_level: int = 1) -> void:
 	current_level = player_level
 	reset_scroll_count()
 	overclock_purchased_this_round = false
-	relic_refresh_purchased_this_round = false
 	_generate_rune_inventory(player_level)
 	_generate_piece_inventory(player_level)
 	_generate_modifier_inventory(player_level)
-	_generate_relic_inventory(player_level)
+	if not relic_sealed:
+		_generate_relic_inventory(player_level)
 	print("[Shop] Refreshed: %d runes, %d pieces, %d modifiers, %d relics" % [
 		available_runes.size(), available_pieces.size(),
 		available_modifiers.size(), available_relics.size()
 	])
-	_emit_shop_stocked(true, true, true, true)
+	_emit_shop_stocked(true, true, true, not relic_sealed)
 	shop_updated.emit()
 
 
@@ -683,6 +684,7 @@ func buy_overclock() -> bool:
 	var base_piece = _piece_pool[_rng.randi() % _piece_pool.size()]
 	var defective_piece = base_piece.duplicate() as SlotPieceData
 	defective_piece.set_meta("can_receive_modifiers", false)
+	defective_piece.set_meta("shop_overclock_offer", true)
 	defective_piece.display_name = "Defective " + defective_piece.display_name
 	available_pieces.append(defective_piece)
 	_available_piece_rotations.append(_rng.randi() % 4)
@@ -710,6 +712,7 @@ func buy_overclock() -> bool:
 		anomalous_modifier.display_name = "Anômalo " + anomalous_modifier.display_name
 	
 	if anomalous_modifier:
+		anomalous_modifier.set_meta("shop_overclock_offer", true)
 		available_modifiers.append(anomalous_modifier)
 		
 	print("[Shop] Overclock purchased! Defective piece and Anomalous modifier added.")
@@ -718,28 +721,37 @@ func buy_overclock() -> bool:
 	return true
 
 
-## Refresh/Reroll the offered relic: costs 1 Mana, limited to 1x per round.
-func reroll_relic() -> bool:
-	if relic_refresh_purchased_this_round:
-		transaction_completed.emit(false, "Permitido apenas 1 reroll de reliquia por rodada")
+## Price of the next altar action. Buying a relic does not release its seal.
+func get_relic_seal_cost() -> int:
+	return ShopConfig.RELIC_UNSEAL_COST if relic_sealed else ShopConfig.RELIC_SEAL_COST
+
+
+## There must be an offer to bind; an empty sealed altar can always be released.
+func can_toggle_relic_seal() -> bool:
+	return (relic_sealed or not available_relics.is_empty()) and _can_afford(get_relic_seal_cost())
+
+
+func toggle_relic_seal() -> bool:
+	if not relic_sealed and available_relics.is_empty():
+		transaction_completed.emit(false, "Nenhuma relíquia disponível para selar")
 		return false
-		
-	var cost = 1
+	var cost := get_relic_seal_cost()
 	if not _can_afford(cost):
 		insufficient_funds.emit(cost, _get_money())
-		transaction_completed.emit(false, "Nao ha mana suficiente para reroll de reliquia")
+		transaction_completed.emit(false, "Mana insuficiente para alterar o selo")
 		return false
-		
-	_spend_money(cost, "relic_reroll")
-	relic_refresh_purchased_this_round = true
-	
-	_generate_relic_inventory(current_level)
-	
-	print("[Shop] Relic rerolled successfully")
-	transaction_completed.emit(true, "Relic rerolled for 1 mana")
-	_emit_shop_stocked(false, false, false, true)
+	_spend_money(cost, "relic_unseal" if relic_sealed else "relic_seal")
+	relic_sealed = not relic_sealed
+	transaction_completed.emit(true, "Relíquia selada" if relic_sealed else "Selo liberado")
+	# Releasing never stocks a new offer. Only the next round refresh does that.
 	shop_updated.emit()
 	return true
+
+
+## Explicit new-run reset, separate from the repeatable round refresh.
+func reset_relic_seal() -> void:
+	relic_sealed = false
+	shop_updated.emit()
 
 
 ## Pick a random rune using weighted probabilities (legacy, uses current level)

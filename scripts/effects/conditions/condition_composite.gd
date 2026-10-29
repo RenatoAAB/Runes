@@ -12,6 +12,13 @@ enum Mode {
 @export var conditions: Array[NewEffectCondition] = []
 
 
+func is_gameplay_condition() -> bool:
+	for cond in conditions:
+		if cond and cond.is_gameplay_condition():
+			return true
+	return false
+
+
 func evaluate(ctx: EffectContext) -> bool:
 	if conditions.is_empty():
 		return true

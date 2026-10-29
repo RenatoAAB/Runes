@@ -53,3 +53,30 @@ Os caminhos antigos em resources/effects/conditions, resources/effects/targets e
 - Recursos de efeito ativos: resources/effects/rune_effects/*.tres
 - Recursos compartilhados: resources/effects/shared/conditions/*.tres, resources/effects/shared/selectors/*.tres e resources/effects/shared/filters/*.tres
 - Encadeamento de execucao: scripts/logic/reader.gd e scripts/logic/battle_context.gd
+
+## Condições de jogo e O Alquimista (2026-10-21)
+
+Uma condição é um requisito explícito de uma regra de jogo: um predicado sobre
+o estado da fonte, do alvo ou do painel que autoriza um efeito ou uma alternativa
+da ação. Deve ser um `NewEffectCondition`, inclusive quando avaliada por alvo.
+Um `if` de validação técnica, um gatilho, um filtro de alvos e uma fórmula
+"por cada" não se tornam condições automaticamente.
+
+- `evaluate(ctx)` consulta o requisito sem alterar a contagem (tooltip, hover e previews).
+- `evaluate_for_execution(ctx)` avalia e registra uma satisfação natural durante a execução.
+- Cada execução de GameEffect contribui no máximo uma vez, mesmo com vários requisitos satisfeitos ou vários alvos elegíveis.
+- Uma regra composta AND/OR conta uma vez; seus termos não registram separadamente.
+- Regras por alvo usam o contexto do efeito para compartilhar essa contagem. Efeitos copiados/aninhados têm execuções próprias; novas execuções do mesmo efeito podem contar novamente.
+- `Always`, condição ausente e composições sem requisitos não contam.
+- O Refrator pode liberar um efeito sem satisfazer naturalmente o requisito; esse bypass não conta.
+- A satisfação é registrada antes da seleção/ação: não exige alvo disponível nem resultado da ação.
+- Novas execuções podem contar novamente. O total reinicia com a rodada/painel.
+
+Golem declara os requisitos de resíduo e anomalia nos dois GameEffects. Cada
+regra conta uma vez, mesmo consumindo vários resíduos. Geada declara
+`buff_condition` e a avalia no contexto de cada alvo antes de conceder carga,
+mas contribui apenas uma vez por execução, mesmo beneficiando vários alvos;
+uma runa desabilitada que ainda tem cargas não satisfaz "sem cargas".
+Fênix continua usando um gatilho de destruição, que não conta por si só.
+
+Regressão: `godot --headless --path . --script tools/test_gameplay_conditions.gd`.

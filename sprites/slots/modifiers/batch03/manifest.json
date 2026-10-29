@@ -1,0 +1,126 @@
+{
+  "revision": "slot-modifier-trio-integration-r01",
+  "sources": {
+    "art:reviews/slot-modifier-bundles-batch02-r01/IG-kit.png": "2975bbd91f274bf806a9ed8d2fdbd9f1b2bec0ac725fc1464c15a9b0aac9e1ed",
+    "art:reviews/slot-modifier-bundles-batch02-r01/IG-kit.aseprite": "62e07873ce85be20ccf1bba152aa8f02ca05d64d4b28e88ab3012defbcecf8d4",
+    "art:reviews/slot-modifier-bundles-batch02-r01/PR-kit.png": "a5eafb70c363e35009696179248ddc7641623e88d2f300ca0f46d2faa852f20a",
+    "art:reviews/slot-modifier-bundles-batch02-r01/PR-kit.aseprite": "e027d1b09d56285ba6104b61afb86fc7adc9d1cea0dafa0becb92891c4a3530d",
+    "art:reviews/slot-modifier-bundles-batch02-r01/RF-kit.png": "c3f903303a44532002c007278d1d0eaaca984a39a3cbadf0cdf5a3a2cdcaf0fd",
+    "art:reviews/slot-modifier-bundles-batch02-r01/RF-kit.aseprite": "b80a7eb8c643757fbd47ee90a2bf36f711e39dd98eeca55449552494ff0fba2b",
+    "art:reviews/slot-modifiers-remaining-r01/IG3.aseprite": "18f5e356618aa0884b0b8de0f7ccf1717c18698c0f2ee3844d05c0484dcd51c3",
+    "art:reviews/slot-modifiers-remaining-r01/IG3.png": "5e024c638ab16d024eade73d2c07c7a945926489c0498949a9f7dcaf106709c6",
+    "art:reviews/slot-modifiers-remaining-r01/IG3-overlay.png": "d3b2a6d1ea471a9c256f74e5e876de839db78bbfcab335805be33e014f89bc63",
+    "art:reviews/slot-modifiers-remaining-r01/IG3-ocupado.png": "2f15a3ecf3c5c2b2dd7214535cf011bbfbca1dcb1996c69692c1d9f18d59ab46",
+    "art:reviews/slot-modifiers-remaining-r01/RF1.aseprite": "1b13c4be0043962b6e48198e5139480e2688d0c023c1e89fc0871e705cfb69a2",
+    "art:reviews/slot-modifiers-remaining-r01/RF1.png": "4606e2a8447d3c56a65227af0e23dc442c1a174649eb30b4e9397e414565477d",
+    "art:reviews/slot-modifiers-remaining-r01/RF1-overlay.png": "2cd77e4d14f8d5fb003ad1368ec2dc1c77a4fbb6f0c8c6e8395aa527f48792d0",
+    "art:reviews/slot-modifiers-remaining-r01/RF1-ocupado.png": "eeaedc172aed2f818038fe6a02d0e8bd525ec376efe69b0dee79b26651235f39",
+    "art:reviews/slot-modifiers-remaining-r02/PR1.3.aseprite": "36cbe775e2f7266998ef8d6c7bc2bfefe94e9fc461a67917b26451c68663d9b5",
+    "art:reviews/slot-modifiers-remaining-r02/PR1.3.png": "c37208234c6dd53030c48d8e00e9f9f0a5f2428adb0bd78708567ecb19a10d10",
+    "art:reviews/slot-modifiers-remaining-r02/PR1.3-overlay.png": "673a482cdc586fe5f9994fee0e9b3a070cc99cdeac053f20e5db4ecd47956d28",
+    "art:reviews/slot-modifiers-remaining-r02/PR1.3-ocupado.png": "f0bb97b36466d988c733280923129bfb81eb85fae684034e9760b79c9321b315"
+  },
+  "variants": {
+    "igniter": {
+      "variant": "IG3",
+      "source_revision": "slot-modifiers-remaining-r01",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "kit": "IG-kit",
+      "kit_bounds": [
+        6,
+        7,
+        27,
+        25
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true
+    },
+    "pressurizer": {
+      "variant": "PR1.3",
+      "source_revision": "slot-modifiers-remaining-r02",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "kit": "PR-kit",
+      "kit_bounds": [
+        5,
+        7,
+        27,
+        25
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true
+    },
+    "refractor": {
+      "variant": "RF1",
+      "source_revision": "slot-modifiers-remaining-r01",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        6,
+        40,
+        40
+      ],
+      "kit": "RF-kit",
+      "kit_bounds": [
+        6,
+        7,
+        27,
+        26
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true
+    }
+  },
+  "origin": [
+    0,
+    0
+  ],
+  "pivot": [
+    20,
+    20
+  ],
+  "visual_order": [
+    "base",
+    "equipment",
+    "rune"
+  ],
+  "panel_hitbox": [
+    40,
+    40
+  ],
+  "runtime_scale": 1,
+  "filter": "nearest",
+  "frames": 1
+}

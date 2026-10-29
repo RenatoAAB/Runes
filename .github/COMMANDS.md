@@ -38,6 +38,16 @@ EN:
 
 ## Run and Debug / Execucao e Debug
 
+### Testes obrigatórios para mudanças de comportamento
+
+```powershell
+python tools/run_tests.py --godot 'C:/caminho/para/godot.exe'
+python tools/run_tests.py --godot 'C:/caminho/para/godot.exe' --suite ui
+python tools/run_tests.py --godot 'C:/caminho/para/godot.exe' --suite ui --render
+```
+
+O executável também pode ser configurado em `GODOT_BIN`. O runner imprime o caminho de `results.json`, preserva logs e falha em assertions, erros de script, timeout ou ausência do marcador de conclusão. `--output` aceita uma pasta vazia fora do checkout. Consulte [docs/testing.md](../docs/testing.md) e o padrão obrigatório em [AGENTS.md](../AGENTS.md).
+
 Preferred in VS Code:
 - Use launch profile from [.vscode/launch.json](.vscode/launch.json):
   - `GDScript: Launch Project`

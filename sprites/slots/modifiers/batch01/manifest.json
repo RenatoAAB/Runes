@@ -1,0 +1,111 @@
+{
+  "revision": "slot-modifiers-integration-r05",
+  "sources": {
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r10\\AC10-A.png": "14334ff22aaf590318d8dbe72d085ea1f43e95974c965d4da3222840536fe67a",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r10\\AC10-A-overlay.png": "0fb017ecd2546d748fd9ad8ab4e999c15a057f9408b09238e99346c23ab6f30c",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r10\\AC10-A.aseprite": "012a188ecb2a1eeeb92fe34265c63e3ccbb88878ffd3d96be381f7afe1abf61a",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\C1.1-solenoides.png": "15d1988d2c4a106ee9cdbe400fa6cd60e85408b62f0f517ce34e229b6a9323de",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\C1.1-solenoides-overlay.png": "35dc4546a08bd7edafe7efd7f4e3a837ac817fae9725bfd28f5a52845fccc244",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\C1.1-solenoides.aseprite": "bc195e564ea36acb9f0405a29c9b587187eb3ffbf0024c224dd40bce2a664230",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\S1-grampos.png": "e49eb456d54b3dd1e988ccf8cab10db3ffcf6c7cd5dbac24fa5505973c491b12",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\S1-grampos-overlay.png": "45389e5f1c3289152520da89acfd51787a756d401bbb539ed5e2282301d88cc7",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\S1-grampos.aseprite": "4deef77406c5b5988ff48d8e8ff18ea8618b57af9f6e64209ac0583331642f1f"
+  },
+  "base_size": [
+    40,
+    40
+  ],
+  "panel_hitbox": [
+    40,
+    40
+  ],
+  "shop_hitbox": [
+    23,
+    19
+  ],
+  "pixel_filter": "nearest",
+  "render_order": [
+    "opaque base40",
+    "transparent native border40 z1",
+    "interaction feedback z3"
+  ],
+  "neighbor_rule": "All six native40 decorations fit their own grid cell at pitch40.",
+  "shop_rule": "Both offers present: normal artwork x-7, Extra x+7; hitboxes stay unchanged. Solo artwork offset0.",
+  "superseded_sources": {
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r01\\A1-reservatorio.png": "b2b22305739736642f2a6f1a2c18dfce785fb9a89819bcbb1aad703c472b5231",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r01\\A1-reservatorio-overlay.png": "ea7473291a4aac3cb1f3618b4cf4773c45b4cacc62b106001c05053cdd22e468",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r01\\A1-reservatorio.aseprite": "eb81fd4861012e6220dd902fb8178b1b97687d8cd7f828558fa743dfd1478d30",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r04\\C1.1-solenoides.png": "30bd18064ec7710c08025dcede235df427f5e58e8b543fa1eed465abff8756eb",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r04\\C1.1-solenoides-overlay.png": "27b16d5dd5ffff87e4c7d2e70cba230ed10a147ebbd2397965d34f62584acea9",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r04\\C1.1-solenoides.aseprite": "e74bab2666fe80d3a05dcfb3ccfb8b71049d3605b0811ba2ed99e508ae0df518",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r01\\S1-grampos.png": "4b1ad72438a88dfac9532e6e05ee4e4303fc9ebbadd111ff2e71ef706e45598c",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r01\\S1-grampos-overlay.png": "eb288168215e877d6d4b878e5a1155e44d6f9290dfa155f88b29353d207ee213",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r01\\S1-grampos.aseprite": "72b2c22aa2bf6ad4137e9166809d7600073787d904452409d074b6ee0b72ea3f"
+  },
+  "variants": {
+    "conector": {
+      "dimensions": [
+        40,
+        40
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "source": "C1.1-solenoides",
+      "source_revision": "slot-modifiers-r08",
+      "recomposition_exact": true,
+      "inner32_unchanged": true,
+      "overflow_pixels": 0,
+      "bounds": [
+        0,
+        0,
+        40,
+        40
+      ]
+    },
+    "stabilizer": {
+      "dimensions": [
+        40,
+        40
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "source": "S1-grampos",
+      "source_revision": "slot-modifiers-r08",
+      "recomposition_exact": true,
+      "inner32_unchanged": true,
+      "overflow_pixels": 0,
+      "bounds": [
+        0,
+        0,
+        40,
+        40
+      ]
+    },
+    "accumulator": {
+      "dimensions": [
+        40,
+        40
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "source": "AC10-A",
+      "source_revision": "slot-modifiers-r10",
+      "recomposition_exact": true,
+      "proof_rune_alpha_intersection_pixels": 0,
+      "additional_pixels_within_inner32": 44,
+      "bounds": [
+        0,
+        0,
+        40,
+        40
+      ]
+    }
+  },
+  "dimension_policy": "All six authored modifiers are native40x40 with origin0,0. AC10-A, CH10-A and CD12.3 retained; Conector, Stabilizer and Resonator use approved softened r08."
+}

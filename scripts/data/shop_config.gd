@@ -30,6 +30,8 @@ const BASE_SCROLL_COST: int = 1       # Custo base do pergaminho (reroll de runa
 # --- Other Costs ---
 const UPGRADE_COST: int = 5  # Cost to upgrade 2 runes into 1
 const PANEL_UNLOCK_COST: int = 25
+const RELIC_SEAL_COST: int = 1
+const RELIC_UNSEAL_COST: int = 1
 
 # --- Shop Inventory Sizes ---
 const RUNE_SHOP_SIZE: int = 3   # Pergaminhos revelam 3 runas

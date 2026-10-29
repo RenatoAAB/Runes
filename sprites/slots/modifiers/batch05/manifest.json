@@ -1,0 +1,95 @@
+{
+  "revision": "slot-modifier-final-integration-r01",
+  "sources": {
+    "art:reviews/slot-modifier-bundles-batch04-r01/PU-kit.png": "83c2bfef3c1bdae58860f730d770d65903873bb72f36dc6b1d83ed3d719a9f50",
+    "art:reviews/slot-modifier-bundles-batch04-r01/PU-kit.aseprite": "d53a6118503a772a00e39b83286e96890775c73e00a1ae6ecfa96ccadd1f3909",
+    "art:reviews/slot-modifier-bundles-batch04-r01/TR-kit.png": "86c5fa766ba4ce3c413d25cd79a2160cc2a84534c0263cdec1c292c8e6e36484",
+    "art:reviews/slot-modifier-bundles-batch04-r01/TR-kit.aseprite": "74a68a68f8936ecd897261a02ea7ac88e3bdd82e16a2598ca9a8ef550df86702",
+    "art:reviews/slot-modifiers-remaining-r07/PU1.1.aseprite": "8f9ce46b30104296fdc6406d5bb10e57af5bc0a0a200398ecba403820e4bfa39",
+    "art:reviews/slot-modifiers-remaining-r07/PU1.1.png": "2c009f3a35b86439ef4ad51e905697b8508b2f4237124487626973771658c6aa",
+    "art:reviews/slot-modifiers-remaining-r07/PU1.1-overlay.png": "59e217c6f0aa9d1658712b342437bb93c9833d4f8cf7e09580a9feb63d74bae2",
+    "art:reviews/slot-modifiers-remaining-r07/PU1.1-ocupado.png": "8e2fd6356175f2d9058c4b71f8327b1586654f0c3708720d728d30a17f22c714",
+    "art:reviews/slot-modifiers-remaining-r07/TR4.aseprite": "ae556d7fc81c19b7119f6adcae28d93930643755271e588b39b13b9743a971e3",
+    "art:reviews/slot-modifiers-remaining-r07/TR4.png": "91d415280080ac131fcbfc71d74f19edc284adaf9f8e65530ae1526b04a28593",
+    "art:reviews/slot-modifiers-remaining-r07/TR4-overlay.png": "88b87e34d1b360b99248a854b6e16d05a27cdfa46121e79d576254a2a873d2b8",
+    "art:reviews/slot-modifiers-remaining-r07/TR4-ocupado.png": "a3db43e3b0bb0533b3d025fd645dd20a5fee87bd046af2c2fcd5d389ec72500d"
+  },
+  "variants": {
+    "purifier": {
+      "variant": "PU1.1",
+      "source_revision": "slot-modifiers-remaining-r07",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        7,
+        0,
+        40,
+        40
+      ],
+      "kit": "PU-kit",
+      "kit_bounds": [
+        5,
+        7,
+        27,
+        25
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true,
+      "overlap_policy": "No rock intersection"
+    },
+    "transmuter": {
+      "variant": "TR4",
+      "source_revision": "slot-modifiers-remaining-r07",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        0,
+        40,
+        40
+      ],
+      "kit": "TR-kit",
+      "kit_bounds": [
+        4,
+        6,
+        28,
+        26
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true,
+      "overlap_policy": "No rock intersection"
+    }
+  },
+  "origin": [
+    0,
+    0
+  ],
+  "pivot": [
+    20,
+    20
+  ],
+  "visual_order": [
+    "base",
+    "equipment",
+    "rune"
+  ],
+  "panel_hitbox": [
+    40,
+    40
+  ],
+  "runtime_scale": 1,
+  "filter": "nearest",
+  "frames": 1
+}

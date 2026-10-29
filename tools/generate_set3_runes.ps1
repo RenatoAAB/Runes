@@ -1635,12 +1635,14 @@ New-ScoreEffect "ge_s3_score_20" 20
 
 # ge_s3_golem_consume_residue_perm50 (consume adj mana residue, +50 perm each)
 Write-TresFile "$effectsDir\ge_s3_consume_residue_adj_perm50.tres" @"
-[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=8 format=3]
 
 [ext_resource type="Script" path="$($S.game_effect)" id="1_ge"]
 [ext_resource type="Script" path="$($S.action_consume_residue)" id="2_ac"]
 [ext_resource type="Script" path="$($S.value_resolver)" id="3_vr"]
 [ext_resource type="Resource" path="$($Shared.sel_adj)" id="4_sel"]
+
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_adj_mana_residue.tres" id="5_cond"]
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")
@@ -1651,24 +1653,25 @@ script = ExtResource("2_ac")
 residue_id = "mana_residue"
 max_consume = -1
 score_per_consumed = SubResource("vr")
+is_permanent = true
 
 [resource]
 script = ExtResource("1_ge")
+condition = ExtResource("5_cond")
 selector = ExtResource("4_sel")
 action = SubResource("act")
 "@
-# Note: score_per_consumed gives immediate score per consumed. For permanent, we'd need the action to support is_permanent.
-# Since ActionConsumeResidue's score_per_consumed may not support permanent, let's check and potentially use a different approach.
-# For now, this gives +50 score per consumed residue (not permanent). TODO: verify if permanent is needed.
 
 # ge_s3_golem_consume_anomaly_perm100 (consume adj anomaly, +100 perm each)
 Write-TresFile "$effectsDir\ge_s3_consume_anomaly_adj_perm100.tres" @"
-[gd_resource type="Resource" script_class="GameEffect" load_steps=5 format=3]
+[gd_resource type="Resource" script_class="GameEffect" load_steps=8 format=3]
 
 [ext_resource type="Script" path="$($S.game_effect)" id="1_ge"]
 [ext_resource type="Script" path="$($S.action_consume_residue)" id="2_ac"]
 [ext_resource type="Script" path="$($S.value_resolver)" id="3_vr"]
 [ext_resource type="Resource" path="$($Shared.sel_adj)" id="4_sel"]
+
+[ext_resource type="Resource" path="res://resources/effects/shared/conditions/condition_adj_mana_anomaly.tres" id="5_cond"]
 
 [sub_resource type="Resource" id="vr"]
 script = ExtResource("3_vr")
@@ -1679,9 +1682,11 @@ script = ExtResource("2_ac")
 residue_id = "mana_anomaly"
 max_consume = -1
 score_per_consumed = SubResource("vr")
+is_permanent = true
 
 [resource]
 script = ExtResource("1_ge")
+condition = ExtResource("5_cond")
 selector = ExtResource("4_sel")
 action = SubResource("act")
 "@

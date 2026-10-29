@@ -15,6 +15,8 @@ const VICTORY_COLOR := Color(0.3, 0.8, 0.3)
 const DEFEAT_COLOR := Color(0.8, 0.3, 0.3)
 
 var _is_victory: bool = false
+var _is_run_complete: bool = false
+var _continue_emitted: bool = false
 
 
 func _ready() -> void:
@@ -25,18 +27,22 @@ func _ready() -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	# Any click on the screen closes it
-	if event is InputEventMouseButton and event.pressed:
+	if not _is_run_complete and event is InputEventMouseButton and event.pressed:
 		_on_continue_pressed()
 
 
 ## Show the battle result screen with statistics
-func show_result(is_victory: bool, final_score: int, target_score: int) -> void:
+func show_result(is_victory: bool, final_score: int, target_score: int, run_completed: bool = false) -> void:
 	_is_victory = is_victory
+	_is_run_complete = run_completed
+	_continue_emitted = false
+	if continue_button:
+		continue_button.text = "New Run" if run_completed else ("Continue" if is_victory else "Try Again")
 	
 	# Update title
 	if title_label:
 		if is_victory:
-			title_label.text = "VICTORY!"
+			title_label.text = "VICTORY!" if run_completed else "ROUND CLEARED"
 			title_label.add_theme_color_override("font_color", VICTORY_COLOR)
 		else:
 			title_label.text = "DEFEAT"
@@ -121,12 +127,15 @@ func _add_section_header(title: String) -> void:
 
 
 func _on_continue_pressed() -> void:
+	if _continue_emitted:
+		return
+	_continue_emitted = true
 	hide()
 	continue_pressed.emit()
 
 
 ## Static helper to create and show the result screen
-static func create_popup(parent: Node, is_victory: bool, final_score: int, target_score: int) -> BattleResultScreen:
+static func create_popup(parent: Node, is_victory: bool, final_score: int, target_score: int, run_completed: bool = false) -> BattleResultScreen:
 	var screen = BattleResultScreen.new()
 	
 	# Set up basic layout
@@ -138,7 +147,7 @@ static func create_popup(parent: Node, is_victory: bool, final_score: int, targe
 	bg.set_anchors_preset(Control.PRESET_FULL_RECT)
 	bg.mouse_filter = Control.MOUSE_FILTER_STOP
 	bg.gui_input.connect(func(event):
-		if event is InputEventMouseButton and event.pressed:
+		if not screen._is_run_complete and event is InputEventMouseButton and event.pressed:
 			screen._on_continue_pressed()
 	)
 	screen.add_child(bg)
@@ -191,12 +200,11 @@ static func create_popup(parent: Node, is_victory: bool, final_score: int, targe
 	var button = Button.new()
 	button.text = "Continue" if is_victory else "Try Again"
 	button.custom_minimum_size = Vector2(100, 30)
-	button.pressed.connect(screen._on_continue_pressed)
 	screen.continue_button = button
 	vbox.add_child(button)
 	
 	# Add to parent and show
 	parent.add_child(screen)
-	screen.show_result(is_victory, final_score, target_score)
+	screen.show_result(is_victory, final_score, target_score, run_completed)
 	
 	return screen

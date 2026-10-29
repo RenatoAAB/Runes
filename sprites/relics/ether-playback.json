@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 5,
+  "drawn_bounds_xyxy": [
+    6,
+    3,
+    26,
+    28
+  ],
+  "frame_files": {
+    "frame-0.png": "c958678b1eed1b5fb80d60fed1d987828e9e9169a3b78d55e21287195372a016",
+    "frame-1.png": "c958678b1eed1b5fb80d60fed1d987828e9e9169a3b78d55e21287195372a016",
+    "frame-10.png": "c958678b1eed1b5fb80d60fed1d987828e9e9169a3b78d55e21287195372a016",
+    "frame-11.png": "c958678b1eed1b5fb80d60fed1d987828e9e9169a3b78d55e21287195372a016",
+    "frame-2.png": "3cb2137704a706cf38acfed2ad68ff4e80418f7ae058ae49206764036c2c8c0d",
+    "frame-3.png": "3cb2137704a706cf38acfed2ad68ff4e80418f7ae058ae49206764036c2c8c0d",
+    "frame-4.png": "ff1b42385b5fc4e3a0437635387bb6fb19f042032aeafe87faf77d19c7aa944b",
+    "frame-5.png": "ff1b42385b5fc4e3a0437635387bb6fb19f042032aeafe87faf77d19c7aa944b",
+    "frame-6.png": "ff1b42385b5fc4e3a0437635387bb6fb19f042032aeafe87faf77d19c7aa944b",
+    "frame-7.png": "3cb2137704a706cf38acfed2ad68ff4e80418f7ae058ae49206764036c2c8c0d",
+    "frame-8.png": "3cb2137704a706cf38acfed2ad68ff4e80418f7ae058ae49206764036c2c8c0d",
+    "frame-9.png": "c958678b1eed1b5fb80d60fed1d987828e9e9169a3b78d55e21287195372a016"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "metaphysical-trio-v2",
+  "runtime_tag": "Cross",
+  "selected_variant": "ether",
+  "sheet_sha256": "d030e1f60a45fd8e497483f11ffee8a74669da16d3e07dd8ed527b959b009f94",
+  "source": "art:reviews/relic-item-inventory-r01/metaphysical-trio-v2/ether.aseprite",
+  "source_sha256": "114544dfb80a573a145b8f3e5adf055644456b0299c17fc5bbae41a04dbcbfb6"
+}

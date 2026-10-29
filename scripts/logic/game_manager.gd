@@ -36,6 +36,8 @@ var grid_manager: GridManager:
 @export var base_target_score: int = 100
 @export var score_growth_initial: float = 1.5
 @export var score_growth_acceleration: float = 0.05
+## Final score of one complete multi-panel battle; not cumulative run score.
+@export_range(1, 2147483647, 1) var run_victory_score: int = 1_000_000
 
 var current_level: int = 1
 var current_target_score: int = 0
@@ -149,6 +151,8 @@ func _load_all_runes() -> void:
 	print("Total runes loaded: %d" % available_runes.size())
 
 func start_game() -> void:
+	_result_pending = false
+	_run_victory_pending = false
 	current_level = 1
 	is_initial_setup = true
 	_bind_panel_manager()
@@ -158,6 +162,7 @@ func start_game() -> void:
 		shop_manager = _main_controller.get_shop_manager()
 		if shop_manager:
 			shop_manager.reset_elemental_probabilities()
+			shop_manager.reset_relic_seal()
 
 	if _panel_manager:
 		_panel_manager.full_reset_all_panels()
@@ -215,15 +220,22 @@ func start_battle() -> void:
 ## Reference to current result screen (if any)
 var _result_screen: BattleResultScreen = null
 var _last_battle_score: int = 0
+var _result_pending: bool = false
+var _run_victory_pending: bool = false
 
 func _on_battle_finished(total_score: int) -> void:
+	if current_phase != GamePhase.BATTLE:
+		return
 	current_phase = GamePhase.RESOLUTION
 	phase_changed.emit(current_phase)
 	_last_battle_score = total_score
 	
 	print("Battle Finished. Score: %d / %d" % [total_score, current_target_score])
 	
-	var is_victory = total_score >= current_target_score
+	_result_pending = true
+	_run_victory_pending = total_score >= run_victory_score
+	# Reaching the finish line takes precedence over the round's curve.
+	var is_victory = _run_victory_pending or total_score >= current_target_score
 	
 	# Show result screen with statistics
 	_show_result_screen(is_victory, total_score)
@@ -239,18 +251,24 @@ func _show_result_screen(is_victory: bool, total_score: int) -> void:
 		ui_parent,
 		is_victory,
 		total_score,
-		current_target_score
+		run_victory_score if _run_victory_pending else current_target_score,
+		_run_victory_pending
 	)
 	
 	_result_screen.continue_pressed.connect(_on_result_continue.bind(is_victory))
 
 
 func _on_result_continue(was_victory: bool) -> void:
+	if not _result_pending:
+		return
+	_result_pending = false
 	if _result_screen:
 		_result_screen.queue_free()
 		_result_screen = null
 	
-	if was_victory:
+	if _run_victory_pending:
+		_handle_run_win()
+	elif was_victory:
 		_handle_win()
 	else:
 		_handle_loss()
@@ -324,17 +342,27 @@ func _refresh_shop_after_victory() -> void:
 
 func _handle_loss() -> void:
 	print("Defeat!")
-	# When a win condition exists, _handle_win must mirror these two calls with victory = true
+	_end_run(false)
+	start_game()
+
+
+func _handle_run_win() -> void:
+	print("Run won! Score: %d / %d" % [_last_battle_score, run_victory_score])
+	_end_run(true)
+	start_game()
+
+
+func _end_run(victory: bool) -> void:
 	var stats = get_node_or_null("/root/Stats")
 	if stats and stats.has_method("end_run"):
-		stats.end_run(false)
+		stats.end_run(victory)
 	var event_bus = get_node_or_null("/root/EventBus")
 	if event_bus:
-		event_bus.run_ended.emit(false, current_level)
-	game_lost.emit(current_level)
-	# Restart or Game Over logic
-	# For now, just restart
-	start_game()
+		event_bus.run_ended.emit(victory, current_level)
+	if victory:
+		game_won.emit()
+	else:
+		game_lost.emit(current_level)
 
 func _calculate_target_score(level: int) -> int:
 	# Accelerating exponential: growth itself grows each round

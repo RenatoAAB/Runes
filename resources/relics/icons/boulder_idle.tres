@@ -1,0 +1,42 @@
+[gd_resource type="AnimatedTexture" load_steps=13 format=3]
+
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-0.png" id="1"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-1.png" id="2"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-2.png" id="3"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-3.png" id="4"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-4.png" id="5"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-5.png" id="6"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-6.png" id="7"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-7.png" id="8"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-8.png" id="9"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-9.png" id="10"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-10.png" id="11"]
+[ext_resource type="Texture2D" path="res://sprites/relics/boulder-AtlasEyes/frame-11.png" id="12"]
+
+[resource]
+frames = 12
+speed_scale = 1.0
+frame_0/texture = ExtResource("1")
+frame_0/duration = 0.2
+frame_1/texture = ExtResource("2")
+frame_1/duration = 0.2
+frame_2/texture = ExtResource("3")
+frame_2/duration = 0.2
+frame_3/texture = ExtResource("4")
+frame_3/duration = 0.2
+frame_4/texture = ExtResource("5")
+frame_4/duration = 0.2
+frame_5/texture = ExtResource("6")
+frame_5/duration = 0.2
+frame_6/texture = ExtResource("7")
+frame_6/duration = 0.2
+frame_7/texture = ExtResource("8")
+frame_7/duration = 0.2
+frame_8/texture = ExtResource("9")
+frame_8/duration = 0.2
+frame_9/texture = ExtResource("10")
+frame_9/duration = 0.2
+frame_10/texture = ExtResource("11")
+frame_10/duration = 0.2
+frame_11/texture = ExtResource("12")
+frame_11/duration = 0.2

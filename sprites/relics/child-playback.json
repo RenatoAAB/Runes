@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 5,
+  "drawn_bounds_xyxy": [
+    9,
+    7,
+    24,
+    28
+  ],
+  "frame_files": {
+    "frame-0.png": "74910ab8d7192667f6b14bf8ad8df32be63bfa243c01bf645665ef201ddcaa71",
+    "frame-1.png": "74910ab8d7192667f6b14bf8ad8df32be63bfa243c01bf645665ef201ddcaa71",
+    "frame-10.png": "74910ab8d7192667f6b14bf8ad8df32be63bfa243c01bf645665ef201ddcaa71",
+    "frame-11.png": "74910ab8d7192667f6b14bf8ad8df32be63bfa243c01bf645665ef201ddcaa71",
+    "frame-2.png": "20ecc62dbe90711938e5ac9a1a408e91e4dc7c71e61ae65468a9f54142894be8",
+    "frame-3.png": "20ecc62dbe90711938e5ac9a1a408e91e4dc7c71e61ae65468a9f54142894be8",
+    "frame-4.png": "629dc249f0e298dc8bb61cfd9b30dd9567611faf6ccec398dcb282aab28e1025",
+    "frame-5.png": "629dc249f0e298dc8bb61cfd9b30dd9567611faf6ccec398dcb282aab28e1025",
+    "frame-6.png": "629dc249f0e298dc8bb61cfd9b30dd9567611faf6ccec398dcb282aab28e1025",
+    "frame-7.png": "20ecc62dbe90711938e5ac9a1a408e91e4dc7c71e61ae65468a9f54142894be8",
+    "frame-8.png": "20ecc62dbe90711938e5ac9a1a408e91e4dc7c71e61ae65468a9f54142894be8",
+    "frame-9.png": "74910ab8d7192667f6b14bf8ad8df32be63bfa243c01bf645665ef201ddcaa71"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "earth-trio-v1",
+  "runtime_tag": "Child",
+  "selected_variant": "child",
+  "sheet_sha256": "b1eb95ae6845860a5ea343136073cce255bc20b50d0efacc512561837e649727",
+  "source": "art:reviews/relic-item-inventory-r01/earth-trio-v1/child.aseprite",
+  "source_sha256": "fe5b12b367e4a5aea652491487dd25d472472e27814d0aa00e421b282e91a2da"
+}

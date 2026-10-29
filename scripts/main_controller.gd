@@ -163,6 +163,7 @@ func _ready() -> void:
 		game_manager.phase_changed.connect(_on_phase_changed)
 		game_manager.free_pick_granted.connect(_on_free_pick_granted)
 		game_manager.game_lost.connect(_on_game_lost)
+		game_manager.game_won.connect(_reset_run_ui)
 		# Force initial update in case level started before we connected
 		_on_level_started(game_manager.current_level, game_manager.current_target_score)
 	
@@ -1179,6 +1180,11 @@ func _on_phase_changed(new_phase: GameEnums.GamePhase) -> void:
 
 ## Called when the player loses the game - reset panels to initial 3x3 state
 func _on_game_lost(_final_level: int) -> void:
+	_reset_run_ui()
+
+
+## Refresh the board and extra inventory for either terminal outcome.
+func _reset_run_ui() -> void:
 	if _panel_manager:
 		_panel_manager.full_reset_all_panels()
 		_current_panel_index = 0

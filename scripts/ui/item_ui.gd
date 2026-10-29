@@ -5,6 +5,7 @@ extends TextureRect
 ## Handles Drag & Drop similar to RuneUI.
 ## Can display relics, modifiers, and slot pieces with appropriate visuals.
 
+signal visuals_changed
 signal item_clicked(item_ui: ItemUI)
 signal item_drag_started(item_ui: ItemUI)
 
@@ -16,6 +17,7 @@ var item_type: ItemType = ItemType.NONE
 var item_data: Variant = null  # RelicData, SlotModifierData, or SlotPieceData
 var item_instance: Variant = null  # RelicInstance, null for modifiers, SlotPieceInstance
 
+var _modifier_overlay: Sprite2D
 var _background: ColorRect
 var _label: Label
 var _piece_preview_grid: Control = null
@@ -35,6 +37,14 @@ func _ready() -> void:
 
 
 func _setup_visuals() -> void:
+	_modifier_overlay = Sprite2D.new()
+	_modifier_overlay.name = "ModifierBorder"
+	_modifier_overlay.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_modifier_overlay.z_index = 1
+	add_child(_modifier_overlay)
+	resized.connect(func(): _modifier_overlay.position = size * 0.5)
+	_modifier_overlay.position = size * 0.5
+
 	# Background color rect
 	_background = ColorRect.new()
 	_background.set_anchors_preset(Control.PRESET_FULL_RECT)
@@ -124,6 +134,9 @@ func clear() -> void:
 	item_data = null
 	item_instance = null
 	texture = null
+	if _modifier_overlay:
+		_modifier_overlay.texture = null
+	visuals_changed.emit()
 	
 	if _background:
 		_background.color = Color(0.2, 0.2, 0.2, 0.5)
@@ -142,6 +155,7 @@ func _update_visuals() -> void:
 	var color: Color
 	var label_text: String
 	var icon: Texture2D = null
+	var border: Texture2D = null
 	
 	match item_type:
 		ItemType.RELIC:
@@ -155,6 +169,9 @@ func _update_visuals() -> void:
 			color = SlotPieceUI.get_color_for_modifier_type(modifier.modifier_type)
 			label_text = modifier.display_name.substr(0, 2) if modifier.display_name else "M"
 			icon = modifier.icon
+			if not icon and modifier.slot_data_override and modifier.slot_data_override.modifier_overlay_texture:
+				icon = modifier.slot_data_override.texture
+				border = modifier.slot_data_override.modifier_overlay_texture
 		
 		ItemType.PIECE:
 			var _piece = item_data as SlotPieceData
@@ -166,9 +183,11 @@ func _update_visuals() -> void:
 			color = Color.GRAY
 			label_text = "?"
 	
+	_modifier_overlay.texture = border
+	var native_icon := icon != null and (item_type == ItemType.RELIC or has_modifier_icon() or border != null)
 	# Apply visuals
 	if _background:
-		_background.color = color
+		_background.color = Color.TRANSPARENT if native_icon else color
 	
 	if _label:
 		if icon:
@@ -177,7 +196,11 @@ func _update_visuals() -> void:
 			_label.text = label_text
 	
 	texture = icon
+	stretch_mode = TextureRect.STRETCH_KEEP_CENTERED if native_icon else TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST if native_icon else CanvasItem.TEXTURE_FILTER_PARENT_NODE
 	
+	visuals_changed.emit()
+
 	# Handle piece preview grid
 	if item_type == ItemType.PIECE:
 		if not _piece_preview_grid:
@@ -202,6 +225,14 @@ func _update_visuals() -> void:
 	else:
 		if _piece_preview_grid:
 			_piece_preview_grid.get_parent().visible = false
+
+
+func has_modifier_border() -> bool:
+	return _modifier_overlay != null and _modifier_overlay.texture != null
+
+
+func has_modifier_icon() -> bool:
+	return item_type == ItemType.MODIFIER and item_data != null and (item_data as SlotModifierData).icon != null
 
 
 func _connect_event_bus() -> void:
@@ -357,7 +388,10 @@ func _create_drag_preview() -> Control:
 		preview_tex.texture = texture
 		preview_tex.size = size
 		preview_tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		preview_tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		preview_tex.stretch_mode = stretch_mode
+		preview_tex.texture_filter = texture_filter
+		if item_type == ItemType.RELIC or has_modifier_icon() or has_modifier_border():
+			preview_tex.position = -0.5 * size
 		preview_tex.modulate = Color(1, 1, 1, 0.7)
 		control.add_child(preview_tex)
 	else:
@@ -369,6 +403,13 @@ func _create_drag_preview() -> Control:
 		preview_label.add_theme_font_size_override("font_size", 18)
 		preview_bg.add_child(preview_label)
 	
+	if has_modifier_border():
+		var border := Sprite2D.new()
+		border.texture = _modifier_overlay.texture
+		border.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		border.modulate = Color(1, 1, 1, 0.7)
+		control.add_child(border)
+
 	preview_bg.position = -0.5 * size
 	
 	return control

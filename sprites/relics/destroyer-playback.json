@@ -1,0 +1,27 @@
+{
+  "revision": "destroyer-creatures-v3",
+  "source_aseprite_sha256": "43e8f52b0c599f425ab82a9b4456415c16a8a1cb6b0b647b71842f486499e974",
+  "sheet_sha256": "66ab60c7416bd8e22c7eca391d338998c0bd040069f15aa1bffe4f12d64cc660",
+  "native_size": [
+    32,
+    32
+  ],
+  "frames": 12,
+  "frame_ms": 200,
+  "loop_ms": 2400,
+  "frame_files": {
+    "frame-0.png": "59b12e25211dd634407a76871c5e61090782c91d21faf0a922f5eb2a237718a8",
+    "frame-1.png": "59b12e25211dd634407a76871c5e61090782c91d21faf0a922f5eb2a237718a8",
+    "frame-2.png": "cc7e440d891460622bd4ae21097b800a564397a593a11d650fc1e23c83e0a561",
+    "frame-3.png": "cc7e440d891460622bd4ae21097b800a564397a593a11d650fc1e23c83e0a561",
+    "frame-4.png": "2f054542087dc332e5c865aa634d938defe30008ae1d284dc3287dfa1800f505",
+    "frame-5.png": "2f054542087dc332e5c865aa634d938defe30008ae1d284dc3287dfa1800f505",
+    "frame-6.png": "2f054542087dc332e5c865aa634d938defe30008ae1d284dc3287dfa1800f505",
+    "frame-7.png": "cc7e440d891460622bd4ae21097b800a564397a593a11d650fc1e23c83e0a561",
+    "frame-8.png": "cc7e440d891460622bd4ae21097b800a564397a593a11d650fc1e23c83e0a561",
+    "frame-9.png": "59b12e25211dd634407a76871c5e61090782c91d21faf0a922f5eb2a237718a8",
+    "frame-10.png": "59b12e25211dd634407a76871c5e61090782c91d21faf0a922f5eb2a237718a8",
+    "frame-11.png": "59b12e25211dd634407a76871c5e61090782c91d21faf0a922f5eb2a237718a8"
+  },
+  "pixel_verification": "Every PNG matches its approved sheet frame exactly"
+}

@@ -1,0 +1,178 @@
+[gd_scene load_steps=28 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_fountain_art.gd" id="1"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/background.png" id="2"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/water-loop.png" id="3"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/panels/neutral.png" id="4"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/panels/water.png" id="5"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/panels/fire.png" id="6"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/panels/earth.png" id="7"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/panels/air.png" id="8"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/panels/soul.png" id="9"]
+
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/furnace-benches/furnace.png" id="10"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/furnace-benches/bench-upper.png" id="11"]
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/furnace-benches/bench-lower.png" id="12"]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_room_lighting.gd" id="13_light"]
+
+[ext_resource type="Texture2D" path="res://sprites/scenes/shop/floor/floor-overlay.png" id="14_floor"]
+
+[sub_resource type="AtlasTexture" id="WaterFrame_0"]
+atlas = ExtResource("3")
+region = Rect2(0, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_1"]
+atlas = ExtResource("3")
+region = Rect2(184, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_2"]
+atlas = ExtResource("3")
+region = Rect2(368, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_3"]
+atlas = ExtResource("3")
+region = Rect2(552, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_4"]
+atlas = ExtResource("3")
+region = Rect2(736, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_5"]
+atlas = ExtResource("3")
+region = Rect2(920, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_6"]
+atlas = ExtResource("3")
+region = Rect2(1104, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_7"]
+atlas = ExtResource("3")
+region = Rect2(1288, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_8"]
+atlas = ExtResource("3")
+region = Rect2(1472, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_9"]
+atlas = ExtResource("3")
+region = Rect2(1656, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_10"]
+atlas = ExtResource("3")
+region = Rect2(1840, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="AtlasTexture" id="WaterFrame_11"]
+atlas = ExtResource("3")
+region = Rect2(2024, 0, 184, 131)
+filter_clip = true
+
+[sub_resource type="SpriteFrames" id="WaterLoopFrames"]
+animations = [{"frames": [
+{"duration": 150.0, "texture": SubResource("WaterFrame_0")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_1")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_2")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_3")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_4")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_5")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_6")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_7")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_8")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_9")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_10")},
+{"duration": 150.0, "texture": SubResource("WaterFrame_11")}
+], "loop": true, "name": &"water_idle", "speed": 1000.0}]
+
+
+
+[node name="FountainArt" type="Node2D"]
+texture_filter = 1
+script = ExtResource("1")
+
+[node name="Background" type="Sprite2D" parent="."]
+position = Vector2(0, 0)
+texture = ExtResource("2")
+centered = false
+
+
+[node name="FloorFinish" type="Sprite2D" parent="Background"]
+texture_filter = 1
+texture = ExtResource("14_floor")
+centered = false
+
+[node name="Furnace" type="Sprite2D" parent="."]
+position = Vector2(14, 18)
+texture = ExtResource("10")
+centered = false
+texture_filter = 1
+
+[node name="BenchUpper" type="Sprite2D" parent="."]
+position = Vector2(43, 141)
+texture = ExtResource("11")
+centered = false
+texture_filter = 1
+
+[node name="BenchLower" type="Sprite2D" parent="."]
+position = Vector2(30, 190)
+texture = ExtResource("12")
+centered = false
+texture_filter = 1
+
+[node name="FountainWater" type="AnimatedSprite2D" parent="."]
+position = Vector2(225, 110)
+sprite_frames = SubResource("WaterLoopFrames")
+animation = &"water_idle"
+autoplay = "water_idle"
+centered = false
+
+[node name="Panels" type="Node2D" parent="."]
+
+[node name="neutral" type="Sprite2D" parent="Panels"]
+z_index = 1
+position = Vector2(303, 66)
+texture = ExtResource("4")
+centered = false
+
+[node name="water" type="Sprite2D" parent="Panels"]
+z_index = 1
+position = Vector2(221, 96)
+texture = ExtResource("5")
+centered = false
+
+[node name="fire" type="Sprite2D" parent="Panels"]
+z_index = 1
+position = Vector2(385, 97)
+texture = ExtResource("6")
+centered = false
+
+[node name="earth" type="Sprite2D" parent="Panels"]
+z_index = 1
+position = Vector2(224, 188)
+texture = ExtResource("7")
+centered = false
+
+[node name="air" type="Sprite2D" parent="Panels"]
+z_index = 1
+position = Vector2(377, 189)
+texture = ExtResource("8")
+centered = false
+
+[node name="soul" type="Sprite2D" parent="Panels"]
+z_index = 1
+position = Vector2(301, 221)
+texture = ExtResource("9")
+centered = false
+
+[node name="RoomLighting" type="Node2D" parent="."]
+script = ExtResource("13_light")

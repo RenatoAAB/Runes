@@ -9,3 +9,7 @@ func evaluate(_ctx: EffectContext) -> bool:
 
 func get_description() -> String:
 	return "Always"
+
+
+func is_gameplay_condition() -> bool:
+	return false

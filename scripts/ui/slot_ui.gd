@@ -33,6 +33,11 @@ var slot_context: SlotContext = SlotContext.PANEL
 ## Reference to the Sprite2D child that shows the slot frame.
 var _slot_sprite: Sprite2D = null
 var _base_slot_texture: Texture2D = null
+var _modifier_overlay: Sprite2D = null
+var _modifier_icon: Sprite2D = null
+var _item_kit_hides_base := false
+var _default_sprite_position := Vector2.ZERO
+var _modifier_visual_offset := Vector2.ZERO
 var _modifier_texture_cache: Dictionary = {}
 
 # If part of the grid, this will be set.
@@ -69,12 +74,22 @@ func _ready() -> void:
 
 	# Get the sprite child and clear the PanelContainer background fill
 	_slot_sprite = get_node_or_null("Sprite2D")
+	if _slot_sprite:
+		_default_sprite_position = _slot_sprite.position
 	add_theme_stylebox_override("panel", StyleBoxEmpty.new())
 	if _slot_sprite and _slot_sprite.texture:
 		_base_slot_texture = _slot_sprite.texture
 	elif texture_panel_empty:
 		_base_slot_texture = texture_panel_empty
 	_prepare_context_fallback_textures()
+
+	_modifier_overlay = Sprite2D.new()
+	_modifier_overlay.name = "ModifierBorder"
+	_modifier_overlay.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_modifier_overlay.z_index = 1
+	add_child(_modifier_overlay)
+	resized.connect(_position_modifier_overlay)
+	_position_modifier_overlay()
 
 	# Create buff overlay (persistent state)
 	buff_rect = ColorRect.new()
@@ -85,11 +100,13 @@ func _ready() -> void:
 
 	# Create residue visual overlay (shader effects for mana residue/anomaly)
 	residue_visual = ResidueVisual.new()
+	residue_visual.z_index = 2  # Same plane as runes; tree order keeps residue above them.
 	residue_visual.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(residue_visual)
 
 	# Create multi-effect overlay (preview/interaction) - replaces old highlight_rect
 	multi_effect_overlay = MultiEffectOverlay.new()
+	multi_effect_overlay.z_index = 3
 	multi_effect_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	add_child(multi_effect_overlay)
 	
@@ -109,9 +126,27 @@ func _ready() -> void:
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_DRAG_END:
+		if multi_effect_overlay:
+			multi_effect_overlay.set_drop_state(-1)
+		# Restoring the RuneUI mouse filter does not guarantee another enter signal.
+		# Wait until all drag-end notifications and queued replacements have settled.
+		call_deferred("_restore_rune_hover_after_drag")
 		var mc = get_tree().get_first_node_in_group("main_controller")
 		if mc and mc.has_method("clear_piece_drag_preview"):
 			mc.clear_piece_drag_preview()
+
+
+func _restore_rune_hover_after_drag() -> void:
+	if not is_inside_tree():
+		return
+	await get_tree().process_frame
+	if not is_inside_tree() or not is_visible_in_tree() or get_viewport().gui_is_dragging():
+		return
+	if not is_instance_valid(rune_ui) or rune_ui.is_queued_for_deletion():
+		return
+	var hovered := get_viewport().gui_get_hovered_control()
+	if hovered == rune_ui or hovered == self:
+		rune_ui._on_mouse_entered()
 
 
 ## Set whether this slot is unlocked (can hold runes) or locked (empty expansion space)
@@ -135,6 +170,9 @@ func set_slot_context(context: SlotContext) -> void:
 func _refresh_slot_sprite() -> void:
 	if not _slot_sprite:
 		return
+	_clear_modifier_icon()
+	_modifier_visual_offset = Vector2.ZERO
+	_set_modifier_overlay(null)
 	_slot_sprite.self_modulate = Color.WHITE
 	match slot_context:
 		SlotContext.RELIC:
@@ -148,6 +186,70 @@ func _refresh_slot_sprite() -> void:
 				_slot_sprite.texture = texture_panel_locked if texture_panel_locked else texture_panel_empty
 			else:
 				_slot_sprite.texture = texture_panel_empty
+
+
+## Border pixels may extend beyond the cell; input controls remain 40px.
+## Separate z-order keeps later opaque neighbor bases from covering the border.
+func _set_modifier_overlay(data: SlotData) -> void:
+	if data:
+		_clear_modifier_icon()
+	if _modifier_overlay:
+		_modifier_overlay.texture = data.modifier_overlay_texture if data else null
+		_modifier_overlay.visible = _modifier_overlay.texture != null
+	_position_modifier_overlay()
+	_update_modifier_clipping()
+
+
+func _position_modifier_overlay() -> void:
+	if _modifier_icon:
+		_modifier_icon.position = (size * 0.5).floor()
+	if _modifier_overlay:
+		_modifier_overlay.position = (size * 0.5).floor() + _modifier_visual_offset
+		if _slot_sprite:
+			_slot_sprite.position = _modifier_overlay.position if _modifier_overlay.texture else _default_sprite_position
+
+
+## Composition offset only: never moves the Control, tooltip anchor or hitbox.
+func set_modifier_visual_offset(offset: Vector2) -> void:
+	_modifier_visual_offset = offset.round()
+	_position_modifier_overlay()
+
+
+func _update_modifier_clipping() -> void:
+	var border_visible := _modifier_overlay != null and _modifier_overlay.texture != null
+	var item_border := is_instance_valid(item_ui) and item_ui.has_modifier_border()
+	var hide_inventory_base := slot_context == SlotContext.INVENTORY and is_instance_valid(item_ui) and item_ui.has_modifier_icon()
+	if _slot_sprite and (hide_inventory_base or _item_kit_hides_base):
+		_slot_sprite.visible = not hide_inventory_base
+	_item_kit_hides_base = hide_inventory_base
+	# Shop kits can extend one opaque pixel beyond the23x19 click area.
+	clip_contents = not (border_visible or item_border or _modifier_icon != null)
+
+
+## Shop kit pixels are independent from the mounted SlotData presentation.
+func set_modifier_icon_display(icon: Texture2D) -> void:
+	clear_display()
+	if not icon:
+		return
+	_modifier_icon = Sprite2D.new()
+	_modifier_icon.name = "ModifierKit"
+	_modifier_icon.texture = icon
+	_modifier_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	add_child(_modifier_icon)
+	if _slot_sprite:
+		_slot_sprite.visible = false
+	_position_modifier_overlay()
+	_update_modifier_clipping()
+
+
+func _clear_modifier_icon() -> void:
+	if not _modifier_icon:
+		return
+	_modifier_icon.hide()
+	_modifier_icon.queue_free()
+	_modifier_icon = null
+	if _slot_sprite:
+		_slot_sprite.visible = true
 
 
 func _prepare_context_fallback_textures() -> void:
@@ -263,7 +365,7 @@ func update_slot_info(slot: GridSlot) -> void:
 			_refresh_slot_sprite()
 		return
 
-	if slot_context == SlotContext.PANEL and slot.slot:
+	if slot_context == SlotContext.PANEL and slot.slot and is_unlocked:
 		var modifier_key := slot.slot.slot_modifier_id
 		if modifier_key.is_empty():
 			var applied_modifiers = slot.slot.get_meta("applied_modifiers", {})
@@ -271,6 +373,7 @@ func update_slot_info(slot: GridSlot) -> void:
 				modifier_key = String(applied_modifiers.keys()[0])
 
 		if not modifier_key.is_empty() or (slot.slot.data and slot.slot.data.id != "default"):
+			_set_modifier_overlay(slot.slot.data)
 			var modifier_texture := _get_modifier_texture(slot.slot.data, modifier_key)
 			if _slot_sprite and modifier_texture:
 				_slot_sprite.texture = modifier_texture
@@ -310,6 +413,10 @@ func update_slot_info(slot: GridSlot) -> void:
 	set_buff_highlight(highlight_color)
 
 func _on_mouse_entered() -> void:
+	# While dragging, the carried rune owns effect feedback; don't replace it
+	# with the hovered destination's occupant or tooltip.
+	if get_viewport().gui_is_dragging():
+		return
 	if slot_context == SlotContext.PANEL and current_slot_data and current_slot_data.rune:
 		var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
 		if highlighter and highlighter.has_method("highlight_rune_effects"):
@@ -336,6 +443,8 @@ func _on_mouse_entered() -> void:
 			tooltip_manager.set_slot_tooltip(text)
 
 func _on_mouse_exited() -> void:
+	if multi_effect_overlay:
+		multi_effect_overlay.set_drop_state(-1)
 	var tooltip_manager = get_tree().get_first_node_in_group("tooltip_manager")
 	if tooltip_manager:
 		tooltip_manager.clear_slot_tooltip()
@@ -345,7 +454,7 @@ func _on_mouse_exited() -> void:
 
 	if slot_context == SlotContext.PANEL:
 		var highlighter = get_tree().get_first_node_in_group("grid_highlighter")
-		if highlighter and highlighter.has_method("clear_highlights"):
+		if highlighter and highlighter.has_method("clear_highlights") and not get_viewport().gui_is_dragging():
 			highlighter.clear_highlights()
 
 
@@ -372,6 +481,8 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	var preview = TextureRect.new()
 	if _relic_instance.data and _relic_instance.data.icon:
 		preview.texture = _relic_instance.data.icon
+		preview.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	preview.custom_minimum_size = Vector2(48, 48)
 	preview.size = Vector2(48, 48)
@@ -410,6 +521,7 @@ func set_rune(rune: RuneInstance) -> void:
 		item_ui.visible = false
 		item_ui.queue_free()
 		item_ui = null
+	_update_modifier_clipping()
 	if _placeholder_label:
 		_placeholder_label.visible = false
 	
@@ -419,8 +531,9 @@ func set_rune(rune: RuneInstance) -> void:
 		# For this script-only task, we create it programmatically.
 		rune_ui = RuneUI.new()
 		rune_ui.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		rune_ui.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		rune_ui.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
 		rune_ui.custom_minimum_size = Vector2(32, 32)
+		rune_ui.z_index = 2  # Above mounted equipment; below targeting overlay (3).
 		add_child(rune_ui)
 		rune_ui.setup(rune)
 		# Keep overlay above all visuals for clear targeting/condition feedback.
@@ -445,9 +558,10 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 	
 	# Can drop rune instances only on UNLOCKED slots
 	if data.has("rune_instance") and not data.has("source_type"):
-		if slot_context == SlotContext.INVENTORY:
-			return _is_inventory_drop_target_empty()
-		return is_unlocked
+		var accepted := _can_drop_rune(data)
+		if get_viewport().gui_is_dragging() and multi_effect_overlay:
+			multi_effect_overlay.set_drop_state(1 if accepted else 0)
+		return accepted
 	
 	# Can drop relics FROM relic slots back to inventory (other_inventory slots only)
 	if data.get("source_type") == "relic_slot" and data.has("relic_instance"):
@@ -474,6 +588,29 @@ func _can_drop_data(_at_position: Vector2, data: Variant) -> bool:
 		return not is_unlocked
 	
 	return false
+
+
+func _can_drop_rune(data: Dictionary) -> bool:
+	var game_manager = get_tree().get_first_node_in_group("game_manager")
+	if game_manager and game_manager.current_phase in [GameEnums.GamePhase.BATTLE, GameEnums.GamePhase.RESOLUTION]:
+		return false
+	var source = data.get("source_ui")
+	var source_slot: SlotUI = source.get_parent() as SlotUI if is_instance_valid(source) else null
+	if not source_slot or source_slot.slot_context == SlotContext.SHOP:
+		return false
+	if source_slot.current_slot_data and source_slot.current_slot_data.has_state("petrified"):
+		return false
+	if slot_context == SlotContext.INVENTORY:
+		return _is_inventory_drop_target_empty()
+	if slot_context != SlotContext.PANEL or not is_unlocked:
+		return false
+	if current_slot_data and current_slot_data.rune:
+		# Inventory placement cannot replace a rune; grid movement may swap.
+		if source_slot.grid_coord == Vector2i(-1, -1):
+			return false
+		if current_slot_data.has_state("petrified"):
+			return false
+	return true
 
 
 func _is_inventory_drop_target_empty() -> bool:
@@ -541,6 +678,7 @@ var _shop_mode: bool = false
 var _shop_price_text: String = ""  # Price text for tooltip display
 var _price_label: Label = null
 var _placeholder_label: Label = null
+var _display_icon: TextureRect = null
 
 ## Shop item data for tooltips
 var _shop_item_type: String = ""  # "piece", "modifier", "relic", "rune"
@@ -599,6 +737,7 @@ func update_slot_data_display(slot_data: SlotData) -> void:
 		rune_ui.queue_free()
 		rune_ui = null
 	
+	_set_modifier_overlay(slot_data)
 	# Update sprite for modified slot — use SlotData's own texture when available
 	if _slot_sprite:
 		var tex = _get_modifier_texture(slot_data)
@@ -627,11 +766,26 @@ func update_slot_data_display(slot_data: SlotData) -> void:
 		display_text = slot_data.slot_name.substr(0, 3).to_upper()
 	
 	slot_type_label.text = display_text
-	slot_type_label.visible = true
+	slot_type_label.visible = slot_data.modifier_overlay_texture == null
+
+
+## Authored icons keep their native pixels; the slot retains purchase and tooltip input.
+func set_icon_display(icon: Texture2D) -> void:
+	clear_display()
+	_display_icon = TextureRect.new()
+	_display_icon.name = "RelicIcon"
+	_display_icon.texture = icon
+	_display_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	_display_icon.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	_display_icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+	_display_icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_display_icon.set_anchors_preset(Control.PRESET_FULL_RECT)
+	add_child(_display_icon)
 
 
 ## Show placeholder display (for relics, etc.)
 func set_placeholder_display(text: String, bg_color: Color = Color(0.2, 0.2, 0.2)) -> void:
+	clear_display()
 	# Clear any rune display
 	if rune_ui:
 		rune_ui.queue_free()
@@ -656,6 +810,10 @@ func set_placeholder_display(text: String, bg_color: Color = Color(0.2, 0.2, 0.2
 
 ## Clear all display (rune, slot type, placeholder)
 func clear_display() -> void:
+	if _display_icon:
+		_display_icon.hide()
+		_display_icon.queue_free()
+		_display_icon = null
 	if rune_ui:
 		rune_ui.queue_free()
 		rune_ui = null
@@ -691,6 +849,7 @@ func set_extra_item(item_type: String, data: Variant, instance: Variant = null) 
 	# Create or reuse ItemUI
 	if not item_ui:
 		item_ui = ItemUI.new()
+		item_ui.visuals_changed.connect(_update_modifier_clipping)
 		item_ui.set_anchors_preset(Control.PRESET_FULL_RECT)
 		add_child(item_ui)
 

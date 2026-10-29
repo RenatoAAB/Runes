@@ -1,0 +1,382 @@
+{
+  "schema_version": 1,
+  "revision": "shop-furnace-benches-r15",
+  "status": "candidate_original_geometry",
+  "source": {
+    "original_path": "Sprites/loja/loja-editavel.aseprite",
+    "original_sha256": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88",
+    "editable_copy": "art:revisions/shop-furnace-benches-r15/source/loja-original-export-r15.aseprite",
+    "editable_copy_sha256": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88",
+    "frames": 12,
+    "frame_duration_ms": 150,
+    "tag": "water_idle",
+    "all_12_compositions_identical_to_r10": true
+  },
+  "canvas": [
+    640,
+    360
+  ],
+  "background": {
+    "path": "background-without-furnace-benches.png",
+    "sha256": "0eff3dbab05a69f640d89b6909c8322aedf65af46e64aedbf01be9e062879ad8",
+    "origin": [
+      0,
+      0
+    ],
+    "texture_size": [
+      640,
+      360
+    ],
+    "draw_size": [
+      640,
+      360
+    ],
+    "z_index": 0,
+    "excludes": [
+      "FountainWater",
+      "FountainPanel_*",
+      "Furnace",
+      "MesasTrabalho",
+      "MesasTrabalhoDetalhes"
+    ]
+  },
+  "assets": [
+    {
+      "id": "furnace",
+      "path": "furnace.png",
+      "sha256": "7a198272f6d4239959298e2613c743220a42b097b44eb6efceeb876fea71cffb",
+      "source_layers": [
+        "Furnace"
+      ],
+      "source_bounds": [
+        14,
+        18,
+        131,
+        168
+      ],
+      "origin": [
+        14,
+        18
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "padding": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "texture_size": [
+        131,
+        168
+      ],
+      "draw_size": [
+        131,
+        168
+      ],
+      "texture_filter": "nearest",
+      "hitbox": {
+        "mode": "source_alpha_mask",
+        "note": "Texture geometry does not impose a rectangular interaction region."
+      },
+      "z_index": 1,
+      "visual_order": 1,
+      "frame_count": 1,
+      "tools_pixels_preserved": true
+    },
+    {
+      "id": "bench-upper",
+      "path": "bench-upper.png",
+      "sha256": "a59a5768d6ad878ba9e6a12ba563e948e53d8a353ba5066d7b70ba6b9aa99914",
+      "source_layers": [
+        "MesasTrabalho",
+        "MesasTrabalhoDetalhes"
+      ],
+      "source_bounds": [
+        43,
+        141,
+        127,
+        48
+      ],
+      "origin": [
+        43,
+        141
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "padding": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "texture_size": [
+        127,
+        48
+      ],
+      "draw_size": [
+        127,
+        48
+      ],
+      "texture_filter": "nearest",
+      "hitbox": {
+        "mode": "per_slot_rects_below",
+        "note": "Texture geometry does not impose a rectangular interaction region."
+      },
+      "z_index": 1,
+      "visual_order": 2,
+      "frame_count": 1,
+      "tools_pixels_preserved": true
+    },
+    {
+      "id": "bench-lower",
+      "path": "bench-lower.png",
+      "sha256": "9646686c891e924ee28aeaa4a2185c82b15381a7357ef15edef130aeb9b14277",
+      "source_layers": [
+        "MesasTrabalho",
+        "MesasTrabalhoDetalhes"
+      ],
+      "source_bounds": [
+        30,
+        190,
+        139,
+        48
+      ],
+      "origin": [
+        30,
+        190
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "padding": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "texture_size": [
+        139,
+        48
+      ],
+      "draw_size": [
+        139,
+        48
+      ],
+      "texture_filter": "nearest",
+      "hitbox": {
+        "mode": "per_slot_rects_below",
+        "note": "Texture geometry does not impose a rectangular interaction region."
+      },
+      "z_index": 1,
+      "visual_order": 3,
+      "frame_count": 1,
+      "tools_pixels_preserved": true
+    }
+  ],
+  "original_slots": [
+    {
+      "id": 1,
+      "bench": "upper",
+      "role": "normal",
+      "painted_dark_bounds": [
+        92,
+        156,
+        23,
+        19
+      ],
+      "suggested_hitbox_bounds": [
+        92,
+        156,
+        23,
+        19
+      ],
+      "item_draw_size_suggestion": [
+        18,
+        18
+      ],
+      "item_draw_note": "Godot must preserve item texture aspect ratio and reduce the visual to the original opening; do not alter bench artwork.",
+      "actual_hitbox_bounds": [
+        92,
+        156,
+        23,
+        19
+      ],
+      "runtime_item_presentation": "piece native integer cells max16x16; modifier centered10px label"
+    },
+    {
+      "id": 2,
+      "bench": "upper",
+      "role": "overclock",
+      "painted_dark_bounds": [
+        126,
+        156,
+        23,
+        19
+      ],
+      "suggested_hitbox_bounds": [
+        126,
+        156,
+        23,
+        19
+      ],
+      "item_draw_size_suggestion": [
+        18,
+        18
+      ],
+      "item_draw_note": "Godot must preserve item texture aspect ratio and reduce the visual to the original opening; do not alter bench artwork.",
+      "actual_hitbox_bounds": [
+        126,
+        156,
+        23,
+        19
+      ],
+      "runtime_item_presentation": "piece native integer cells max16x16; modifier centered10px label"
+    },
+    {
+      "id": 3,
+      "bench": "lower",
+      "role": "normal",
+      "painted_dark_bounds": [
+        91,
+        199,
+        23,
+        19
+      ],
+      "suggested_hitbox_bounds": [
+        91,
+        199,
+        23,
+        19
+      ],
+      "item_draw_size_suggestion": [
+        18,
+        18
+      ],
+      "item_draw_note": "Godot must preserve item texture aspect ratio and reduce the visual to the original opening; do not alter bench artwork.",
+      "actual_hitbox_bounds": [
+        91,
+        199,
+        23,
+        19
+      ],
+      "runtime_item_presentation": "piece native integer cells max16x16; modifier centered10px label"
+    },
+    {
+      "id": 4,
+      "bench": "lower",
+      "role": "overclock",
+      "painted_dark_bounds": [
+        126,
+        199,
+        23,
+        19
+      ],
+      "suggested_hitbox_bounds": [
+        126,
+        199,
+        23,
+        19
+      ],
+      "item_draw_size_suggestion": [
+        18,
+        18
+      ],
+      "item_draw_note": "Godot must preserve item texture aspect ratio and reduce the visual to the original opening; do not alter bench artwork.",
+      "actual_hitbox_bounds": [
+        126,
+        199,
+        23,
+        19
+      ],
+      "runtime_item_presentation": "piece native integer cells max16x16; modifier centered10px label"
+    }
+  ],
+  "overclock_sigil": {
+    "path": "overclock-sigil.png",
+    "sha256": "948de5320c9d9e441a748e7cc2af663c184606d6873c228b1af8770efd61d943",
+    "editable_source": "art:revisions/shop-furnace-benches-r15/source/overclock-sigil.aseprite",
+    "editable_source_sha256": "f656f937ad3b568135f237f36d4f5914badf127ac6d2c1ae56a56b75f2ad15e5",
+    "texture_size": [
+      18,
+      18
+    ],
+    "draw_size": [
+      18,
+      18
+    ],
+    "draw_origins": [
+      [
+        128,
+        157
+      ],
+      [
+        128,
+        200
+      ]
+    ],
+    "pivot": [
+      9,
+      9
+    ],
+    "hitbox": null,
+    "color": [
+      255,
+      255,
+      255,
+      255
+    ],
+    "palette_index": 9,
+    "frame_count": 1,
+    "authoring": "Aseprite native Lua",
+    "animation_author": "Godot runtime",
+    "animation_intent": "Brightness/color pulse of one monochrome magic circle with a central flame; no Aseprite animation frames.",
+    "padding": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "visual_order": "overclock slot effect overlay; Godot decides relation to offered item visibility"
+  },
+  "composition_order": [
+    "background",
+    "furnace",
+    "bench-upper",
+    "bench-lower",
+    "existing_r10_water_and_six_panels"
+  ],
+  "existing_approved_assets": {
+    "water_manifest": "art:revisions/shop-water-r10/manifest.json",
+    "water_and_panels": "Use installed approved r10 assets, unchanged; not baked into this background."
+  },
+  "limitations": [
+    "Existing incomplete surfaces beneath previously separated fountain plaques remain; no reconstruction.",
+    "Visible Ref source layer remains preserved.",
+    "Existing tool pixels and source geometry unchanged. Lower right original opening is partially framed by the original cable/tool detail; retain detail above visual where appropriate.",
+    "Original legacy palette deviations preserved elsewhere; new sigil uses palette color9 only.",
+    "40x40 bench redraw proposals r14 were rejected; original opening geometry is authoritative."
+  ],
+  "validation": "art:reviews/shop-furnace-benches-r15/art-validation.json",
+  "recipe": "art:revisions/shop-furnace-benches-r15/aseprite-tools/export.lua",
+  "recipe_sha256": "fe4a60f8add8e29ff3f182a60c4cb86a7560637f63746d2f3fe08f3d4d2aac2f",
+  "authoritative_manifest": {
+    "path": "art:revisions/shop-furnace-benches-r15/assets/manifest.json",
+    "sha256": "b5e63e75bf06418627e0672e76662152ac4e9e422c18c2ccc64e7b2819b4548a"
+  },
+  "runtime": {
+    "slots_visual_piece_max": [
+      16,
+      16
+    ],
+    "hitboxes": "original_slots suggested_hitbox_bounds",
+    "rendering": "nearest/native, integer cells, no backdrop",
+    "animation": "Godot uniform monochromatic color pulse, period1.6s; both destinations before purchase",
+    "metadata": "shop_overclock_offer tags only duplicated runtime offers"
+  }
+}

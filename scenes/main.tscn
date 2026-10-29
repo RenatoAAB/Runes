@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://c654112svuun8"]
+[gd_scene load_steps=29 format=3 uid="uid://c654112svuun8"]
 
 [ext_resource type="Script" uid="uid://dq73w8ijdk043" path="res://scripts/main_controller.gd" id="1_eb6dy"]
 [ext_resource type="Script" uid="uid://bg0n7gpcqvw2c" path="res://scripts/logic/game_manager.gd" id="1_o6xl0"]
@@ -9,19 +9,27 @@
 [ext_resource type="Script" uid="uid://fdnstpi6guoh" path="res://scripts/ui/grid_highlighter.gd" id="6_eb6dy"]
 [ext_resource type="Resource" uid="uid://70xt70mrvq5w" path="res://resources/runes/common/rune_derretimento.tres" id="6_yc10j"]
 [ext_resource type="Script" uid="uid://c212fo845qvri" path="res://scripts/ui/tooltip_manager.gd" id="7_trceg"]
-[ext_resource type="Resource" path="res://resources/runes/common/rune_rocha.tres" id="8_jscy8"]
-[ext_resource type="Resource" path="res://resources/runes/common/rune_vento.tres" id="9_og1vs"]
-[ext_resource type="Resource" path="res://resources/runes/common/rune_gota.tres" id="9_pm3ni"]
+[ext_resource type="Resource" uid="uid://bnmug7jnexwkt" path="res://resources/runes/common/rune_rocha.tres" id="8_jscy8"]
+[ext_resource type="Resource" uid="uid://brv0q4acdh878" path="res://resources/runes/common/rune_vento.tres" id="9_og1vs"]
+[ext_resource type="Resource" uid="uid://cnscar7te0xso" path="res://resources/runes/common/rune_gota.tres" id="9_pm3ni"]
 [ext_resource type="Texture2D" uid="uid://cpe1u42w8fhu7" path="res://sprites/scenes/background-cristal-painel.png" id="11_dp3eg"]
 [ext_resource type="Script" uid="uid://2lm3cymbdyl3" path="res://scripts/ui/shop_ui.gd" id="11_shop"]
 [ext_resource type="Texture2D" uid="uid://b4d2ywwi8m37t" path="res://sprites/scenes/inventario.png" id="12_0ld40"]
-[ext_resource type="Script" uid="uid://1napf1qi4oou" path="res://scripts/ui/sell_area.gd" id="12_sell"]
+[ext_resource type="Script" path="res://scripts/ui/fountain_sell_area.gd" id="12_sell"]
 [ext_resource type="Texture2D" uid="uid://6fcltngweltw" path="res://sprites/scenes/ativador.png" id="13_gqmmt"]
 [ext_resource type="Script" uid="uid://dnp324y0uqp7w" path="res://scripts/ui/activator_sprite.gd" id="14_activ"]
 [ext_resource type="Resource" uid="uid://drwnsdkkhm5um" path="res://resources/runes/drop_rates.tres" id="18_pm3ni"]
 [ext_resource type="LabelSettings" uid="uid://cpkun2ukv0p34" path="res://text/default_label_settings.tres" id="19_dlbl"]
-[ext_resource type="Texture2D" uid="uid://bse65gjp4t6jm" path="res://sprites/scenes/loja-v1.png" id="19_jscy8"]
+[ext_resource type="PackedScene" path="res://scenes/shop/fountain_art.tscn" id="19_jscy8"]
 [ext_resource type="Script" uid="uid://rxeqythqjxp2" path="res://scripts/ui/movement_link_overlay.gd" id="20_mvlnk"]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_rune_presentation.gd" id="28_rune_visual"]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_furnace_control.gd" id="29_furnace"]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_relic_altar_control.gd" id="30_relic_altar"]
+
+[ext_resource type="Script" path="res://scripts/ui/shop_relic_presentation.gd" id="31_relic_visual"]
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_jbj1t"]
 animations = [{
@@ -33,6 +41,8 @@ animations = [{
 "name": &"default",
 "speed": 5.0
 }]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_panel"]
 
 [node name="Main" type="Node2D" node_paths=PackedStringArray("game_manager", "inventory_manager", "grid_container", "inventory_container", "relic_slots_container", "score_label", "level_label", "target_value_label", "money_label", "panel_label", "enter_shop_button", "activator_node", "previous_panel_button", "next_panel_button", "shop_ui", "grid_highlighter", "movement_link_overlay")]
 script = ExtResource("1_eb6dy")
@@ -339,9 +349,7 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("11_shop")
 
-[node name="Sprite2D" type="Sprite2D" parent="UI/ShopUI"]
-position = Vector2(320, 180)
-texture = ExtResource("19_jscy8")
+[node name="FountainArt" parent="UI/ShopUI" instance=ExtResource("19_jscy8")]
 
 [node name="EnterPanel" type="Button" parent="UI/ShopUI"]
 layout_mode = 0
@@ -353,13 +361,14 @@ text = "Back"
 
 [node name="SellArea" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0
-offset_left = 228.0
-offset_top = 116.0
-offset_right = 408.0
-offset_bottom = 236.0
+offset_left = 225.0
+offset_top = 110.0
+offset_right = 409.0
+offset_bottom = 241.0
 script = ExtResource("12_sell")
 
 [node name="Panel" type="Panel" parent="UI/ShopUI/SellArea"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -373,6 +382,7 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="Label" type="Label" parent="UI/ShopUI/SellArea"]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -388,22 +398,34 @@ pool to recycle"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="PurchasableRunes" type="GridContainer" parent="UI/ShopUI"]
+[node name="PurchasableRunes" type="Control" parent="UI/ShopUI"]
 layout_mode = 0
 offset_left = 255.0
-offset_top = 134.0
+offset_top = 126.0
 offset_right = 383.0
 offset_bottom = 174.0
-columns = 4
+mouse_filter = 2
 
 [node name="Slot" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
+layout_mode = 0
+offset_left = 0.0
+offset_top = 8.0
+offset_right = 40.0
+offset_bottom = 48.0
 
 [node name="Slot2" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
+layout_mode = 0
+offset_left = 44.0
+offset_top = 0.0
+offset_right = 84.0
+offset_bottom = 40.0
 
 [node name="Slot3" parent="UI/ShopUI/PurchasableRunes" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
+layout_mode = 0
+offset_left = 88.0
+offset_top = 8.0
+offset_right = 128.0
+offset_bottom = 48.0
 
 [node name="ElementDistribution" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0
@@ -459,60 +481,102 @@ offset_bottom = 51.0
 
 [node name="ElementPedestals" type="Control" parent="UI/ShopUI"]
 anchors_preset = 0
-offset_left = -276.0
-offset_top = -4.0
-offset_right = -236.0
-offset_bottom = 36.0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
 
 [node name="Fire" type="Button" parent="UI/ShopUI/ElementPedestals"]
 layout_mode = 0
-offset_left = 660.0
-offset_top = 101.0
-offset_right = 693.0
-offset_bottom = 134.0
+offset_left = 385.0
+offset_top = 97.0
+offset_right = 416.0
+offset_bottom = 130.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_panel")
 
 [node name="Air" type="Button" parent="UI/ShopUI/ElementPedestals"]
 layout_mode = 0
-offset_left = 652.0
-offset_top = 194.0
-offset_right = 685.0
-offset_bottom = 227.0
+offset_left = 377.0
+offset_top = 189.0
+offset_right = 409.0
+offset_bottom = 222.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_panel")
 
 [node name="Spirit" type="Button" parent="UI/ShopUI/ElementPedestals"]
 layout_mode = 0
-offset_left = 577.0
-offset_top = 226.0
-offset_right = 610.0
-offset_bottom = 259.0
+offset_left = 301.0
+offset_top = 221.0
+offset_right = 333.0
+offset_bottom = 254.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_panel")
 
 [node name="Earth" type="Button" parent="UI/ShopUI/ElementPedestals"]
 layout_mode = 0
-offset_left = 499.0
-offset_top = 193.0
-offset_right = 532.0
-offset_bottom = 226.0
+offset_left = 224.0
+offset_top = 188.0
+offset_right = 255.0
+offset_bottom = 221.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_panel")
 
 [node name="Water" type="Button" parent="UI/ShopUI/ElementPedestals"]
 layout_mode = 0
-offset_left = 495.0
-offset_top = 101.0
-offset_right = 528.0
-offset_bottom = 134.0
+offset_left = 221.0
+offset_top = 96.0
+offset_right = 251.0
+offset_bottom = 130.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_panel")
 
 [node name="Repeat" type="Button" parent="UI/ShopUI/ElementPedestals"]
 layout_mode = 0
-offset_left = 579.0
-offset_top = 70.0
-offset_right = 612.0
-offset_bottom = 103.0
+offset_left = 303.0
+offset_top = 66.0
+offset_right = 335.0
+offset_bottom = 99.0
+mouse_default_cursor_shape = 2
+theme_override_styles/normal = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/disabled = SubResource("StyleBoxEmpty_panel")
+theme_override_styles/hover_pressed = SubResource("StyleBoxEmpty_panel")
 
-[node name="RefreshRelicButton" type="Button" parent="UI/ShopUI"]
+[node name="RelicSealButton" type="Button" parent="UI/ShopUI"]
 layout_mode = 0
-offset_left = 474.0
-offset_top = 73.0
-offset_right = 579.0
-offset_bottom = 108.0
-text = "Refresh relic"
+offset_left = 473.0
+offset_top = 46.0
+offset_right = 581.0
+offset_bottom = 136.0
+text = ""
+script = ExtResource("30_relic_altar")
 
 [node name="PurchasableRelics" type="GridContainer" parent="UI/ShopUI"]
 layout_mode = 0
@@ -531,37 +595,55 @@ offset_left = 36.0
 offset_top = 71.0
 offset_right = 178.0
 offset_bottom = 106.0
-text = "Turn up the heat!"
+text = ""
+script = ExtResource("29_furnace")
+mouse_default_cursor_shape = 2
 
-[node name="PurchasableSlotsModifiers" type="GridContainer" parent="UI/ShopUI"]
+[node name="PurchasableSlotsModifiers" type="Control" parent="UI/ShopUI"]
 layout_mode = 0
-offset_left = 89.0
-offset_top = 143.0
-offset_right = 205.0
-offset_bottom = 183.0
-columns = 4
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
 
 [node name="SlotModifier" parent="UI/ShopUI/PurchasableSlotsModifiers" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
+layout_mode = 0
+custom_minimum_size = Vector2(23, 19)
+offset_left = 92.0
+offset_top = 156.0
+offset_right = 115.0
+offset_bottom = 175.0
 
 [node name="Extra" parent="UI/ShopUI/PurchasableSlotsModifiers" instance=ExtResource("5_ya4ey")]
 visible = false
-layout_mode = 2
-
-[node name="PurchasableSlotsPieces" type="GridContainer" parent="UI/ShopUI"]
 layout_mode = 0
-offset_left = 89.0
-offset_top = 193.0
-offset_right = 205.0
-offset_bottom = 233.0
-columns = 4
+custom_minimum_size = Vector2(23, 19)
+offset_left = 126.0
+offset_top = 156.0
+offset_right = 149.0
+offset_bottom = 175.0
+
+[node name="PurchasableSlotsPieces" type="Control" parent="UI/ShopUI"]
+layout_mode = 0
+offset_right = 640.0
+offset_bottom = 360.0
+mouse_filter = 2
 
 [node name="SlotPiece" parent="UI/ShopUI/PurchasableSlotsPieces" instance=ExtResource("5_ya4ey")]
-layout_mode = 2
+layout_mode = 0
+custom_minimum_size = Vector2(23, 19)
+offset_left = 91.0
+offset_top = 199.0
+offset_right = 114.0
+offset_bottom = 218.0
 
 [node name="Extra" parent="UI/ShopUI/PurchasableSlotsPieces" instance=ExtResource("5_ya4ey")]
 visible = false
-layout_mode = 2
+layout_mode = 0
+custom_minimum_size = Vector2(23, 19)
+offset_left = 126.0
+offset_top = 199.0
+offset_right = 149.0
+offset_bottom = 218.0
 
 [node name="GridHighlighter" type="Node" parent="UI" groups=["grid_highlighter"]]
 script = ExtResource("6_eb6dy")
@@ -573,3 +655,9 @@ offset_right = 40.0
 offset_bottom = 40.0
 script = ExtResource("7_trceg")
 label_settings = ExtResource("3_dp3eg")
+
+[node name="RunePresentation" type="Node2D" parent="UI/ShopUI"]
+script = ExtResource("28_rune_visual")
+
+[node name="RelicPresentation" type="Node2D" parent="UI/ShopUI"]
+script = ExtResource("31_relic_visual")

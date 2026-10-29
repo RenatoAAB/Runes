@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 4,
+  "drawn_bounds_xyxy": [
+    5,
+    3,
+    26,
+    29
+  ],
+  "frame_files": {
+    "frame-0.png": "6f2c84765d90ea72dd57c88a46f01f0edcc4772b1f944e2578a9b2b494507f12",
+    "frame-1.png": "6f2c84765d90ea72dd57c88a46f01f0edcc4772b1f944e2578a9b2b494507f12",
+    "frame-10.png": "6f2c84765d90ea72dd57c88a46f01f0edcc4772b1f944e2578a9b2b494507f12",
+    "frame-11.png": "6f2c84765d90ea72dd57c88a46f01f0edcc4772b1f944e2578a9b2b494507f12",
+    "frame-2.png": "86e04663da32be21ab7ddff8dd04f847ad0721071ca0133a022927543111dbab",
+    "frame-3.png": "86e04663da32be21ab7ddff8dd04f847ad0721071ca0133a022927543111dbab",
+    "frame-4.png": "60c2af109476786b5ea10dcabf8a67110e374c350fd00e7505b5434d2cfade03",
+    "frame-5.png": "60c2af109476786b5ea10dcabf8a67110e374c350fd00e7505b5434d2cfade03",
+    "frame-6.png": "60c2af109476786b5ea10dcabf8a67110e374c350fd00e7505b5434d2cfade03",
+    "frame-7.png": "86e04663da32be21ab7ddff8dd04f847ad0721071ca0133a022927543111dbab",
+    "frame-8.png": "86e04663da32be21ab7ddff8dd04f847ad0721071ca0133a022927543111dbab",
+    "frame-9.png": "6f2c84765d90ea72dd57c88a46f01f0edcc4772b1f944e2578a9b2b494507f12"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "remaining-trio-v1",
+  "runtime_tag": "Clown",
+  "selected_variant": "clown",
+  "sheet_sha256": "ca433fcccd62c55203f135560db716057fd589ab1feca2d9b1f5c6c3833e914c",
+  "source": "art:reviews/relic-item-inventory-r01/remaining-trio-v1/clown.aseprite",
+  "source_sha256": "78aeb67f0780442c8f8d2c9a742feb806fa4b3bb457f7e64fa6fde45971c7d1b"
+}

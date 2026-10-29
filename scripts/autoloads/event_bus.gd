@@ -149,13 +149,22 @@ func begin_battle(panel_count: int = 1) -> void:
 
 
 ## Call at the end of a battle sequence
-func end_battle(target_score: int) -> void:
+func resolve_round_end_effects() -> void:
 	# Process round end triggers before finalizing
 	round_ending.emit()
 	_process_round_end_effects()
+
+
+func end_battle(target_score: int, final_score: int = -1, run_victory_score: int = 0, resolve_effects: bool = true) -> void:
+	if resolve_effects:
+		resolve_round_end_effects()
 	
 	is_battle_active = false
-	var victory = current_score >= target_score
+	# PanelManager supplies the same combined score used by GameManager.
+	# Standalone readers keep the existing current_score behavior.
+	if final_score >= 0:
+		current_score = final_score
+	var victory = current_score >= target_score or (run_victory_score > 0 and current_score >= run_victory_score)
 	battle_ended.emit(current_score, target_score, victory)
 	print("[EventBus] Battle ended. Score: %d/%d - %s" % [
 		current_score, target_score, "Victory!" if victory else "Defeat"

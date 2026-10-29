@@ -1,0 +1,109 @@
+{
+  "revision": "slot-modifiers-integration-r05",
+  "sources": {
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r10\\CH10-A.png": "453eeb25e1449ed3db3f57dbca4e87f4210794888c5bbfdf4783fa3480ddd4a7",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r10\\CH10-A-overlay.png": "4e7646ff84c87d4d4990137b107d372edd5219103c5a5667cc9c9c5c4b9d15ec",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r10\\CH10-A.aseprite": "2658c50bae10a83f00d08a9a61e135f96a2340b3a7552f78dc0f1439a4505029",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r12\\CD12.3.png": "8b52b57247260369b21797189a83aab1d7627f8afc091bfa0c3c57ced468b220",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r12\\CD12.3-overlay.png": "c7ee40eefbfefcb45607fdbd85c3bf99e6ba7c1e6a37ddcee11ba61e79133a4e",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r12\\CD12.3.aseprite": "f69297d16825b4e5a4be09573ed4b80df7d360965e149f305e93ac5dddbbfe75",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\R5-pente-harmonico.png": "8055145559a89c0596963c2b86dbd86787430e91a0fe342e373fc7b6ac8218e9",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\R5-pente-harmonico-overlay.png": "a2cbdc334a883f93292ba366b8602d72229149ca6b00e5d68515f7e98c6eee3a",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r08\\R5-pente-harmonico.aseprite": "3dbf531fed0363654c7a862a98f1630051611894f135826312484d71cfcc0a76"
+  },
+  "variants": {
+    "charger": {
+      "dimensions": [
+        40,
+        40
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "source": "CH10-A",
+      "source_revision": "slot-modifiers-r10",
+      "recomposition_exact": true,
+      "proof_rune_alpha_intersection_pixels": 0,
+      "additional_pixels_within_inner32": 42,
+      "bounds": [
+        0,
+        0,
+        40,
+        39
+      ]
+    },
+    "condenser": {
+      "dimensions": [
+        40,
+        40
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "source": "CD12.3",
+      "source_revision": "slot-modifiers-r12",
+      "recomposition_exact": true,
+      "proof_rune_alpha_intersection_pixels": 0,
+      "additional_pixels_within_inner32": 62,
+      "bounds": [
+        22,
+        0,
+        40,
+        40
+      ]
+    },
+    "resonator": {
+      "dimensions": [
+        40,
+        40
+      ],
+      "origin": [
+        0,
+        0
+      ],
+      "source": "R5-pente-harmonico",
+      "source_revision": "slot-modifiers-r08",
+      "recomposition_exact": true,
+      "inner32_unchanged": true,
+      "overflow_pixels": 0,
+      "bounds": [
+        0,
+        0,
+        40,
+        40
+      ]
+    }
+  },
+  "base_size": [
+    40,
+    40
+  ],
+  "panel_hitbox": [
+    40,
+    40
+  ],
+  "shop_hitbox": [
+    23,
+    19
+  ],
+  "renderer": "Existing generic base40 and native centered overlay; nearest; no runtime modifications",
+  "superseded_sources": {
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\CH5-dinamo.png": "0f93793ccc0333d831189cc2db2de16d03bcc576c1e544be49df8101a5ef4d04",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\CH5-dinamo-overlay.png": "903444541f981d4869b6949c6a18cef156cfcf039e0359827a0dcf0ea5a539df",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\CH5-dinamo.aseprite": "76de4cd3cc582e4482acdae3748602d8c717b3dcf2d5986c8941afaafc93896d",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\CD1-circuito.png": "7df95c0c7ca47768ec5f108f7417c7138a177fef7928de6e5a316a381f1c5f53",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\CD1-circuito-overlay.png": "0990ddb289c63e4af017e1fad7dc5be4fca0318ce113d8fa398f7d8cc10288d1",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\CD1-circuito.aseprite": "5f8564535c5711daaf5d16e979a1f9da4e9b5eec4d7f9a3ec4fa3cccc933f4a3",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\R5-pente-harmonico.png": "164bf6ca98bd306c4b93a3ac7e68cee4e3038f31c7ecb5a54534dbedb31162fe",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\R5-pente-harmonico-overlay.png": "bda46b88f55baa5379af275baf3a24402a833ae072850b4fc575ac581097b20b",
+    "C:\\Users\\55119\\Pictures\\Runes[ART]\\reviews\\slot-modifiers-r07\\R5-pente-harmonico.aseprite": "14e922e2b44668877d4400d8cbcf24f516205a01c6ff96a6481c77e601cd983c"
+  },
+  "dimension_policy": "All six authored modifiers are native40x40 with origin0,0. AC10-A, CH10-A and CD12.3 retained; Conector, Stabilizer and Resonator use approved softened r08.",
+  "render_order": [
+    "opaque base40",
+    "transparent native border40 z1",
+    "interaction feedback z3"
+  ]
+}

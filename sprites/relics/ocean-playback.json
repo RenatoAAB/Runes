@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 5,
+  "drawn_bounds_xyxy": [
+    3,
+    4,
+    28,
+    28
+  ],
+  "frame_files": {
+    "frame-0.png": "3fdfd522ff729e99d43badd964b86428d92f5118864aeabd2d0f40a59feb1ebd",
+    "frame-1.png": "3fdfd522ff729e99d43badd964b86428d92f5118864aeabd2d0f40a59feb1ebd",
+    "frame-10.png": "3fdfd522ff729e99d43badd964b86428d92f5118864aeabd2d0f40a59feb1ebd",
+    "frame-11.png": "3fdfd522ff729e99d43badd964b86428d92f5118864aeabd2d0f40a59feb1ebd",
+    "frame-2.png": "21a2ce4a8861d2ea502e2e5986e7dff6421424ab6674b6ce2a4954086481b5e3",
+    "frame-3.png": "21a2ce4a8861d2ea502e2e5986e7dff6421424ab6674b6ce2a4954086481b5e3",
+    "frame-4.png": "670c4da02b7876f1243b8a209654e8d168e0e24e076b3fa0691ca5d46e06fd94",
+    "frame-5.png": "670c4da02b7876f1243b8a209654e8d168e0e24e076b3fa0691ca5d46e06fd94",
+    "frame-6.png": "670c4da02b7876f1243b8a209654e8d168e0e24e076b3fa0691ca5d46e06fd94",
+    "frame-7.png": "21a2ce4a8861d2ea502e2e5986e7dff6421424ab6674b6ce2a4954086481b5e3",
+    "frame-8.png": "21a2ce4a8861d2ea502e2e5986e7dff6421424ab6674b6ce2a4954086481b5e3",
+    "frame-9.png": "3fdfd522ff729e99d43badd964b86428d92f5118864aeabd2d0f40a59feb1ebd"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "elemental-trio-v1",
+  "runtime_tag": "Ocean",
+  "selected_variant": "ocean",
+  "sheet_sha256": "98aa6d0610049c6def27131de78d9a4021f324b7c12638e76cd2c4a15d2a9da5",
+  "source": "art:reviews/relic-item-inventory-r01/elemental-trio-v1/ocean.aseprite",
+  "source_sha256": "8b9b1fc4f93fcb0f0209f2ca346fd6e0332736f67a68fc4ce6151c00d9f49d29"
+}

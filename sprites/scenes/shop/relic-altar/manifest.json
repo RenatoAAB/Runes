@@ -1,0 +1,362 @@
+{
+  "schema_version": 1,
+  "revision": "shop-relic-altar-r16",
+  "status": "candidate_for_visual_review",
+  "canvas": [
+    640,
+    360
+  ],
+  "authoring": "Aseprite native Lua",
+  "texture_filter": "nearest",
+  "source": {
+    "original_path": "Sprites/loja/loja-editavel.aseprite",
+    "original_sha256": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88",
+    "editable_original": "art:revisions/shop-relic-altar-r16/source/loja-original-r16.aseprite",
+    "editable_crystals": "art:revisions/shop-relic-altar-r16/source/crystal-binding.aseprite",
+    "editable_circle": "art:revisions/shop-relic-altar-r16/source/altar-circle.aseprite"
+  },
+  "background": {
+    "path": "background-without-relic-altar.png",
+    "origin": [
+      0,
+      0
+    ],
+    "texture_size": [
+      640,
+      360
+    ],
+    "draw_size": [
+      640,
+      360
+    ],
+    "z_index": 0,
+    "excludes": [
+      "FountainWater",
+      "FountainPanel_*",
+      "Furnace",
+      "MesasTrabalho",
+      "MesasTrabalhoDetalhes",
+      "Altares"
+    ]
+  },
+  "assets": [
+    {
+      "id": "pedestal-left",
+      "path": "pedestal-left.png",
+      "source_layer": "Altares",
+      "extraction": "8-connected alpha component mask",
+      "opaque_pixels": 1365,
+      "source_bounds": [
+        473,
+        65,
+        45,
+        41
+      ],
+      "origin": [
+        473,
+        65
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "texture_size": [
+        45,
+        41
+      ],
+      "draw_size": [
+        45,
+        41
+      ],
+      "hitbox": null,
+      "z_index": 1,
+      "frames": 1,
+      "sha256": "617a280ae13105f45bfb2f51b649fbe85a9647941ac1cd4281e22af66444816d"
+    },
+    {
+      "id": "pedestal-right",
+      "path": "pedestal-right.png",
+      "source_layer": "Altares",
+      "extraction": "8-connected alpha component mask",
+      "opaque_pixels": 1365,
+      "source_bounds": [
+        536,
+        95,
+        45,
+        41
+      ],
+      "origin": [
+        536,
+        95
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "texture_size": [
+        45,
+        41
+      ],
+      "draw_size": [
+        45,
+        41
+      ],
+      "hitbox": null,
+      "z_index": 1,
+      "frames": 1,
+      "sha256": "617a280ae13105f45bfb2f51b649fbe85a9647941ac1cd4281e22af66444816d"
+    },
+    {
+      "id": "altar",
+      "path": "altar.png",
+      "source_layer": "Altares",
+      "extraction": "8-connected alpha component mask",
+      "opaque_pixels": 6696,
+      "source_bounds": [
+        473,
+        132,
+        102,
+        83
+      ],
+      "origin": [
+        473,
+        132
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "texture_size": [
+        102,
+        83
+      ],
+      "draw_size": [
+        102,
+        83
+      ],
+      "hitbox": null,
+      "z_index": 1,
+      "frames": 1,
+      "sha256": "8dec918d81e1c6ab391bcd7962f54dd165664a6b9c5fced51858c3a45a341b9a"
+    }
+  ],
+  "crystal_binding": {
+    "path": "crystal-binding-sheet.png",
+    "texture_size": [
+      200,
+      33
+    ],
+    "frame_size": [
+      25,
+      33
+    ],
+    "draw_size": [
+      25,
+      33
+    ],
+    "crystal_painted_size": [
+      9,
+      17
+    ],
+    "origins": [
+      [
+        483,
+        46
+      ],
+      [
+        546,
+        76
+      ]
+    ],
+    "anchor_local": [
+      12,
+      24
+    ],
+    "anchors_global": [
+      [
+        495,
+        70
+      ],
+      [
+        558,
+        100
+      ]
+    ],
+    "hitbox": null,
+    "visual_only": true,
+    "frames": 8,
+    "sheet_layout": "horizontal",
+    "indexing": "zero_based",
+    "open": {
+      "frames": [
+        0
+      ],
+      "loop": false
+    },
+    "capture": {
+      "frames": [
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "frame_duration_ms": 100,
+      "total_duration_ms": 500,
+      "loop": false
+    },
+    "held": {
+      "frames": [
+        6,
+        7
+      ],
+      "frame_duration_ms": 400,
+      "total_duration_ms": 800,
+      "loop": true
+    },
+    "release": {
+      "frames": [
+        5,
+        4,
+        3,
+        2,
+        1
+      ],
+      "frame_duration_ms": 100,
+      "total_duration_ms": 500,
+      "then_frame": 0,
+      "loop": false
+    },
+    "palette_indices": [
+      9,
+      40,
+      41,
+      42,
+      43
+    ],
+    "author": "Aseprite frames; Godot playback only"
+  },
+  "circle": {
+    "mask": "altar-circle-mask.png",
+    "sealed_empty": "altar-circle-red.png",
+    "origin": [
+      473,
+      132
+    ],
+    "texture_size": [
+      102,
+      83
+    ],
+    "draw_size": [
+      102,
+      83
+    ],
+    "source_color": "#0b8a8f",
+    "source_palette_index": 40,
+    "mask_palette_index": 9,
+    "red_palette_index": 15,
+    "red_color": "#e83b3b",
+    "mask_pixels": 314,
+    "geometry": "exact original drawn circle pixels; no dilation",
+    "hitbox": null
+  },
+  "composition_order": [
+    "background",
+    "unchanged_r15_furnace_and_benches",
+    "original_altar_and_pedestals",
+    "unchanged_r10_water_and_panels",
+    "crystal_binding",
+    "altar_circle_red_only_when_sealed_empty",
+    "existing_offered_relic_and_ui"
+  ],
+  "animation_intent": "Compress and close light around each cyan crystal; bound pulse persists until paid release. Reverse capture on unlock.",
+  "limitations": [
+    "Ref remains visible; existing incomplete surfaces and legacy palette deviations preserved.",
+    "No furnace, benches, rune or water assets redrawn.",
+    "Source original and installed config remain untouched.",
+    "The art assets do not define interaction hitboxes; Godot must keep purchase accessible.",
+    "Candidate only; user visual approval and promotion pending."
+  ],
+  "validation": "art:reviews/shop-relic-altar-r16/art-validation.json",
+  "recipe": "../aseprite-tools/export.lua",
+  "hashes": {
+    "assets/altar-circle-mask.png": "8ef95d36303e4542dba3c1188e3efff1bf225df34983afef17fa4f0873a239b3",
+    "assets/altar-circle-red.png": "337a1499e870f504f5c9f7336cf4d55a1a06ea83f39e7322d00e14b7ab556178",
+    "assets/altar.png": "8dec918d81e1c6ab391bcd7962f54dd165664a6b9c5fced51858c3a45a341b9a",
+    "assets/background-without-relic-altar.png": "d12e09b2ee4f3c93e4cc2ad05477b7b16addc8b311c644ca3716757e3a323bee",
+    "assets/crystal-binding-00.png": "6b85582b87401fe3c791d8487a8a82b19d76c0c54118e9e38f2ae40a4c1b8f27",
+    "assets/crystal-binding-01.png": "480754623a46048125e802399a94e59e1fed498d21b08187505e5620b3bdbb69",
+    "assets/crystal-binding-02.png": "c2fcf9b4de3b6da5699a69ed16117d81e1218b8b7f096eca5554b75ec530656d",
+    "assets/crystal-binding-03.png": "087b30f9c00af748ed8bbadd18b5bdabfdd51dd5a9a4ff310710dfe5ee7841d1",
+    "assets/crystal-binding-04.png": "aa3d2d0acf5499db21d8ecec3e440aae0ceee37ca54427167443d8b55ba6dd18",
+    "assets/crystal-binding-05.png": "2313479eb3a91eaf4e7d82c4c6c2a79799921dd8c6ce5e295047afd549cb182f",
+    "assets/crystal-binding-06.png": "dc18febc92fa6345f7f85372c85cd13b57b635d6a2234d3905e4849ea398cef1",
+    "assets/crystal-binding-07.png": "2313479eb3a91eaf4e7d82c4c6c2a79799921dd8c6ce5e295047afd549cb182f",
+    "assets/crystal-binding-sheet.png": "6c688092e0915bfa5109d58b0190c346231fe2a4d85f486db0e3154f1df3b20c",
+    "assets/pedestal-left.png": "617a280ae13105f45bfb2f51b649fbe85a9647941ac1cd4281e22af66444816d",
+    "assets/pedestal-right.png": "617a280ae13105f45bfb2f51b649fbe85a9647941ac1cd4281e22af66444816d",
+    "source/altar-circle.aseprite": "dfb8d2eccb08c799c96dfba00093d285efff3fb68a50790b27a97d779c27d389",
+    "source/crystal-binding.aseprite": "f017b3548002768c5a2f8db6f554ef6626016b0d0ce7110c79599f30c46fdf1e",
+    "source/loja-original-r16.aseprite": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88",
+    "aseprite-tools/export.lua": "a19f94ed11a42cd2bb43ba0d1f0d1a0e57747812f69cd7dc7240ac6643a8f9aa",
+    "aseprite-tools/native-reopen-validation.json": "83f90f30bc9831fe8acf86b1a38fe0bb767c0d089720e40c16331fa8e395130c",
+    "aseprite-tools/native-validation.json": "21019920af1151b6060d908c9cc48b31667c2f4b67b7a2e50365dd9700ea6dbf",
+    "aseprite-tools/reopen.lua": "52c49f1b42e138bfd42d85770f20abac90b0c05dc0f69a3d493d2072f60a75f2"
+  },
+  "authoritative_manifest": {
+    "path": "art:revisions/shop-relic-altar-r16/assets/manifest.json",
+    "sha256": "1f1e10e20ebd28a1d32c53ef87d0c09b256095c3bebf76d5b7f945a195d6cbca"
+  },
+  "runtime": {
+    "controller": "scripts/ui/shop_relic_altar_control.gd",
+    "positions": {
+      "altar": [
+        473,
+        132
+      ],
+      "pedestal_left": [
+        473,
+        65
+      ],
+      "pedestal_right": [
+        536,
+        95
+      ],
+      "crystal_left": [
+        483,
+        46
+      ],
+      "crystal_right": [
+        546,
+        76
+      ]
+    },
+    "seal_hitbox": "alpha union of two pedestal sprites and stable crystal geometry; excludes purchase altar",
+    "empty_altar_hover": "passive alpha of altar sprite, never consumes click, only while empty",
+    "capture_frames": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "capture_frame_ms": 100,
+    "sealed_loop_frames": [
+      6,
+      7
+    ],
+    "sealed_frame_ms": 400,
+    "release_frames": [
+      5,
+      4,
+      3,
+      2,
+      1
+    ],
+    "release_frame_ms": 100,
+    "open_frame": 0,
+    "highlight": "1px runtime outline on native pedestal geometry",
+    "circle": "artist red overlay only when sealed and empty",
+    "state_owner": "ShopManager, persistent until paid release or new run; purchase preserves seal"
+  }
+}

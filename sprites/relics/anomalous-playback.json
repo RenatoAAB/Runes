@@ -1,0 +1,40 @@
+{
+  "animated_pixels": 6,
+  "drawn_bounds_xyxy": [
+    5,
+    3,
+    26,
+    30
+  ],
+  "frame_files": {
+    "frame-0.png": "99018786e3fe87c5e52656a2b909fad29ae53783683f54163475440daf447369",
+    "frame-1.png": "99018786e3fe87c5e52656a2b909fad29ae53783683f54163475440daf447369",
+    "frame-10.png": "99018786e3fe87c5e52656a2b909fad29ae53783683f54163475440daf447369",
+    "frame-11.png": "99018786e3fe87c5e52656a2b909fad29ae53783683f54163475440daf447369",
+    "frame-2.png": "20a6315b0c48bd452e1c3016fa38d0a4c6a8f67610bc7ac768003da1ca8f3c12",
+    "frame-3.png": "20a6315b0c48bd452e1c3016fa38d0a4c6a8f67610bc7ac768003da1ca8f3c12",
+    "frame-4.png": "a0e9f6d790142200e4e0a55b49d990f5cca01c28f6ae26faafc4879801e97130",
+    "frame-5.png": "a0e9f6d790142200e4e0a55b49d990f5cca01c28f6ae26faafc4879801e97130",
+    "frame-6.png": "a0e9f6d790142200e4e0a55b49d990f5cca01c28f6ae26faafc4879801e97130",
+    "frame-7.png": "20a6315b0c48bd452e1c3016fa38d0a4c6a8f67610bc7ac768003da1ca8f3c12",
+    "frame-8.png": "20a6315b0c48bd452e1c3016fa38d0a4c6a8f67610bc7ac768003da1ca8f3c12",
+    "frame-9.png": "99018786e3fe87c5e52656a2b909fad29ae53783683f54163475440daf447369"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "relic-trio-variations-v3",
+  "selected_variant": "A1",
+  "sheet_sha256": "35139af1593de7fec7e3e4a7e967bc305cd86b4cc386d7ecfcbabf6d17360ac1",
+  "source": "art:reviews/relic-item-inventory-r01/relic-trio-variations-v3/A1.aseprite",
+  "source_sha256": "4d873283d2a238c211ac348aebfcc46b72b84b6de915281fc0eb0c0716b9e9bc"
+}

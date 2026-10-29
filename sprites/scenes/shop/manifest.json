@@ -1,0 +1,385 @@
+{
+  "schema_version": 1,
+  "canvas": [
+    640,
+    360
+  ],
+  "background": {
+    "path": "background.png",
+    "position": [
+      0,
+      0
+    ],
+    "size": [
+      640,
+      360
+    ],
+    "z_index": 0,
+    "sha256": "d12e09b2ee4f3c93e4cc2ad05477b7b16addc8b311c644ca3716757e3a323bee",
+    "excludes_additionally": [
+      "Furnace",
+      "MesasTrabalho",
+      "MesasTrabalhoDetalhes",
+      "Altares"
+    ]
+  },
+  "water": {
+    "id": "water_surface",
+    "path": "water.png",
+    "position": [
+      225,
+      110
+    ],
+    "size": [
+      184,
+      131
+    ],
+    "bounds": [
+      225,
+      110,
+      184,
+      131
+    ],
+    "pivot": [
+      0,
+      0
+    ],
+    "z_index": 0,
+    "frame": 1,
+    "duration_ms": 100,
+    "layer": "FountainWater",
+    "sha256": "1786e4a04efb58970c16f90b762802a10cdc8ae1cbfc6dc8bb4101e03fd2ac31",
+    "static_reference_revision": "shop-water-r05",
+    "active_representation": "animation",
+    "animation": {
+      "name": "water_idle",
+      "tag": "water_idle",
+      "loop": true,
+      "total_duration_ms": 1800,
+      "sheet": "water-loop.png",
+      "sheet_sha256": "a0a7440004fdd2314574165b444c107c670353f2c22ee2147bcf0215e9c73e8d",
+      "frame_size": [
+        184,
+        131
+      ],
+      "frames": [
+        {
+          "rect": [
+            0,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "ecd848b80d3d1fad18c587a56603e250dde6c369117b31422c6ded4a70ca6968"
+        },
+        {
+          "rect": [
+            184,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "d70f370c796fc3f2d1a61053e9c52f6098eabb1b49311153342788e313042265"
+        },
+        {
+          "rect": [
+            368,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "276e27a4e335b1c8b1b014cc48c30a6b3349662e25a41301c140c9e9e235b48b"
+        },
+        {
+          "rect": [
+            552,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "dc376cde7003759eaacb082265f3bdbdacc428a191b93b06f7b7ef86e1edb952"
+        },
+        {
+          "rect": [
+            736,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "5290026cdc37105ec90803c2ef2419c76a13c0d1c96ef53f4f7077b1eb9755e0"
+        },
+        {
+          "rect": [
+            920,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "a47dcfbb3b7776b498d631306855cbd2a34efbd9e6008697de90d3877cd5ae55"
+        },
+        {
+          "rect": [
+            1104,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "47663259552f9c113958aa20c6e25d05e70426e2871fe1d610a3f36b3f342915"
+        },
+        {
+          "rect": [
+            1288,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "ce0e8a2def3066ae9f52572870847b93a1b51922de91e179f99c2c969c27c18f"
+        },
+        {
+          "rect": [
+            1472,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "d2393d7869839bfd73016d6243aa3535fcde80dd0f36d43719adb8b3049fdcd7"
+        },
+        {
+          "rect": [
+            1656,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "750ea0c3bc319db177ab34bbe575f87ac3acab650ac5d22ff2f49491bb14afb5"
+        },
+        {
+          "rect": [
+            1840,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "7fbd570d5806b9113d921b9602929d01d11c56ee53a07431d5c52c1ffa8b4bd4"
+        },
+        {
+          "rect": [
+            2024,
+            0,
+            184,
+            131
+          ],
+          "duration_ms": 150,
+          "sha256": "56f087123ef0812cf4852ea252fce1ccc9f9abf5deed8cabad134d9a8b3a46a6"
+        }
+      ],
+      "playback_resource": "res://scenes/shop/fountain_art.tscn::WaterLoopFrames"
+    },
+    "contract_note": "path/sha256/frame/duration_ms retain the r05 static fallback. Active runtime playback uses animation.sheet and the ordered frames with duration_ms, fixed position/size/pivot/z_index."
+  },
+  "elements": [
+    {
+      "id": "neutral",
+      "path": "panels/neutral.png",
+      "position": [
+        303,
+        66
+      ],
+      "size": [
+        32,
+        33
+      ],
+      "bounds": [
+        303,
+        66,
+        32,
+        33
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "z_index": 1,
+      "duration_ms": 100,
+      "frame": 1,
+      "layer": "FountainPanel_neutral",
+      "sha256": "4d55b1aee1db9bb0544c363139bdeae2b23336568013ae93c078fce5bdf7684a"
+    },
+    {
+      "id": "water",
+      "path": "panels/water.png",
+      "position": [
+        221,
+        96
+      ],
+      "size": [
+        30,
+        34
+      ],
+      "bounds": [
+        221,
+        96,
+        30,
+        34
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "z_index": 1,
+      "duration_ms": 100,
+      "frame": 1,
+      "layer": "FountainPanel_water",
+      "sha256": "aa957dc43dcd594fefdc98c7b0d7ddf54f5ff5e77555833022f1ef0ebfdd46b7"
+    },
+    {
+      "id": "fire",
+      "path": "panels/fire.png",
+      "position": [
+        385,
+        97
+      ],
+      "size": [
+        31,
+        33
+      ],
+      "bounds": [
+        385,
+        97,
+        31,
+        33
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "z_index": 1,
+      "duration_ms": 100,
+      "frame": 1,
+      "layer": "FountainPanel_fire",
+      "sha256": "6e904bd700819353608480425ee3d5afd24a7a5e0467a4eb4ab37f56cf3c4ce1"
+    },
+    {
+      "id": "earth",
+      "path": "panels/earth.png",
+      "position": [
+        224,
+        188
+      ],
+      "size": [
+        31,
+        33
+      ],
+      "bounds": [
+        224,
+        188,
+        31,
+        33
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "z_index": 1,
+      "duration_ms": 100,
+      "frame": 1,
+      "layer": "FountainPanel_earth",
+      "sha256": "a7f97bac646659270d8db2689bf7ae9ef3107f8c4c7660953e09962490405759"
+    },
+    {
+      "id": "air",
+      "path": "panels/air.png",
+      "position": [
+        377,
+        189
+      ],
+      "size": [
+        32,
+        33
+      ],
+      "bounds": [
+        377,
+        189,
+        32,
+        33
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "z_index": 1,
+      "duration_ms": 100,
+      "frame": 1,
+      "layer": "FountainPanel_air",
+      "sha256": "6a9abcf6558b7514a047cf815fc909146379550aaae95ed8f06014167f4cd87c"
+    },
+    {
+      "id": "soul",
+      "path": "panels/soul.png",
+      "position": [
+        301,
+        221
+      ],
+      "size": [
+        32,
+        33
+      ],
+      "bounds": [
+        301,
+        221,
+        32,
+        33
+      ],
+      "pivot": [
+        0,
+        0
+      ],
+      "z_index": 1,
+      "duration_ms": 100,
+      "frame": 1,
+      "layer": "FountainPanel_soul",
+      "sha256": "d61f6c58340476174d82ea48044ed9819d0bfe619a9323bbe37e13a7ecf5386b"
+    }
+  ],
+  "composition_order": [
+    "background",
+    "water_surface",
+    "neutral",
+    "water",
+    "fire",
+    "earth",
+    "air",
+    "soul"
+  ],
+  "palette": "palette-source.gpl",
+  "art_revision": "shop-water-r10",
+  "status": "approved_for_integration",
+  "source_file": "Sprites/loja/loja-editavel.aseprite",
+  "source_repository": "Runes[ART]",
+  "source_sha256": "8a3fdd3af8869e8ef1b2cb3b610c56b70ec81619b0c1c378e392614fed749b88",
+  "provenance": "provenance.json",
+  "integration_revision": "shop-relic-altar-r16",
+  "furnace_benches": {
+    "manifest": "furnace-benches/manifest.json",
+    "sha256": "65472eb04f60f67d19bcc966206da50b5e630928325662fb7c1a34a3eb8a8a36",
+    "authoritative_art_manifest": "art:revisions/shop-furnace-benches-r15/assets/manifest.json",
+    "original_geometry_preserved": true
+  },
+  "relic_altar": {
+    "manifest": "relic-altar/manifest.json",
+    "sha256": "74289c0c46d9d8e584c2233bf382853ab03aa0cb8efc671fe5f2a5f9a8b162e3",
+    "authoritative_art_manifest": "art:revisions/shop-relic-altar-r16/assets/manifest.json",
+    "original_geometry_preserved": true
+  }
+}

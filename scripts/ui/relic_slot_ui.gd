@@ -77,8 +77,9 @@ func _setup_ui() -> void:
 	# Icon
 	icon_rect = TextureRect.new()
 	icon_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
-	icon_rect.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
-	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon_rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon_rect.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	icon_rect.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	icon_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(icon_rect)
 	
@@ -242,6 +243,8 @@ func _get_drag_data(_at_position: Vector2) -> Variant:
 	var preview = TextureRect.new()
 	if current_relic.data.icon:
 		preview.texture = current_relic.data.icon
+		preview.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	preview.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	preview.custom_minimum_size = slot_size
 	preview.size = slot_size

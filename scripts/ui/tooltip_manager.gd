@@ -22,6 +22,11 @@ var _item_text: String = ""  # For relics, modifiers, pieces
 var _stats_text: String = ""  # Secondary tooltip: previous round stats
 
 func _ready() -> void:
+	# The manager and text controls must be transparent to input too. Ignoring
+	# only the panels lets tooltips steal hover/drop events from the board.
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stats_label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	# Setup simple tooltip UI
 	add_child(panel)
 	panel.add_child(label)

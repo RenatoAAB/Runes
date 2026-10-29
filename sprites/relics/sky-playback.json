@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 5,
+  "drawn_bounds_xyxy": [
+    2,
+    3,
+    30,
+    28
+  ],
+  "frame_files": {
+    "frame-0.png": "1b17c12ac373b9ea77d74cd9a9f0f35a4c59fad1b295f8572319789a465d42e5",
+    "frame-1.png": "1b17c12ac373b9ea77d74cd9a9f0f35a4c59fad1b295f8572319789a465d42e5",
+    "frame-10.png": "1b17c12ac373b9ea77d74cd9a9f0f35a4c59fad1b295f8572319789a465d42e5",
+    "frame-11.png": "1b17c12ac373b9ea77d74cd9a9f0f35a4c59fad1b295f8572319789a465d42e5",
+    "frame-2.png": "2d07e0c4098ba773cdafa1131144de789fc58b3cdc5d1d4e0cb1c8f61094ea71",
+    "frame-3.png": "2d07e0c4098ba773cdafa1131144de789fc58b3cdc5d1d4e0cb1c8f61094ea71",
+    "frame-4.png": "24845132e7277f4e316068b2f06049fe07bee94c6d5091fc7574097260a6f91b",
+    "frame-5.png": "24845132e7277f4e316068b2f06049fe07bee94c6d5091fc7574097260a6f91b",
+    "frame-6.png": "24845132e7277f4e316068b2f06049fe07bee94c6d5091fc7574097260a6f91b",
+    "frame-7.png": "2d07e0c4098ba773cdafa1131144de789fc58b3cdc5d1d4e0cb1c8f61094ea71",
+    "frame-8.png": "2d07e0c4098ba773cdafa1131144de789fc58b3cdc5d1d4e0cb1c8f61094ea71",
+    "frame-9.png": "1b17c12ac373b9ea77d74cd9a9f0f35a4c59fad1b295f8572319789a465d42e5"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "elemental-trio-v1",
+  "runtime_tag": "Sky",
+  "selected_variant": "sky",
+  "sheet_sha256": "2e2755183489cb76669fb485a2445c07d075e3f06cf04b3d4dc542cbac4bf537",
+  "source": "art:reviews/relic-item-inventory-r01/elemental-trio-v1/sky.aseprite",
+  "source_sha256": "99acf5271c8e786812a2e1e02dcef31158c9d80ed946f7498fd6fd917768d6fa"
+}

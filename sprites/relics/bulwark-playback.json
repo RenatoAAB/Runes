@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 14,
+  "drawn_bounds_xyxy": [
+    4,
+    3,
+    27,
+    28
+  ],
+  "frame_files": {
+    "frame-0.png": "c5943d384c5a41a1ee8437b4e13dc913b88b15167ec23f1e34e6797823e26358",
+    "frame-1.png": "c5943d384c5a41a1ee8437b4e13dc913b88b15167ec23f1e34e6797823e26358",
+    "frame-10.png": "c5943d384c5a41a1ee8437b4e13dc913b88b15167ec23f1e34e6797823e26358",
+    "frame-11.png": "c5943d384c5a41a1ee8437b4e13dc913b88b15167ec23f1e34e6797823e26358",
+    "frame-2.png": "48aad544acd0d783c333c5435b3dbe03dc5266210a3b49d399e5d4471f874959",
+    "frame-3.png": "48aad544acd0d783c333c5435b3dbe03dc5266210a3b49d399e5d4471f874959",
+    "frame-4.png": "db56d49929f112aa42532a6aea4f1604d91b29d25f724f39844cd5c47723eb7c",
+    "frame-5.png": "db56d49929f112aa42532a6aea4f1604d91b29d25f724f39844cd5c47723eb7c",
+    "frame-6.png": "db56d49929f112aa42532a6aea4f1604d91b29d25f724f39844cd5c47723eb7c",
+    "frame-7.png": "48aad544acd0d783c333c5435b3dbe03dc5266210a3b49d399e5d4471f874959",
+    "frame-8.png": "48aad544acd0d783c333c5435b3dbe03dc5266210a3b49d399e5d4471f874959",
+    "frame-9.png": "c5943d384c5a41a1ee8437b4e13dc913b88b15167ec23f1e34e6797823e26358"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "atlas-wall-v4",
+  "runtime_tag": "ShieldLines",
+  "selected_variant": "Bulwark",
+  "sheet_sha256": "6819930bb8dfbc346dee7b1610ca1eb1156f4a64352f7c9c703d70e9846e87e3",
+  "source": "art:reviews/relic-item-inventory-r01/atlas-wall-v4/Bulwark.aseprite",
+  "source_sha256": "240413df4a5960f4910f41adc4ec0fb3c0e7bea2aee018fd1791c1d3b15258a5"
+}

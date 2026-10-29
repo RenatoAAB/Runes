@@ -1,0 +1,129 @@
+{
+  "revision": "slot-modifier-trio-integration-r02",
+  "sources": {
+    "art:reviews/slot-modifier-bundles-batch03-r01/CA-kit.png": "507fbc37ff14f350feb63ba3b23fbdca45e89ad635314be9b6a6b94e36bb6336",
+    "art:reviews/slot-modifier-bundles-batch03-r01/CA-kit.aseprite": "0bee1e3cb529a5b15ea7abdfdade7b0c66ab28f19c2526bbfdfe233703401ab3",
+    "art:reviews/slot-modifier-bundles-batch03-r01/DS-kit.png": "258705f417fedf66c6864826294ece92ca0f483f3c81cb09c8eac8fd5340ebf3",
+    "art:reviews/slot-modifier-bundles-batch03-r01/DS-kit.aseprite": "e6a9fcc5e9a6ae8f10b024f3e72984c7f6c812c57d44ca308f3ea990739f0216",
+    "art:reviews/slot-modifier-bundles-batch03-r01/EN-kit.png": "5262603048769ca6cdc6cdeb5d7efa96377309847d7ac47e93fb9c489fee4652",
+    "art:reviews/slot-modifier-bundles-batch03-r01/EN-kit.aseprite": "edb32be7a87d591781308355f0a5bb3504199ae07bc8bbe7c2231f2bf3bd438a",
+    "art:reviews/slot-modifiers-remaining-r03/CA1.aseprite": "986137ea66c7dba305ad94b17fb147b060e4d382a422f60a3854d2c55addbfa8",
+    "art:reviews/slot-modifiers-remaining-r03/CA1.png": "abfa6c1dd936bf6efb30b2c1881fec191d64672ed46740a4f293cb559e8b081c",
+    "art:reviews/slot-modifiers-remaining-r03/CA1-overlay.png": "7dd7fdcb031c61cf1b4b9f62fd72313dee84e6d6e00184c7427e25e0a4e5a34e",
+    "art:reviews/slot-modifiers-remaining-r03/CA1-ocupado.png": "cfbc50b83b9d23fd3432c50be2b46761558a07920fecd12fe18b5bf97e8fc8a0",
+    "art:reviews/slot-modifiers-remaining-r03/EN1.aseprite": "58f4b86722525f83b2bfaf553fb2a8a53b7d43b3711e34ac0d8db98d28b0cab9",
+    "art:reviews/slot-modifiers-remaining-r03/EN1.png": "a1c8635cedac6a65e84666e14fa6c0363b0462fb76c4b7cdc319729dc3911620",
+    "art:reviews/slot-modifiers-remaining-r03/EN1-overlay.png": "f115f7f8535821d6b835b0bf7f3c36e64f9adfec68a406df610ae95464c28b3b",
+    "art:reviews/slot-modifiers-remaining-r03/EN1-ocupado.png": "316f3aa14cae9f79f0fff21cdaf1a9c59317e8ef1fbe1aaefa21e3c1159d6b18",
+    "art:reviews/slot-modifiers-remaining-r05/DS5.2.aseprite": "d3edb313054f8f6c3d339673407c34cc9106dde5d1a34f6d9c7f7d4e4ce07ba7",
+    "art:reviews/slot-modifiers-remaining-r05/DS5.2.png": "d44d45110c3e44b56ea882752825fd3c8972765d8ae04a1ebda32eabe6b1ac87",
+    "art:reviews/slot-modifiers-remaining-r05/DS5.2-overlay.png": "0047fea095209701a53ad5c71b2dcc622fe7276e80f211374845e25d78466c39",
+    "art:reviews/slot-modifiers-remaining-r05/DS5.2-ocupado.png": "c32888d1efe5ce22495b0ddd89f9c294c7317d96d7cc7f5e465281221d4650c3"
+  },
+  "variants": {
+    "catalyzer": {
+      "variant": "CA1",
+      "source_revision": "slot-modifiers-remaining-r03",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        0,
+        40,
+        38
+      ],
+      "kit": "CA-kit",
+      "kit_bounds": [
+        6,
+        7,
+        27,
+        25
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true,
+      "overlap_policy": "No rock intersection"
+    },
+    "dispenser": {
+      "variant": "DS5.2",
+      "source_revision": "slot-modifiers-remaining-r05",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        8,
+        40,
+        34
+      ],
+      "kit": "DS-kit",
+      "kit_bounds": [
+        5,
+        6,
+        27,
+        26
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 443,
+      "composite_exact": true,
+      "overlap_policy": "Approved central opaque depth cavity; equipment remains visible when empty and rune renders above when occupied"
+    },
+    "enhancer": {
+      "variant": "EN1",
+      "source_revision": "slot-modifiers-remaining-r03",
+      "frame_size": [
+        40,
+        40
+      ],
+      "frame_bounds": [
+        0,
+        0,
+        40,
+        33
+      ],
+      "kit": "EN-kit",
+      "kit_bounds": [
+        6,
+        9,
+        28,
+        26
+      ],
+      "kit_size": [
+        32,
+        32
+      ],
+      "rock_intersection": 0,
+      "composite_exact": true,
+      "overlap_policy": "No rock intersection"
+    }
+  },
+  "origin": [
+    0,
+    0
+  ],
+  "pivot": [
+    20,
+    20
+  ],
+  "visual_order": [
+    "base",
+    "equipment",
+    "rune"
+  ],
+  "panel_hitbox": [
+    40,
+    40
+  ],
+  "runtime_scale": 1,
+  "filter": "nearest",
+  "frames": 1
+}

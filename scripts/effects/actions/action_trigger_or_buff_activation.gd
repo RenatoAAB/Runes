@@ -8,6 +8,8 @@ extends EffectAction
 
 @export var simultaneous: bool = false
 @export var buff_amount: int = 1
+## Evaluate against each target before changing its charges.
+@export var buff_condition: NewEffectCondition = preload("res://resources/effects/shared/conditions/condition_no_remaining_activations.tres")
 
 
 func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
@@ -26,7 +28,7 @@ func execute(ctx: EffectContext, targets: Array[GridSlot]) -> void:
 			if _activate_with_slot_pipeline(ctx, slot):
 				if ctx.battle:
 					ctx.battle.record_activation(target_rune, slot)
-		else:
+		elif buff_condition and buff_condition.evaluate_for_execution(EffectContext.new(target_rune, slot, ctx.battle), ctx):
 			var mult = _get_enhancer_multiplier(slot)
 			var current = target_rune.stat_modifiers.get("activation_bonus", 0)
 			target_rune.stat_modifiers["activation_bonus"] = current + buff_amount * mult

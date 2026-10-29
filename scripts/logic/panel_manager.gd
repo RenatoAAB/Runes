@@ -271,9 +271,12 @@ func _finish_multi_panel_battle() -> void:
 		# Get target from game manager
 		var game_manager = get_tree().get_first_node_in_group("game_manager")
 		var target = 0
+		var victory_score = 0
 		if game_manager:
 			target = game_manager.current_target_score
-		event_bus.end_battle(target)
+			victory_score = game_manager.run_victory_score
+		# Each Reader already resolved its own panel's round-end effects.
+		event_bus.end_battle(target, final_score, victory_score, false)
 	
 	all_panels_completed.emit(final_score)
 

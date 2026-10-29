@@ -31,6 +31,13 @@ func _ready() -> void:
 		_preview_context = BattleContext.new(grid_manager)
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_DRAG_END:
+		# The drag source may already have been freed by a successful transfer.
+		# Clear once centrally; SlotUI restores hover after replacements settle.
+		clear_highlights()
+
+
 func set_grid_manager(new_grid_manager: GridManager) -> void:
 	if new_grid_manager == grid_manager:
 		return

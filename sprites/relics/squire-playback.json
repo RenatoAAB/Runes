@@ -1,0 +1,27 @@
+{
+  "revision": "squire-S1-pulse-v2",
+  "source_aseprite_sha256": "666c84685a85961459c5ad14f22fe62025a4a81164caaf4e9996bdce2fe438cf",
+  "sheet_sha256": "4c2d3b5d41fe7a265cf1e66d762dfe572d40061362ab101fe38fbd3440d8a356",
+  "native_size": [
+    32,
+    32
+  ],
+  "frames": 12,
+  "frame_ms": 200,
+  "loop_ms": 2400,
+  "frame_files": {
+    "frame-0.png": "b0bff97d6c39ee80f394c5ae348e2aed4eb66c1354a9f96b1b55ede3e297bdd8",
+    "frame-1.png": "b0bff97d6c39ee80f394c5ae348e2aed4eb66c1354a9f96b1b55ede3e297bdd8",
+    "frame-2.png": "185c4099cb1f53d233456f9ad2631ffa9bcc63e03fe950c91137fc285fb1a516",
+    "frame-3.png": "185c4099cb1f53d233456f9ad2631ffa9bcc63e03fe950c91137fc285fb1a516",
+    "frame-4.png": "0b0a87020e4443a34e43a66402ffeeaffb4dbf4d1d190de44b634ab26643e38a",
+    "frame-5.png": "0b0a87020e4443a34e43a66402ffeeaffb4dbf4d1d190de44b634ab26643e38a",
+    "frame-6.png": "0b0a87020e4443a34e43a66402ffeeaffb4dbf4d1d190de44b634ab26643e38a",
+    "frame-7.png": "185c4099cb1f53d233456f9ad2631ffa9bcc63e03fe950c91137fc285fb1a516",
+    "frame-8.png": "185c4099cb1f53d233456f9ad2631ffa9bcc63e03fe950c91137fc285fb1a516",
+    "frame-9.png": "b0bff97d6c39ee80f394c5ae348e2aed4eb66c1354a9f96b1b55ede3e297bdd8",
+    "frame-10.png": "b0bff97d6c39ee80f394c5ae348e2aed4eb66c1354a9f96b1b55ede3e297bdd8",
+    "frame-11.png": "b0bff97d6c39ee80f394c5ae348e2aed4eb66c1354a9f96b1b55ede3e297bdd8"
+  },
+  "pixel_verification": "Every PNG matches its approved sheet frame exactly"
+}

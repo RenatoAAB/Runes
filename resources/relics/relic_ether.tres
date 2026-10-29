@@ -1,7 +1,9 @@
-[gd_resource type="Resource" script_class="RelicData" load_steps=3 format=3]
+[gd_resource type="Resource" script_class="RelicData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/relic_data.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/data/relic_effects/calculators/relic_calc_element_activations.gd" id="2"]
+
+[ext_resource type="Texture2D" path="res://resources/relics/icons/ether_idle.tres" id="3"]
 
 [sub_resource type="Resource" script_class="RelicCalcElementActivations" id="1"]
 script = ExtResource("2")
@@ -13,6 +15,7 @@ script = ExtResource("1")
 id = "relic_ether"
 display_name = "O Éter"
 description = "×1.05 para cada ativação de espírito da rodada."
+icon = ExtResource("3")
 rarity = 2
 calculator = SubResource("1")
 max_per_panel = 1

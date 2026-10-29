@@ -49,6 +49,17 @@ EN:
 - The repository is the implementation reference.
 - Historical files must not drive new decisions without validation.
 
+## Padrão obrigatório de testes
+
+- Toda mudança de comportamento deve incluir ou atualizar testes automatizados pertinentes. Correções de bugs exigem um teste de regressão que reproduza a falha antes da correção e passe depois; registre quando não for possível reproduzir automaticamente.
+- Antes de implementar, identifique as mecânicas afetadas e seus pontos de interação. Cubra o caminho válido, rejeição/cancelamento e preservação de estado; inclua efeitos colaterais em sistemas relacionados.
+- Em UI, exercite entradas reais do Godot na cena de produção e confirme o resultado nos controles visuais. Validar somente métodos, parâmetros ou movimentação do nó não comprova hover, highlights, tooltips, prioridade de input ou limpeza após drag/drop. Mudanças visuais também precisam de inspeção de captura renderizada.
+- Não altere expectativas só para fazer testes passarem. Expectativas vêm das specs e do comportamento autorizado. Preserve um caso que falhe com o código anterior quando corrigir regressões.
+- Execute `python tools/run_tests.py --godot <executável>` antes de concluir uma mudança de comportamento. Use `--suite` para iterações focais; execute todas as suítes ao finalizar. O runner usa cópia isolada e perfis temporários, sem acessar saves do jogador.
+- Entregue comando, resultado e limites da cobertura. Quantidade de assertions não equivale a cobertura completa; não declare mecânicas validadas sem casos correspondentes. Se um teste não puder rodar, registre a razão e a pendência.
+- Correções somente de texto/formatação não exigem testes artificiais; use revisão adequada. Mecânicas novas ou alteradas exigem ampliar a matriz em `docs/testing.md`.
+- Guia, casos e lacunas: [docs/testing.md](docs/testing.md). Esse padrão se aplica a todo desenvolvimento futuro, inclusive agentes e alterações de arte que afetem interação.
+
 ## Active References / Referencias Ativas
 
 - Arquitetura tecnica: [.github/ARCHITECTURE.md](.github/ARCHITECTURE.md)
@@ -78,3 +89,7 @@ EN:
 - Design-first: Designer defines direction and trade-offs.
 - Build-second: Implementer translates into technical changes.
 - Record high-impact decisions in the appropriate documentation.
+
+## Fluxo de arte e integração visual
+
+A arte editável e o fluxo reproduzível ficam no repositório local `C:/Users/55119/Pictures/Runes[ART]` (consulte seu `AGENTS.md`, `README.md` e `config/local.json`). Use especialistas separados: `$runes-aseprite` para pixels/camadas/frames e `$runes-godot-art-integration` para composição, interação e reprodução no Godot. Se objetivo, escopo ou critério de pronto estiverem ambíguos, converse com o usuário antes de executar essa parte. Trabalhe em revisões e previews isolados; a promoção da arte e cena oficiais depende da aprovação visual da revisão concreta. Animações são desenhadas no Aseprite sob direção do usuário. Preserve trabalho preexistente e nunca promova a configuração/fixtures de um preview para o projeto oficial.

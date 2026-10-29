@@ -1,0 +1,41 @@
+{
+  "animated_pixels": 2,
+  "drawn_bounds_xyxy": [
+    6,
+    2,
+    32,
+    31
+  ],
+  "frame_files": {
+    "frame-0.png": "a010c89a2b67f002bce681e5f7211e2f6812ef93a981e91b4754722268ce85d7",
+    "frame-1.png": "a010c89a2b67f002bce681e5f7211e2f6812ef93a981e91b4754722268ce85d7",
+    "frame-10.png": "a010c89a2b67f002bce681e5f7211e2f6812ef93a981e91b4754722268ce85d7",
+    "frame-11.png": "a010c89a2b67f002bce681e5f7211e2f6812ef93a981e91b4754722268ce85d7",
+    "frame-2.png": "81fe8e5e317508b6fc22c9fe7fe1230f4e621809a93822b2b5e2b1ab04a59cf3",
+    "frame-3.png": "81fe8e5e317508b6fc22c9fe7fe1230f4e621809a93822b2b5e2b1ab04a59cf3",
+    "frame-4.png": "4262e4b2e4e22c7c87495b5bc68e4b398894e50c06002cc9c6fce0addedaa5c4",
+    "frame-5.png": "4262e4b2e4e22c7c87495b5bc68e4b398894e50c06002cc9c6fce0addedaa5c4",
+    "frame-6.png": "4262e4b2e4e22c7c87495b5bc68e4b398894e50c06002cc9c6fce0addedaa5c4",
+    "frame-7.png": "81fe8e5e317508b6fc22c9fe7fe1230f4e621809a93822b2b5e2b1ab04a59cf3",
+    "frame-8.png": "81fe8e5e317508b6fc22c9fe7fe1230f4e621809a93822b2b5e2b1ab04a59cf3",
+    "frame-9.png": "a010c89a2b67f002bce681e5f7211e2f6812ef93a981e91b4754722268ce85d7"
+  },
+  "frame_ms": 200,
+  "frames": 12,
+  "loop_ms": 2400,
+  "native_size": [
+    32,
+    32
+  ],
+  "origin": [
+    0,
+    0
+  ],
+  "pixel_verification": "All exported frames match approved sheet pixels exactly",
+  "revision": "atlas-wall-v4",
+  "runtime_tag": "AtlasEyes",
+  "selected_variant": "Atlas",
+  "sheet_sha256": "16221f0060a32d46836d3ab8fa5e961833eb71c2db8c066e195d50b7c2064778",
+  "source": "art:reviews/relic-item-inventory-r01/atlas-wall-v4/Atlas.aseprite",
+  "source_sha256": "573dc45e95b10863b7d1169b9f875861be081eb628ca440470a4050dd70e6851"
+}

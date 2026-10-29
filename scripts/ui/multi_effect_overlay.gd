@@ -15,6 +15,18 @@ var _has_condition: bool = false
 # Value source effect indices (dashed border)
 var _value_source_indices: Array = []
 
+# Separate destination feedback from effect/condition colors and persistent buffs.
+var _drop_state: int = -1  # -1: none, 0: rejected, 1: accepted
+
+func set_drop_state(state: int) -> void:
+	if _drop_state == state:
+		return
+	_drop_state = state
+	queue_redraw()
+
+func get_drop_state() -> int:
+	return _drop_state
+
 # Dash rendering constants
 const DASH_LENGTH := 6.0
 const GAP_LENGTH := 4.0
@@ -94,6 +106,11 @@ func _draw() -> void:
 		# If multiple, blend by using the first one (most common case is single)
 		var vs_color = EffectColors.get_value_source_color(_value_source_indices[0])
 		_draw_dashed_rect(Rect2(Vector2(2, 2), rect_size - Vector2(4, 4)), vs_color)
+
+	# Draw inside the slot, so the PanelContainer's clipping cannot cut the border.
+	if _drop_state != -1:
+		var color := Color("6bd66f") if _drop_state == 1 else Color("ef6464")
+		draw_rect(Rect2(Vector2(2, 2), rect_size - Vector2(4, 4)), color, false, 3.0)
 
 
 ## Draws a dashed rectangle border.

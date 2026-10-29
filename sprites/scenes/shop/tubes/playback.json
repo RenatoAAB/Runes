@@ -1,0 +1,768 @@
+{
+  "schema_version": 1,
+  "revision": "shop-furnace-tubes-r19",
+  "texture": "tubes-sheet.png",
+  "frame_size": [
+    131,
+    168
+  ],
+  "sheet_size": [
+    1572,
+    1008
+  ],
+  "sheet_grid": [
+    12,
+    6
+  ],
+  "origin": [
+    14,
+    18
+  ],
+  "frame_count": 72,
+  "indexing": "zero_based_row_major",
+  "tags": {
+    "idle": {
+      "from": 0,
+      "to": 23,
+      "loop": true,
+      "duration_ms": 4320
+    },
+    "surge": {
+      "from": 24,
+      "to": 47,
+      "loop": false,
+      "duration_ms": 2400
+    },
+    "heated": {
+      "from": 48,
+      "to": 71,
+      "loop": true,
+      "duration_ms": 2880
+    }
+  },
+  "frames": [
+    {
+      "index": 0,
+      "rect": [
+        0,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 1,
+      "rect": [
+        131,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 2,
+      "rect": [
+        262,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 3,
+      "rect": [
+        393,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 4,
+      "rect": [
+        524,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 5,
+      "rect": [
+        655,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 6,
+      "rect": [
+        786,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 7,
+      "rect": [
+        917,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 8,
+      "rect": [
+        1048,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 9,
+      "rect": [
+        1179,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 10,
+      "rect": [
+        1310,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 11,
+      "rect": [
+        1441,
+        0,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 12,
+      "rect": [
+        0,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 13,
+      "rect": [
+        131,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 14,
+      "rect": [
+        262,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 15,
+      "rect": [
+        393,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 16,
+      "rect": [
+        524,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 17,
+      "rect": [
+        655,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 18,
+      "rect": [
+        786,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 19,
+      "rect": [
+        917,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 20,
+      "rect": [
+        1048,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 21,
+      "rect": [
+        1179,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 22,
+      "rect": [
+        1310,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 23,
+      "rect": [
+        1441,
+        168,
+        131,
+        168
+      ],
+      "duration_ms": 180
+    },
+    {
+      "index": 24,
+      "rect": [
+        0,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 25,
+      "rect": [
+        131,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 80
+    },
+    {
+      "index": 26,
+      "rect": [
+        262,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 27,
+      "rect": [
+        393,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 60
+    },
+    {
+      "index": 28,
+      "rect": [
+        524,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 140
+    },
+    {
+      "index": 29,
+      "rect": [
+        655,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 30,
+      "rect": [
+        786,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 80
+    },
+    {
+      "index": 31,
+      "rect": [
+        917,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 32,
+      "rect": [
+        1048,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 60
+    },
+    {
+      "index": 33,
+      "rect": [
+        1179,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 140
+    },
+    {
+      "index": 34,
+      "rect": [
+        1310,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 35,
+      "rect": [
+        1441,
+        336,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 36,
+      "rect": [
+        0,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 37,
+      "rect": [
+        131,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 80
+    },
+    {
+      "index": 38,
+      "rect": [
+        262,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 39,
+      "rect": [
+        393,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 60
+    },
+    {
+      "index": 40,
+      "rect": [
+        524,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 140
+    },
+    {
+      "index": 41,
+      "rect": [
+        655,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 42,
+      "rect": [
+        786,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 80
+    },
+    {
+      "index": 43,
+      "rect": [
+        917,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 44,
+      "rect": [
+        1048,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 60
+    },
+    {
+      "index": 45,
+      "rect": [
+        1179,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 140
+    },
+    {
+      "index": 46,
+      "rect": [
+        1310,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 47,
+      "rect": [
+        1441,
+        504,
+        131,
+        168
+      ],
+      "duration_ms": 100
+    },
+    {
+      "index": 48,
+      "rect": [
+        0,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 49,
+      "rect": [
+        131,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 50,
+      "rect": [
+        262,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 51,
+      "rect": [
+        393,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 52,
+      "rect": [
+        524,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 53,
+      "rect": [
+        655,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 54,
+      "rect": [
+        786,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 55,
+      "rect": [
+        917,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 56,
+      "rect": [
+        1048,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 57,
+      "rect": [
+        1179,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 58,
+      "rect": [
+        1310,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 59,
+      "rect": [
+        1441,
+        672,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 60,
+      "rect": [
+        0,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 61,
+      "rect": [
+        131,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 62,
+      "rect": [
+        262,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 63,
+      "rect": [
+        393,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 64,
+      "rect": [
+        524,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 65,
+      "rect": [
+        655,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 66,
+      "rect": [
+        786,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 67,
+      "rect": [
+        917,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 68,
+      "rect": [
+        1048,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 69,
+      "rect": [
+        1179,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 70,
+      "rect": [
+        1310,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    },
+    {
+      "index": 71,
+      "rect": [
+        1441,
+        840,
+        131,
+        168
+      ],
+      "duration_ms": 120
+    }
+  ],
+  "reset": "idle at frame 0 when a new round clears overclock; failed or repeated purchase does not restart",
+  "state_transition": "idle -> surge(2400ms once) -> heated loop; reset -> idle",
+  "mask": "tube-mask.png"
+}

@@ -27,6 +27,9 @@ Stats="*res://scripts/autoloads/statistics_manager.gd"
 SoundManager="*res://scripts/audio/sound_manager.gd"
 JuiceManager="*res://scripts/autoloads/juice_manager.gd"
 Telemetry="*res://scripts/autoloads/telemetry_manager.gd"
+MCPScreenshot="*res://addons/godot_mcp/mcp_screenshot_service.gd"
+MCPInputService="*res://addons/godot_mcp/mcp_input_service.gd"
+MCPGameInspector="*res://addons/godot_mcp/mcp_game_inspector_service.gd"
 
 [display]
 
@@ -37,14 +40,14 @@ window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/stretch/scale_mode="integer"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
+
 [global_group]
 
 grid_highlighter=""
 tooltip_manager=""
-
-[editor_plugins]
-
-enabled=PackedStringArray("res://addons/godot_mcp/plugin.cfg")
 
 [rendering]
 

@@ -15,6 +15,8 @@ const SlotEffect = preload("res://scripts/data/slot_effects/slot_effect.gd")
 
 @export_group("Visuals")
 @export var texture: Texture2D
+## Optional native border art, centered on the 40px slot without changing its hitbox.
+@export var modifier_overlay_texture: Texture2D
 @export var color_tint: Color = Color.WHITE
 
 @export_group("Multipliers")

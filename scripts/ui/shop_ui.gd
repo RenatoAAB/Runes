@@ -20,12 +20,12 @@ var shop_manager: ShopManager
 
 # --- UI Node References (from scene via @onready) ---
 @onready var enter_panel_button: Button = $EnterPanel
-@onready var purchasable_runes_container: GridContainer = $PurchasableRunes
+@onready var purchasable_runes_container: Control = $PurchasableRunes
 # @onready var purchasable_slots_container: GridContainer = get_node_or_null("PurchasableSlots")  # For pieces & modifiers
-@onready var purchasable_pieces_container: GridContainer = get_node_or_null("PurchasableSlotsPieces")
-@onready var purchasable_modifiers_container: GridContainer = get_node_or_null("PurchasableSlotsModifiers")
+@onready var purchasable_pieces_container: Control = get_node_or_null("PurchasableSlotsPieces")
+@onready var purchasable_modifiers_container: Control = get_node_or_null("PurchasableSlotsModifiers")
 @onready var overclock_button: Button = get_node_or_null("ExtraOptionsFurnace")
-@onready var refresh_relic_button: Button = get_node_or_null("RefreshRelicButton")
+@onready var relic_seal_button: Button = get_node_or_null("RelicSealButton")
 @onready var water_bar: ColorRect = get_node_or_null("ElementDistribution/WaterBar")
 @onready var earth_bar: ColorRect = get_node_or_null("ElementDistribution/EarthBar")
 @onready var spirit_bar: ColorRect = get_node_or_null("ElementDistribution/SpiritBar")
@@ -36,14 +36,14 @@ var shop_manager: ShopManager
 @onready var sell_area: SellArea = get_node_or_null("SellArea")
 
 # Pergaminho (scroll) button — repurposed from old GetOneOfThree section
-@onready var pergaminho_section: Control = $Pergaminho
-@onready var pergaminho_button: Button = $Pergaminho/BuyRunePack
+@onready var pergaminho_section: Control = get_node_or_null("Pergaminho")
+@onready var pergaminho_button: Button = get_node_or_null("Pergaminho/BuyRunePack")
 
 # Upgrade section
-@onready var upgrade_section: Control = $Upgrade
-@onready var runes_to_upgrade_container: GridContainer = $Upgrade/RunesToUpgrade
-@onready var upgraded_rune_preview_container: GridContainer = $Upgrade/UpgradedRunePreview
-@onready var upgrade_cost_label: Label = $Upgrade/Label
+@onready var upgrade_section: Control = get_node_or_null("Upgrade")
+@onready var runes_to_upgrade_container: GridContainer = get_node_or_null("Upgrade/RunesToUpgrade")
+@onready var upgraded_rune_preview_container: GridContainer = get_node_or_null("Upgrade/UpgradedRunePreview")
+@onready var upgrade_cost_label: Label = get_node_or_null("Upgrade/Label")
 
 # --- Internal State ---
 var _upgrade_rune_1: RuneInstance = null
@@ -79,8 +79,8 @@ func _connect_signals() -> void:
 		overclock_button.pressed.connect(_on_overclock_pressed)
 		
 	# Refresh relic button
-	if refresh_relic_button and not refresh_relic_button.pressed.is_connected(_on_refresh_relic_pressed):
-		refresh_relic_button.pressed.connect(_on_refresh_relic_pressed)
+	if relic_seal_button and not relic_seal_button.pressed.is_connected(_on_relic_seal_pressed):
+		relic_seal_button.pressed.connect(_on_relic_seal_pressed)
 		
 	# ElementPedestals
 	var element_pedestals = get_node_or_null("ElementPedestals")
@@ -228,103 +228,111 @@ func _refresh_slots_shop() -> void:
 func _refresh_pieces_shop() -> void:
 	if not purchasable_pieces_container or not shop_manager:
 		return
-		
-	var slots = purchasable_pieces_container.get_children()
-	
-	# Control "Extra" slot visibility based on overclock purchase
-	var extra_slot = purchasable_pieces_container.get_node_or_null("Extra")
-	if extra_slot:
-		extra_slot.visible = shop_manager.overclock_purchased_this_round
-		
-	# Clean up old preview grids
 	for pg in _piece_preview_grids:
 		if is_instance_valid(pg):
+			pg.get_parent().remove_child(pg)
 			pg.queue_free()
 	_piece_preview_grids.clear()
-	
-	var item_index = 0
-	for i in range(slots.size()):
-		var slot_ui = slots[i] as SlotUI
-		if not slot_ui:
+	for child in purchasable_pieces_container.get_children():
+		var slot := child as SlotUI
+		if not slot:
 			continue
-			
-		if slot_ui.name == "Extra":
-			slot_ui.visible = shop_manager.overclock_purchased_this_round
-			
-		if not slot_ui.visible:
-			slot_ui.clear_display()
-			slot_ui.set_shop_mode(false)
-			slot_ui.set_shop_item("", null)
+		_reset_bench_slot(slot)
+		var index := _bench_offer_index(shop_manager.available_pieces, slot.name == "Extra")
+		if index < 0:
 			continue
-			
-		if item_index < shop_manager.available_pieces.size():
-			var piece_data = shop_manager.available_pieces[item_index] as SlotPieceData
-			slot_ui.clear_display()
-			var preview_grid = SlotPiecePreviewGrid.new()
-			preview_grid.mouse_filter = Control.MOUSE_FILTER_IGNORE
-			preview_grid.set_anchors_preset(Control.PRESET_CENTER)
-			slot_ui.add_child(preview_grid)
-			# Criar instância temporária com a rotação da vitrine para exibir corretamente
-			var display_rot = shop_manager.get_piece_display_rotation(item_index)
-			var preview_instance = SlotPieceInstance.new(piece_data)
-			preview_instance.current_rotation = display_rot
-			preview_grid.setup_auto_fit_instance(preview_instance, Vector2(28, 28), 2)
-			_piece_preview_grids.append(preview_grid)
-			
-			var bg_style = StyleBoxFlat.new()
-			bg_style.bg_color = _get_piece_shape_color(piece_data).darkened(0.6)
-			bg_style.set_border_width_all(2)
-			bg_style.border_color = _get_piece_shape_color(piece_data).darkened(0.2)
-			bg_style.set_corner_radius_all(4)
-			slot_ui.add_theme_stylebox_override("panel", bg_style)
-			slot_ui.set_shop_mode(true, shop_manager.get_piece_price_display(piece_data))
-			slot_ui.set_shop_item("piece", piece_data)
-			_connect_slot_buy_signal(slot_ui, item_index, "piece")
-			item_index += 1
-		else:
-			slot_ui.clear_display()
-			slot_ui.set_shop_mode(false)
-			slot_ui.set_shop_item("", null)
+		var data: SlotPieceData = shop_manager.available_pieces[index]
+		var instance := SlotPieceInstance.new(data)
+		instance.current_rotation = shop_manager.get_piece_display_rotation(index)
+		var shape := instance.get_current_shape()
+		var low := Vector2i(999,999)
+		var high := Vector2i(-999,-999)
+		for cell in shape:
+			low = low.min(cell)
+			high = high.max(cell)
+		var dimensions := high - low + Vector2i.ONE
+		var cell_size := maxi(1, mini(16 / maxi(1,dimensions.x), 16 / maxi(1,dimensions.y)))
+		var preview := SlotPiecePreviewGrid.new()
+		preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		preview.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		slot.add_child(preview)
+		preview.setup_from_instance(instance, cell_size, 0)
+		var shift := ((Vector2(23,19) - preview.custom_minimum_size) * 0.5).floor()
+		for cell: Control in preview.get_children():
+			cell.position += shift
+			var style := cell.get_theme_stylebox("panel") as StyleBoxFlat
+			if style:
+				style.set_corner_radius_all(0)
+		_piece_preview_grids.append(preview)
+		slot.set_shop_mode(true, shop_manager.get_piece_price_display(data))
+		slot.set_shop_item("piece", data)
+		_connect_bench_buy(slot, index, "piece")
 
 
 func _refresh_modifiers_shop() -> void:
 	if not purchasable_modifiers_container or not shop_manager:
 		return
-		
-	var slots = purchasable_modifiers_container.get_children()
-	
-	# Control "Extra" slot visibility based on overclock purchase
-	var extra_slot = purchasable_modifiers_container.get_node_or_null("Extra")
-	if extra_slot:
-		extra_slot.visible = shop_manager.overclock_purchased_this_round
-		
-	var item_index = 0
-	for i in range(slots.size()):
-		var slot_ui = slots[i] as SlotUI
-		if not slot_ui:
+	for child in purchasable_modifiers_container.get_children():
+		var slot := child as SlotUI
+		if not slot:
 			continue
-			
-		if slot_ui.name == "Extra":
-			slot_ui.visible = shop_manager.overclock_purchased_this_round
-			
-		if not slot_ui.visible:
-			slot_ui.clear_display()
-			slot_ui.set_shop_mode(false)
-			slot_ui.set_shop_item("", null)
+		_reset_bench_slot(slot)
+		var index := _bench_offer_index(shop_manager.available_modifiers, slot.name == "Extra")
+		if index < 0:
 			continue
-			
-		if item_index < shop_manager.available_modifiers.size():
-			var modifier_data = shop_manager.available_modifiers[item_index] as SlotModifierData
-			var color = SlotPieceUI.get_color_for_modifier_type(modifier_data.modifier_type)
-			slot_ui.set_placeholder_display(modifier_data.display_name.substr(0, 2), color)
-			slot_ui.set_shop_mode(true, shop_manager.get_modifier_price_display(modifier_data))
-			slot_ui.set_shop_item("modifier", modifier_data)
-			_connect_slot_buy_signal(slot_ui, item_index, "modifier")
-			item_index += 1
-		else:
-			slot_ui.clear_display()
-			slot_ui.set_shop_mode(false)
-			slot_ui.set_shop_item("", null)
+		var data: SlotModifierData = shop_manager.available_modifiers[index]
+		var color := SlotPieceUI.get_color_for_modifier_type(data.modifier_type)
+		# Use the actual modifier's short name, not the shared "Anomalo" prefix.
+		var label_text := data.display_name.trim_prefix("An\u00f4malo ").substr(0,2)
+		slot.set_placeholder_display(label_text, color)
+		slot.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+		slot.get_node("Sprite2D").visible = false
+		var label := slot._placeholder_label
+		label.add_theme_font_size_override("font_size", 10)
+		label.add_theme_color_override("font_color", color.lightened(0.25))
+		label.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if data.icon:
+			slot.set_modifier_icon_display(data.icon)
+		elif data.slot_data_override and data.slot_data_override.modifier_overlay_texture:
+			slot._placeholder_label.visible = false
+			slot.get_node("Sprite2D").visible = true
+			slot.update_slot_data_display(data.slot_data_override)
+			# The overclock bench has 34px between click areas. Separate only the
+			# mounted fallback artwork; kits stay on their natural click centers.
+			if shop_manager.overclock_purchased_this_round and _bench_offer_index(shop_manager.available_modifiers, true) >= 0 and _bench_offer_index(shop_manager.available_modifiers, false) >= 0:
+				slot.set_modifier_visual_offset(Vector2(7 if slot.name == "Extra" else -7, 0))
+		slot.set_shop_mode(true, shop_manager.get_modifier_price_display(data))
+		slot.set_shop_item("modifier", data)
+		_connect_bench_buy(slot, index, "modifier")
+
+
+func _bench_offer_index(offers: Array, extra: bool) -> int:
+	for index in offers.size():
+		if bool(offers[index].get_meta("shop_overclock_offer", false)) == extra:
+			return index
+	return -1
+
+
+func _reset_bench_slot(slot: SlotUI) -> void:
+	if slot.has_meta("bench_buy_callback"):
+		var callback: Callable = slot.get_meta("bench_buy_callback")
+		if slot.gui_input.is_connected(callback):
+			slot.gui_input.disconnect(callback)
+		slot.remove_meta("bench_buy_callback")
+	slot.clear_display()
+	slot.set_shop_mode(false)
+	slot.set_shop_item("", null)
+	slot.visible = slot.name != "Extra" or shop_manager.overclock_purchased_this_round
+	slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	slot.get_node("Sprite2D").visible = false
+	slot.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+
+
+func _connect_bench_buy(slot: SlotUI, index: int, item_type: String) -> void:
+	var callback := _on_shop_slot_clicked.bind(index, item_type)
+	slot.set_meta("bench_buy_callback", callback)
+	slot.gui_input.connect(callback)
+	slot.mouse_filter = Control.MOUSE_FILTER_STOP
 
 
 func _get_piece_shape_color(piece_data: SlotPieceData) -> Color:
@@ -349,11 +357,15 @@ func _refresh_relic_shop() -> void:
 		if not slot_ui:
 			continue
 		
+		slot_ui.visible = i < shop_manager.available_relics.size()
 		if i < shop_manager.available_relics.size():
 			var relic_data = shop_manager.available_relics[i]
 			# Show relic icon or placeholder
 			var display_text = relic_data.display_name.substr(0, 2) if relic_data.display_name else "?"
-			slot_ui.set_placeholder_display(display_text, Color.PURPLE.darkened(0.3))
+			if relic_data.icon:
+				slot_ui.set_icon_display(relic_data.icon)
+			else:
+				slot_ui.set_placeholder_display(display_text, Color.PURPLE.darkened(0.3))
 			slot_ui.set_shop_mode(true, shop_manager.get_relic_price_display(relic_data))
 			slot_ui.set_shop_item("relic", relic_data)
 			_connect_slot_buy_signal(slot_ui, i, "relic")
@@ -557,20 +569,18 @@ func _update_reroll_button() -> void:
 		
 	if overclock_button:
 		if shop_manager.overclock_purchased_this_round:
-			overclock_button.text = "Overclock Ativo"
+			overclock_button.text = ""
 			overclock_button.disabled = true
 		else:
-			overclock_button.text = "Overclock\n1 Mana"
+			overclock_button.text = ""
 			overclock_button.disabled = _get_money() < 1
 			
-	if refresh_relic_button:
-		if shop_manager.relic_refresh_purchased_this_round:
-			refresh_relic_button.text = "Reroll Usado"
-			refresh_relic_button.disabled = true
-		else:
-			refresh_relic_button.text = "Reroll Relíquia\n1 Mana"
-			refresh_relic_button.disabled = _get_money() < 1
-			
+	if relic_seal_button:
+		relic_seal_button.text = ""
+		relic_seal_button.disabled = not shop_manager.can_toggle_relic_seal()
+		if relic_seal_button.has_method("sync_state"):
+			relic_seal_button.sync_state()
+		
 	_update_elemental_bars()
 
 
@@ -580,10 +590,10 @@ func _on_overclock_pressed() -> void:
 	shop_manager.buy_overclock()
 
 
-func _on_refresh_relic_pressed() -> void:
+func _on_relic_seal_pressed() -> void:
 	if not shop_manager:
 		return
-	shop_manager.reroll_relic()
+	shop_manager.toggle_relic_seal()
 
 
 func _on_pedestal_pressed(element_index: int) -> void:

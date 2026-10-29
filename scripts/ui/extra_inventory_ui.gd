@@ -196,7 +196,8 @@ func _create_relic_item(relic: RelicInstance) -> Control:
 		var icon = TextureRect.new()
 		icon.texture = relic.data.icon
 		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+		icon.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		icon.set_anchors_preset(Control.PRESET_FULL_RECT)
 		icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		item.add_child(icon)

@@ -1,6 +1,9 @@
-[gd_resource type="Resource" script_class="SlotData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="SlotData" load_steps=4 format=3]
 
 [ext_resource type="Script" path="res://scripts/data/slot_data.gd" id="1"]
+
+[ext_resource type="Texture2D" path="res://sprites/slots/construido.png" id="art_base"]
+[ext_resource type="Texture2D" path="res://sprites/slots/modifiers/batch05/purifier-overlay.png" id="art_overlay"]
 
 [resource]
 script = ExtResource("1")
@@ -8,3 +11,5 @@ id = "slot_purifier"
 slot_name = "Purifier"
 rarity = 0
 description = "Se lida com uma anomalia de mana, consome-a e a runa recebe x3 no score."
+texture = ExtResource("art_base")
+modifier_overlay_texture = ExtResource("art_overlay")
